@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_14wyvh1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="newsletterSubscription" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_SubmitRegistrationForm" name="Submit newsletter form">
+      <bpmn:outgoing>Flow_1xmbgyu</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1gwpit2" messageRef="Message_168ccah" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1xmbgyu" sourceRef="StartEvent_SubmitRegistrationForm" targetRef="EndEvent_RegistrationCompleted" />
+    <bpmn:endEvent id="EndEvent_RegistrationCompleted" name="Registration completed">
+      <bpmn:incoming>Flow_1xmbgyu</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_168ccah" name="StartEvent_SubmitRegistrationForm" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="newsletterSubscription">
+      <bpmndi:BPMNShape id="Event_0cr6s3t_di" bpmnElement="StartEvent_SubmitRegistrationForm">
+        <dc:Bounds x="202" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="176" y="155" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1d2dfd0_di" bpmnElement="EndEvent_RegistrationCompleted">
+        <dc:Bounds x="342" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="331" y="155" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1xmbgyu_di" bpmnElement="Flow_1xmbgyu">
+        <di:waypoint x="238" y="130" />
+        <di:waypoint x="342" y="130" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
