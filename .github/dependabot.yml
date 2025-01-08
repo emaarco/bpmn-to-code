@@ -1,0 +1,15 @@
+version: 2
+updates:
+
+  # Config for backend-dependencies
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      backend-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "major"
