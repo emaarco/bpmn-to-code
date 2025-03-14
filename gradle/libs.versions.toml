@@ -26,6 +26,6 @@ codegen = ["kotlinpoet", "javapoet"]
 testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.0.21" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.1.10" }
 gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
