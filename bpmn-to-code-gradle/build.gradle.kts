@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.1-snapshot"
+version = "0.0.1-alpha"
 
 repositories {
     mavenLocal()

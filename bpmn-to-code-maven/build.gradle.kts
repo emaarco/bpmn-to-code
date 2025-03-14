@@ -5,11 +5,11 @@ plugins {
     `kotlin-dsl`
     signing
     alias(libs.plugins.mavenPluginDevelopment)
-    id("com.vanniktech.maven.publish") version "0.31.0"
+    alias(libs.plugins.mavenPublish)
 }
 
 group = "io.github.emaarco"
-version = "0.0.1"
+version = "0.0.1-alpha"
 
 val deps: Configuration by configurations.creating
 
@@ -22,8 +22,8 @@ dependencies {
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
     compileOnly(project(":bpmn-to-code-core"))
-    implementation("org.apache.maven:maven-plugin-api:3.8.6")
-    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.0")
+    implementation(libs.mavenPluginApi)
+    implementation(libs.mavenPluginAnnotations)
     testImplementation(libs.bundles.testing)
 }
 
@@ -49,7 +49,7 @@ artifacts {
 
 mavenPublishing {
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, false)
     signAllPublications()
     coordinates("io.github.emaarco", "bpmn-to-code-maven", version.toString())
 
