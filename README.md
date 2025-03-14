@@ -3,47 +3,48 @@
 
 # 🚀 bpmn-to-code
 
-bpmn-to-code is a **Maven** and **Gradle** plugin designed to simplify process automation.
+bpmn-to-code is a Maven and Gradle plugin designed to simplify process automation.
 Its vision is to foster clean & robust solutions for BPMN-based process automation.
-Therefore, it aims to provide a range of features -
-such as the generation of API definition files from BPMN process models -
-to reduce manual effort, promote the creation of clean process models
+Therefore, it aims to provide a range of features —
+such as generating API definition files from BPMN process models —
+to reduce manual effort, simplify testing, promote the creation of clean process models,
 and ensure consistency between your BPMN model and your code.
 
-## 🎯 Purpose
+## **🤩** What it can do for you
 
-In typical BPMN automation projects, developers often need to manually reference message names,
-element names, or service task types from the BPMN model.
-This can lead to errors, duplication of effort, and maintenance challenges.
-BPMN to Code automates this process by:
+**Streamlined Process Automation**
 
-- Extracting **element names** for testing and other programmatic use cases.
-- Exporting **message names** for easy interaction with the process API.
-- Providing information about **service task types** for integration purposes.
+Say goodbye to the tedious task of manually referencing BPMN elements. bpmn-to-code automatically extracts key
+details—like element IDs, messages, and worker types—and generates a lightweight “**Process API**” that keeps your
+process models and code in sync.
 
-With BPMN to Code, you can streamline your workflow, improve accuracy,
-and focus on building robust process automation solutions.
+**Java & Kotlin Code Generation**
 
-## ✨ Features
+Whether you’re developing in **Java** or **Kotlin**, our plugin creates ready-to-use API definitions that integrate
+seamlessly with your testing frameworks, messaging systems, or any other automation logic.
 
-- **Java and Kotlin Support:** Generate API-definition files in Java or Kotlin, based on your preference.
-- **Automated Extraction:** Automatically extract relevant data (message names, element names, service task types) from
-  BPMN process models.
-- **Flexible Use Cases:** Use the generated APIs for process testing, message handling, and other automation scenarios.
-- **Supports multiple engines:** The plugin currently supports Camunda 7 and Zeebe, but is designed to be as extensible
-  as possible to also support other process engines.
+**Engine Agnostic & Extensible**
 
-## 💡 The plugin in action
+Currently, bpmn-to-code supports both **Camunda** 7 and **Zeebe**. Built with extensibility in mind, it is designed so
+that adding support for additional process engines is straightforward—if there is enough demand.
 
-Assuming you have a bpmn-process to manage newsletter subscriptions, that looks like this:
+**Styleguide Validation** (🚧)
+
+Looking ahead, I’m planing a styleguide validation feature. Much like a linter for code, it will analyze your BPMN
+models against your custom style guide - ensuring that element IDs, message names, and task types adhere to predefined
+patterns and naming conventions. This will help maintain designs that are as clean and consistent as your code.
+
+## 💡 Process-API generation in action
+
+One of the key current features is generating a lightweight “Process API” for your BPMN models.
+Let’s say you have a newsletter subscription workflow (BPMN) that looks like this:
 
 <img src="docs/example-process.png" alt="Example Process" width="800"/>
 
-Then, based on the technical configuration, the generated API file for Kotlin could look like this:
+After running bpmn-to-code, you’ll have a Kotlin (or Java) file that programmatically references your process model. For
+example:
 
 ```kotlin
-package com.example.process
-
 package com.example.process
 
 public object NewsletterSubscriptionProcessApi {
@@ -69,21 +70,48 @@ public object NewsletterSubscriptionProcessApi {
 }
 ```
 
+All you need is a simple Gradle task configuration that specifies **where** your BPMN models reside,
+**where** to output the generated API files, **which** language (Java or Kotlin) to generate,
+and **which** process engine your models target (e.g., Camunda 7 or Zeebe):
+
+```kotlin
+tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
+    baseDir = projectDir.toString()
+    filePattern = "src/main/resources/**/*.bpmn"
+    outputFolderPath = "$projectDir/src/main/kotlin"
+    packagePath = "de.emaarco.example"
+    outputLanguage = OutputLanguage.KOTLIN
+    processEngine = ProcessEngine.ZEEBE
+}
+```
+
+Once configured, **bpmn-to-code** automatically picks up your BPMN files and generates convenient,
+type-safe references you can use throughout your application—be it for testing, messaging,
+or worker definitions.
+
 ## 📦 Modules
 
 bpmn-to-code is available for both Gradle and Maven.
 For detailed installation and configuration instructions,
 please refer to the respective module README's:
 
-- **bpmn-to-code-core**: Contains the core logic for parsing BPMN files and generating the API representation.
-- [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md): Gradle plugin integration for projects using Gradle.
-- [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin integration for projects using Maven.
+- [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md): Gradle plugin integration for
+  projects using Gradle.
+- [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin integration for
+  projects using Maven.
+- [bpmn-to-code-core](bpmn-to-code-core): Contains the core logic for parsing BPMN files and generating the API
+  representation.
+
+## 📬 Get the Plugin
+
+You can find the plugin on either
+the [Maven Central Repository](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven)
+or the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests on
-the [GitHub repository](https://github.com/example/bpmn-to-code).
-
-## 📜 License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Community contributions are at the heart of bpmn-to-code’s vision.
+If you have ideas to improve the code generation, want to add support for a new engine,
+or are keen to help shape the styleguide validator,
+please join me on [GitHub](https://github.com/example/bpmn-to-code).
+Submit issues, open pull requests, or simply start a discussion.

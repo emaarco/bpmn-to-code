@@ -1,22 +1,16 @@
 # 🚀 bpmn-to-code-gradle
 
-bpmn-to-code-gradle enables you to generate API-definition files from BPMN process models
-within your Gradle projects. Its purpose is to extract vital process information
-(like element names, message names, and service task types)
-and convert them into Java or Kotlin API representations —
-streamlining your process automation and reducing manual errors.
-
-## 🎯 Purpose & Use-Case
-
-This plugin is designed to automate the extraction of BPMN model data, so you can:
-
-- Easily interact with processes via generated API definitions.
-- Minimize manual errors by keeping your BPMN model and code in sync.
-- Accelerate process testing, message handling, and integration efforts.
+bpmn-to-code is a plugin designed to simplify process automation.
+Its vision is to foster clean & robust solutions for BPMN-based process automation.
+Therefore, it aims to provide a range of features —
+such as generating API definition files from BPMN process models —
+to reduce manual effort, simplify testing,
+promote the creation of clean process models,
+and ensure consistency between your BPMN model and your code.
 
 ## ✨ How to Use
 
-Add the plugin to your Gradle project by applying it in your `build.gradle.kts` file:
+To get started, apply the plugin in your build.gradle.kts file:
 
 ```kotlin
 plugins {
@@ -24,8 +18,11 @@ plugins {
 }
 ```
 
-Then, configure the generation task by setting up its parameters. For example, if you have a BPMN process managing
-newsletter subscriptions, add the following configuration:
+Next, configure the generation task by setting its parameters.
+This configuration directs the plugin on where to locate your BPMN files,
+where to generate the API code, and which settings to apply (language, package, and process engine).
+Once configured, bpmn-to-code-gradle automatically processes your BPMN models
+and creates convenient, type-safe references for your application.
 
 ```
 import io.github.emaarco.bpmn.adapter.GenerateBpmnModelsTask
@@ -41,14 +38,3 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     processEngine = ProcessEngine.ZEEBE
 }
 ```
-
-This configuration instructs the plugin where to find your BPMN files,
-where to generate the API code, and how to generate it.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please check the root repository for contribution guidelines.
-
-## 📜 License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
