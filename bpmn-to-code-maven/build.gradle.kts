@@ -23,7 +23,7 @@ dependencies {
     api(libs.bundles.codegen)
     compileOnly(project(":bpmn-to-code-core"))
     implementation("org.apache.maven:maven-plugin-api:3.8.6")
-    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.0")
+    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.15.1")
     testImplementation(libs.bundles.testing)
 }
 
