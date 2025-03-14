@@ -1,0 +1,30 @@
+name: Pre-Merge Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build with Gradle
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      # Step 3: Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Step 4: Run Gradle build
+      - name: Run Gradle Build
+        run: ./gradlew build
