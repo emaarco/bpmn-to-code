@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.1-snapshot"
+version = "0.0.1-alpha"
 
 repositories {
     mavenLocal()
@@ -51,7 +51,8 @@ gradlePlugin {
         create("io.github.emaarco.bpmn-to-code-gradle") {
             id = "io.github.emaarco.bpmn-to-code-gradle"
             displayName = "bpmn-to-code"
-            description = "A Gradle plugin to generate API-like representations from BPMN models"
+            description =
+                "Gradle plugin that bridges gaps between BPMN and code - fostering the creation of clean process-automation solutions"
             implementationClass = "io.github.emaarco.bpmn.adapter.BpmnModelGeneratorPlugin"
             tags = setOf("bpmn", "codegen")
         }

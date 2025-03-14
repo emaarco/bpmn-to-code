@@ -1,24 +1,19 @@
 # 🚀 bpmn-to-code Maven Plugin
 
-bpmn-to-code-maven enables you to generate API-definition files from BPMN process models
-within your Maven projects. Its purpose is to extract vital process information
-(like element names, message names, and service task types)
-and convert them into Java or Kotlin API representations —
-streamlining your process automation and reducing manual errors.
-
-## 🎯 Purpose & Use-Case
-
-The Maven plugin automates the extraction of BPMN model data by:
-
-- Extracting **element names** for testing and programmatic use.
-- Exporting **message names** for easy process interaction.
-- Providing details on **service task types** to simplify integration.
-
-These features help you build robust BPMN-based process automation solutions with less manual work.
+bpmn-to-code is a plugin designed to simplify process automation.
+Its vision is to foster clean & robust solutions for BPMN-based process automation.
+Therefore, it aims to provide a range of features —
+such as generating API definition files from BPMN process models —
+to reduce manual effort, simplify testing,
+promote the creation of clean process models,
+and ensure consistency between your BPMN model and your code.
 
 ## ✨ How to Use
 
-Add the following plugin configuration to your project's `pom.xml` within the `<build>` section:
+Add the following plugin configuration to your project's pom.xml within the <build> section.
+This configuration instructs the plugin on where to locate your BPMN files,
+where to output the generated API files, and how to format the output
+(e.g., language, package, and process engine).
 
 ```xml
 
@@ -48,13 +43,5 @@ Add the following plugin configuration to your project's `pom.xml` within the `<
 </build>
 ```
 
-This configuration directs the plugin on where to locate your BPMN files,
-where to generate the API files, and how to configure the output (such as language, package, etc.).
-
-## 🤝 Contributing
-
-Contributions are welcome! Please refer to the root repository for contribution guidelines.
-
-## 📜 License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
+Once configured, bpmn-to-code-maven automatically processes your BPMN files and generates type-safe API references that
+you can seamlessly integrate into your application—whether for testing, messaging, or managing worker tasks.

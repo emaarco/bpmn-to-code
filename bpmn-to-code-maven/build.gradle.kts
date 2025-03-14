@@ -5,11 +5,11 @@ plugins {
     `kotlin-dsl`
     signing
     alias(libs.plugins.mavenPluginDevelopment)
-    id("com.vanniktech.maven.publish") version "0.31.0"
+    alias(libs.plugins.mavenPublish)
 }
 
 group = "io.github.emaarco"
-version = "0.0.1"
+version = "0.0.1-alpha"
 
 val deps: Configuration by configurations.creating
 
@@ -22,8 +22,8 @@ dependencies {
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
     compileOnly(project(":bpmn-to-code-core"))
-    implementation("org.apache.maven:maven-plugin-api:3.8.6")
-    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.0")
+    implementation(libs.mavenPluginApi)
+    implementation(libs.mavenPluginAnnotations)
     testImplementation(libs.bundles.testing)
 }
 
@@ -49,14 +49,14 @@ artifacts {
 
 mavenPublishing {
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, false)
     signAllPublications()
     coordinates("io.github.emaarco", "bpmn-to-code-maven", version.toString())
 
     // Configure the POM details.
     pom {
         name.set("bpmn-to-code-maven")
-        description.set("A Maven plugin to generate API-like representations from BPMN models")
+        description.set("Maven plugin that bridges gaps between BPMN and code - fostering the creation of clean process-automation solutions")
         inceptionYear.set("2025")
         url.set("https://github.com/emaarco/bpmn-to-code")
         licenses {
