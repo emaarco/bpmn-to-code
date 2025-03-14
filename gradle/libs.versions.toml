@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlinpoet = "2.0.0"
+kotlinpoet = "2.1.0"
 javapoet = "0.6.0"
 camunda = "7.22.0"
 jUnit = "5.12.0"
