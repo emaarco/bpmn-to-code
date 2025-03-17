@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 class WriteApiFileAdapterTest {
 
-    private val kotlinBuilder = mockk<WriteApiFileAdapter.ApiFileBuilder>(relaxed = true)
+    private val kotlinBuilder = mockk<WriteApiFileAdapter.AbstractApiBuilder<*>>(relaxed = true)
     private val underTest = WriteApiFileAdapter(
         builder = mapOf(OutputLanguage.KOTLIN to kotlinBuilder)
     )

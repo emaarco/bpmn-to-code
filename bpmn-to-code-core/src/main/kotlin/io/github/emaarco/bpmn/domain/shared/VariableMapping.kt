@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.domain.shared
 
-interface VariableMapping {
+interface VariableMapping<T : Any> {
     fun getName(): String
-    fun getValue(): String
+    fun getValue(): T
 }

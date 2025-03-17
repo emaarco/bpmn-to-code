@@ -18,9 +18,6 @@
       <bpmn:incoming>Flow_1bsb8no</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1bsb8no" sourceRef="Activity_AbortRegistration" targetRef="EndEvent_RegistrationAborted" />
-    <bpmn:endEvent id="EndEvent_RegistrationCompleted" name="Registration completed">
-      <bpmn:incoming>Flow_1i7hjid</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:serviceTask id="Activity_SendWelcomeMail" name="Send Welcome-Mail">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="newsletter.sendWelcomeMail" />
@@ -44,6 +41,9 @@
       <bpmn:serviceTask id="Activity_SendConfirmationMail" name="Send confirmation mail">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="newsletter.sendConfirmationMail" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=&#34;123&#34;" target="testVariable" />
+          </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_05i3x1y</bpmn:incoming>
         <bpmn:incoming>Flow_0x4ewvb</bpmn:incoming>
@@ -78,13 +78,31 @@
     <bpmn:sequenceFlow id="Flow_1csfyyz" sourceRef="StartEvent_SubmitRegistrationForm" targetRef="SubProcess_Confirmation" />
     <bpmn:sequenceFlow id="Flow_1l1lj4m" sourceRef="Timer_After3Days" targetRef="Activity_AbortRegistration" />
     <bpmn:sequenceFlow id="Flow_09cuvzp" sourceRef="SubProcess_Confirmation" targetRef="Activity_SendWelcomeMail" />
-    <bpmn:boundaryEvent id="Timer_After3Days" name="After 3&#10;days" attachedToRef="SubProcess_Confirmation">
+    <bpmn:boundaryEvent id="Timer_After3Days" name="After 3 days" attachedToRef="SubProcess_Confirmation">
       <bpmn:outgoing>Flow_1l1lj4m</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0tvn6wx">
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT2M30S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="ErrorEvent_InvalidMail" name="Invalid Mail" attachedToRef="SubProcess_Confirmation">
+      <bpmn:outgoing>Flow_0i2ctuv</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0tozp3v" errorRef="Error_0uxgmyc" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0i2ctuv" sourceRef="ErrorEvent_InvalidMail" targetRef="EndEvent_RegistrationNotPossible" />
+    <bpmn:endEvent id="EndEvent_RegistrationCompleted" name="Registration completed">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="newsletter.registrationCompleted" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i7hjid</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1lg5ag3" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_RegistrationNotPossible" name="Registration not possible">
+      <bpmn:incoming>Flow_0i2ctuv</bpmn:incoming>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_1yluppl" signalRef="Signal_14g8ki5" />
+    </bpmn:endEvent>
   </bpmn:process>
+  <bpmn:signal id="Signal_14g8ki5" name="Signal_RegistrationNotPossible" />
+  <bpmn:error id="Error_0uxgmyc" name="Error_InvalidMail" errorCode="500" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="newsletterSubscription">
       <bpmndi:BPMNShape id="Activity_0hslg4x_di" bpmnElement="Activity_AbortRegistration">
@@ -95,12 +113,6 @@
         <dc:Bounds x="982" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="971" y="145" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0ocbg8y_di" bpmnElement="EndEvent_RegistrationCompleted">
-        <dc:Bounds x="982" y="302" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="971" y="345" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_105q7u2_di" bpmnElement="Activity_SendWelcomeMail">
@@ -161,10 +173,28 @@
         <di:waypoint x="650" y="320" />
         <di:waypoint x="692" y="320" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1fyeli8_di" bpmnElement="EndEvent_RegistrationCompleted">
+        <dc:Bounds x="982" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="971" y="345" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l6q4ul_di" bpmnElement="EndEvent_RegistrationNotPossible">
+        <dc:Bounds x="842" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="822" y="545" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yodhht_di" bpmnElement="ErrorEvent_InvalidMail">
+        <dc:Bounds x="692" y="420" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="632" y="453" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0i6u6yw_di" bpmnElement="Timer_After3Days">
         <dc:Bounds x="652" y="202" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="678" y="176" width="33" height="27" />
+          <dc:Bounds x="690" y="193" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1bsb8no_di" bpmnElement="Flow_1bsb8no">
@@ -187,6 +217,11 @@
       <bpmndi:BPMNEdge id="Flow_09cuvzp_di" bpmnElement="Flow_09cuvzp">
         <di:waypoint x="770" y="320" />
         <di:waypoint x="820" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i2ctuv_di" bpmnElement="Flow_0i2ctuv">
+        <di:waypoint x="710" y="456" />
+        <di:waypoint x="710" y="520" />
+        <di:waypoint x="842" y="520" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
