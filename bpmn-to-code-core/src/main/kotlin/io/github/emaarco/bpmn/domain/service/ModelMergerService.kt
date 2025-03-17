@@ -21,12 +21,17 @@ class ModelMergerService {
         val mergedFlowNodes = models.flatMap { it.flowNodes }.distinctBy { it.getName() }
         val mergedMessages = models.flatMap { it.messages }.distinctBy { it.getName() }
         val mergedServiceTasks = models.flatMap { it.serviceTasks }.distinctBy { it.getName() }
-
+        val mergedSignals = models.flatMap { it.signals }.distinctBy { it.getName() }
+        val mergedErrors = models.flatMap { it.errors }.distinctBy { it.getName() }
+        val mergedTimers = models.flatMap { it.timers }.distinctBy { it.getName() }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
             messages = mergedMessages,
-            serviceTasks = mergedServiceTasks
+            serviceTasks = mergedServiceTasks,
+            signals = mergedSignals,
+            errors = mergedErrors,
+            timers = mergedTimers
         )
     }
 }

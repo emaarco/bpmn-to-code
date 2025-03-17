@@ -2,8 +2,8 @@ package io.github.emaarco.bpmn.adapter.outbound.engine
 
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificExtractor
 import io.github.emaarco.bpmn.domain.BpmnFile
-import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.github.emaarco.bpmn.domain.testBpmnModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,12 +22,7 @@ class ExtractBpmnAdapterTest {
     @Test
     fun `extract returns model using correct extractor`() {
         // given: a dummy extractor that returns an expected BpmnModel
-        val expectedModel = BpmnModel(
-            processId = "dummyProcess",
-            flowNodes = emptyList(),
-            serviceTasks = emptyList(),
-            messages = emptyList()
-        )
+        val expectedModel = testBpmnModel(processId = "dummyProcess")
         val dummyFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
         val bpmnFile = BpmnFile(rawFile = dummyFile, engine = ProcessEngine.ZEEBE)
         every { extractor.extract(any()) } returns expectedModel

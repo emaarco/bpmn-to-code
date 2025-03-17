@@ -63,7 +63,10 @@ class GenerateProcessApiServiceTest {
         processId = "newsletterSubscription",
         flowNodes = emptyList(),
         serviceTasks = emptyList(),
-        messages = emptyList()
+        messages = emptyList(),
+        signals = emptyList(),
+        errors = emptyList(),
+        timers = emptyList()
     )
 
     private val expectedModelApi = testBpmnModelApi(

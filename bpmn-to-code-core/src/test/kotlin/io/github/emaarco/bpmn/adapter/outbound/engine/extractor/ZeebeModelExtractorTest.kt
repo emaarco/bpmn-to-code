@@ -15,7 +15,7 @@ class ZeebeModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file)
         assertThat(bpmnModel).isNotNull()
-        assertThat(bpmnModel).usingRecursiveComparison().isEqualTo(
+        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel()
         )
     }
