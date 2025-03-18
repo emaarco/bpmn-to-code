@@ -10,7 +10,7 @@ import java.util.*
 
 class VersionServiceTest {
 
-    private val versionFileName = "bpmn-api-versions.properties"
+    private val versionFileName = "bpmn-to-code.properties"
     private val underTest = VersionService(versionFileName)
 
     @Test
