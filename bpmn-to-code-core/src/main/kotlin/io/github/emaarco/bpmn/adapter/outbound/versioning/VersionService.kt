@@ -5,7 +5,7 @@ import java.io.File
 import java.util.*
 
 class VersionService(
-    private val versionFile: String = "bpmn-api-versions.properties"
+    private val versionFile: String = "bpmn-to-code.properties"
 ) : ApiVersioningPort {
 
     /**
