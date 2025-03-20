@@ -130,7 +130,7 @@ Once configured, **bpmn-to-code** automatically picks up your BPMN files and gen
 type-safe references you can use throughout your application—be it for testing, messaging,
 or worker definitions.
 
-## 📦 Modules
+## 📦 Structure
 
 bpmn-to-code is available for both Gradle and Maven.
 For detailed installation and configuration instructions,
@@ -142,6 +142,9 @@ please refer to the respective module README's:
   projects using Maven.
 - [bpmn-to-code-core](bpmn-to-code-core): Contains the core logic for parsing BPMN files and generating the API
   representation.
+- [examples](examples): Contains gradle- & maven-example projects demonstrating how to use the plugin. They are not part
+  of the
+  gradle-monorepo. In case you clone the repository, I'd suggest you to open them as a separate project.
 
 ## 📬 Get the Plugin
 

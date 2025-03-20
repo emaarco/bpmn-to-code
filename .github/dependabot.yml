@@ -1,8 +1,23 @@
 version: 2
 updates:
 
-  # Config for backend-dependencies
+  # Config for all gradle dependencies.
+  # This includes the plugin-core & the gradle-example(s)
   - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      backend-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "major"
+
+  # Config for all maven dependencies.
+  # This includes only the maven-example(s)
+  - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
