@@ -43,5 +43,11 @@ where to output the generated API files, and how to format the output
 </build>
 ```
 
-Once configured, bpmn-to-code-maven automatically processes your BPMN files and generates type-safe API references that
+Once configured, bpmn-to-code-maven processes your BPMN files and generates type-safe API references that
 you can seamlessly integrate into your application—whether for testing, messaging, or managing worker tasks.
+
+To execute the plugin, run the following command:
+
+```shell
+mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+```

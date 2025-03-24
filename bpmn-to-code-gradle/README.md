@@ -32,7 +32,7 @@ pluginManagement {
 Next, configure the generation task by setting its parameters.
 This configuration directs the plugin on where to locate your BPMN files,
 where to generate the API code, and which settings to apply (language, package, and process engine).
-Once configured, bpmn-to-code-gradle automatically processes your BPMN models
+Once configured, bpmn-to-code-gradle processes your BPMN models
 and creates convenient, type-safe references for your application.
 
 ```kotlin

@@ -38,3 +38,9 @@ output (e.g., language, package, and process engine).
 
 Once configured, the plugin automatically processes your BPMN files and generates type-safe API references that you can
 seamlessly integrate into your application—whether for testing, messaging, or managing worker tasks.
+
+To execute the plugin, run the following command:
+
+```shell
+mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+```
