@@ -19,7 +19,7 @@ output (e.g., language, package, and process engine).
             <executions>
                 <execution>
                     <goals>
-                        <goal>generate</goal>
+                        <goal>generate-bpmn-api</goal>
                     </goals>
                 </execution>
             </executions>

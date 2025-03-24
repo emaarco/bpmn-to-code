@@ -22,11 +22,11 @@ where to output the generated API files, and how to format the output
         <plugin>
             <groupId>io.github.emaarco</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>0.0.3-alpha</version>
+            <version>0.0.4-alpha</version>
             <executions>
                 <execution>
                     <goals>
-                        <goal>generate</goal>
+                        <goal>generate-bpmn-api</goal>
                     </goals>
                 </execution>
             </executions>
