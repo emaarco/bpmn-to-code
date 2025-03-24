@@ -9,8 +9,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(
-        name = "generate",
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        name = "generate-bpmn-api",
+        defaultPhase = LifecyclePhase.NONE,
         requiresProject = false
 )
 public class BpmnModelMojo extends AbstractMojo {
