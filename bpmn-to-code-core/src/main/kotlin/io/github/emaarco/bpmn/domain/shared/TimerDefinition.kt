@@ -1,5 +1,8 @@
 package io.github.emaarco.bpmn.domain.shared
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TimerDefinition(
     private val id: String,
     private val type: String,

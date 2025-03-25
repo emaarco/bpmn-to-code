@@ -1,7 +1,9 @@
 package io.github.emaarco.bpmn.domain
 
 import io.github.emaarco.bpmn.domain.shared.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BpmnModel(
     val processId: String,
     val flowNodes: List<FlowNodeDefinition>,

@@ -1,5 +1,8 @@
 package io.github.emaarco.bpmn.domain.shared
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class FlowNodeDefinition(
     private val id: String,
 ) : VariableMapping<String> {
