@@ -8,13 +8,19 @@ data class BpmnModelApi(
     val outputLanguage: OutputLanguage,
     val packagePath: String,
     val outputFolder: File,
-    val apiVersion: Int,
+    val apiVersion: Int?,
 ) {
 
-    fun fileName(): String {
+    fun fileName(): String = if (apiVersion != null) {
+        "${rawFileName()}V$apiVersion"
+    } else {
+        rawFileName()
+    }
+
+    private fun rawFileName(): String {
         val seperatedProcessId = model.processId.split("_", "-")
         val processId = seperatedProcessId.joinToString("") { it.camelCase() }
-        return "${processId}ProcessApiV$apiVersion"
+        return "${processId}ProcessApi"
     }
 
     private fun String.camelCase() = replaceFirstChar { it.uppercase() }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0vze3ke" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0vze3ke" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0">
   <bpmn:message id="Message_04tc0t0" name="Message_FormSubmitted" />
   <bpmn:message id="Message_36dkcng" name="Message_SubscriptionConfirmed" />
   <bpmn:signal id="Signal_14g8ki5" name="Signal_RegistrationNotPossible" />
@@ -76,7 +76,7 @@
     <bpmn:sequenceFlow id="Flow_1i7hjid" sourceRef="Activity_SendWelcomeMail" targetRef="EndEvent_RegistrationCompleted" />
     <bpmn:boundaryEvent id="ErrorEvent_InvalidMail" name="Invalid Mail" attachedToRef="SubProcess_Confirmation">
       <bpmn:outgoing>Flow_0i2ctuv</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_0uxgmyc" />
+      <bpmn:errorEventDefinition />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0i2ctuv" sourceRef="ErrorEvent_InvalidMail" targetRef="EndEvent_RegistrationNotPossible" />
     <bpmn:endEvent id="EndEvent_RegistrationNotPossible" name="Registration not possible">
@@ -85,7 +85,7 @@
     </bpmn:endEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="newsletterSubscription">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="newsletterSubscriptionC7">
       <bpmndi:BPMNShape id="Event_12xytcj_di" bpmnElement="StartEvent_SubmitRegistrationForm">
         <dc:Bounds x="182" y="302" width="36" height="36" />
         <bpmndi:BPMNLabel>

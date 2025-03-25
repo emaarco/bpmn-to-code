@@ -12,5 +12,6 @@ interface GenerateProcessApiUseCase {
         val packagePath: String,
         val outputLanguage: OutputLanguage,
         val engine: ProcessEngine,
+        val useVersioning: Boolean = false
     )
 }

@@ -29,27 +29,46 @@ class GenerateProcessApiService(
         val outputFolder = getOutputFolder(command.outputFolderPath)
         val models = inputFiles.map { bpmnService.extract(BpmnFile(it, command.engine)) }
         val mergedModels = modelMergerService.mergeModels(models)
-        mergedModels.forEach {
-            val modelApi = toBpmnModelApi(it, command, outputFolder)
-            this.apiFileWriter.writeApiFile(modelApi)
-            this.versionService.increaseVersion(command.baseDir, it.processId, modelApi.apiVersion)
+        if (command.useVersioning) {
+            createVersionedProcessApis(mergedModels, command, outputFolder)
+        } else {
+            createUnversionedProcessApis(mergedModels, command, outputFolder)
         }
+    }
+
+    private fun createVersionedProcessApis(
+        models: List<BpmnModel>,
+        command: GenerateProcessApiUseCase.Command,
+        outputFolder: File
+    ) = models.forEach {
+        val currentVersion = this.versionService.getVersion(command.baseDir, it.processId)
+        val nextVersion = currentVersion + 1
+        val modelApi = toBpmnModelApi(it, command, outputFolder, nextVersion)
+        this.apiFileWriter.writeApiFile(modelApi)
+        this.versionService.increaseVersion(command.baseDir, it.processId, nextVersion)
+    }
+
+    private fun createUnversionedProcessApis(
+        models: List<BpmnModel>,
+        command: GenerateProcessApiUseCase.Command,
+        outputFolder: File
+    ) = models.forEach {
+        val modelApi = toBpmnModelApi(it, command, outputFolder)
+        this.apiFileWriter.writeApiFile(modelApi)
     }
 
     private fun toBpmnModelApi(
         model: BpmnModel,
         command: GenerateProcessApiUseCase.Command,
-        outputFolder: File
-    ): BpmnModelApi {
-        val version = versionService.getVersion(command.baseDir, model.processId)
-        return BpmnModelApi(
-            model = model,
-            outputLanguage = command.outputLanguage,
-            packagePath = command.packagePath,
-            outputFolder = outputFolder,
-            apiVersion = version + 1
-        )
-    }
+        outputFolder: File,
+        version: Int? = null
+    ) = BpmnModelApi(
+        model = model,
+        outputLanguage = command.outputLanguage,
+        packagePath = command.packagePath,
+        outputFolder = outputFolder,
+        apiVersion = version,
+    )
 
     private fun getOutputFolder(outputFolderPath: String): File {
         val outputFolder = File(outputFolderPath)

@@ -22,7 +22,7 @@ where to output the generated API files, and how to format the output
         <plugin>
             <groupId>io.github.emaarco</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>0.0.4-alpha</version>
+            <version>0.0.5-alpha</version>
             <executions>
                 <execution>
                     <goals>
@@ -37,6 +37,7 @@ where to output the generated API files, and how to format the output
                 <packagePath>org.example</packagePath>
                 <outputLanguage>KOTLIN</outputLanguage>
                 <processEngine>ZEEBE</processEngine>
+                <useVersioning>true</useVersioning>
             </configuration>
         </plugin>
     </plugins>

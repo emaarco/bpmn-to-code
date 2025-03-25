@@ -7,7 +7,7 @@ import kotlin.String
 import kotlin.Suppress
 
 @Suppress("unused")
-object NewsletterSubscriptionC7ProcessApiV1 {
+object NewsletterSubscriptionC7ProcessApi {
   val PROCESS_ID: String = "newsletterSubscriptionC7"
 
   object Elements {
@@ -64,15 +64,6 @@ object NewsletterSubscriptionC7ProcessApiV1 {
     data class BpmnTimer(
       val type: String,
       val timerValue: String,
-    )
-  }
-
-  object Errors {
-    val Error_InvalidMail: BpmnError = BpmnError("Error_InvalidMail", "500")
-
-    data class BpmnError(
-      val name: String,
-      val code: String,
     )
   }
 

@@ -33,12 +33,15 @@ public class BpmnModelMojo extends AbstractMojo {
     @Parameter(property = "processEngine")
     private String processEngine;
 
+    @Parameter(property = "useVersioning", defaultValue = "false")
+    private Boolean useVersioning;
+
     @Override
     public void execute() {
         CreateProcessApiPlugin plugin = new CreateProcessApiPlugin();
         OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
         ProcessEngine engine = ProcessEngine.valueOf(processEngine);
-        plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine);
+        plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, useVersioning);
     }
 
 }

@@ -27,10 +27,21 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
     @Input
     lateinit var processEngine: ProcessEngine
 
+    @Input
+    var useVersioning: Boolean = false
+
     @TaskAction
     fun execute() {
         val service = CreateProcessApiPlugin()
-        service.execute(baseDir, filePattern, outputFolderPath, packagePath, outputLanguage, processEngine)
+        service.execute(
+            baseDir,
+            filePattern,
+            outputFolderPath,
+            packagePath,
+            outputLanguage,
+            processEngine,
+            useVersioning
+        )
         println("BPMN models generated successfully")
     }
 }

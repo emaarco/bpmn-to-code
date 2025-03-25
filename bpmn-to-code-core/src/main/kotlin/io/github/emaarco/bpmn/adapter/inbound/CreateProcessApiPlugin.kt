@@ -15,16 +15,18 @@ class CreateProcessApiPlugin(
         outputFolderPath: String,
         packagePath: String,
         outputLanguage: OutputLanguage,
-        engine: ProcessEngine
+        engine: ProcessEngine,
+        useVersioning: Boolean
     ) {
         useCase.generateProcessApi(
             GenerateProcessApiUseCase.Command(
-                baseDir,
-                filePattern,
-                outputFolderPath,
-                packagePath,
-                outputLanguage,
-                engine
+                baseDir = baseDir,
+                filePattern = filePattern,
+                outputFolderPath = outputFolderPath,
+                packagePath = packagePath,
+                outputLanguage = outputLanguage,
+                engine = engine,
+                useVersioning = useVersioning
             )
         )
     }

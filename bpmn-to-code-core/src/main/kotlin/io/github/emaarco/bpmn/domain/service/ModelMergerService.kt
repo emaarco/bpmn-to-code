@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.domain.service
 
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.shared.VariableMapping
 
 class ModelMergerService {
 
@@ -18,12 +19,12 @@ class ModelMergerService {
      * Merges multiple models that share the same process ID into a single model.
      */
     private fun mergeModelsWithSameId(processId: String, models: List<BpmnModel>): BpmnModel {
-        val mergedFlowNodes = models.flatMap { it.flowNodes }.distinctBy { it.getName() }
-        val mergedMessages = models.flatMap { it.messages }.distinctBy { it.getName() }
-        val mergedServiceTasks = models.flatMap { it.serviceTasks }.distinctBy { it.getName() }
-        val mergedSignals = models.flatMap { it.signals }.distinctBy { it.getName() }
-        val mergedErrors = models.flatMap { it.errors }.distinctBy { it.getName() }
-        val mergedTimers = models.flatMap { it.timers }.distinctBy { it.getName() }
+        val mergedFlowNodes = mergeDistinctBy(models) { it.flowNodes }
+        val mergedMessages = mergeDistinctBy(models) { it.messages }
+        val mergedServiceTasks = mergeDistinctBy(models) { it.serviceTasks }
+        val mergedSignals = mergeDistinctBy(models) { it.signals }
+        val mergedErrors = mergeDistinctBy(models) { it.errors }
+        val mergedTimers = mergeDistinctBy(models) { it.timers }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
@@ -33,5 +34,12 @@ class ModelMergerService {
             errors = mergedErrors,
             timers = mergedTimers
         )
+    }
+
+    private fun <T : VariableMapping<*>> mergeDistinctBy(
+        models: List<BpmnModel>,
+        selector: (BpmnModel) -> List<T>,
+    ): List<T> {
+        return models.flatMap(selector).distinctBy { it.getName() }
     }
 }
