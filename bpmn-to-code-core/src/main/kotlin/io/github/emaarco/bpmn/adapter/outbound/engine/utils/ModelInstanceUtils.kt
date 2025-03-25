@@ -31,8 +31,9 @@ object ModelInstanceUtils {
 
     fun ModelInstance.findErrorEventDefinition(): List<ErrorDefinition> {
         val errorEvents = this.getModelElementsByType(ErrorEventDefinition::class.java)
-        return errorEvents.map {
-            ErrorDefinition(id = it.error.name, name = it.error.name, code = it.error.errorCode)
+        val configuredErrors = errorEvents.mapNotNull { it.error }
+        return configuredErrors.map {
+            ErrorDefinition(id = it.name, name = it.name, code = it.errorCode)
         }
     }
 

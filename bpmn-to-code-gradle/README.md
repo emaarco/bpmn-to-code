@@ -14,7 +14,7 @@ To get started, apply the plugin in your build.gradle.kts file:
 
 ```kotlin
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.3-alpha"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.5-alpha"
 }
 ```
 
@@ -47,5 +47,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     packagePath = "de.emaarco.example"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
+    useVersioning = true
 }
 ```

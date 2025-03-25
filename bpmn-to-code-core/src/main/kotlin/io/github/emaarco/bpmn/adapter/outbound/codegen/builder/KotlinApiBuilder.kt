@@ -109,8 +109,8 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
         return TypeSpec.classBuilder("BpmnError")
             .addModifiers(KModifier.DATA)
             .primaryConstructor(constructor)
-            .addProperty(PropertySpec.builder("name", String::class).initializer("name").build())
-            .addProperty(PropertySpec.builder("code", String::class).initializer("code").build())
+            .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
+            .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
             .build()
     }
 

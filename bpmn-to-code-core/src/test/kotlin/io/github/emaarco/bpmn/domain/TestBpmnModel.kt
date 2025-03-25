@@ -23,7 +23,7 @@ fun testBpmnModel(
 
 fun testBpmnModelApi(
     model: BpmnModel = testBpmnModel(),
-    apiVersion: Int = 1,
+    apiVersion: Int? = 1,
     outputFolder: File = File("outputFolder"),
     packagePath: String = "packagePath",
     language: OutputLanguage = OutputLanguage.KOTLIN

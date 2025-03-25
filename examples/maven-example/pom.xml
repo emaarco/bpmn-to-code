@@ -34,7 +34,7 @@
             <plugin>
                 <groupId>io.github.emaarco</groupId>
                 <artifactId>bpmn-to-code-maven</artifactId>
-                <version>0.0.4-alpha</version>
+                <version>0.0.5-alpha</version>
                 <executions>
                     <execution>
                         <goals>
@@ -49,6 +49,7 @@
                     <packagePath>io.emaarco.example</packagePath>
                     <outputLanguage>KOTLIN</outputLanguage>
                     <processEngine>ZEEBE</processEngine>
+                    <useVersioning>true</useVersioning>
                 </configuration>
             </plugin>
             <plugin>

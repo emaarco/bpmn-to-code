@@ -132,6 +132,7 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     packagePath = "de.emaarco.example"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
+    useVersioning = true
 }
 ```
 
