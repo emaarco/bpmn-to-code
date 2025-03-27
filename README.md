@@ -34,6 +34,15 @@ Looking ahead, I’m planing a styleguide validation feature. Much like a linter
 models against your custom style guide - ensuring that element IDs, message names, and task types adhere to predefined
 patterns and naming conventions. This will help maintain designs that are as clean and consistent as your code.
 
+## 📖 Story behind the plugin
+
+If you want to learn more about the vision & story behind the plugin —
+and the problems it aims to solve as well as the advantages it can bring —
+check out the following posts:
+
+- [🇬🇧 Simplifying process automation with bpmn-to-code](https://medium.com/miragon/simplifying-process-automation-with-bpmn-to-code-from-bpmn-models-to-process-apis-216adafeb0ac)
+- [🇩🇪 Mit bpmn-to-code ein deine Prozesse & Code in Einklang bringen](https://www.miragon.io/blog/mit-bpmn-to-code-deine-prozesse-and-code-in-einklang-bringen/)
+
 ## 💡 Process-API generation in action
 
 One of the key current features is generating a lightweight “Process API” for your BPMN models.
