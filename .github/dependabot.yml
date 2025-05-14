@@ -6,13 +6,14 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       backend-dependencies:
         patterns:
           - "*"
         update-types:
           - "patch"
+          - "minor"
           - "major"
 
   # Config for all maven dependencies.
@@ -20,11 +21,12 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       backend-dependencies:
         patterns:
           - "*"
         update-types:
           - "patch"
+          - "minor"
           - "major"
