@@ -9,7 +9,7 @@ camunda = "7.23.0"
 jUnit = "5.12.2"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "1.12.2"
-mockk = "1.14.0"
+mockk = "1.14.2"
 
 [libraries]
 # Plugin dependencies
