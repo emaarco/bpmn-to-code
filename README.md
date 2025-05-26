@@ -45,7 +45,7 @@ check out the following posts:
 
 ## 💡 Process-API generation in action
 
-One of the key current features is generating a lightweight “Process API” for your BPMN models.
+The key feature of bpmn-to-code is generating a lightweight “Process API” for your BPMN models.
 Let’s say you have a newsletter subscription workflow (BPMN) that looks like this:
 
 <img src="docs/example-process.png" alt="Example Process" width="800"/>
