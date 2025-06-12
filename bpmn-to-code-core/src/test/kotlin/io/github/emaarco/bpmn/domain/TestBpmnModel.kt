@@ -35,9 +35,9 @@ fun testBpmnModelApi(
     outputLanguage = language,
 )
 
-fun testNewsletterBpmnModel() = testBpmnModel(
-    processId = "newsletterSubscription",
-    flowNodes = listOf(
+fun testNewsletterBpmnModel(
+    processId: String = "newsletterSubscription",
+    flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("Timer_EveryDay"),
         FlowNodeDefinition("Timer_After3Days"),
         FlowNodeDefinition("ErrorEvent_InvalidMail"),
@@ -51,26 +51,34 @@ fun testNewsletterBpmnModel() = testBpmnModel(
         FlowNodeDefinition("Activity_SendWelcomeMail"),
         FlowNodeDefinition("Activity_SendConfirmationMail"),
         FlowNodeDefinition("StartEvent_SubmitRegistrationForm"),
-        FlowNodeDefinition("StartEvent_RequestReceived"),
+        FlowNodeDefinition("StartEvent_RequestReceived")
     ),
-    serviceTasks = listOf(
+    serviceTasks: List<ServiceTaskDefinition> = listOf(
         ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted"),
         ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
         ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
-        ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail"),
+        ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail")
     ),
-    messages = listOf(
+    messages: List<MessageDefinition> = listOf(
         MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
         MessageDefinition("Message_SubscriptionConfirmed", "Message_SubscriptionConfirmed")
     ),
-    signals = listOf(
+    signals: List<SignalDefinition> = listOf(
         SignalDefinition("Signal_RegistrationNotPossible")
     ),
-    errors = listOf(
+    errors: List<ErrorDefinition> = listOf(
         ErrorDefinition("Error_InvalidMail", "Error_InvalidMail", "500")
     ),
-    timers = listOf(
+    timers: List<TimerDefinition> = listOf(
         TimerDefinition("Timer_EveryDay", "Duration", "PT1M"),
-        TimerDefinition("Timer_After3Days", "Duration", "PT2M30S"),
+        TimerDefinition("Timer_After3Days", "Duration", "PT2M30S")
     )
+) = testBpmnModel(
+    processId = processId,
+    flowNodes = flowNodes,
+    serviceTasks = serviceTasks,
+    messages = messages,
+    signals = signals,
+    errors = errors,
+    timers = timers
 )

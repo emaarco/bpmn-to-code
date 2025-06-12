@@ -5,6 +5,6 @@ data class TimerDefinition(
     private val type: String,
     private val value: String,
 ) : VariableMapping<Pair<String, String>> {
-    override fun getName() = id
+    override fun getName() = id.replace("-", "_").replace(".", "_")
     override fun getValue() = (type to value)
 }

@@ -19,4 +19,5 @@ class ZeebeModelExtractorTest {
             testNewsletterBpmnModel()
         )
     }
+
 }

@@ -5,6 +5,6 @@ data class ErrorDefinition(
     private val name: String,
     private val code: String,
 ) : VariableMapping<Pair<String, String>> {
-    override fun getName() = id
+    override fun getName() = id.replace(".", "_").replace(".", "_")
     override fun getValue() = name to code
 }

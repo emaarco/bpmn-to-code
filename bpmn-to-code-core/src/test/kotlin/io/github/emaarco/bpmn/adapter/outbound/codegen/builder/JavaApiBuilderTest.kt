@@ -6,13 +6,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 
 class JavaApiBuilderTest {
 
     private val underTest = JavaApiBuilder()
 
     @Test
-    fun `buildApiFile generates correct API file content`(@TempDir tempDir: java.nio.file.Path) {
+    fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
 
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(),
@@ -30,6 +31,28 @@ class JavaApiBuilderTest {
         val generatedContent = generatedFile.readText()
         val expectedContent = expectedFile.readText()
         assertThat(generatedContent).isEqualToIgnoringWhitespace(expectedContent)
+    }
+
+    @Test
+    fun `maps content of id to valid variable name format`() {
+
+        // given: a model with flow nodes that have slashes in their names
+        val defaultModel = testNewsletterBpmnModel()
+        val modifiedNodes = defaultModel.flowNodes.map { it.copy(id = it.getName().replace("_", "-")) }
+        val modelApi = testBpmnModelApi(
+            model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
+            apiVersion = 1,
+            outputFolder = File("src/test/resources"),
+            packagePath = "de.emaarco.example"
+        )
+
+        // when: we build the API file
+        underTest.buildApiFile(modelApi)
+
+        // then: expect the generated file to contain the expected content
+        val generatedFile = File("src/test/resources/de/emaarco/example/${modelApi.fileName()}.java")
+        assertThat(generatedFile.exists()).isTrue()
+
     }
 
 }
