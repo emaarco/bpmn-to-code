@@ -6,13 +6,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 
 class KotlinApiBuilderTest {
 
     private val underTest = KotlinApiBuilder()
 
     @Test
-    fun `buildApiFile generates correct API file content`(@TempDir tempDir: java.nio.file.Path) {
+    fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
 
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(),

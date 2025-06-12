@@ -41,10 +41,9 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
         val flowNodesWithServiceTasks = findAllServiceTaskDefinitions(flowNodes)
         return flowNodesWithServiceTasks.map { (event, taskDefinition) ->
-            ServiceTaskDefinition(
-                id = event.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID),
-                type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
-            )
+            val id = event.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
+            ServiceTaskDefinition(id = id, type = type)
         }
     }
 

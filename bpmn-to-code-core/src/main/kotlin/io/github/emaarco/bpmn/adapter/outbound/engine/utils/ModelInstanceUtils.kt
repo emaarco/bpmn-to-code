@@ -46,21 +46,31 @@ object ModelInstanceUtils {
         val timerEvents = this.getModelElementsByType(TimerEventDefinition::class.java)
         return timerEvents.map {
             val timerId = it.parentElement.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val (timerType, timerValue) = detectTimerType(it)
-            TimerDefinition(id = timerId, type = timerType, value = timerValue)
+            val (timerType, timerValue) = it.detectTimerType()
+            TimerDefinition(id = timerId, type = timerType, value = cleanTimerValue(timerValue))
         }
     }
 
-    private fun ModelInstance.detectTimerType(eventDefinition: TimerEventDefinition): Pair<String, String> {
-        return if (eventDefinition.timeDate != null) {
-            Pair("Date", eventDefinition.timeDate.textContent)
-        } else if (eventDefinition.timeDuration != null) {
-            Pair("Duration", eventDefinition.timeDuration.textContent)
-        } else if (eventDefinition.timeCycle != null) {
-            Pair("Cycle", eventDefinition.timeCycle.textContent)
+    private fun TimerEventDefinition.detectTimerType(): Pair<String, String> {
+        return if (this.timeDate != null) {
+            Pair("Date", this.timeDate.textContent)
+        } else if (this.timeDuration != null) {
+            Pair("Duration", this.timeDuration.textContent)
+        } else if (this.timeCycle != null) {
+            Pair("Cycle", this.timeCycle.textContent)
         } else {
             throw IllegalStateException("Timer event definition has no valid type")
         }
+    }
+
+    /**
+     * A value can contain a variable reference in the form of #{variableName} or ${variableName}.
+     * This method cleans the value by removing the surrounding syntax.
+     */
+    private fun cleanTimerValue(value: String): String = when {
+        value.startsWith("#{") && value.endsWith("}") -> value.substring(2, value.length - 1)
+        value.startsWith("\${") && value.endsWith("}") -> value.substring(2, value.length - 1)
+        else -> value
     }
 
 }
