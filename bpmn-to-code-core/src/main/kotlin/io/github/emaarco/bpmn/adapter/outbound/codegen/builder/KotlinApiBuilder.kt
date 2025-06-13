@@ -80,17 +80,19 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
         timersBuilder.addType(buildTimerDataClass())
         model.timers.forEach { timer ->
             val (timerType, timerValue) = timer.getValue()
+            val cleanTimerValue = timerValue.escapeDollarInterpolation()
             val instanceBuilder = PropertySpec.builder(timer.getName(), ClassName("", "BpmnTimer"))
-            val variable = instanceBuilder.initializer("BpmnTimer(\"$timerType\", \"$timerValue\")")
+            val variable = instanceBuilder.initializer("BpmnTimer(\"$timerType\", \"$cleanTimerValue\")")
             timersBuilder.addProperty(variable.build())
         }
         builder.addType(timersBuilder.build())
     }
 
-    private fun createAttribute(variable: VariableMapping<*>): PropertySpec {
+    private fun createAttribute(variable: VariableMapping<String>): PropertySpec {
+        val cleanValue = variable.getValue().escapeDollarInterpolation()
         return PropertySpec.builder(variable.getName(), String::class)
             .addModifiers(KModifier.PUBLIC)
-            .initializer("\"${variable.getValue()}\"")
+            .initializer("\"$cleanValue\"")
             .build()
     }
 
@@ -120,5 +122,13 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
     }
 
     private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
+
+    /**
+     * Some process configurations can reference to variables, by using `${variableName}`.
+     * This method escapes the dollar sign to prevent Kotlin from interpreting it as an interpolation.
+     */
+    private fun String.escapeDollarInterpolation(): String {
+        return this.replace("\${", "\\\${")
+    }
 
 }
