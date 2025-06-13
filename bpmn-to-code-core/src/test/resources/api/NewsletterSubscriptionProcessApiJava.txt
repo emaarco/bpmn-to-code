@@ -55,7 +55,7 @@ public final class NewsletterSubscriptionProcessApiV1 {
   public static final class Timers {
     public static final BpmnTimer Timer_EveryDay = new BpmnTimer("Duration", "PT1M");
 
-    public static final BpmnTimer Timer_After3Days = new BpmnTimer("Duration", "PT2M30S");
+    public static final BpmnTimer Timer_After3Days = new BpmnTimer("Duration", "${testVariable}");
 
     public static class BpmnTimer {
       public final String type;

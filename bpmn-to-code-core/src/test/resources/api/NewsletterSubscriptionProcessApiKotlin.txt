@@ -59,7 +59,7 @@ object NewsletterSubscriptionProcessApiV1 {
   object Timers {
     val Timer_EveryDay: BpmnTimer = BpmnTimer("Duration", "PT1M")
 
-    val Timer_After3Days: BpmnTimer = BpmnTimer("Duration", "PT2M30S")
+    val Timer_After3Days: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
 
     data class BpmnTimer(
       val type: String,

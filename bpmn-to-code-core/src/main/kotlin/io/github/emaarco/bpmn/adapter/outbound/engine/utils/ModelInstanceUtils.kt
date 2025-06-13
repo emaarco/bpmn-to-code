@@ -47,7 +47,7 @@ object ModelInstanceUtils {
         return timerEvents.map {
             val timerId = it.parentElement.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val (timerType, timerValue) = it.detectTimerType()
-            TimerDefinition(id = timerId, type = timerType, value = cleanTimerValue(timerValue))
+            TimerDefinition(id = timerId, type = timerType, value = timerValue)
         }
     }
 
@@ -61,16 +61,6 @@ object ModelInstanceUtils {
         } else {
             throw IllegalStateException("Timer event definition has no valid type")
         }
-    }
-
-    /**
-     * A value can contain a variable reference in the form of #{variableName} or ${variableName}.
-     * This method cleans the value by removing the surrounding syntax.
-     */
-    private fun cleanTimerValue(value: String): String = when {
-        value.startsWith("#{") && value.endsWith("}") -> value.substring(2, value.length - 1)
-        value.startsWith("\${") && value.endsWith("}") -> value.substring(2, value.length - 1)
-        else -> value
     }
 
 }
