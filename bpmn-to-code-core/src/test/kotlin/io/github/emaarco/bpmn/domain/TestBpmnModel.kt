@@ -37,6 +37,7 @@ fun testBpmnModelApi(
 
 fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
+    testVariable: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("Timer_EveryDay"),
         FlowNodeDefinition("Timer_After3Days"),
@@ -71,7 +72,7 @@ fun testNewsletterBpmnModel(
     ),
     timers: List<TimerDefinition> = listOf(
         TimerDefinition("Timer_EveryDay", "Duration", "PT1M"),
-        TimerDefinition("Timer_After3Days", "Duration", "PT2M30S")
+        TimerDefinition("Timer_After3Days", "Duration", testVariable)
     )
 ) = testBpmnModel(
     processId = processId,
