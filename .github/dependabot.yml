@@ -6,7 +6,7 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
     groups:
       backend-dependencies:
         patterns:
@@ -21,7 +21,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
     groups:
       backend-dependencies:
         patterns:
