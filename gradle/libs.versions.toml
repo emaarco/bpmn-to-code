@@ -6,14 +6,14 @@ kotlin = "2.1.21"
 kotlinpoet = "2.2.0"
 javapoet = "0.7.0"
 camunda = "7.23.0"
-jUnit = "5.13.0"
+jUnit = "5.13.1"
 assertJ = "4.0.0-M1"
-junitPlatformLauncher = "1.13.0"
+junitPlatformLauncher = "1.13.1"
 mockk = "1.14.2"
 
 [libraries]
 # Plugin dependencies
-mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.9" }
+mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.10" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.1" }
 # Production dependencies
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
