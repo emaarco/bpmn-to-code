@@ -9,7 +9,7 @@ camunda = "7.23.0"
 jUnit = "5.13.1"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "1.13.1"
-mockk = "1.14.2"
+mockk = "1.14.4"
 
 [libraries]
 # Plugin dependencies
@@ -33,4 +33,4 @@ testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "1.3.1" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.32.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.33.0" }
