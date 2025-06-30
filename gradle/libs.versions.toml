@@ -2,13 +2,13 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 kotlinpoet = "2.2.0"
 javapoet = "0.7.0"
 camunda = "7.23.0"
-jUnit = "5.13.1"
+jUnit = "5.13.2"
 assertJ = "4.0.0-M1"
-junitPlatformLauncher = "1.13.1"
+junitPlatformLauncher = "1.13.2"
 mockk = "1.14.4"
 
 [libraries]
