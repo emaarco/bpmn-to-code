@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost
-
 plugins {
     `maven-publish`
     `kotlin-dsl`
@@ -49,7 +47,7 @@ artifacts {
 
 mavenPublishing {
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, false)
+    publishToMavenCentral()
     signAllPublications()
     coordinates("io.github.emaarco", "bpmn-to-code-maven", version.toString())
 
