@@ -40,7 +40,7 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
             packagePath,
             outputLanguage,
             processEngine,
-            useVersioning
+            useVersioning,
         )
         println("BPMN models generated successfully")
     }

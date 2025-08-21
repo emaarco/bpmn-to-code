@@ -1,6 +1,12 @@
 package io.github.emaarco.bpmn.domain
 
-import io.github.emaarco.bpmn.domain.shared.*
+import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.SignalDefinition
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import java.io.File
 
 fun testBpmnModel(
@@ -26,7 +32,7 @@ fun testBpmnModelApi(
     apiVersion: Int? = 1,
     outputFolder: File = File("outputFolder"),
     packagePath: String = "packagePath",
-    language: OutputLanguage = OutputLanguage.KOTLIN
+    language: OutputLanguage = OutputLanguage.KOTLIN,
 ) = BpmnModelApi(
     model = model,
     apiVersion = apiVersion,

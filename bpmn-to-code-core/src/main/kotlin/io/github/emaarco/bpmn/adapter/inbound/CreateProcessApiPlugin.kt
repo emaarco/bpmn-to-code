@@ -16,7 +16,7 @@ class CreateProcessApiPlugin(
         packagePath: String,
         outputLanguage: OutputLanguage,
         engine: ProcessEngine,
-        useVersioning: Boolean
+        useVersioning: Boolean,
     ) {
         useCase.generateProcessApi(
             GenerateProcessApiUseCase.Command(
@@ -26,7 +26,7 @@ class CreateProcessApiPlugin(
                 packagePath = packagePath,
                 outputLanguage = outputLanguage,
                 engine = engine,
-                useVersioning = useVersioning
+                useVersioning = useVersioning,
             )
         )
     }
