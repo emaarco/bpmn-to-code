@@ -34,7 +34,7 @@ class JavaApiBuilderTest {
     }
 
     @Test
-    fun `maps content of id to valid variable name format`() {
+    fun `maps content of id to valid variable name format`(@TempDir tempDir: Path) {
 
         // given: a model with flow nodes that have slashes in their names
         val defaultModel = testNewsletterBpmnModel()
@@ -42,7 +42,7 @@ class JavaApiBuilderTest {
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
             apiVersion = 1,
-            outputFolder = File("src/test/resources"),
+            outputFolder = tempDir.toFile(),
             packagePath = "de.emaarco.example"
         )
 
@@ -50,9 +50,8 @@ class JavaApiBuilderTest {
         underTest.buildApiFile(modelApi)
 
         // then: expect the generated file to contain the expected content
-        val generatedFile = File("src/test/resources/de/emaarco/example/${modelApi.fileName()}.java")
+        val generatedFile = File(tempDir.toFile(), "de/emaarco/example/${modelApi.fileName()}.java")
         assertThat(generatedFile.exists()).isTrue()
 
     }
-
 }

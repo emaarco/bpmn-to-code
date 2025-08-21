@@ -6,3 +6,4 @@ bin
 .vscode
 .DS_Store
 target
+.claude

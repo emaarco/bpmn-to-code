@@ -18,13 +18,15 @@ class BpmnFileLoader : LoadBpmnFilesPort {
         val basePath = Path.of(baseDirectory).absolute().normalize()
         val (searchDir, pattern) = resolvePattern(basePath, filePattern)
 
-        val scanner = DirectoryScanner().apply {
-            basedir = searchDir.toFile()
-            setIncludes(arrayOf(pattern))
-            scan()
-        }
+        val scanner = DirectoryScanner()
+        scanner.basedir = searchDir.toFile()
+        scanner.setIncludes(arrayOf(pattern))
+        scanner.scan()
+        
+        val files = scanner.includedFiles.map { File(searchDir.toFile(), it) }
+        println("Found ${files.size} files matching pattern $pattern in directory $searchDir")
 
-        return scanner.includedFiles.map { File(searchDir.toFile(), it) }
+        return files
     }
 
     private fun resolvePattern(basePath: Path, pattern: String): Pair<Path, String> {

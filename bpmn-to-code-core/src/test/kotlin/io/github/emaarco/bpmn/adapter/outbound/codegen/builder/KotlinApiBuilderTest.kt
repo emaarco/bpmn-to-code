@@ -32,5 +32,4 @@ class KotlinApiBuilderTest {
         val expectedContent = expectedFile.readText()
         assertThat(generatedContent).isEqualToIgnoringWhitespace(expectedContent)
     }
-
 }
