@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.9"
+version = "0.0.10"
 
 val deps: Configuration by configurations.creating
 

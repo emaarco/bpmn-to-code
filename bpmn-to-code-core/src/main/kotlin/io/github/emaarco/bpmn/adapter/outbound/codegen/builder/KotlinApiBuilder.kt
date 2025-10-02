@@ -35,9 +35,8 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
         val rootObjectBuilder = TypeSpec.objectBuilder(objectName).addAnnotation(unusedAnnotation)
         val fileSpecBuilder = FileSpec.builder(modelApi.packagePath, objectName).addFileComment(autoGenComment)
 
-        objectWriters.forEach { (_, writer) ->
-            writer.write(rootObjectBuilder, modelApi.model)
-        }
+        val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi.model) }
+        relevantWriters.forEach { (_, writer) -> writer.write(rootObjectBuilder, modelApi.model) }
 
         fileSpecBuilder.addType(rootObjectBuilder.build()).addAnnotation(unusedAnnotation)
         val fileSpec = fileSpecBuilder.build()
