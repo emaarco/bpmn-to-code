@@ -29,9 +29,8 @@ class JavaApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>(
         val className = modelApi.fileName()
         val rootClassBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, FINAL)
 
-        objectWriters.forEach { (_, writer) ->
-            writer.write(rootClassBuilder, modelApi.model)
-        }
+        val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi.model) }
+        relevantWriters.forEach { (_, writer) -> writer.write(rootClassBuilder, modelApi.model) }
 
         val fileBuilder = JavaFile.builder(modelApi.packagePath, rootClassBuilder.build())
         val javaFile = fileBuilder.addFileComment(autoGenComment).build()
@@ -66,7 +65,7 @@ class JavaApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>(
     private inner class MessagesWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.MESSAGES
-        override fun shouldWrite(model: BpmnModel) = true
+        override fun shouldWrite(model: BpmnModel) = model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
             val messagesBuilder = TypeSpec.classBuilder("Messages").addModifiers(PUBLIC, STATIC, FINAL)
