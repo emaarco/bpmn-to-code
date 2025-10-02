@@ -10,6 +10,7 @@ jUnit = "5.13.4"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "1.13.4"
 mockk = "1.14.5"
+ant = "1.10.15"
 
 [libraries]
 # Plugin dependencies
@@ -19,6 +20,7 @@ mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 javapoet = { module = "com.palantir.javapoet:javapoet", version.ref = "javapoet" }
 bpmnmodel = { module = "org.camunda.bpm.model:camunda-bpmn-model", version.ref = "camunda" }
+ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 # Testing dependencies
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }

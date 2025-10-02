@@ -13,6 +13,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.bpmnmodel)
     implementation(libs.bundles.codegen)
+    implementation(libs.ant)
     testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
