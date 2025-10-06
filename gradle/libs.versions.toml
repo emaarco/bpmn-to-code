@@ -6,10 +6,10 @@ kotlin = "2.2.20"
 kotlinpoet = "2.2.0"
 javapoet = "0.7.0"
 camunda = "7.23.0"
-jUnit = "5.13.4"
+jUnit = "6.0.0"
 assertJ = "4.0.0-M1"
-junitPlatformLauncher = "1.13.4"
-mockk = "1.14.5"
+junitPlatformLauncher = "6.0.0"
+mockk = "1.14.6"
 ant = "1.10.15"
 
 [libraries]
