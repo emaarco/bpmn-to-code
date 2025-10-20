@@ -5,7 +5,7 @@
 kotlin = "2.2.20"
 kotlinpoet = "2.2.0"
 javapoet = "0.7.0"
-camunda = "7.23.0"
+camunda = "7.24.0"
 jUnit = "6.0.0"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.0"
