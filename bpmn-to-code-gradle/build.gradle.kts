@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.10"
+version = "0.0.11"
 
 repositories {
     mavenLocal()
@@ -18,6 +18,7 @@ dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
+    api(libs.ant)
     compileOnly(project(":bpmn-to-code-core"))
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.testing)
