@@ -62,7 +62,6 @@ package de.emaarco.example
 import kotlin.String
 import kotlin.Suppress
 
-@Suppress("unused")
 object NewsletterSubscriptionProcessApiV1 {
     val PROCESS_ID: String = "newsletterSubscription"
 

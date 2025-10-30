@@ -72,3 +72,19 @@ Tests are organized by layer:
 - Test resources include sample BPMN files and expected API outputs
 
 The project uses JUnit 5, AssertJ, and MockK for testing.
+
+## Best Practices
+
+### Always Consider Testing Impact
+
+When making code changes, always think about the testing implications:
+
+- **Write new tests** for new functionality or behavior changes
+- **Update existing tests** when modifying expected outputs or behavior
+- **Run affected tests** to verify changes work correctly before committing
+- **Update test fixtures** (like expected output files) when generation logic changes
+
+Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
+1. Update the corresponding expected output files in `src/test/resources/`
+2. Run the specific test suite to verify the changes
+3. Check if other builders or tests are affected

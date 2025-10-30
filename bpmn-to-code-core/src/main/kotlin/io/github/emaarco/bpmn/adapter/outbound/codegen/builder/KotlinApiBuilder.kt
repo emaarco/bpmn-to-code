@@ -32,7 +32,7 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
 
         val objectName = modelApi.fileName()
         val unusedAnnotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
-        val rootObjectBuilder = TypeSpec.objectBuilder(objectName).addAnnotation(unusedAnnotation)
+        val rootObjectBuilder = TypeSpec.objectBuilder(objectName)
         val fileSpecBuilder = FileSpec.builder(modelApi.packagePath, objectName).addFileComment(autoGenComment)
 
         val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi.model) }
