@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 plugins {
     kotlin("jvm") version "1.9.25"
-    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.11"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.12"
 }
 
 repositories {
