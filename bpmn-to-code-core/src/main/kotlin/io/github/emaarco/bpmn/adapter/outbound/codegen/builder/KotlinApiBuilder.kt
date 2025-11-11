@@ -53,6 +53,7 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
 
         override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
             val idPropertyBuilder = PropertySpec.builder("PROCESS_ID", String::class)
+                .addModifiers(KModifier.CONST)
             val idProperty = idPropertyBuilder.initializer("\"${model.processId}\"").build()
             builder.addProperty(idProperty)
         }
@@ -170,7 +171,7 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
     private fun createAttribute(variable: VariableMapping<String>): PropertySpec {
         val cleanValue = variable.getValue().escapeDollarInterpolation()
         return PropertySpec.builder(variable.getName(), String::class)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.CONST)
             .initializer("\"$cleanValue\"")
             .build()
     }
