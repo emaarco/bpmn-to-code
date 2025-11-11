@@ -63,35 +63,35 @@ import kotlin.String
 import kotlin.Suppress
 
 object NewsletterSubscriptionProcessApiV1 {
-    val PROCESS_ID: String = "newsletterSubscription"
+    const val PROCESS_ID: String = "newsletterSubscription"
 
     object Elements {
-        val Timer_EveryDay: String = "Timer_EveryDay"
-        val Timer_After3Days: String = "Timer_After3Days"
-        val ErrorEvent_InvalidMail: String = "ErrorEvent_InvalidMail"
-        val Activity_ConfirmRegistration: String = "Activity_ConfirmRegistration"
-        val SubProcess_Confirmation: String = "SubProcess_Confirmation"
-        val EndEvent_RegistrationAborted: String = "EndEvent_RegistrationAborted"
-        val EndEvent_SubscriptionConfirmed: String = "EndEvent_SubscriptionConfirmed"
-        val EndEvent_RegistrationCompleted: String = "EndEvent_RegistrationCompleted"
-        val EndEvent_RegistrationNotPossible: String = "EndEvent_RegistrationNotPossible"
-        val Activity_AbortRegistration: String = "Activity_AbortRegistration"
-        val Activity_SendWelcomeMail: String = "Activity_SendWelcomeMail"
-        val Activity_SendConfirmationMail: String = "Activity_SendConfirmationMail"
-        val StartEvent_SubmitRegistrationForm: String = "StartEvent_SubmitRegistrationForm"
-        val StartEvent_RequestReceived: String = "StartEvent_RequestReceived"
+        const val Timer_EveryDay: String = "Timer_EveryDay"
+        const val Timer_After3Days: String = "Timer_After3Days"
+        const val ErrorEvent_InvalidMail: String = "ErrorEvent_InvalidMail"
+        const val Activity_ConfirmRegistration: String = "Activity_ConfirmRegistration"
+        const val SubProcess_Confirmation: String = "SubProcess_Confirmation"
+        const val EndEvent_RegistrationAborted: String = "EndEvent_RegistrationAborted"
+        const val EndEvent_SubscriptionConfirmed: String = "EndEvent_SubscriptionConfirmed"
+        const val EndEvent_RegistrationCompleted: String = "EndEvent_RegistrationCompleted"
+        const val EndEvent_RegistrationNotPossible: String = "EndEvent_RegistrationNotPossible"
+        const val Activity_AbortRegistration: String = "Activity_AbortRegistration"
+        const val Activity_SendWelcomeMail: String = "Activity_SendWelcomeMail"
+        const val Activity_SendConfirmationMail: String = "Activity_SendConfirmationMail"
+        const val StartEvent_SubmitRegistrationForm: String = "StartEvent_SubmitRegistrationForm"
+        const val StartEvent_RequestReceived: String = "StartEvent_RequestReceived"
     }
 
     object Messages {
-        val Message_FormSubmitted: String = "Message_FormSubmitted"
-        val Message_SubscriptionConfirmed: String = "Message_SubscriptionConfirmed"
+        const val Message_FormSubmitted: String = "Message_FormSubmitted"
+        const val Message_SubscriptionConfirmed: String = "Message_SubscriptionConfirmed"
     }
 
     object TaskTypes {
-        val EndEvent_RegistrationCompleted: String = "newsletter.registrationCompleted"
-        val Activity_AbortRegistration: String = "newsletter.abortRegistration"
-        val Activity_SendWelcomeMail: String = "newsletter.sendWelcomeMail"
-        val Activity_SendConfirmationMail: String = "newsletter.sendConfirmationMail"
+        const val EndEvent_RegistrationCompleted: String = "newsletter.registrationCompleted"
+        const val Activity_AbortRegistration: String = "newsletter.abortRegistration"
+        const val Activity_SendWelcomeMail: String = "newsletter.sendWelcomeMail"
+        const val Activity_SendConfirmationMail: String = "newsletter.sendConfirmationMail"
     }
 
     object Timers {
@@ -114,7 +114,7 @@ object NewsletterSubscriptionProcessApiV1 {
     }
 
     object Signals {
-        val Signal_RegistrationNotPossible: String = "Signal_RegistrationNotPossible"
+        const val Signal_RegistrationNotPossible: String = "Signal_RegistrationNotPossible"
     }
 }
 ```
