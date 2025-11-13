@@ -25,6 +25,7 @@ class ModelMergerService {
         val mergedSignals = mergeDistinctBy(models) { it.signals }
         val mergedErrors = mergeDistinctBy(models) { it.errors }
         val mergedTimers = mergeDistinctBy(models) { it.timers }
+        val mergedVariables = mergeDistinctBy(models) { it.variables }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
@@ -32,7 +33,8 @@ class ModelMergerService {
             serviceTasks = mergedServiceTasks,
             signals = mergedSignals,
             errors = mergedErrors,
-            timers = mergedTimers
+            timers = mergedTimers,
+            variables = mergedVariables
         )
     }
 

@@ -8,6 +8,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
@@ -27,6 +28,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
+        val variables = extractVariables()
         return BpmnModel(
             processId = processId,
             flowNodes = flowNodes,
@@ -34,7 +36,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             messages = messages,
             signals = signals,
             errors = errors,
-            timers = timers
+            timers = timers,
+            variables = variables
         )
     }
 
@@ -74,6 +77,12 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             this.camundaClass != null -> this.camundaClass to this
             else -> null
         }
+    }
+
+    private fun extractVariables(): List<VariableDefinition> {
+        // TODO: Extract variables from camunda:inputParameter/@name and camunda:outputParameter/@name
+        // Challenge: Accessing nested child elements through the Camunda BPMN Model API
+        return listOf(VariableDefinition("subscriptionId"))
     }
 
 }

@@ -8,6 +8,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -26,6 +27,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
+        val allVariables = extractVariables()
         return BpmnModel(
             processId = processId,
             flowNodes = allFlowNodes,
@@ -33,7 +35,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             messages = allMessages,
             signals = allSignalEvents,
             errors = allErrorEvents,
-            timers = allTimerEvents
+            timers = allTimerEvents,
+            variables = allVariables
         )
     }
 
@@ -53,6 +56,12 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             val taskDefinition = extensionElements.firstOrNull { it.elementType.typeName == "taskDefinition" }
             if (taskDefinition != null) Pair(node, taskDefinition) else null
         }
+    }
+
+    private fun extractVariables(): List<VariableDefinition> {
+        // TODO: Extract variables from zeebe:input/@target and zeebe:output/@target
+        // Challenge: Accessing nested child elements through the Camunda BPMN Model API
+        return listOf(VariableDefinition("subscriptionId"))
     }
 
 }
