@@ -29,15 +29,9 @@ const val SUBSCRIPTION_ID: String = "subscriptionId"
 - Eliminates IDE warnings and linter errors
 - Improves code readability with consistent naming
 - Follows official Kotlin and Java style guides
-- Better number handling: `Timer_After3Days` ’ `TIMER_AFTER_3_DAYS`
+- Better number handling: `Timer_After3Days` ï¿½ `TIMER_AFTER_3_DAYS`
 
 ### Negative
-- **Breaking change**: Requires users to update constant references when upgrading
+
 - BPMN element IDs no longer directly map to constant names
 
-## Implementation
-Conversion handled by `StringUtils.toUpperSnakeCase()` which:
-- Converts case boundaries to underscores
-- Adds underscores between letters and digits
-- Replaces hyphens and dots with underscores
-- Transforms result to uppercase
