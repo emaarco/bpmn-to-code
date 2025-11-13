@@ -7,55 +7,55 @@ public final class NewsletterSubscriptionProcessApiV1 {
   public static final String PROCESS_ID = "newsletterSubscription";
 
   public static final class Elements {
-    public static final String Timer_EveryDay = "Timer_EveryDay";
+    public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
 
-    public static final String Timer_After3Days = "Timer_After3Days";
+    public static final String TIMER_AFTER_3_DAYS = "Timer_After3Days";
 
-    public static final String ErrorEvent_InvalidMail = "ErrorEvent_InvalidMail";
+    public static final String ERROR_EVENT_INVALID_MAIL = "ErrorEvent_InvalidMail";
 
-    public static final String Activity_ConfirmRegistration = "Activity_ConfirmRegistration";
+    public static final String ACTIVITY_CONFIRM_REGISTRATION = "Activity_ConfirmRegistration";
 
-    public static final String SubProcess_Confirmation = "SubProcess_Confirmation";
+    public static final String SUB_PROCESS_CONFIRMATION = "SubProcess_Confirmation";
 
-    public static final String EndEvent_RegistrationAborted = "EndEvent_RegistrationAborted";
+    public static final String END_EVENT_REGISTRATION_ABORTED = "EndEvent_RegistrationAborted";
 
-    public static final String EndEvent_SubscriptionConfirmed = "EndEvent_SubscriptionConfirmed";
+    public static final String END_EVENT_SUBSCRIPTION_CONFIRMED = "EndEvent_SubscriptionConfirmed";
 
-    public static final String EndEvent_RegistrationCompleted = "EndEvent_RegistrationCompleted";
+    public static final String END_EVENT_REGISTRATION_COMPLETED = "EndEvent_RegistrationCompleted";
 
-    public static final String EndEvent_RegistrationNotPossible = "EndEvent_RegistrationNotPossible";
+    public static final String END_EVENT_REGISTRATION_NOT_POSSIBLE = "EndEvent_RegistrationNotPossible";
 
-    public static final String Activity_AbortRegistration = "Activity_AbortRegistration";
+    public static final String ACTIVITY_ABORT_REGISTRATION = "Activity_AbortRegistration";
 
-    public static final String Activity_SendWelcomeMail = "Activity_SendWelcomeMail";
+    public static final String ACTIVITY_SEND_WELCOME_MAIL = "Activity_SendWelcomeMail";
 
-    public static final String Activity_SendConfirmationMail = "Activity_SendConfirmationMail";
+    public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "Activity_SendConfirmationMail";
 
-    public static final String StartEvent_SubmitRegistrationForm = "StartEvent_SubmitRegistrationForm";
+    public static final String START_EVENT_SUBMIT_REGISTRATION_FORM = "StartEvent_SubmitRegistrationForm";
 
-    public static final String StartEvent_RequestReceived = "StartEvent_RequestReceived";
+    public static final String START_EVENT_REQUEST_RECEIVED = "StartEvent_RequestReceived";
   }
 
   public static final class Messages {
-    public static final String Message_FormSubmitted = "Message_FormSubmitted";
+    public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
 
-    public static final String Message_SubscriptionConfirmed = "Message_SubscriptionConfirmed";
+    public static final String MESSAGE_SUBSCRIPTION_CONFIRMED = "Message_SubscriptionConfirmed";
   }
 
   public static final class TaskTypes {
-    public static final String EndEvent_RegistrationCompleted = "newsletter.registrationCompleted";
+    public static final String END_EVENT_REGISTRATION_COMPLETED = "newsletter.registrationCompleted";
 
-    public static final String Activity_AbortRegistration = "newsletter.abortRegistration";
+    public static final String ACTIVITY_ABORT_REGISTRATION = "newsletter.abortRegistration";
 
-    public static final String Activity_SendWelcomeMail = "newsletter.sendWelcomeMail";
+    public static final String ACTIVITY_SEND_WELCOME_MAIL = "newsletter.sendWelcomeMail";
 
-    public static final String Activity_SendConfirmationMail = "newsletter.sendConfirmationMail";
+    public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "newsletter.sendConfirmationMail";
   }
 
   public static final class Timers {
-    public static final BpmnTimer Timer_EveryDay = new BpmnTimer("Duration", "PT1M");
+    public static final BpmnTimer TIMER_EVERY_DAY = new BpmnTimer("Duration", "PT1M");
 
-    public static final BpmnTimer Timer_After3Days = new BpmnTimer("Duration", "${testVariable}");
+    public static final BpmnTimer TIMER_AFTER_3_DAYS = new BpmnTimer("Duration", "${testVariable}");
 
     public static class BpmnTimer {
       public final String type;
@@ -70,7 +70,7 @@ public final class NewsletterSubscriptionProcessApiV1 {
   }
 
   public static final class Errors {
-    public static final BpmnError Error_InvalidMail = new BpmnError("Error_InvalidMail", "500");
+    public static final BpmnError ERROR_INVALID_MAIL = new BpmnError("Error_InvalidMail", "500");
 
     public static class BpmnError {
       public final String name;
@@ -85,12 +85,12 @@ public final class NewsletterSubscriptionProcessApiV1 {
   }
 
   public static final class Signals {
-    public static final String Signal_RegistrationNotPossible = "Signal_RegistrationNotPossible";
+    public static final String SIGNAL_REGISTRATION_NOT_POSSIBLE = "Signal_RegistrationNotPossible";
   }
 
   public static final class Variables {
-    public static final String subscriptionId = "subscriptionId";
+    public static final String SUBSCRIPTION_ID = "subscriptionId";
 
-    public static final String testVariable = "testVariable";
+    public static final String TEST_VARIABLE = "testVariable";
   }
 }
