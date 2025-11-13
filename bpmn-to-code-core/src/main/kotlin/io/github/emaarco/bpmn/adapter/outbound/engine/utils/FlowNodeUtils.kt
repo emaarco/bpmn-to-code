@@ -19,5 +19,4 @@ object FlowNodeUtils {
     fun FlowNode.findExtensionElements(): List<ModelElementInstance> {
         return this.extensionElements?.elementsQuery?.list() ?: emptyList()
     }
-
 }
