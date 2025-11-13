@@ -88,3 +88,10 @@ Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
 1. Update the corresponding expected output files in `src/test/resources/`
 2. Run the specific test suite to verify the changes
 3. Check if other builders or tests are affected
+
+### Productivity Tips: 
+- When working with GitHub, you can use the gh cli tool
+
+### GitHub
+- Keep commit messages and body short and descriptive. Focus on what changed and why, not on technical details and adding bloat like author notes and co.
+- When writing issues, pull requests or other stuff, also write compact.
