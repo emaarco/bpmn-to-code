@@ -90,5 +90,7 @@ public final class NewsletterSubscriptionProcessApiV1 {
 
   public static final class Variables {
     public static final String subscriptionId = "subscriptionId";
+
+    public static final String testVariable = "testVariable";
   }
 }

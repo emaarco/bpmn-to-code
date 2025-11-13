@@ -28,7 +28,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
-        val variables = extractVariables()
+        val variables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
             flowNodes = flowNodes,
@@ -79,10 +79,30 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    private fun extractVariables(): List<VariableDefinition> {
-        // TODO: Extract variables from camunda:inputParameter/@name and camunda:outputParameter/@name
-        // Challenge: Accessing nested child elements through the Camunda BPMN Model API
-        return listOf(VariableDefinition("subscriptionId"))
+    // TODO: Analyze refactoring demand
+    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+        val flowNodes = modelInstance.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.FlowNode::class.java)
+        val variableNames = mutableSetOf<String>()
+
+        flowNodes.forEach { flowNode ->
+            val extensionElements = flowNode.extensionElements?.elementsQuery?.list() ?: emptyList()
+            val inputOutputs = extensionElements.filter { it.elementType.typeName == "inputOutput" }
+
+            inputOutputs.forEach { inputOutput ->
+                val domElement = inputOutput.domElement
+                domElement.childElements.forEach { childDom ->
+                    val localName = childDom.localName
+                    if (localName == "inputParameter" || localName == "outputParameter") {
+                        val name = childDom.getAttribute("name")
+                        if (name != null && name.isNotBlank()) {
+                            variableNames.add(name)
+                        }
+                    }
+                }
+            }
+        }
+
+        return variableNames.map { VariableDefinition(it) }
     }
 
 }

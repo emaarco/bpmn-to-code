@@ -16,7 +16,12 @@ class KotlinApiBuilderTest {
     fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
 
         val modelApi = testBpmnModelApi(
-            model = testNewsletterBpmnModel(),
+            model = testNewsletterBpmnModel(
+                variables = listOf(
+                    io.github.emaarco.bpmn.domain.shared.VariableDefinition("subscriptionId"),
+                    io.github.emaarco.bpmn.domain.shared.VariableDefinition("testVariable")
+                )
+            ),
             apiVersion = 1,
             outputFolder = tempDir.toFile(),
             packagePath = "de.emaarco.example"

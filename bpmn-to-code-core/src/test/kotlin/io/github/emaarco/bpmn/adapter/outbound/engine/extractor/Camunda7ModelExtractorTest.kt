@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +16,12 @@ class Camunda7ModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file)
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
-            testNewsletterBpmnModel()
+            testNewsletterBpmnModel(
+                variables = listOf(
+                    VariableDefinition("otherVariable"),
+                    VariableDefinition("subscriptionId")
+                )
+            )
         )
     }
 }

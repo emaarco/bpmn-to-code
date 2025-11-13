@@ -81,5 +81,7 @@ object NewsletterSubscriptionProcessApiV1 {
 
   object Variables {
     const val subscriptionId: String = "subscriptionId"
+
+    const val testVariable: String = "testVariable"
   }
 }

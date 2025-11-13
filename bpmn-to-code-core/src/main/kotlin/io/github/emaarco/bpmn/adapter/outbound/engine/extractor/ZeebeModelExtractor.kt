@@ -27,7 +27,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
-        val allVariables = extractVariables()
+        val allVariables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
             flowNodes = allFlowNodes,
@@ -58,10 +58,30 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    private fun extractVariables(): List<VariableDefinition> {
-        // TODO: Extract variables from zeebe:input/@target and zeebe:output/@target
-        // Challenge: Accessing nested child elements through the Camunda BPMN Model API
-        return listOf(VariableDefinition("subscriptionId"))
+    // TODO: Analyze refactoring demand
+    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        val variableNames = mutableSetOf<String>()
+
+        flowNodes.forEach { flowNode ->
+            val extensionElements = flowNode.extensionElements?.elementsQuery?.list() ?: emptyList()
+            val ioMappings = extensionElements.filter { it.elementType.typeName == "ioMapping" }
+
+            ioMappings.forEach { ioMapping ->
+                val domElement = ioMapping.domElement
+                domElement.childElements.forEach { childDom ->
+                    val localName = childDom.localName
+                    if (localName == "input" || localName == "output") {
+                        val target = childDom.getAttribute("target")
+                        if (target != null && target.isNotBlank()) {
+                            variableNames.add(target)
+                        }
+                    }
+                }
+            }
+        }
+
+        return variableNames.map { VariableDefinition(it) }
     }
 
 }
