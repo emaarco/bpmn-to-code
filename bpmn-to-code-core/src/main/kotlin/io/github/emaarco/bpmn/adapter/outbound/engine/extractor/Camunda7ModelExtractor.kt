@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -8,11 +9,14 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
+import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
+import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.File
 
 class Camunda7ModelExtractor : EngineSpecificExtractor {
@@ -27,6 +31,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
+        val variables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
             flowNodes = flowNodes,
@@ -34,7 +39,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             messages = messages,
             signals = signals,
             errors = errors,
-            timers = timers
+            timers = timers,
+            variables = variables
         )
     }
 
@@ -74,6 +80,23 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             this.camundaClass != null -> this.camundaClass to this
             else -> null
         }
+    }
+
+    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
+        val variableNames = extractInputAndOutputVariables(extensions)
+        return variableNames.distinct().map { VariableDefinition(it) }
+    }
+
+    private fun extractInputAndOutputVariables(
+        extensions: List<ModelElementInstance>
+    ): List<String> {
+        val allowedDefinitions = listOf("inputParameter", "outputParameter")
+        val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
+        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute("name") }
+        return variableNames.filterNot { it.isNullOrBlank() }
     }
 
 }

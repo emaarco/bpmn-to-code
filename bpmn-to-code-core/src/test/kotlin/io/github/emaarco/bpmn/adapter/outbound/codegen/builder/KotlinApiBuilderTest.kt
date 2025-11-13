@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -15,11 +16,17 @@ class KotlinApiBuilderTest {
     @Test
     fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
 
+        // given: a BPMN model and a model API
         val modelApi = testBpmnModelApi(
-            model = testNewsletterBpmnModel(),
             apiVersion = 1,
             outputFolder = tempDir.toFile(),
-            packagePath = "de.emaarco.example"
+            packagePath = "de.emaarco.example",
+            model = testNewsletterBpmnModel(
+                variables = listOf(
+                    VariableDefinition("subscriptionId"),
+                    VariableDefinition("testVariable")
+                )
+            ),
         )
 
         // when: we build the API file

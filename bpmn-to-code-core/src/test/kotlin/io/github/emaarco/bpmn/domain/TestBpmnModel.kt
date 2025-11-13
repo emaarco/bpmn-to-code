@@ -7,6 +7,7 @@ import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import java.io.File
 
 fun testBpmnModel(
@@ -16,7 +17,8 @@ fun testBpmnModel(
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
-    timers: List<TimerDefinition> = listOf(TimerDefinition(id = "timerId", type = "timerType", value = "PT1H"))
+    timers: List<TimerDefinition> = listOf(TimerDefinition(id = "timerId", type = "timerType", value = "PT1H")),
+    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
 ) = BpmnModel(
     processId = processId,
     flowNodes = flowNodes,
@@ -24,7 +26,8 @@ fun testBpmnModel(
     messages = messages,
     signals = signals,
     errors = errors,
-    timers = timers
+    timers = timers,
+    variables = variables
 )
 
 fun testBpmnModelApi(
@@ -43,7 +46,7 @@ fun testBpmnModelApi(
 
 fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
-    testVariable: String = "$" + "{testVariable}",
+    testVariableForTimer: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("Timer_EveryDay"),
         FlowNodeDefinition("Timer_After3Days"),
@@ -78,8 +81,9 @@ fun testNewsletterBpmnModel(
     ),
     timers: List<TimerDefinition> = listOf(
         TimerDefinition("Timer_EveryDay", "Duration", "PT1M"),
-        TimerDefinition("Timer_After3Days", "Duration", testVariable)
-    )
+        TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer)
+    ),
+    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,
@@ -87,5 +91,6 @@ fun testNewsletterBpmnModel(
     messages = messages,
     signals = signals,
     errors = errors,
-    timers = timers
+    timers = timers,
+    variables = variables
 )

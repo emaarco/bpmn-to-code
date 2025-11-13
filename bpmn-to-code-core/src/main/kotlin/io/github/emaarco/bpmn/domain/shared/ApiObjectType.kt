@@ -7,5 +7,6 @@ enum class ApiObjectType {
     SERVICE_TASKS,
     TIMERS,
     ERRORS,
-    SIGNALS
+    SIGNALS,
+    VARIABLES
 }

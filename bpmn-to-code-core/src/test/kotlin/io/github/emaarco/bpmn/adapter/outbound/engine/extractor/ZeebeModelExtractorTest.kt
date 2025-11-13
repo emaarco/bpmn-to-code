@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,7 +17,13 @@ class ZeebeModelExtractorTest {
         val bpmnModel = underTest.extract(file)
         assertThat(bpmnModel).isNotNull()
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
-            testNewsletterBpmnModel(testVariable = "=testVariable")
+            testNewsletterBpmnModel(
+                testVariableForTimer = "=testVariable",
+                variables = listOf(
+                    VariableDefinition("subscriptionId"),
+                    VariableDefinition("testVariable")
+                )
+            )
         )
     }
 

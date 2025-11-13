@@ -93,7 +93,8 @@ class GenerateProcessApiServiceTest {
         messages = emptyList(),
         signals = emptyList(),
         errors = emptyList(),
-        timers = emptyList()
+        timers = emptyList(),
+        variables = emptyList()
     )
 
     private fun getExpectedModelApi(

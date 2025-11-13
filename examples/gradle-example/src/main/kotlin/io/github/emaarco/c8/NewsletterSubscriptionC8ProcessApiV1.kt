@@ -6,7 +6,6 @@ package io.github.emaarco.c8
 import kotlin.String
 import kotlin.Suppress
 
-@Suppress("unused")
 object NewsletterSubscriptionC8ProcessApiV1 {
   const val PROCESS_ID: String = "newsletterSubscriptionC8"
 
@@ -78,5 +77,11 @@ object NewsletterSubscriptionC8ProcessApiV1 {
 
   object Signals {
     const val Signal_RegistrationNotPossible: String = "Signal_RegistrationNotPossible"
+  }
+
+  object Variables {
+    const val testVariable: String = "testVariable"
+
+    const val subscriptionId: String = "subscriptionId"
   }
 }

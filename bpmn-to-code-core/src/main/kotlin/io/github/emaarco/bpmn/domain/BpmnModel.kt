@@ -10,4 +10,5 @@ data class BpmnModel(
     val signals: List<SignalDefinition>,
     val errors: List<ErrorDefinition>,
     val timers: List<TimerDefinition>,
+    val variables: List<VariableDefinition>,
 )

@@ -1,5 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElements
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -8,6 +10,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -26,6 +29,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
+        val allVariables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
             flowNodes = allFlowNodes,
@@ -33,7 +37,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             messages = allMessages,
             signals = allSignalEvents,
             errors = allErrorEvents,
-            timers = allTimerEvents
+            timers = allTimerEvents,
+            variables = allVariables
         )
     }
 
@@ -49,10 +54,27 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun findAllServiceTaskDefinitions(flowNodes: Collection<FlowNode>): List<Pair<FlowNode, ModelElementInstance>> {
         return flowNodes.mapNotNull { node ->
-            val extensionElements = node.extensionElements?.elementsQuery?.list() ?: emptyList()
+            val extensionElements = node.findExtensionElements()
             val taskDefinition = extensionElements.firstOrNull { it.elementType.typeName == "taskDefinition" }
             if (taskDefinition != null) Pair(node, taskDefinition) else null
         }
+    }
+
+    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "ioMapping") }
+        val variableNames = extractInputAndOutputVariables(extensions)
+        return variableNames.distinct().map { VariableDefinition(it) }
+    }
+
+    private fun extractInputAndOutputVariables(
+        extensions: List<ModelElementInstance>
+    ): List<String> {
+        val allowedDefinitions = listOf("input", "output")
+        val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
+        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute("target") }
+        return variableNames.filterNot { it.isNullOrBlank() }
     }
 
 }

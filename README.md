@@ -116,6 +116,10 @@ object NewsletterSubscriptionProcessApiV1 {
     object Signals {
         const val Signal_RegistrationNotPossible: String = "Signal_RegistrationNotPossible"
     }
+
+    object Variables {
+        const val subscriptionId: String = "subscriptionId"
+    }
 }
 ```
 

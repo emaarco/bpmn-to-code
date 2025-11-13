@@ -1,10 +1,23 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
-import io.github.emaarco.bpmn.domain.shared.*
+import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.SignalDefinition
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
-import org.camunda.bpm.model.bpmn.instance.*
+import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
+import org.camunda.bpm.model.bpmn.instance.FlowNode
+import org.camunda.bpm.model.bpmn.instance.Message
+import org.camunda.bpm.model.bpmn.instance.Process
+import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
+import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
 import org.camunda.bpm.model.xml.ModelInstance
 
+/**
+ * Utility functions for extracting BPMN elements that are common across process engines.
+ * Use this only if you have a method that can be used by multiple extractors.
+ */
 object ModelInstanceUtils {
 
     fun ModelInstance.getProcessId(): String {

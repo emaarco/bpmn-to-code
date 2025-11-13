@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0vze3ke" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0vze3ke" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.41.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:message id="Message_04tc0t0" name="Message_FormSubmitted" />
   <bpmn:message id="Message_36dkcng" name="Message_SubscriptionConfirmed">
     <bpmn:extensionElements>
@@ -10,6 +10,9 @@
     <bpmn:serviceTask id="Activity_AbortRegistration" name="Abort registration">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="newsletter.abortRegistration" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=subscriptionId" target="subscriptionId" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
@@ -21,6 +24,9 @@
     <bpmn:serviceTask id="Activity_SendWelcomeMail" name="Send Welcome-Mail">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="newsletter.sendWelcomeMail" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=subscriptionId" target="subscriptionId" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_09cuvzp</bpmn:incoming>
       <bpmn:outgoing>Flow_1i7hjid</bpmn:outgoing>
@@ -43,6 +49,7 @@
           <zeebe:taskDefinition type="newsletter.sendConfirmationMail" />
           <zeebe:ioMapping>
             <zeebe:input source="=&#34;123&#34;" target="testVariable" />
+            <zeebe:input source="=subscriptionId" target="subscriptionId" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_05i3x1y</bpmn:incoming>
@@ -85,6 +92,11 @@
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="ErrorEvent_InvalidMail" name="Invalid Mail" attachedToRef="SubProcess_Confirmation">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=subscriptionId" target="subscriptionId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0i2ctuv</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0tozp3v" errorRef="Error_0uxgmyc" />
     </bpmn:boundaryEvent>
@@ -92,6 +104,9 @@
     <bpmn:endEvent id="EndEvent_RegistrationCompleted" name="Registration completed">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="newsletter.registrationCompleted" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=subscriptionId" target="subscriptionId" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1i7hjid</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1lg5ag3" />

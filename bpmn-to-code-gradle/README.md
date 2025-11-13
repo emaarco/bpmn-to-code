@@ -14,7 +14,7 @@ To get started, apply the plugin in your build.gradle.kts file:
 
 ```kotlin
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.12"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.13"
 }
 ```
 

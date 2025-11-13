@@ -25,7 +25,8 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
         ApiObjectType.TIMERS to TimersWriter(),
         ApiObjectType.ERRORS to ErrorsWriter(),
-        ApiObjectType.SIGNALS to SignalsWriter()
+        ApiObjectType.SIGNALS to SignalsWriter(),
+        ApiObjectType.VARIABLES to VariablesWriter()
     )
 
     override fun buildApiFile(modelApi: BpmnModelApi) {
@@ -104,6 +105,18 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
             val signalsBuilder = TypeSpec.objectBuilder("Signals")
             model.signals.forEach { signal -> signalsBuilder.addProperty(createAttribute(signal)) }
             builder.addType(signalsBuilder.build())
+        }
+    }
+
+    private inner class VariablesWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.VARIABLES
+        override fun shouldWrite(model: BpmnModel) = model.variables.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+            val variablesBuilder = TypeSpec.objectBuilder("Variables")
+            model.variables.forEach { variable -> variablesBuilder.addProperty(createAttribute(variable)) }
+            builder.addType(variablesBuilder.build())
         }
     }
 
