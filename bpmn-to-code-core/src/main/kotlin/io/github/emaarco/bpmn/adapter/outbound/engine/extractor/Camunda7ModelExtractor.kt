@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -11,9 +12,11 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
+import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
+import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.File
 
 class Camunda7ModelExtractor : EngineSpecificExtractor {
@@ -79,30 +82,21 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    // TODO: Analyze refactoring demand
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
-        val flowNodes = modelInstance.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.FlowNode::class.java)
-        val variableNames = mutableSetOf<String>()
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
+        val variableNames = extractInputAndOutputVariables(extensions)
+        return variableNames.distinct().map { VariableDefinition(it) }
+    }
 
-        flowNodes.forEach { flowNode ->
-            val extensionElements = flowNode.extensionElements?.elementsQuery?.list() ?: emptyList()
-            val inputOutputs = extensionElements.filter { it.elementType.typeName == "inputOutput" }
-
-            inputOutputs.forEach { inputOutput ->
-                val domElement = inputOutput.domElement
-                domElement.childElements.forEach { childDom ->
-                    val localName = childDom.localName
-                    if (localName == "inputParameter" || localName == "outputParameter") {
-                        val name = childDom.getAttribute("name")
-                        if (name != null && name.isNotBlank()) {
-                            variableNames.add(name)
-                        }
-                    }
-                }
-            }
-        }
-
-        return variableNames.map { VariableDefinition(it) }
+    private fun extractInputAndOutputVariables(
+        extensions: List<ModelElementInstance>
+    ): List<String> {
+        val allowedDefinitions = listOf("inputParameter", "outputParameter")
+        val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
+        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute("name") }
+        return variableNames.filterNot { it.isNullOrBlank() }
     }
 
 }

@@ -1,5 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElements
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -52,36 +54,27 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun findAllServiceTaskDefinitions(flowNodes: Collection<FlowNode>): List<Pair<FlowNode, ModelElementInstance>> {
         return flowNodes.mapNotNull { node ->
-            val extensionElements = node.extensionElements?.elementsQuery?.list() ?: emptyList()
+            val extensionElements = node.findExtensionElements()
             val taskDefinition = extensionElements.firstOrNull { it.elementType.typeName == "taskDefinition" }
             if (taskDefinition != null) Pair(node, taskDefinition) else null
         }
     }
 
-    // TODO: Analyze refactoring demand
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val variableNames = mutableSetOf<String>()
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "ioMapping") }
+        val variableNames = extractInputAndOutputVariables(extensions)
+        return variableNames.distinct().map { VariableDefinition(it) }
+    }
 
-        flowNodes.forEach { flowNode ->
-            val extensionElements = flowNode.extensionElements?.elementsQuery?.list() ?: emptyList()
-            val ioMappings = extensionElements.filter { it.elementType.typeName == "ioMapping" }
-
-            ioMappings.forEach { ioMapping ->
-                val domElement = ioMapping.domElement
-                domElement.childElements.forEach { childDom ->
-                    val localName = childDom.localName
-                    if (localName == "input" || localName == "output") {
-                        val target = childDom.getAttribute("target")
-                        if (target != null && target.isNotBlank()) {
-                            variableNames.add(target)
-                        }
-                    }
-                }
-            }
-        }
-
-        return variableNames.map { VariableDefinition(it) }
+    private fun extractInputAndOutputVariables(
+        extensions: List<ModelElementInstance>
+    ): List<String> {
+        val allowedDefinitions = listOf("input", "output")
+        val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
+        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute("target") }
+        return variableNames.filterNot { it.isNullOrBlank() }
     }
 
 }
