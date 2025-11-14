@@ -11,7 +11,7 @@ BPMN processes use variables in multiple ways:
 Example of implicit variable reference:
 ```xml
 <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
-  ${execution.getVariable('entscheidung_vorgesetzter') == 'GENEHMIGUNG_ABGELEHNT'}
+  ${execution.getVariable('decision') == 'ACCEPTED'}
 </bpmn:conditionExpression>
 ```
 
