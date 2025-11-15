@@ -89,9 +89,13 @@ Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
 2. Run the specific test suite to verify the changes
 3. Check if other builders or tests are affected
 
-### Productivity Tips: 
+### Productivity Tips:
 - When working with GitHub, you can use the gh cli tool
+- Use context7 for code generation & general questions whenever working with specific frameworks or libraries.
 
 ### GitHub
-- Keep commit messages and body short and descriptive. Focus on what changed and why, not on technical details and adding bloat like author notes and co.
-- When writing issues, pull requests or other stuff, also write compact.
+
+- Keep commit messages and body short and descriptive.
+- When writing pull requests or issues, also write compact. Focus on what changed and why, not on technical details and adding bloat like author notes and co.
+- When writing issues, always write a summary, the current state, and the desired state. moreover, give a high-level overview of the technical details - and whether stuff is breaking or not. Each of these is a compact subchapter. Focus on behavior, not implementation. Avoid specific file names, line numbers, or code paths.
+
