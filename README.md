@@ -48,7 +48,7 @@ check out the following posts:
 The key feature of bpmn-to-code is generating a lightweight “Process API” for your BPMN models.
 Let’s say you have a newsletter subscription workflow (BPMN) that looks like this:
 
-<img src="docs/example-process.png" alt="Example Process" width="800"/>
+<img src="assets/example-process.png" alt="Example Process" width="800"/>
 
 After running bpmn-to-code, you’ll have a Kotlin (or Java) file that programmatically references your process model. For
 example:
