@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>bpmn-to-code - Online Generator</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🚀 bpmn-to-code</h1>
+        <p class="subtitle">Generate type-safe Process APIs from BPMN models</p>
+        <p class="description">
+            Transform your BPMN process diagrams into clean, type-safe Kotlin or Java code.
+            Stop manually referencing element IDs, messages, and task types.
+            Let bpmn-to-code extract them automatically and keep your code in sync with your models.
+        </p>
+    </header>
+
+    <main>
+        <!-- Step 1: Upload BPMN Files -->
+        <section class="card upload-section" id="upload-section">
+            <h2>1. Upload BPMN Files</h2>
+            <div class="upload-area" id="upload-area">
+                <input accept=".bpmn" hidden id="file-input" multiple type="file">
+                <label class="upload-label" for="file-input">
+                    <svg fill="none" height="48" stroke="currentColor" viewBox="0 0 24 24" width="48">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" x2="12" y1="3" y2="15"></line>
+                    </svg>
+                    <span>Click to select BPMN files or drag & drop</span>
+                    <span class="upload-hint">.bpmn files only</span>
+                </label>
+            </div>
+            <div class="file-list" id="file-list"></div>
+        </section>
+
+        <!-- Step 2: Configure Generation -->
+        <section class="card config-section" id="config-section" style="display: none;">
+            <h2>2. Configure Generation</h2>
+            <form id="config-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="output-language">Output Language</label>
+                        <select id="output-language">
+                            <option selected value="KOTLIN">Kotlin</option>
+                            <option value="JAVA">Java</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="process-engine">Process Engine</label>
+                        <select id="process-engine">
+                            <option selected value="ZEEBE">Zeebe (Camunda 8)</option>
+                            <option value="CAMUNDA_7">Camunda 7</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="generate-btn" type="submit">
+                    Generate Process API
+                </button>
+            </form>
+        </section>
+
+        <!-- Step 3: Results -->
+        <section class="card results-section" id="results-section" style="display: none;">
+            <h2>3. Generated Code</h2>
+            <div id="results-content"></div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Generating code...</p>
+        </div>
+
+        <!-- Error Display -->
+        <div class="error-message" id="error-message" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <div class="footer-section">
+                <h4>Production Use</h4>
+                <p>
+                    Install the
+                    <a href="https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle" target="_blank">Gradle
+                        plugin</a>
+                    or
+                    <a href="https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven"
+                       target="_blank">Maven plugin</a>
+                    for automated code generation in your build pipeline
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <p>
+                    <a href="https://github.com/emaarco/bpmn-to-code" target="_blank">GitHub Repository</a> ·
+                    <a href="https://github.com/emaarco/bpmn-to-code/issues" target="_blank">Report Issues</a>
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>
+                    Created by <a href="https://github.com/emaarco" target="_blank">Marco Schäck</a> ·
+                    <a href="https://www.linkedin.com/in/schaeckm" target="_blank">LinkedIn</a>
+                </p>
+                <p>
+                    Working at <a href="https://miragon.io" target="_blank">Miragon</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>Open source under MIT License · Contributions welcome</p>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
