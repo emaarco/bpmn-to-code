@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-**bpmn-to-code** is a Gradle and Maven plugin that generates type-safe API definitions from BPMN process models. Its vision is to foster clean and robust solutions for BPMN-based process automation by:
+**bpmn-to-code** is a tool that generates type-safe API definitions from BPMN process models. Available as Gradle/Maven plugins and a web application, its vision is to foster clean and robust solutions for BPMN-based process automation by:
 
 - **Keeping models and code in sync**: Automatically extract process elements and generate code that references them
 - **Reducing manual effort**: Eliminate tedious manual referencing of BPMN element IDs, messages, and task types
@@ -43,3 +43,24 @@ Document decisions that:
 - **Accepted**: Decision approved and implemented
 - **Deprecated**: Decision no longer recommended
 - **Superseded**: Replaced by newer ADR
+
+## Records
+
+### Core Architecture
+- [ADR 001: Hexagonal Architecture](001-hexagonal-architecture.md) - Clean architecture with ports and adapters
+- [ADR 002: Model Merging](002-model-merging.md) - Combining multiple BPMN files into single API
+
+### Code Generation
+- [ADR 003: Generated API Structure](003-generated-api-structure.md) - Structure of generated Process APIs
+- [ADR 005: Strategy Pattern for Code Generation](005-strategy-pattern-code-generation.md) - Language-specific builders (Java/Kotlin)
+
+### Multi-Engine Support
+- [ADR 004: Strategy Pattern for Multi-Engine](004-strategy-pattern-multi-engine.md) - Supporting Camunda 7 and Zeebe
+
+### Features
+- [ADR 006: File-Based Versioning](006-file-based-versioning.md) - API versioning strategy
+- [ADR 007: Variable Extraction Scope](007-variable-extraction-scope.md) - Explicit variable definitions only
+
+### Web Module
+- [ADR 008: Web Module for Browser-Based Access](008-web-module-for-browser-access.md) - Strategic decision for web application
+- [ADR 009: Ktor with Static Frontend (Single Module)](009-ktor-static-frontend-single-module.md) - Technology choices for web module

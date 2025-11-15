@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>bpmn-to-code - Online Generator</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🚀 bpmn-to-code</h1>
+        <p class="subtitle">Generate type-safe Process APIs from BPMN models</p>
+        <p class="description">
+            Transform your BPMN process diagrams into clean, type-safe Kotlin or Java code.
+            Stop manually referencing element IDs, messages, and task types.
+            Let bpmn-to-code extract them automatically and keep your code in sync with your models.
+        </p>
+    </header>
+
+    <main>
+        <!-- Step 1: Upload BPMN Files -->
+        <section class="card upload-section" id="upload-section">
+            <h2>1. Upload BPMN Files</h2>
+            <div class="upload-area" id="upload-area">
+                <input accept=".bpmn" hidden id="file-input" multiple type="file">
+                <label class="upload-label" for="file-input">
+                    <svg fill="none" height="48" stroke="currentColor" viewBox="0 0 24 24" width="48">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" x2="12" y1="3" y2="15"></line>
+                    </svg>
+                    <span>Click to select BPMN files or drag & drop</span>
+                    <span class="upload-hint">.bpmn files only</span>
+                </label>
+            </div>
+            <div class="file-list" id="file-list"></div>
+        </section>
+
+        <!-- Step 2: Configure Generation -->
+        <section class="card config-section" id="config-section" style="display: none;">
+            <h2>2. Configure Generation</h2>
+            <form id="config-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="output-language">Output Language</label>
+                        <select id="output-language">
+                            <option selected value="KOTLIN">Kotlin</option>
+                            <option value="JAVA">Java</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="process-engine">Process Engine</label>
+                        <select id="process-engine">
+                            <option selected value="ZEEBE">Zeebe (Camunda 8)</option>
+                            <option value="CAMUNDA_7">Camunda 7</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="generate-btn" type="submit">
+                    Generate Process API
+                </button>
+            </form>
+        </section>
+
+        <!-- Step 3: Results -->
+        <section class="card results-section" id="results-section" style="display: none;">
+            <h2>3. Generated Code</h2>
+            <div id="results-content"></div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Generating code...</p>
+        </div>
+
+        <!-- Error Display -->
+        <div class="error-message" id="error-message" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <div class="footer-section">
+                <h4>Production Use</h4>
+                <p>
+                    Install the
+                    <a href="https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle" target="_blank">Gradle
+                        plugin</a>
+                    or
+                    <a href="https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven"
+                       target="_blank">Maven plugin</a>
+                    for automated code generation in your build pipeline
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <p>This project can be found on GitHub</p>
+                <p>
+                    <a href="https://github.com/emaarco/bpmn-to-code" target="_blank">GitHub Repository</a>
+                    <span id="resources-separator"> · </span>
+                    <a href="https://github.com/emaarco/bpmn-to-code/issues" target="_blank">Report Issues</a>
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>
+                    Created with ♥ by
+                    <a href="https://www.linkedin.com/in/schaeckm" target="_blank">Marco Schäck</a>
+                </p>
+                <p>
+                    <a href="#" id="imprint-link" target="_blank">Legal Notice</a>
+                    <span id="legal-separator"> · </span>
+                    <a href="#" id="privacy-link" target="_blank">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="social-links-row">
+            <a aria-label="GitHub" class="social-link-item" href="https://github.com/emaarco" target="_blank">
+                <span class="social-icon">
+                    <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+                        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                    </svg>
+                </span>
+                <span class="platform-name">GitHub</span>
+            </a>
+            <a aria-label="LinkedIn" class="social-link-item" href="https://www.linkedin.com/in/schaeckm"
+               target="_blank">
+                <span class="social-icon">
+                    <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                </span>
+                <span class="platform-name">LinkedIn</span>
+            </a>
+            <a aria-label="Medium" class="social-link-item" href="https://medium.com/@emaarco" target="_blank">
+                <span class="social-icon">
+                    <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
+                        <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
+                    </svg>
+                </span>
+                <span class="platform-name">Medium</span>
+            </a>
+            <a aria-label="Miragon" class="social-link-item" href="https://miragon.io" target="_blank">
+                <span class="social-icon">
+                    <img alt="Miragon" height="24" src="/static/favicon/miragon.png" width="24">
+                </span>
+                <span class="platform-name">Miragon</span>
+            </a>
+        </div>
+
+        <div class="footer-bottom">
+            <span>👋 Contributions welcome</span>
+            <span> · </span>
+            <span>Open source under
+                <a href="https://github.com/emaarco/bpmn-to-code?tab=MIT-1-ov-file#readme"
+                   target="_blank">MIT Licence
+                </a>
+            </span>
+        </div>
+
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
