@@ -143,6 +143,10 @@ Once configured, **bpmn-to-code** automatically picks up your BPMN files and gen
 type-safe references you can use throughout your application—be it for testing, messaging,
 or worker definitions.
 
+## 📋 Best Practices
+
+For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide. It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
+
 ## 📦 Structure
 
 bpmn-to-code is available for both Gradle and Maven.
