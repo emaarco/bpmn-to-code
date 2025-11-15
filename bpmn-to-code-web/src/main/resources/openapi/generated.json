@@ -1,0 +1,243 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BPMN to Code Web API",
+    "version": "0.0.1",
+    "description": "Upload BPMN files and generate type-safe API definitions for process engines like Camunda 7 and Zeebe. Supports both Java and Kotlin output languages with optional API versioning.",
+    "contact": {
+      "url": "https://github.com/emaarco/bpmn-to-code"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "termsOfService": "https://github.com/emaarco/bpmn-to-code"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "description": "Returns the health status of the service",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "UP"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Health"]
+      }
+    },
+    "/api/config": {
+      "get": {
+        "summary": "Get configuration",
+        "description": "Returns application configuration including legal links",
+        "operationId": "getConfig",
+        "responses": {
+          "200": {
+            "description": "Configuration retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "legalLinks": {
+                      "type": "object",
+                      "properties": {
+                        "imprintUrl": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "privacyUrl": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Configuration"]
+      }
+    },
+    "/api/generate": {
+      "post": {
+        "summary": "Generate process API code",
+        "description": "Upload BPMN files and generate type-safe API code for process engines",
+        "operationId": "generateCode",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no files provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Code Generation"]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GenerateRequest": {
+        "type": "object",
+        "required": ["files", "config"],
+        "properties": {
+          "files": {
+            "type": "array",
+            "description": "List of BPMN files to process",
+            "items": {
+              "$ref": "#/components/schemas/BpmnFileData"
+            }
+          },
+          "config": {
+            "$ref": "#/components/schemas/GenerationConfig"
+          }
+        }
+      },
+      "BpmnFileData": {
+        "type": "object",
+        "required": ["fileName", "content"],
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "Name of the BPMN file",
+            "example": "process.bpmn"
+          },
+          "content": {
+            "type": "string",
+            "description": "Base64-encoded BPMN XML content",
+            "format": "byte"
+          }
+        }
+      },
+      "GenerationConfig": {
+        "type": "object",
+        "required": ["outputLanguage", "processEngine"],
+        "properties": {
+          "outputLanguage": {
+            "type": "string",
+            "enum": ["KOTLIN", "JAVA"],
+            "description": "Target programming language for generated code"
+          },
+          "processEngine": {
+            "type": "string",
+            "enum": ["CAMUNDA_7", "ZEEBE"],
+            "description": "Target process engine platform"
+          }
+        }
+      },
+      "GenerateResponse": {
+        "type": "object",
+        "required": ["success", "files"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the generation was successful"
+          },
+          "files": {
+            "type": "array",
+            "description": "List of generated files",
+            "items": {
+              "$ref": "#/components/schemas/GeneratedFile"
+            }
+          },
+          "error": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if generation failed"
+          }
+        }
+      },
+      "GeneratedFile": {
+        "type": "object",
+        "required": ["fileName", "content", "processId"],
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "Name of the generated file",
+            "example": "OrderProcessApi.kt"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the generated file"
+          },
+          "processId": {
+            "type": "string",
+            "description": "ID of the process from BPMN",
+            "example": "order-process"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Configuration",
+      "description": "Application configuration"
+    },
+    {
+      "name": "Code Generation",
+      "description": "BPMN to code generation endpoints"
+    }
+  ]
+}

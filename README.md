@@ -3,12 +3,26 @@
 
 # 🚀 bpmn-to-code
 
-bpmn-to-code is a Maven and Gradle plugin designed to simplify process automation.
+bpmn-to-code is a tool designed to simplify process automation through automated code generation from BPMN models.
 Its vision is to foster clean & robust solutions for BPMN-based process automation.
 Therefore, it aims to provide a range of features —
 such as generating API definition files from BPMN process models —
 to reduce manual effort, simplify testing, promote the creation of clean process models,
 and ensure consistency between your BPMN model and your code.
+
+## 🌐 How to Use
+
+bpmn-to-code is available in multiple ways to fit your workflow:
+
+**🌍 Web Application** (No Installation Required)
+- Use bpmn-to-code directly in your browser
+- Upload BPMN files and download generated code instantly
+- Self-hostable via Docker (🚧 work in progress)
+- Visit: [Coming soon]
+
+**⚙️ Build Plugins** (For Project Integration)
+- **Gradle Plugin**: Integrate into Gradle builds - [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md)
+- **Maven Plugin**: Integrate into Maven builds - [bpmn-to-code-maven](bpmn-to-code-maven/README.md)
 
 ## **🤩** What it can do for you
 
@@ -149,25 +163,30 @@ For guidance on how to model BPMN processes that work optimally with bpmn-to-cod
 
 ## 📦 Structure
 
-bpmn-to-code is available for both Gradle and Maven.
-For detailed installation and configuration instructions,
-please refer to the respective module README's:
+bpmn-to-code consists of multiple modules to support different use cases:
 
-- [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md): Gradle plugin integration for
-  projects using Gradle.
-- [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin integration for
-  projects using Maven.
-- [bpmn-to-code-core](bpmn-to-code-core): Contains the core logic for parsing BPMN files and generating the API
-  representation.
-- [examples](examples): Contains gradle- & maven-example projects demonstrating how to use the plugin. They are not part
-  of the
-  gradle-monorepo. In case you clone the repository, I'd suggest you to open them as a separate project.
+### User-Facing Modules
+- [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md): Gradle plugin for integrating code generation
+  into Gradle builds.
+- [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin for integrating code generation
+  into Maven builds.
+- [bpmn-to-code-web](bpmn-to-code-web/README.md): Web application for browser-based code generation (🚧 work in progress).
 
-## 📬 Get the Plugin
+### Core & Examples
+- [bpmn-to-code-core](bpmn-to-code-core): Core logic for parsing BPMN files and generating API code.
+  Shared by all user-facing modules.
+- [examples](examples): Example projects demonstrating Gradle & Maven plugin usage.
+  Not part of the monorepo; open as separate projects if cloning the repository.
 
-You can find the plugin on either
-the [Maven Central Repository](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven)
-or the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle)
+## 📬 Get bpmn-to-code
+
+**Web Application:**
+- 🌐 [Coming soon] - Browser-based, no installation required
+- 🐳 Docker: [Coming soon] - Self-hostable
+
+**Build Plugins:**
+- 📦 [Maven Central Repository](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) - Maven Plugin
+- 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) - Gradle Plugin
 
 ## 🤝 Contributing
 
