@@ -8,15 +8,15 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
-import io.github.emaarco.bpmn.adapter.outbound.codegen.WriteApiFileAdapter
+import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
-import java.io.File
 
-class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
+class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
@@ -29,7 +29,7 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.VARIABLES to VariablesWriter()
     )
 
-    override fun buildApiFile(modelApi: BpmnModelApi) {
+    override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
 
         val objectName = modelApi.fileName()
         val unusedAnnotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
@@ -41,10 +41,15 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
 
         fileSpecBuilder.addType(rootObjectBuilder.build()).addAnnotation(unusedAnnotation)
         val fileSpec = fileSpecBuilder.build()
-        val file = fileSpec.writeTo(modelApi.outputFolder)
-        file.removeUnnecessaryPublicModifier()
 
-        println("Generated: $objectName.kt")
+        val content = buildString { fileSpec.writeTo(this) }.replace("public ", "")
+
+        return GeneratedApiFile(
+            fileName = "$objectName.kt",
+            packagePath = modelApi.packagePath,
+            content = content,
+            language = modelApi.outputLanguage
+        )
     }
 
     private class ProcessIdWriter : ObjectWriter<TypeSpec.Builder> {
@@ -191,10 +196,5 @@ class KotlinApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder
 
     private fun String.escapeDollarInterpolation(): String {
         return this.replace("\${", "\\\${")
-    }
-
-    private fun File.removeUnnecessaryPublicModifier() {
-        val text = this.readText().replace("public ", "")
-        this.writeText(text)
     }
 }

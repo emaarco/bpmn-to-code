@@ -14,12 +14,11 @@ class JavaApiBuilderTest {
     private val underTest = JavaApiBuilder()
 
     @Test
-    fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
+    fun `buildApiFile generates correct API file content`() {
 
         // given: a BPMN model and a model API
         val modelApi = testBpmnModelApi(
             apiVersion = 1,
-            outputFolder = tempDir.toFile(),
             packagePath = "de.emaarco.example",
             model = testNewsletterBpmnModel(
                 variables = listOf(
@@ -30,18 +29,18 @@ class JavaApiBuilderTest {
         )
 
         // when: we build the API file
-        underTest.buildApiFile(modelApi)
+        val result = underTest.buildApiFile(modelApi)
 
-        // then: expect the generated file to contain the expected content
-        val generatedFile = File(tempDir.toFile(), "de/emaarco/example/${modelApi.fileName()}.java")
+        // then: expect the generated content to match the expected content
         val expectedFile = File(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt").toURI())
-        val generatedContent = generatedFile.readText()
         val expectedContent = expectedFile.readText()
-        assertThat(generatedContent).isEqualToIgnoringWhitespace(expectedContent)
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedContent)
+        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
+        assertThat(result.packagePath).isEqualTo("de.emaarco.example")
     }
 
     @Test
-    fun `maps content of id to valid variable name format`(@TempDir tempDir: Path) {
+    fun `maps content of id to valid variable name format`() {
 
         // given: a model with flow nodes that have slashes in their names
         val defaultModel = testNewsletterBpmnModel()
@@ -49,16 +48,14 @@ class JavaApiBuilderTest {
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
             apiVersion = 1,
-            outputFolder = tempDir.toFile(),
             packagePath = "de.emaarco.example"
         )
 
         // when: we build the API file
-        underTest.buildApiFile(modelApi)
+        val result = underTest.buildApiFile(modelApi)
 
-        // then: expect the generated file to contain the expected content
-        val generatedFile = File(tempDir.toFile(), "de/emaarco/example/${modelApi.fileName()}.java")
-        assertThat(generatedFile.exists()).isTrue()
-
+        // then: expect the generated code contains valid Java
+        assertThat(result.content).isNotEmpty()
+        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
     }
 }

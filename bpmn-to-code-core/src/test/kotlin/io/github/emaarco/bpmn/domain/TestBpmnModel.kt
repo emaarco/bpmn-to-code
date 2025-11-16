@@ -8,7 +8,6 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
-import java.io.File
 
 fun testBpmnModel(
     processId: String = "order",
@@ -33,13 +32,11 @@ fun testBpmnModel(
 fun testBpmnModelApi(
     model: BpmnModel = testBpmnModel(),
     apiVersion: Int? = 1,
-    outputFolder: File = File("outputFolder"),
     packagePath: String = "packagePath",
     language: OutputLanguage = OutputLanguage.KOTLIN,
 ) = BpmnModelApi(
     model = model,
     apiVersion = apiVersion,
-    outputFolder = outputFolder,
     packagePath = packagePath,
     outputLanguage = language,
 )

@@ -14,12 +14,11 @@ class KotlinApiBuilderTest {
     private val underTest = KotlinApiBuilder()
 
     @Test
-    fun `buildApiFile generates correct API file content`(@TempDir tempDir: Path) {
+    fun `buildApiFile generates correct API file content`() {
 
         // given: a BPMN model and a model API
         val modelApi = testBpmnModelApi(
             apiVersion = 1,
-            outputFolder = tempDir.toFile(),
             packagePath = "de.emaarco.example",
             model = testNewsletterBpmnModel(
                 variables = listOf(
@@ -30,13 +29,13 @@ class KotlinApiBuilderTest {
         )
 
         // when: we build the API file
-        underTest.buildApiFile(modelApi)
+        val result = underTest.buildApiFile(modelApi)
 
-        // then: expect the generated file to contain the expected content
-        val generatedFile = File(tempDir.toFile(), "de/emaarco/example/${modelApi.fileName()}.kt")
+        // then: expect the generated content to match the expected content
         val expectedFile = File(javaClass.getResource("/api/NewsletterSubscriptionProcessApiKotlin.txt").toURI())
-        val generatedContent = generatedFile.readText()
         val expectedContent = expectedFile.readText()
-        assertThat(generatedContent).isEqualToIgnoringWhitespace(expectedContent)
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedContent)
+        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.kt")
+        assertThat(result.packagePath).isEqualTo("de.emaarco.example")
     }
 }
