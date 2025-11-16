@@ -5,15 +5,16 @@ import com.palantir.javapoet.FieldSpec
 import com.palantir.javapoet.JavaFile
 import com.palantir.javapoet.MethodSpec
 import com.palantir.javapoet.TypeSpec
-import io.github.emaarco.bpmn.adapter.outbound.codegen.WriteApiFileAdapter
+import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import javax.lang.model.element.Modifier.*
 
-class JavaApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
+class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
@@ -26,7 +27,8 @@ class JavaApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>(
         ApiObjectType.VARIABLES to VariablesWriter()
     )
 
-    override fun buildApiFile(modelApi: BpmnModelApi) {
+    override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
+
         val className = modelApi.fileName()
         val rootClassBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, FINAL)
 
@@ -35,9 +37,15 @@ class JavaApiBuilder : WriteApiFileAdapter.AbstractApiBuilder<TypeSpec.Builder>(
 
         val fileBuilder = JavaFile.builder(modelApi.packagePath, rootClassBuilder.build())
         val javaFile = fileBuilder.addFileComment(autoGenComment).build()
-        javaFile.writeTo(modelApi.outputFolder)
 
-        println("Generated: ${modelApi.fileName()}.java")
+        val fileContent = buildString { javaFile.writeTo(this) }
+
+        return GeneratedApiFile(
+            fileName = "${modelApi.fileName()}.java",
+            packagePath = modelApi.packagePath,
+            content = fileContent,
+            language = modelApi.outputLanguage
+        )
     }
 
     private class ProcessIdWriter : ObjectWriter<TypeSpec.Builder> {

@@ -14,7 +14,7 @@ class Camunda7ModelExtractorTest {
     fun `extract returns valid BpmnModel`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file)
+        val bpmnModel = underTest.extract(file.inputStream())
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
                 variables = listOf(

@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.Camunda7ModelExt
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificExtractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.ZeebeModelExtractor
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
-import io.github.emaarco.bpmn.domain.BpmnFile
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
@@ -13,22 +13,22 @@ class ExtractBpmnAdapter(
 ) : ExtractBpmnPort {
 
     override fun extract(
-        bpmnFile: BpmnFile
+        bpmnFile: BpmnResource
     ): BpmnModel {
-        val rawFile = bpmnFile.rawFile
+        val content = bpmnFile.content
         val (engine, extractor) = getExtractor(bpmnFile)
         return try {
-            println("Extracting model '${rawFile.name}' with extractor for '$engine'")
-            extractor.extract(rawFile)
+            println("Extracting model '${bpmnFile.fileName}' with extractor for '$engine'")
+            extractor.extract(content)
         } catch (ex: Exception) {
             throw RuntimeException(
-                "Failed to extract file: ${rawFile.name}. Please check its a valid file for $engine",
+                "Failed to extract file: ${bpmnFile.fileName}. Please check its a valid file for $engine",
                 ex
             )
         }
     }
 
-    private fun getExtractor(file: BpmnFile): Map.Entry<ProcessEngine, EngineSpecificExtractor> {
+    private fun getExtractor(file: BpmnResource): Map.Entry<ProcessEngine, EngineSpecificExtractor> {
         val entry = extractors.entries.find { it.key == file.engine }
         if (entry == null) throw IllegalStateException("No extractor found for engine: ${file.engine}")
         return entry

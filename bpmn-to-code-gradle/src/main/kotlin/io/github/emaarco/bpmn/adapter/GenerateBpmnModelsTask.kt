@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.adapter
 
-import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiPlugin
+import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiFilesystemPlugin
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import org.gradle.api.DefaultTask
@@ -32,7 +32,7 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val service = CreateProcessApiPlugin()
+        val service = CreateProcessApiFilesystemPlugin()
         service.execute(
             baseDir,
             filePattern,

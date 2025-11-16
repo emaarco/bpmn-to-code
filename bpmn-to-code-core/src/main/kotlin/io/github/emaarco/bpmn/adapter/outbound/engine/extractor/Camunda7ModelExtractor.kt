@@ -18,11 +18,12 @@ import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.File
+import java.io.InputStream
 
 class Camunda7ModelExtractor : EngineSpecificExtractor {
 
-    override fun extract(file: File): BpmnModel {
-        val modelInstance = Bpmn.readModelFromFile(file)
+    override fun extract(inputStream: InputStream): BpmnModel {
+        val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
         val messages = modelInstance.findMessages()
         val flowNodes = modelInstance.findFlowNodes()

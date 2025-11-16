@@ -6,7 +6,7 @@ rootProject.name = "bpmn-to-code-gradle-example"
  */
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         mavenLocal()
+        gradlePluginPortal()
     }
 }
