@@ -46,6 +46,18 @@ fun Application.configureApp() {
         allowHeader(HttpHeaders.ContentType)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Options)
+
+        // Configure allowed origins from environment
+        if (appConfig.cors.allowsAllOrigins()) {
+            anyHost()
+        } else {
+            appConfig.cors.allowedOrigins.forEach { origin ->
+                allowHost(
+                    host = origin.removePrefix("https://").removePrefix("http://"),
+                    schemes = listOf("https", "http")
+                )
+            }
+        }
     }
 
     // Call logging

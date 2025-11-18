@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.1"
+version = "0.0.3"
 
 repositories {
     mavenCentral()
@@ -105,6 +105,7 @@ tasks.register<Exec>("dockerBuild") {
         println("Using docker: $docker")
         commandLine(
             docker, "build",
+            "--platform", "linux/amd64",
             "-f", "bpmn-to-code-web/Dockerfile",
             "-t", "$dockerImageName:$dockerImageTag",
             "-t", "$dockerImageName:latest",

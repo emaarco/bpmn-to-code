@@ -53,9 +53,13 @@ class WebGenerationService {
         }
     }
 
-    private fun extractProcessIdFromFileName(fileName: String): String {
-        // NewsletterSubscriptionProcessApi.kt -> newsletterSubscription
-        // Remove file extension and "ProcessApi" suffix
+    /**
+     * NewsletterSubscriptionProcessApi.kt -> newsletterSubscription
+     * Remove file extension and "ProcessApi" suffix
+     */
+    private fun extractProcessIdFromFileName(
+        fileName: String
+    ): String {
         return fileName
             .removeSuffix(".kt")
             .removeSuffix(".java")
