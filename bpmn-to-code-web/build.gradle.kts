@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.1"
+version = "0.0.5"
 
 repositories {
     mavenCentral()
@@ -37,7 +37,6 @@ dependencies {
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.15")
-    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 
     // Testing
     testImplementation(libs.bundles.testing)
@@ -106,6 +105,7 @@ tasks.register<Exec>("dockerBuild") {
         println("Using docker: $docker")
         commandLine(
             docker, "build",
+            "--platform", "linux/amd64",
             "-f", "bpmn-to-code-web/Dockerfile",
             "-t", "$dockerImageName:$dockerImageTag",
             "-t", "$dockerImageName:latest",

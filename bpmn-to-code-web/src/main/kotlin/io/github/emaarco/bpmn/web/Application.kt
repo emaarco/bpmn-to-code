@@ -20,20 +20,21 @@ import kotlinx.serialization.json.Json
 
 fun main() {
 
+    val appConfig = AppConfig.fromEnvironment()
+
     embeddedServer(
         factory = Netty,
-        port = 8080,
+        port = appConfig.port,
         host = "0.0.0.0",
-        module = Application::configureApp
+        module = { configureApp(appConfig) }
     ).start(
         wait = true
     )
 }
 
-fun Application.configureApp() {
-
-    // Load configuration from environment
-    val appConfig = AppConfig.fromEnvironment()
+fun Application.configureApp(
+    appConfig: AppConfig
+) {
 
     // JSON serialization
     install(ContentNegotiation) {
@@ -46,6 +47,18 @@ fun Application.configureApp() {
         allowHeader(HttpHeaders.ContentType)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Options)
+
+        // Configure allowed origins from environment
+        if (appConfig.cors.allowsAllOrigins()) {
+            anyHost()
+        } else {
+            appConfig.cors.allowedOrigins.forEach { origin ->
+                allowHost(
+                    host = origin.removePrefix("https://").removePrefix("http://"),
+                    schemes = listOf("https", "http")
+                )
+            }
+        }
     }
 
     // Call logging

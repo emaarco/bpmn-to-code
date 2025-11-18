@@ -4,13 +4,11 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.Camunda7ModelExt
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificExtractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.ZeebeModelExtractor
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
-import io.github.emaarco.bpmn.application.port.outbound.LoggerPort
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 class ExtractBpmnAdapter(
-    private val logger: LoggerPort,
     private val extractors: Map<ProcessEngine, EngineSpecificExtractor> = ExtractBpmnAdapter.extractors
 ) : ExtractBpmnPort {
 
@@ -20,7 +18,7 @@ class ExtractBpmnAdapter(
         val content = bpmnFile.content
         val (engine, extractor) = getExtractor(bpmnFile)
         return try {
-            logger.debug("Extracting model '${bpmnFile.fileName}' with extractor for '$engine'")
+            println("Extracting model '${bpmnFile.fileName}' with extractor for '$engine'")
             extractor.extract(content)
         } catch (ex: Exception) {
             throw RuntimeException(

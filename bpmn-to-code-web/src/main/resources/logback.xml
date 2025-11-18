@@ -1,44 +1,14 @@
 <configuration>
-    <!-- Console appender for human-readable logs (development) -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- JSON appender for structured logs (production) -->
-    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <includeMdcKeyName>requestId</includeMdcKeyName>
-            <includeMdcKeyName>userId</includeMdcKeyName>
-            <fieldNames>
-                <timestamp>timestamp</timestamp>
-                <version>[ignore]</version>
-                <message>message</message>
-                <logger>logger</logger>
-                <thread>thread</thread>
-                <level>level</level>
-                <levelValue>[ignore]</levelValue>
-            </fieldNames>
-        </encoder>
-    </appender>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
 
-    <!-- Use environment variable to switch between console and JSON logging -->
-    <!-- Set LOG_FORMAT=json for production, defaults to console for development -->
-    <if condition='property("LOG_FORMAT").equals("json")'>
-        <then>
-            <root level="INFO">
-                <appender-ref ref="JSON"/>
-            </root>
-        </then>
-        <else>
-            <root level="INFO">
-                <appender-ref ref="CONSOLE"/>
-            </root>
-        </else>
-    </if>
-
-    <!-- Application-specific logger levels -->
     <logger name="io.github.emaarco" level="DEBUG"/>
     <logger name="io.ktor" level="INFO"/>
 </configuration>

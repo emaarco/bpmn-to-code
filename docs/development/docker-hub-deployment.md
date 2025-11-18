@@ -54,6 +54,20 @@ This task:
    - `emaarco/bpmn-to-code-web:VERSION` (e.g., `0.0.15`)
    - `emaarco/bpmn-to-code-web:latest`
 
+**Platform Architecture:**
+The build is configured to create AMD64/x86_64 images using `--platform linux/amd64`. This ensures compatibility with most cloud Kubernetes clusters (AWS, GCP, Azure, etc.), even when building locally on Apple Silicon Macs.
+
+**Image Details:**
+- Base image: `gcr.io/distroless/java21-debian12:nonroot` (Google Distroless)
+- Image size: ~300MB (base: ~195MB, JAR: ~105MB)
+- Security: Minimal attack surface (no shell, package managers, or unnecessary tools)
+- User: Runs as non-root user by default
+
+**Health Checks:**
+The distroless image doesn't support shell-based health checks. Configure health checks at the orchestrator level:
+- Kubernetes: Use `livenessProbe` and `readinessProbe` with HTTP GET to `/`
+- Docker Compose: Use `test: ["CMD", "curl", "-f", "http://localhost:8080/"]` (requires curl in image)
+
 Verify the image was created:
 ```bash
 docker images | grep bpmn-to-code-web

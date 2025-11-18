@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
@@ -17,12 +16,10 @@ import org.junit.jupiter.api.Test
 
 class GenerateProcessApiInMemoryServiceTest {
 
-    private val logger = NoOpLoggerAdapter()
     private val codeGenerator = mockk<GenerateApiCodePort>(relaxed = true)
     private val bpmnService = mockk<ExtractBpmnPort>(relaxed = true)
 
     private val underTest = GenerateProcessApiInMemoryService(
-        logger = logger,
         codeGenerator = codeGenerator,
         bpmnService = bpmnService
     )
