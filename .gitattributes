@@ -10,3 +10,5 @@
 # Binary files should be left untouched
 *.jar           binary
 
+# Mark auto-generated documentation as generated
+bpmn-to-code-web/docs/index.html linguist-generated=true
