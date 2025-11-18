@@ -1,7 +1,6 @@
 package io.github.emaarco.bpmn.adapter;
 
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiFilesystemPlugin;
-import io.github.emaarco.bpmn.adapter.logger.MavenLoggerAdapter;
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage;
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine;
 import org.apache.maven.plugin.AbstractMojo;
@@ -39,12 +38,10 @@ public class BpmnModelMojo extends AbstractMojo {
 
     @Override
     public void execute() {
-        MavenLoggerAdapter loggerAdapter = new MavenLoggerAdapter(getLog());
-        CreateProcessApiFilesystemPlugin plugin = new CreateProcessApiFilesystemPlugin(loggerAdapter);
+        CreateProcessApiFilesystemPlugin plugin = new CreateProcessApiFilesystemPlugin();
         OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
         ProcessEngine engine = ProcessEngine.valueOf(processEngine);
         plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, useVersioning);
-        getLog().info("BPMN models generated successfully");
     }
 
 }

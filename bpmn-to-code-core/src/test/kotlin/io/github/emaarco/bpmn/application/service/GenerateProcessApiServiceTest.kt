@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ApiVersioningPort
@@ -22,7 +21,6 @@ import java.io.File
 
 class GenerateProcessApiServiceTest {
 
-    private val logger = NoOpLoggerAdapter()
     private val codeGenerator = mockk<GenerateApiCodePort>(relaxed = true)
     private val bpmnFileLoader = mockk<LoadBpmnFilesPort>(relaxed = true)
     private val versionService = mockk<ApiVersioningPort>(relaxed = true)
@@ -30,7 +28,6 @@ class GenerateProcessApiServiceTest {
     private val fileSystemOutput = mockk<ProcessApiFileSaver>(relaxed = true)
 
     private val underTest = GenerateProcessApiService(
-        logger = logger,
         codeGenerator = codeGenerator,
         bpmnFileLoader = bpmnFileLoader,
         versionService = versionService,

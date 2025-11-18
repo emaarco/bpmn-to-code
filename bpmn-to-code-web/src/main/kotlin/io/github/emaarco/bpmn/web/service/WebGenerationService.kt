@@ -1,20 +1,16 @@
 package io.github.emaarco.bpmn.web.service
 
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiInMemoryPlugin
-import io.github.emaarco.bpmn.web.adapter.logger.Slf4jLoggerAdapter
 import io.github.emaarco.bpmn.web.model.GenerateRequest
 import io.github.emaarco.bpmn.web.model.GenerateResponse
-import org.slf4j.LoggerFactory
 import java.util.*
 
 class WebGenerationService {
 
-    private val logger = Slf4jLoggerAdapter(LoggerFactory.getLogger(WebGenerationService::class.java))
-    private val plugin = CreateProcessApiInMemoryPlugin(logger)
+    private val plugin = CreateProcessApiInMemoryPlugin()
 
     fun generate(request: GenerateRequest): GenerateResponse {
         try {
-            logger.info("Starting BPMN generation for ${request.files.size} file(s)")
             // Decode Base64 BPMN content and prepare input for in-memory plugin
             val bpmnInputs = request.files.map { fileData ->
                 val bpmnXml = String(Base64.getDecoder().decode(fileData.content))
@@ -43,14 +39,12 @@ class WebGenerationService {
                 )
             }
 
-            logger.info("Successfully generated ${generatedFiles.size} API file(s)")
             return GenerateResponse(
                 success = true,
                 files = generatedFiles
             )
 
         } catch (e: Exception) {
-            logger.error("Failed to generate BPMN API", e)
             return GenerateResponse(
                 success = false,
                 files = emptyList(),
@@ -59,9 +53,13 @@ class WebGenerationService {
         }
     }
 
-    private fun extractProcessIdFromFileName(fileName: String): String {
-        // NewsletterSubscriptionProcessApi.kt -> newsletterSubscription
-        // Remove file extension and "ProcessApi" suffix
+    /**
+     * NewsletterSubscriptionProcessApi.kt -> newsletterSubscription
+     * Remove file extension and "ProcessApi" suffix
+     */
+    private fun extractProcessIdFromFileName(
+        fileName: String
+    ): String {
         return fileName
             .removeSuffix(".kt")
             .removeSuffix(".java")

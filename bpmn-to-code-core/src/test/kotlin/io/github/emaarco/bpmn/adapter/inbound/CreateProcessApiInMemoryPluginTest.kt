@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.adapter.inbound
 
-import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
@@ -14,9 +13,8 @@ import org.junit.jupiter.api.Test
 
 class CreateProcessApiInMemoryPluginTest {
 
-    private val logger = NoOpLoggerAdapter()
     private val useCase = mockk<GenerateProcessApiInMemoryUseCase>(relaxed = true)
-    private val underTest = CreateProcessApiInMemoryPlugin(logger, useCase)
+    private val underTest = CreateProcessApiInMemoryPlugin(useCase)
 
     @Test
     fun `execute delegates to use case and returns generated files`() {

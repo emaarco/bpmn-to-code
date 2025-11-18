@@ -14,11 +14,13 @@ allprojects {
 }
 
 subprojects {
+
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_21
         }
     }
+
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "21"
         targetCompatibility = "21"

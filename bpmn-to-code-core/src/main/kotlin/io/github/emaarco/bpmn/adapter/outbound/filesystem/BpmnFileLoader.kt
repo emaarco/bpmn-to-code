@@ -1,15 +1,12 @@
 package io.github.emaarco.bpmn.adapter.outbound.filesystem
 
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
-import io.github.emaarco.bpmn.application.port.outbound.LoggerPort
 import org.apache.tools.ant.DirectoryScanner
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolute
 
-class BpmnFileLoader(
-    private val logger: LoggerPort
-) : LoadBpmnFilesPort {
+class BpmnFileLoader : LoadBpmnFilesPort {
 
     /**
      * Retrieves all files from the specified base-directory
@@ -25,9 +22,9 @@ class BpmnFileLoader(
         scanner.basedir = searchDir.toFile()
         scanner.setIncludes(arrayOf(pattern))
         scanner.scan()
-
+        
         val files = scanner.includedFiles.map { File(searchDir.toFile(), it) }
-        logger.info("Found ${files.size} files matching pattern $pattern in directory $searchDir")
+        println("Found ${files.size} files matching pattern $pattern in directory $searchDir")
 
         return files
     }

@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.adapter.outbound.filesystem
 
-import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import org.assertj.core.api.Assertions.assertThat
@@ -10,8 +9,7 @@ import java.io.File
 
 class ProcessApiFileSaverTest {
 
-    private val logger = NoOpLoggerAdapter()
-    private val underTest = ProcessApiFileSaver(logger)
+    private val underTest = ProcessApiFileSaver()
 
     @Test
     fun `saver writes multiple files to correct locations`(@TempDir tempDir: File) {

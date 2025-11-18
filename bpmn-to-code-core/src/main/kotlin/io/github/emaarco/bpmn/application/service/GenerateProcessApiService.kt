@@ -10,7 +10,6 @@ import io.github.emaarco.bpmn.application.port.outbound.ApiVersioningPort
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
-import io.github.emaarco.bpmn.application.port.outbound.LoggerPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
@@ -20,12 +19,11 @@ import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import java.io.File
 
 class GenerateProcessApiService(
-    private val logger: LoggerPort,
     private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
-    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(logger),
+    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(),
     private val versionService: ApiVersioningPort = VersionService(),
-    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(logger),
-    private val fileSystemOutput: SaveProcessApiPort = ProcessApiFileSaver(logger),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val fileSystemOutput: SaveProcessApiPort = ProcessApiFileSaver(),
 ) : GenerateProcessApiFromFilesystemUseCase {
 
     private val modelMergerService = ModelMergerService()
