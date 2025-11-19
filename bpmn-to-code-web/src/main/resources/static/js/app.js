@@ -52,6 +52,7 @@ function setupEventListeners() {
 function handleFileSelect(e) {
     const files = Array.from(e.target.files);
     addFiles(files);
+    e.target.value = ''; // Reset input to allow re-selecting same file
 }
 
 function addFiles(newFiles) {
