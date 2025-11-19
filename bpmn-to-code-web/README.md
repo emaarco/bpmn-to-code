@@ -12,7 +12,7 @@ making it ideal for quick experiments, non-Java projects, or teams who prefer a 
 - Perfect for quick prototyping and exploration
 
 **Self-Hostable**
-- Deploy as a Docker container in your own infrastructure (🚧 work in progress)
+- Deploy as a Docker container in your own infrastructure
 - Full control over your BPMN files and generated code
 - No data leaves your environment
 
@@ -34,9 +34,12 @@ making it ideal for quick experiments, non-Java projects, or teams who prefer a 
 
 ## 🚀 Quick Start
 
-### Using the Hosted Version
+### Using the Hosted Version (Preview)
 
-🚧 **Coming Soon** - The hosted version will be available at [URL to be announced]
+The web application is currently available as a preview at:
+**https://bpmn-to-code.miragon.io/static/index.html**
+
+Simply visit the URL, upload your BPMN files, configure your settings, and generate your Process API code.
 
 ### Running Locally
 
@@ -68,14 +71,14 @@ Then:
 
 ### Self-Hosting with Docker
 
-🚧 **Work in Progress** - Docker deployment is currently being finalized.
-
-The application will be available as a Docker image for easy self-hosting:
+The application is available as a Docker image for easy self-hosting:
 
 ```bash
-# Pull the image (coming soon)
+# Pull the image
 docker pull emaarco/bpmn-to-code-web:latest
 
 # Run the container
 docker run -p 8080:8080 emaarco/bpmn-to-code-web:latest
 ```
+
+The Docker image is hosted on Docker Hub: **https://hub.docker.com/r/emaarco/bpmn-to-code-web**

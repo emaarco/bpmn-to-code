@@ -1,5 +1,6 @@
-> 🚧 **This plugin is currently in a beta-version.
-> Feel free to test it and provide feedback! :)**
+> **bpmn-to-code is now publicly available!**
+> While the project is still in its early phase, all core features are ready to use.
+> Your feedback and contributions are highly appreciated as we continue to improve and expand the toolset.
 
 # 🚀 bpmn-to-code
 
@@ -9,20 +10,6 @@ Therefore, it aims to provide a range of features —
 such as generating API definition files from BPMN process models —
 to reduce manual effort, simplify testing, promote the creation of clean process models,
 and ensure consistency between your BPMN model and your code.
-
-## 🌐 How to Use
-
-bpmn-to-code is available in multiple ways to fit your workflow:
-
-**🌍 Web Application** (No Installation Required)
-- Use bpmn-to-code directly in your browser
-- Upload BPMN files and download generated code instantly
-- Self-hostable via Docker (🚧 work in progress)
-- Visit: [Coming soon]
-
-**⚙️ Build Plugins** (For Project Integration)
-- **Gradle Plugin**: Integrate into Gradle builds - [bpmn-to-code-gradle](bpmn-to-code-gradle/README.md)
-- **Maven Plugin**: Integrate into Maven builds - [bpmn-to-code-maven](bpmn-to-code-maven/README.md)
 
 ## **🤩** What it can do for you
 
@@ -170,7 +157,7 @@ bpmn-to-code consists of multiple modules to support different use cases:
   into Gradle builds.
 - [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin for integrating code generation
   into Maven builds.
-- [bpmn-to-code-web](bpmn-to-code-web/README.md): Web application for browser-based code generation (🚧 work in progress).
+- [bpmn-to-code-web](bpmn-to-code-web/README.md): Web application for browser-based code generation (preview available).
 
 ### Core & Examples
 - [bpmn-to-code-core](bpmn-to-code-core): Core logic for parsing BPMN files and generating API code.
@@ -180,9 +167,9 @@ bpmn-to-code consists of multiple modules to support different use cases:
 
 ## 📬 Get bpmn-to-code
 
-**Web Application:**
-- 🌐 [Coming soon] - Browser-based, no installation required
-- 🐳 Docker: [Coming soon] - Self-hostable
+**Web Application (Preview):**
+- 🌐 [Live Preview](https://bpmn-to-code.miragon.io/static/index.html) - Browser-based, no installation required
+- 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) - Self-hostable container
 
 **Build Plugins:**
 - 📦 [Maven Central Repository](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) - Maven Plugin
