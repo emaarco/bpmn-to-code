@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.inbound
 
+import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
@@ -10,8 +11,9 @@ import org.junit.jupiter.api.Test
 
 class CreateProcessApiFilesystemPluginTest {
 
+    private val logger = NoOpLoggerAdapter()
     private val useCase = mockk<GenerateProcessApiFromFilesystemUseCase>(relaxed = true)
-    private val underTest = CreateProcessApiFilesystemPlugin(useCase)
+    private val underTest = CreateProcessApiFilesystemPlugin(logger, useCase)
 
     @Test
     fun `execute delegates to use case with correct command`() {

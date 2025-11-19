@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter
 
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiFilesystemPlugin
+import io.github.emaarco.bpmn.adapter.logger.GradleLoggerAdapter
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import org.gradle.api.DefaultTask
@@ -32,7 +33,8 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val service = CreateProcessApiFilesystemPlugin()
+        val loggerAdapter = GradleLoggerAdapter(logger)
+        val service = CreateProcessApiFilesystemPlugin(loggerAdapter)
         service.execute(
             baseDir,
             filePattern,
@@ -42,6 +44,6 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
             processEngine,
             useVersioning,
         )
-        println("BPMN models generated successfully")
+        logger.lifecycle("BPMN models generated successfully")
     }
 }

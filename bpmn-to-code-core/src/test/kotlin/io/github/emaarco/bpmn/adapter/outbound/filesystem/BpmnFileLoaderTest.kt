@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.filesystem
 
+import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -8,7 +9,8 @@ import java.nio.file.Path
 
 class BpmnFileLoaderTest {
 
-    private val underTest = BpmnFileLoader()
+    private val logger = NoOpLoggerAdapter()
+    private val underTest = BpmnFileLoader(logger)
 
     @Test
     fun `loadFrom returns empty list when no files match`(@TempDir tempDir: Path) {

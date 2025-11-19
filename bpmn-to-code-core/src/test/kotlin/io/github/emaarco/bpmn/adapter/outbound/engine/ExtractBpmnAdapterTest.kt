@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine
 
+import io.github.emaarco.bpmn.adapter.logger.NoOpLoggerAdapter
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificExtractor
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
@@ -14,8 +15,10 @@ import java.io.File
 
 class ExtractBpmnAdapterTest {
 
+    private val logger = NoOpLoggerAdapter()
     private val extractor = mockk<EngineSpecificExtractor>()
     private val underTest = ExtractBpmnAdapter(
+        logger = logger,
         extractors = mapOf(ProcessEngine.ZEEBE to extractor)
     )
 

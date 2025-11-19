@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
+import io.github.emaarco.bpmn.application.port.outbound.LoggerPort
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
@@ -12,8 +13,9 @@ import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 
 class GenerateProcessApiInMemoryService(
+    private val logger: LoggerPort,
     private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
-    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(logger),
 ) : GenerateProcessApiInMemoryUseCase {
 
     private val modelMergerService = ModelMergerService()
