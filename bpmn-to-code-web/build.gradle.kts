@@ -4,7 +4,7 @@ import io.ktor.plugin.*
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("plugin.serialization") version "2.2.21"
     id("io.ktor.plugin") version "3.3.2"
     application
 }
@@ -21,26 +21,26 @@ dependencies {
     implementation(project(":bpmn-to-code-core"))
 
     // Ktor server
-    implementation("io.ktor:ktor-server-core:3.0.3")
-    implementation("io.ktor:ktor-server-netty:3.0.3")
-    implementation("io.ktor:ktor-server-content-negotiation:3.0.3")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.3")
-    implementation("io.ktor:ktor-server-cors:3.0.3")
-    implementation("io.ktor:ktor-server-call-logging:3.0.3")
-    implementation("io.ktor:ktor-server-status-pages:3.0.3")
+    implementation("io.ktor:ktor-server-core:3.3.2")
+    implementation("io.ktor:ktor-server-netty:3.3.2")
+    implementation("io.ktor:ktor-server-content-negotiation:3.3.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
+    implementation("io.ktor:ktor-server-cors:3.3.2")
+    implementation("io.ktor:ktor-server-call-logging:3.3.2")
+    implementation("io.ktor:ktor-server-status-pages:3.3.2")
 
     // Swagger UI for API documentation
-    implementation("io.ktor:ktor-server-swagger:3.0.3")
+    implementation("io.ktor:ktor-server-swagger:3.3.2")
 
     // Kotlin serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.5.15")
+    implementation("ch.qos.logback:logback-classic:1.5.21")
 
     // Testing
     testImplementation(libs.bundles.testing)
-    testImplementation("io.ktor:ktor-server-test-host:3.0.3")
+    testImplementation("io.ktor:ktor-server-test-host:3.3.2")
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
