@@ -20,13 +20,9 @@ dependencies {
     // Core dependency - reuse existing logic
     implementation(project(":bpmn-to-code-core"))
 
-    // Ktor server
+    // Ktor dependencies
     implementation(libs.bundles.ktor)
-
-    // Kotlin serialization
     implementation(libs.kotlinxSerializationJson)
-
-    // Logging
     implementation(libs.logbackClassic)
 
     // Testing
