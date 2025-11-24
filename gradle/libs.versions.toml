@@ -2,9 +2,9 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "2.0.21"
+kotlin = "2.2.21"
 kotlinpoet = "2.2.0"
-javapoet = "0.7.0"
+javapoet = "0.8.0"
 camunda = "7.24.0"
 jUnit = "6.0.1"
 assertJ = "4.0.0-M1"
@@ -35,4 +35,4 @@ testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.34.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
