@@ -56,6 +56,7 @@ Document decisions that:
 
 ### Multi-Engine Support
 - [ADR 004: Strategy Pattern for Multi-Engine](004-strategy-pattern-multi-engine.md) - Supporting Camunda 7 and Zeebe
+- [ADR 010: Operaton Namespace-Only Extractor](010-operaton-namespace-only-extractor.md) - Dedicated extractor for Operaton engine
 
 ### Features
 - [ADR 006: File-Based Versioning](006-file-based-versioning.md) - API versioning strategy
