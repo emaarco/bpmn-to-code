@@ -43,13 +43,13 @@ public final class NewsletterSubscriptionProcessApiV1 {
   }
 
   public static final class TaskTypes {
-    public static final String END_EVENT_REGISTRATION_COMPLETED = "newsletter.registrationCompleted";
+    public static final String NEWSLETTER_REGISTRATION_COMPLETED = "newsletter.registrationCompleted";
 
-    public static final String ACTIVITY_ABORT_REGISTRATION = "newsletter.abortRegistration";
+    public static final String NEWSLETTER_ABORT_REGISTRATION = "newsletter.abortRegistration";
 
-    public static final String ACTIVITY_SEND_WELCOME_MAIL = "newsletter.sendWelcomeMail";
+    public static final String NEWSLETTER_SEND_WELCOME_MAIL = "${newsletterSendWelcomeMail}";
 
-    public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "newsletter.sendConfirmationMail";
+    public static final String NEWSLETTER_SEND_CONFIRMATION_MAIL = "#{newsletterSendConfirmationMail}";
   }
 
   public static final class Timers {

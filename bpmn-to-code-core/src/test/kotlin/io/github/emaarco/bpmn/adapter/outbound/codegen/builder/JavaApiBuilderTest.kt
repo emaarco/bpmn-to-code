@@ -1,13 +1,12 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Path
 
 class JavaApiBuilderTest {
 
@@ -24,6 +23,12 @@ class JavaApiBuilderTest {
                 variables = listOf(
                     VariableDefinition("subscriptionId"),
                     VariableDefinition("testVariable")
+                ),
+                serviceTasks = listOf(
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted"),
+                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
+                    ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
                 )
             ),
         )
@@ -58,4 +63,5 @@ class JavaApiBuilderTest {
         assertThat(result.content).isNotEmpty()
         assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
     }
+
 }
