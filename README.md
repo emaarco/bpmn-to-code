@@ -89,10 +89,10 @@ object NewsletterSubscriptionProcessApiV1 {
     }
 
     object TaskTypes {
-        const val END_EVENT_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
-        const val ACTIVITY_ABORT_REGISTRATION: String = "newsletter.abortRegistration"
-        const val ACTIVITY_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
-        const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "newsletter.sendConfirmationMail"
+        const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
+        const val NEWSLETTER_ABORT_REGISTRATION: String = "newsletter.abortRegistration"
+        const val NEWSLETTER_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
+        const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "newsletter.sendConfirmationMail"
     }
 
     object Timers {

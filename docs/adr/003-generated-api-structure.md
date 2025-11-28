@@ -26,7 +26,7 @@ object ProcessApi {
 ```
 
 ### UPPER_SNAKE_CASE Naming Convention
-Transform BPMN element IDs to follow Kotlin/Java constant conventions:
+Transform BPMN identifiers to follow Kotlin/Java constant conventions:
 
 ```kotlin
 // BPMN: "Timer_EveryDay" → Generated constant name
@@ -40,6 +40,16 @@ const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
 ```
 
 Constant values preserve original BPMN identifiers unchanged. Conversion adds underscores at case boundaries and between letters/digits, then uppercases.
+
+**Service Tasks & Messages**: For consistency, constant names are derived from the semantic identifier (for instance worker type for service tasks, message name for messages) rather than technical element IDs. This makes constants more meaningful and aligned with their business purpose. Moreover it allows us to generate a distinct list, since workerTypes and messageNames may be reused in multiple elements of a process:
+
+```kotlin
+// Service task with camunda:topic="newsletter.sendWelcomeMail"
+const val NEWSLETTER_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
+
+// Message with name="Message_FormSubmitted"
+const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
+```
 
 ### Const vs Val for Property Types
 Use `const val` for string constants, `val` for data class instances:

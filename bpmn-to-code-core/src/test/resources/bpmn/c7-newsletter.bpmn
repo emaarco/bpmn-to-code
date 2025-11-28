@@ -25,7 +25,7 @@
         </bpmn:extensionElements>
         <bpmn:outgoing>Flow_05i3x1y</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="Activity_SendConfirmationMail" name="Send confirmation mail" camunda:type="external" camunda:topic="newsletter.sendConfirmationMail">
+      <bpmn:serviceTask id="Activity_SendConfirmationMail" name="Send confirmation mail" camunda:type="external" camunda:topic="#{newsletterSendConfirmationMail}">
         <bpmn:extensionElements>
           <camunda:inputOutput>
             <camunda:inputParameter name="subscriptionId">${subscriptionId}</camunda:inputParameter>
@@ -66,7 +66,7 @@
         <bpmn:timeDuration>${testVariable}</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_AbortRegistration" name="Abort registration" camunda:topic="newsletter.abortRegistration">
+    <bpmn:serviceTask id="Activity_AbortRegistration" name="Abort registration" camunda:type="external" camunda:topic="newsletter.abortRegistration">
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -75,7 +75,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1l1lj4m" sourceRef="Timer_After3Days" targetRef="Activity_AbortRegistration" />
     <bpmn:sequenceFlow id="Flow_1bsb8no" sourceRef="Activity_AbortRegistration" targetRef="EndEvent_RegistrationAborted" />
-    <bpmn:serviceTask id="Activity_SendWelcomeMail" name="Send Welcome-Mail" camunda:delegateExpression="newsletter.sendWelcomeMail">
+    <bpmn:serviceTask id="Activity_SendWelcomeMail" name="Send Welcome-Mail" camunda:delegateExpression="${newsletterSendWelcomeMail}">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="subscriptionId">${subscriptionId}</camunda:inputParameter>

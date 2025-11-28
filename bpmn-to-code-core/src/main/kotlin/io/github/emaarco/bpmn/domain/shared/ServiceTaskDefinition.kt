@@ -6,6 +6,6 @@ data class ServiceTaskDefinition(
     private val id: String,
     private val type: String,
 ) : VariableMapping<String> {
-    override fun getName() = id.toUpperSnakeCase()
+    override fun getName() = type.toUpperSnakeCase()
     override fun getValue() = type
 }

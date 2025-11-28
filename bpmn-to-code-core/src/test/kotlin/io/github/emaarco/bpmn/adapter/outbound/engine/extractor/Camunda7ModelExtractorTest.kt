@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -20,6 +21,12 @@ class Camunda7ModelExtractorTest {
                 variables = listOf(
                     VariableDefinition("otherVariable"),
                     VariableDefinition("subscriptionId")
+                ),
+                serviceTasks = listOf(
+                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
+                    ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
                 )
             )
         )

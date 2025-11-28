@@ -15,7 +15,7 @@ class ModelMergerServiceTest {
     fun `should merge processes with same id`() {
 
         // given
-        val firstTask = ServiceTaskDefinition(id = "firstTaskId", type = "secondTaskType")
+        val firstTask = ServiceTaskDefinition(id = "firstTaskId", type = "firstTaskType")
         val secondTask = ServiceTaskDefinition(id = "secondTaskId", type = "secondTaskType")
         val thirdTask = ServiceTaskDefinition(id = "thirdTaskId", type = "thirdTaskType")
         val firstMessage = MessageDefinition(id = "firstMessageId", name = "firstMessageName")
