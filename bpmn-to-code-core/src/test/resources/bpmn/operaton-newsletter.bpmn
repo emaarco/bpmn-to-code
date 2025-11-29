@@ -2,6 +2,7 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:operaton="http://operaton.org/schema/1.0/bpmn"
                   id="Definitions_0vze3ke"
                   targetNamespace="http://bpmn.io/schema/bpmn" exporter="operaton Modeler" exporterVersion="5.41.0">
     <bpmn:message id="Message_04tc0t0" name="Message_FormSubmitted"/>
