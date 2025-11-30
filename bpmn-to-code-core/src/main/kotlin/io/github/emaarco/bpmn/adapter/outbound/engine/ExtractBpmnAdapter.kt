@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine
 
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.Camunda7ModelExtractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificExtractor
+import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.OperatonModelExtractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.ZeebeModelExtractor
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.domain.BpmnResource
@@ -37,7 +38,8 @@ class ExtractBpmnAdapter(
     companion object {
         val extractors = mapOf(
             ProcessEngine.ZEEBE to ZeebeModelExtractor(),
-            ProcessEngine.CAMUNDA_7 to Camunda7ModelExtractor()
+            ProcessEngine.CAMUNDA_7 to Camunda7ModelExtractor(),
+            ProcessEngine.OPERATON to OperatonModelExtractor()
         )
     }
 }

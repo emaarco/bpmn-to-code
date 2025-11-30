@@ -58,8 +58,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(model: BpmnModel) = true
 
         override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
-            val idPropertyBuilder = PropertySpec.builder("PROCESS_ID", String::class)
-                .addModifiers(KModifier.CONST)
+            val idPropertyBuilder = PropertySpec.builder("PROCESS_ID", String::class).addModifiers(KModifier.CONST)
             val idProperty = idPropertyBuilder.initializer("\"${model.processId}\"").build()
             builder.addProperty(idProperty)
         }

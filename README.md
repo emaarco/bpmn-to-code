@@ -26,7 +26,7 @@ seamlessly with your testing frameworks, messaging systems, or any other automat
 
 **Engine Agnostic & Extensible**
 
-Currently, bpmn-to-code supports both **Camunda** 7 and **Zeebe**. Built with extensibility in mind, it is designed so
+Currently, bpmn-to-code supports **Camunda 7**, **Zeebe**, and **Operaton**. Built with extensibility in mind, it is designed so
 that adding support for additional process engines is straightforward—if there is enough demand.
 
 **Styleguide Validation** (🚧)

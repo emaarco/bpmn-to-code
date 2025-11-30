@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 plugins {
     kotlin("jvm") version "1.9.25"
-    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.14"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.15"
 }
 
 repositories {
@@ -49,7 +49,22 @@ tasks.register<GenerateBpmnModelsTask>("generateBpmnModelApiForZeebe") {
     useVersioning = true
 }
 
+// Task for Operaton BPMN models
+tasks.register<GenerateBpmnModelsTask>("generateBpmnModelApiForOperaton") {
+    baseDir = projectDir.toString()
+    filePattern = "src/main/resources/operaton/*.bpmn"
+    outputFolderPath = "$projectDir/src/main/kotlin"
+    packagePath = "io.github.emaarco.operaton"
+    outputLanguage = OutputLanguage.KOTLIN
+    processEngine = ProcessEngine.OPERATON
+    useVersioning = false
+}
+
 // Aggregate task to run both tasks together
 tasks.register("generateBpmnModels") {
-    dependsOn("generateBpmnModelApiForC7", "generateBpmnModelApiForZeebe")
+    dependsOn(
+        "generateBpmnModelApiForC7",
+        "generateBpmnModelApiForZeebe",
+        "generateBpmnModelApiForOperaton"
+    )
 }

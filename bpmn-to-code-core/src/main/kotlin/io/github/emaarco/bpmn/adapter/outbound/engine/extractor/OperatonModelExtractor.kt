@@ -19,7 +19,16 @@ import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.InputStream
 
-class Camunda7ModelExtractor : EngineSpecificExtractor {
+/**
+ * Model extractor for Operaton BPMN engine
+ * If you are using operaton, but your models are still camunda-7 based, you cannot use this extractor.
+ * Instead, you must use the [Camunda7ModelExtractor].
+ */
+class OperatonModelExtractor : EngineSpecificExtractor {
+
+    companion object {
+        private const val NAMESPACE = "http://operaton.org/schema/1.0/bpmn"
+    }
 
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
@@ -51,16 +60,17 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun ServiceTask.toServiceTask(): ServiceTaskDefinition {
         val taskId = this.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-        val camundaTopic = this.detectWorkerType()
-        return ServiceTaskDefinition(id = taskId, type = camundaTopic)
+        val workerType = this.detectWorkerType()
+        return ServiceTaskDefinition(id = taskId, type = workerType)
     }
 
     private fun ServiceTask.detectWorkerType(): String {
+        val taskExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
         return when {
-            this.camundaTopic != null -> this.camundaTopic
-            this.camundaDelegateExpression != null -> this.camundaDelegateExpression
-            this.camundaClass != null -> this.camundaClass
-            else -> throw IllegalStateException("Service task '${this.id}' has no worker valid type")
+            taskExtractor("topic") != null -> taskExtractor("topic")
+            taskExtractor("delegateExpression") != null -> taskExtractor("delegateExpression")
+            taskExtractor("class") != null -> taskExtractor("class")
+            else -> throw IllegalStateException("Service task '${this.id}' has no valid worker type")
         }
     }
 
@@ -74,10 +84,11 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     }
 
     private fun MessageEventDefinition.detectSendEvents(): Pair<String, MessageEventDefinition>? {
+        val eventExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
         return when {
-            this.camundaTopic != null -> this.camundaTopic to this
-            this.camundaDelegateExpression != null -> this.camundaDelegateExpression to this
-            this.camundaClass != null -> this.camundaClass to this
+            eventExtractor("topic") != null -> eventExtractor("topic") to this
+            eventExtractor("delegateExpression") != null -> eventExtractor("delegateExpression") to this
+            eventExtractor("class") != null -> eventExtractor("class") to this
             else -> null
         }
     }
