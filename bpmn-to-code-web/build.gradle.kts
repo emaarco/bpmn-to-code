@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.5"
+version = "0.0.15"
 
 repositories {
     mavenCentral()
