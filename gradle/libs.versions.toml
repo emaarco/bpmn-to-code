@@ -4,14 +4,14 @@
 [versions]
 kotlin = "2.2.21"
 kotlinpoet = "2.2.0"
-javapoet = "0.8.0"
+javapoet = "0.9.0"
 camunda = "7.24.0"
 jUnit = "6.0.1"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.1"
 mockk = "1.14.6"
 ant = "1.10.15"
-ktor = "3.3.2"
+ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
 logback = "1.5.21"
 
