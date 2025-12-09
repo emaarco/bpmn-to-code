@@ -11,10 +11,11 @@ import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
-import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.service.CollisionDetectionService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import java.io.File
 
@@ -24,6 +25,7 @@ class GenerateProcessApiService(
     private val versionService: ApiVersioningPort = VersionService(),
     private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
     private val fileSystemOutput: SaveProcessApiPort = ProcessApiFileSaver(),
+    private val collisionDetectionService: CollisionDetectionService = CollisionDetectionService(),
 ) : GenerateProcessApiFromFilesystemUseCase {
 
     private val modelMergerService = ModelMergerService()
@@ -32,6 +34,7 @@ class GenerateProcessApiService(
         val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
         val models = inputFiles.map { bpmnService.extract(toBpmnFile(it, command)) }
         val mergedModels = modelMergerService.mergeModels(models)
+        collisionDetectionService.detectCollisions(mergedModels)
         val generatedFiles = this.generateApiFiles(mergedModels, command)
         fileSystemOutput.writeFiles(generatedFiles, command.outputFolderPath)
     }

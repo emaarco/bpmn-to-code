@@ -239,7 +239,8 @@ function downloadFile(fileName, index) {
 }
 
 function showError(message) {
-    errorMessage.textContent = message;
+    const escapedMessage = escapeHtml(message);
+    errorMessage.innerHTML = escapedMessage.replace(/\n/g, '<br>');
     errorMessage.style.display = 'block';
     errorMessage.scrollIntoView({behavior: 'smooth'});
 }
@@ -280,8 +281,8 @@ async function loadConfiguration() {
             setupLegalLinks(config.legalLinks);
         }
     } catch (error) {
+        // Silently fail. Legal links are optional
         console.error('Failed to load configuration:', error);
-        // Silently fail - legal links are optional
     }
 }
 

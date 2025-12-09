@@ -7,4 +7,5 @@ data class SignalDefinition(
 ) : VariableMapping<String> {
     override fun getName() = id.toUpperSnakeCase()
     override fun getValue() = id
+    override fun getRawName() = id
 }

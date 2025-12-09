@@ -67,10 +67,8 @@ fun Application.configureApp(
     // Status pages for error handling
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respond(
-                HttpStatusCode.InternalServerError,
-                mapOf("error" to (cause.message ?: "Unknown error"))
-            )
+            val message = mapOf("error" to (cause.message ?: "Unknown error"))
+            call.respond(HttpStatusCode.InternalServerError, message)
         }
     }
 

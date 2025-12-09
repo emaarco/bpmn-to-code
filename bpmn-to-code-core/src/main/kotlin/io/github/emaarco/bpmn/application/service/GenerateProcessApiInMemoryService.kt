@@ -5,15 +5,17 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
-import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.service.CollisionDetectionService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 
 class GenerateProcessApiInMemoryService(
     private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
     private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val collisionDetectionService: CollisionDetectionService = CollisionDetectionService(),
 ) : GenerateProcessApiInMemoryUseCase {
 
     private val modelMergerService = ModelMergerService()
@@ -24,6 +26,7 @@ class GenerateProcessApiInMemoryService(
         val modelsAsFiles = toBpmnFiles(command)
         val models = modelsAsFiles.map { bpmnService.extract(it) }
         val mergedModels = modelMergerService.mergeModels(models)
+        collisionDetectionService.detectCollisions(mergedModels)
         return mergedModels.map {
             val api = this.toModelApi(command, it)
             this.codeGenerator.generateCode(api)

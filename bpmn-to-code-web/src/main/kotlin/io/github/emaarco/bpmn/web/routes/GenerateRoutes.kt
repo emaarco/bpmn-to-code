@@ -13,37 +13,18 @@ fun Route.generateRoutes(
 ) {
 
     post("/api/generate") {
-        try {
-            val request = call.receive<GenerateRequest>()
 
-            if (request.files.isEmpty()) {
-                call.respond(status = HttpStatusCode.BadRequest, message = GenerateResponse.noFilesProvided())
-                return@post
-            }
+        val request = call.receive<GenerateRequest>()
 
-            if (request.files.size > 3) {
-                call.respond(status = HttpStatusCode.BadRequest, message = GenerateResponse.tooManyFiles())
-                return@post
-            }
-
-            // Generate code using core logic
-            val result = generationService.generate(request)
-
-            if (result.success) {
-                call.respond(HttpStatusCode.OK, result)
-            } else {
-                call.respond(HttpStatusCode.InternalServerError, result)
-            }
-
-        } catch (e: Exception) {
-            call.respond(
-                HttpStatusCode.InternalServerError,
-                GenerateResponse(
-                    success = false,
-                    files = emptyList(),
-                    error = "Failed to process request: ${e.message}"
-                )
-            )
+        if (request.files.isEmpty()) {
+            call.respond(status = HttpStatusCode.BadRequest, message = GenerateResponse.noFilesProvided())
+            return@post
+        } else if (request.files.size > 3) {
+            call.respond(status = HttpStatusCode.BadRequest, message = GenerateResponse.tooManyFiles())
+            return@post
         }
+
+        val result = generationService.generate(request)
+        call.respond(result.statusCode, result)
     }
 }

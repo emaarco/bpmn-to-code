@@ -10,9 +10,11 @@ class ModelMergerService {
      * If multiple models have the same ID, their elements are combined into a single model.
      */
     fun mergeModels(models: List<BpmnModel>): List<BpmnModel> {
-        return models.groupBy { it.processId }.map { (processId, modelsWithSameId) ->
-            mergeModelsWithSameId(processId, modelsWithSameId)
-        }
+        val modelsPerProcessId = models.groupBy { it.processId }
+        val (singleModels, modelsThatRequireMerging) = modelsPerProcessId.entries.partition { it.value.size == 1 }
+        val modelsThatDontRequireMerging = singleModels.flatMap { it.value }
+        val mergedModels = modelsThatRequireMerging.map { mergeModelsWithSameId(it.key, it.value) }
+        return modelsThatDontRequireMerging + mergedModels
     }
 
     /**
@@ -42,6 +44,6 @@ class ModelMergerService {
         models: List<BpmnModel>,
         selector: (BpmnModel) -> List<T>,
     ): List<T> {
-        return models.flatMap(selector).distinctBy { it.getName() }
+        return models.flatMap(selector).distinctBy { it.getRawName() }
     }
 }
