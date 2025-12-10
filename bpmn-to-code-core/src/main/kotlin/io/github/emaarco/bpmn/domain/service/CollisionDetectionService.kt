@@ -54,16 +54,13 @@ class CollisionDetectionService {
         val collisions = itemsPerVariableName.filterValues { it.size > 1 }
         return collisions.mapNotNull { (constantName, itemsWithSameName) ->
             val rawNames = itemsWithSameName.map { it.getRawName() }
-            if (rawNames.size > 1) {
-                CollisionDetail(
-                    processId = processId,
-                    variableType = variableType,
-                    constantName = constantName,
-                    conflictingIds = rawNames.sorted(),
-                )
-            } else {
-                null
-            }
+            if (rawNames.isEmpty()) return@mapNotNull null
+            CollisionDetail(
+                processId = processId,
+                variableType = variableType,
+                constantName = constantName,
+                conflictingIds = rawNames.sorted(),
+            )
         }
     }
 }
