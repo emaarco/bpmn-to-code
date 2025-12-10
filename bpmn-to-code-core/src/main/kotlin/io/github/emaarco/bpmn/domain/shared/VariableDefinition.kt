@@ -7,4 +7,5 @@ data class VariableDefinition(
 ) : VariableMapping<String> {
     override fun getName() = name.toUpperSnakeCase()
     override fun getValue() = name
+    override fun getRawName() = name
 }

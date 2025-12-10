@@ -8,4 +8,5 @@ data class ServiceTaskDefinition(
 ) : VariableMapping<String> {
     override fun getName() = type.toUpperSnakeCase()
     override fun getValue() = type
+    override fun getRawName() = type
 }

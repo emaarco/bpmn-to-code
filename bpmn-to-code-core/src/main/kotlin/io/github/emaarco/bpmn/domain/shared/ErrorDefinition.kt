@@ -9,4 +9,5 @@ data class ErrorDefinition(
 ) : VariableMapping<Pair<String, String>> {
     override fun getName() = id.toUpperSnakeCase()
     override fun getValue() = name to code
+    override fun getRawName() = id
 }

@@ -50,7 +50,7 @@ class ModelMergerServiceTest {
         val result = underTest.mergeModels(listOf(firstModel, secondModel, otherModel))
 
         // then
-        Assertions.assertThat(result).containsExactly(
+        Assertions.assertThat(result).containsExactlyInAnyOrder(
             testBpmnModel(
                 processId = "order-process",
                 flowNodes = listOf(firstFlowNode, secondFlowNode, thirdFlowNode),

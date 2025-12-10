@@ -12,8 +12,15 @@ data class GenerateRequest(
 
     @Serializable
     data class BpmnFileData(
+        /**
+         * The name of the file to generate.
+         */
         val fileName: String,
-        val content: String  // Base64-encoded BPMN XML
+
+        /**
+         * The BPMN XML encoded in Base64.
+         */
+        val content: String
     )
 
     @Serializable

@@ -9,4 +9,5 @@ data class TimerDefinition(
 ) : VariableMapping<Pair<String, String>> {
     override fun getName() = id.toUpperSnakeCase()
     override fun getValue() = (type to value)
+    override fun getRawName() = id
 }

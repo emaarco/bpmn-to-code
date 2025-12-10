@@ -8,4 +8,5 @@ data class MessageDefinition(
 ) : VariableMapping<String> {
     override fun getName() = id.toUpperSnakeCase()
     override fun getValue() = name
+    override fun getRawName() = id
 }
