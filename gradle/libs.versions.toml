@@ -38,10 +38,11 @@ junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher" }
 mockk = { module = "io.mockk:mockk", version = "1.14.7" }
+konsist = { module = "com.lemonappdev:konsist", version = "0.17.3" }
 
 [bundles]
 codegen = ["kotlinpoet", "javapoet"]
-testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
+testing = ["junit", "junitPlatformLauncher", "assertj", "mockk", "konsist"]
 ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "ktorSerializationKotlinxJson", "ktorServerCors", "ktorServerCallLogging", "ktorServerStatusPages", "ktorServerSwagger"]
 
 [plugins]

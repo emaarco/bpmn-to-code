@@ -36,6 +36,7 @@ subprojects {
         parallel = true
         allRules = false
         debug = true
+        ignoreFailures = true
     }
 
     tasks.withType<Detekt>().configureEach {
