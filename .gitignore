@@ -7,3 +7,7 @@ bin
 .DS_Store
 target
 .claude
+
+# Detekt reports
+**/build/reports/detekt/
+**/detekt-baseline.xml

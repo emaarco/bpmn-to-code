@@ -3,13 +3,10 @@
 
 [versions]
 kotlin = "2.2.21"
-kotlinpoet = "2.2.0"
-javapoet = "0.9.0"
 camunda = "7.24.0"
 jUnit = "6.0.1"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.1"
-mockk = "1.14.7"
 ant = "1.10.15"
 ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
@@ -20,8 +17,8 @@ logback = "1.5.21"
 mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.11" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.2" }
 # Production dependencies
-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
-javapoet = { module = "com.palantir.javapoet:javapoet", version.ref = "javapoet" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.2.0" }
+javapoet = { module = "com.palantir.javapoet:javapoet", version = "0.9.0" }
 bpmnmodel = { module = "org.camunda.bpm.model:camunda-bpmn-model", version.ref = "camunda" }
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 # Web module dependencies
@@ -40,7 +37,7 @@ logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "log
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk = { module = "io.mockk:mockk", version = "1.14.7" }
 
 [bundles]
 codegen = ["kotlinpoet", "javapoet"]
@@ -54,3 +51,4 @@ gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+detekt = { id = "dev.detekt", version = "2.0.0-alpha.1" }

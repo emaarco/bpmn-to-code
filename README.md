@@ -146,7 +146,8 @@ or worker definitions.
 
 ## 📋 Best Practices
 
-For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide. It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
+For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide.
+It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
 
 ## 📦 Structure
 
@@ -177,8 +178,10 @@ bpmn-to-code consists of multiple modules to support different use cases:
 
 ## 🤝 Contributing
 
-Community contributions are at the heart of bpmn-to-code’s vision.
+Community contributions are at the heart of bpmn-to-code's vision.
 If you have ideas to improve the code generation, want to add support for a new engine,
 or are keen to help shape the styleguide validator,
 please join me on [GitHub](https://github.com/example/bpmn-to-code).
 Submit issues, open pull requests, or simply start a discussion.
+
+For development guidelines and tooling setup, see [docs/development](docs/development/).
