@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug or issue with bpmn-to-code
 title: "[Bug] "
-labels: ["bug"]
+labels: [ "bug" ]
 body:
   - type: markdown
     attributes:
@@ -37,7 +37,7 @@ body:
       description: What version of bpmn-to-code are you using?
       placeholder: e.g., 1.0.0
     validations:
-      required: true
+      required: false
 
   - type: dropdown
     id: process-engine
@@ -60,7 +60,7 @@ body:
         Describe the BPMN process or paste relevant XML snippets.
         You can also drag and drop BPMN files here.
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: configuration
@@ -73,7 +73,7 @@ body:
         packagePath: com.example.api
         processEngine: CAMUNDA_7
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: expected-behavior
@@ -103,7 +103,7 @@ body:
         Use code blocks for better readability.
       render: shell
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: additional-context

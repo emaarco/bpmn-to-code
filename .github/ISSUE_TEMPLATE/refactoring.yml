@@ -1,7 +1,7 @@
 name: Refactoring Proposal
 description: Propose a code refactoring or architectural improvement
 title: "[Refactoring] "
-labels: ["refactoring"]
+labels: [ "refactoring" ]
 body:
   - type: markdown
     attributes:
@@ -69,7 +69,7 @@ body:
         Avoid specific file names, line numbers, or code paths.
         Focus on the overall strategy and key changes.
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: additional-context
