@@ -25,12 +25,12 @@ class KotlinApiBuilderTest {
                     VariableDefinition("testVariable")
                 ),
                 serviceTasks = listOf(
-                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted"),
-                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
-                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
                     ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
+                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
                 )
-            ),
+            )
         )
 
         // when: we build the API file
