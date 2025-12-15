@@ -1,0 +1,22 @@
+name: Publish All Artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-gradle:
+    name: Publish to Gradle Plugin Portal
+    uses: ./.github/workflows/publish-to-gradle.yml
+    secrets: inherit
+
+  publish-maven:
+    name: Publish to Maven Central
+    needs: publish-gradle
+    uses: ./.github/workflows/publish-to-maven.yml
+    secrets: inherit
+
+  publish-docker:
+    name: Publish to Docker Hub
+    needs: publish-maven
+    uses: ./.github/workflows/publish-to-docker.yml
+    secrets: inherit
