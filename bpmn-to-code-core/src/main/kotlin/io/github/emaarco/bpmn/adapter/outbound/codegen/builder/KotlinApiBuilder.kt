@@ -10,7 +10,6 @@ import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
-import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
@@ -20,6 +19,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
+        ApiObjectType.PROCESS_ENGINE to ProcessEngineWriter(),
         ApiObjectType.ELEMENTS to ElementsWriter(),
         ApiObjectType.MESSAGES to MessagesWriter(),
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
@@ -36,8 +36,8 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         val rootObjectBuilder = TypeSpec.objectBuilder(objectName)
         val fileSpecBuilder = FileSpec.builder(modelApi.packagePath, objectName).addFileComment(autoGenComment)
 
-        val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi.model) }
-        relevantWriters.forEach { (_, writer) -> writer.write(rootObjectBuilder, modelApi.model) }
+        val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi) }
+        relevantWriters.forEach { (_, writer) -> writer.write(rootObjectBuilder, modelApi) }
 
         fileSpecBuilder.addType(rootObjectBuilder.build()).addAnnotation(unusedAnnotation)
         val fileSpec = fileSpecBuilder.build()
@@ -55,23 +55,35 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private class ProcessIdWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.PROCESS_ID
-        override fun shouldWrite(model: BpmnModel) = true
+        override fun shouldWrite(modelApi: BpmnModelApi) = true
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val idPropertyBuilder = PropertySpec.builder("PROCESS_ID", String::class).addModifiers(KModifier.CONST)
-            val idProperty = idPropertyBuilder.initializer("\"${model.processId}\"").build()
+            val idProperty = idPropertyBuilder.initializer("\"${modelApi.model.processId}\"").build()
             builder.addProperty(idProperty)
+        }
+    }
+
+    private class ProcessEngineWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.PROCESS_ENGINE
+        override fun shouldWrite(modelApi: BpmnModelApi) = true
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val enginePropertyBuilder = PropertySpec.builder("PROCESS_ENGINE", String::class).addModifiers(KModifier.CONST)
+            val engineProperty = enginePropertyBuilder.initializer("\"${modelApi.engine.name}\"").build()
+            builder.addProperty(engineProperty)
         }
     }
 
     private inner class ElementsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.ELEMENTS
-        override fun shouldWrite(model: BpmnModel) = true
+        override fun shouldWrite(modelApi: BpmnModelApi) = true
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
-            model.flowNodes.forEach { flowNode -> elementsBuilder.addProperty(createAttribute(flowNode)) }
+            modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addProperty(createAttribute(flowNode)) }
             builder.addType(elementsBuilder.build())
         }
     }
@@ -79,11 +91,11 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private inner class MessagesWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.MESSAGES
-        override fun shouldWrite(model: BpmnModel) = model.messages.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val messagesBuilder = TypeSpec.objectBuilder("Messages")
-            model.messages.forEach { message -> messagesBuilder.addProperty(createAttribute(message)) }
+            modelApi.model.messages.forEach { message -> messagesBuilder.addProperty(createAttribute(message)) }
             builder.addType(messagesBuilder.build())
         }
     }
@@ -91,11 +103,11 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private inner class ServiceTasksWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SERVICE_TASKS
-        override fun shouldWrite(model: BpmnModel) = model.serviceTasks.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.serviceTasks.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.objectBuilder("TaskTypes")
-            model.serviceTasks.forEach { task -> tasksBuilder.addProperty(createAttribute(task)) }
+            modelApi.model.serviceTasks.forEach { task -> tasksBuilder.addProperty(createAttribute(task)) }
             builder.addType(tasksBuilder.build())
         }
     }
@@ -103,11 +115,11 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private inner class SignalsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SIGNALS
-        override fun shouldWrite(model: BpmnModel) = model.signals.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val signalsBuilder = TypeSpec.objectBuilder("Signals")
-            model.signals.forEach { signal -> signalsBuilder.addProperty(createAttribute(signal)) }
+            modelApi.model.signals.forEach { signal -> signalsBuilder.addProperty(createAttribute(signal)) }
             builder.addType(signalsBuilder.build())
         }
     }
@@ -115,11 +127,11 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private inner class VariablesWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.VARIABLES
-        override fun shouldWrite(model: BpmnModel) = model.variables.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
-            model.variables.forEach { variable -> variablesBuilder.addProperty(createAttribute(variable)) }
+            modelApi.model.variables.forEach { variable -> variablesBuilder.addProperty(createAttribute(variable)) }
             builder.addType(variablesBuilder.build())
         }
     }
@@ -127,12 +139,12 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private class ErrorsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.ERRORS
-        override fun shouldWrite(model: BpmnModel): Boolean = model.errors.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val errorsBuilder = TypeSpec.objectBuilder("Errors")
             errorsBuilder.addType(buildErrorDataClass())
-            model.errors.forEach {
+            modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
                 val instanceBuilder = PropertySpec.builder(it.getName(), ClassName("", "BpmnError"))
                 val variable = instanceBuilder.initializer("BpmnError(\"$errorName\", \"$errorCode\")")
@@ -157,12 +169,12 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     private inner class TimersWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.TIMERS
-        override fun shouldWrite(model: BpmnModel): Boolean = model.timers.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
-        override fun write(builder: TypeSpec.Builder, model: BpmnModel) {
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val timersBuilder = TypeSpec.objectBuilder("Timers")
             timersBuilder.addType(buildTimerDataClass())
-            model.timers.forEach { timer ->
+            modelApi.model.timers.forEach { timer ->
                 val (timerType, timerValue) = timer.getValue()
                 val cleanTimerValue = timerValue.escapeDollarInterpolation()
                 val instanceBuilder = PropertySpec.builder(timer.getName(), ClassName("", "BpmnTimer"))

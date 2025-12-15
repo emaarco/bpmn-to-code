@@ -6,6 +6,8 @@ import java.lang.String;
 public final class NewsletterSubscriptionProcessApiV1 {
   public static final String PROCESS_ID = "newsletterSubscription";
 
+  public static final String PROCESS_ENGINE = "ZEEBE";
+
   public static final class Elements {
     public static final String ACTIVITY_ABORT_REGISTRATION = "Activity_AbortRegistration";
 

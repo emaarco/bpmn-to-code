@@ -1,12 +1,14 @@
 package io.github.emaarco.bpmn.domain
 
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 data class BpmnModelApi(
     val model: BpmnModel,
     val outputLanguage: OutputLanguage,
     val packagePath: String,
     val apiVersion: Int?,
+    val engine: ProcessEngine,
 ) {
 
     fun fileName(): String = if (apiVersion != null) {

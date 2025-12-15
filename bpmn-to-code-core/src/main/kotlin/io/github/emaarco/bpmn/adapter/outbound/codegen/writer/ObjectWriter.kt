@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.writer
 
-import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 
 /**
@@ -15,12 +15,12 @@ interface ObjectWriter<T> {
     val objectType: ApiObjectType
 
     /**
-     * Writes the API object to the provided builder using data from the BPMN model.
+     * Writes the API object to the provided builder using data from the BPMN model API.
      */
-    fun write(builder: T, model: BpmnModel)
+    fun write(builder: T, modelApi: BpmnModelApi)
 
     /**
      * Determines if the writer should write the object to the process-api.
      */
-    fun shouldWrite(model: BpmnModel): Boolean
+    fun shouldWrite(modelApi: BpmnModelApi): Boolean
 }

@@ -9,6 +9,8 @@ import kotlin.Suppress
 object NewsletterSubscriptionProcessApiV1 {
   const val PROCESS_ID: String = "newsletterSubscription"
 
+  const val PROCESS_ENGINE: String = "ZEEBE"
+
   object Elements {
     const val ACTIVITY_ABORT_REGISTRATION: String = "Activity_AbortRegistration"
 
