@@ -1,0 +1,60 @@
+name: Feature Request
+description: Suggest a new feature or extension for bpmn-to-code
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please describe what you'd like to see and why it would be valuable.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of the feature
+      placeholder: What feature would you like to see?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: |
+        Describe the problem or need this feature addresses.
+        Focus on the behavior and outcome, not implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work?
+      placeholder: |
+        Describe how you envision this feature working.
+        What should users be able to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        What other solutions have you thought about?
+        Why would the proposed solution be better?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: Examples, screenshots, links to similar features in other tools, etc.
+    validations:
+      required: false

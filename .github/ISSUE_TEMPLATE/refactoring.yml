@@ -1,0 +1,81 @@
+name: Refactoring Proposal
+description: Propose a code refactoring or architectural improvement
+title: "[Refactoring] "
+labels: ["refactoring"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a refactoring! Please focus on behavior and motivation rather than specific implementation details.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of the refactoring
+      placeholder: What needs to be refactored?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: How does the code currently work?
+      placeholder: |
+        Describe the current behavior and architecture.
+        Focus on what it does, not specific file paths or line numbers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired-state
+    attributes:
+      label: Desired State
+      description: How should it work after refactoring?
+      placeholder: |
+        Describe the desired behavior and architecture.
+        What will be improved?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this refactoring needed?
+      placeholder: |
+        Examples: improve performance, enhance maintainability, reduce complexity,
+        better separation of concerns, align with architecture patterns, etc.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: breaking-changes
+    attributes:
+      label: Breaking Changes
+      description: Will this refactoring introduce breaking changes?
+      options:
+        - label: This refactoring will introduce breaking changes
+          required: false
+
+  - type: textarea
+    id: technical-overview
+    attributes:
+      label: Technical Overview
+      description: High-level approach to the refactoring
+      placeholder: |
+        Provide a high-level overview of the approach.
+        Avoid specific file names, line numbers, or code paths.
+        Focus on the overall strategy and key changes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: Related issues, benchmarks, architectural diagrams, etc.
+    validations:
+      required: false
