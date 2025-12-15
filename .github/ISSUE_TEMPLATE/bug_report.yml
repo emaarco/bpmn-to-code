@@ -1,0 +1,115 @@
+name: Bug Report
+description: Report a bug or issue with bpmn-to-code
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please provide the following information to help us investigate.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of the bug
+      placeholder: What's wrong?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build-tool
+    attributes:
+      label: Build Tool
+      description: Which build tool are you using?
+      options:
+        - Gradle
+        - Maven
+        - Web (direct API usage)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+      description: What version of bpmn-to-code are you using?
+      placeholder: e.g., 1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: process-engine
+    attributes:
+      label: Process Engine
+      description: Which process engine are you targeting?
+      options:
+        - Camunda 7
+        - Zeebe
+        - Not applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: bpmn-model
+    attributes:
+      label: BPMN Model
+      description: Provide relevant details about your BPMN file (structure, elements, etc.) or attach the BPMN file
+      placeholder: |
+        Describe the BPMN process or paste relevant XML snippets.
+        You can also drag and drop BPMN files here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Configuration
+      description: Plugin configuration used (output language, package path, etc.)
+      placeholder: |
+        Example:
+        outputLanguage: KOTLIN
+        packagePath: com.example.api
+        processEngine: CAMUNDA_7
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+      placeholder: Describe what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: Describe what actually happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-output
+    attributes:
+      label: Error Output
+      description: Stack traces, build logs, or error messages
+      placeholder: |
+        Paste error output, stack traces, or build logs here.
+        Use code blocks for better readability.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: Screenshots, workarounds, related issues, etc.
+    validations:
+      required: false
