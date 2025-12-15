@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
@@ -34,11 +35,13 @@ fun testBpmnModelApi(
     apiVersion: Int? = 1,
     packagePath: String = "packagePath",
     language: OutputLanguage = OutputLanguage.KOTLIN,
+    engine: ProcessEngine = ProcessEngine.ZEEBE,
 ) = BpmnModelApi(
     model = model,
     apiVersion = apiVersion,
     packagePath = packagePath,
     outputLanguage = language,
+    engine = engine,
 )
 
 fun testNewsletterBpmnModel(

@@ -77,7 +77,8 @@ class GenerateProcessApiService(
             model = model,
             outputLanguage = command.outputLanguage,
             packagePath = command.packagePath,
-            apiVersion = apiVersion
+            apiVersion = apiVersion,
+            engine = command.engine
         )
     }
 

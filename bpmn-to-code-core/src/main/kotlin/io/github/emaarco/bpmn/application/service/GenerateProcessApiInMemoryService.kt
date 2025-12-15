@@ -41,6 +41,7 @@ class GenerateProcessApiInMemoryService(
         outputLanguage = command.outputLanguage,
         packagePath = command.packagePath,
         apiVersion = null,
+        engine = command.engine,
     )
 
     private fun toBpmnFiles(
