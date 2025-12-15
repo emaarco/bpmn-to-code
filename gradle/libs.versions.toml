@@ -13,7 +13,7 @@ mockk = "1.14.7"
 ant = "1.10.15"
 ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
-logback = "1.5.21"
+logback = "1.5.22"
 
 [libraries]
 # Plugin dependencies
