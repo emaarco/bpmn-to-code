@@ -45,26 +45,26 @@ fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
     testVariableForTimer: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
-        FlowNodeDefinition("Timer_EveryDay"),
-        FlowNodeDefinition("Timer_After3Days"),
-        FlowNodeDefinition("ErrorEvent_InvalidMail"),
+        FlowNodeDefinition("Activity_AbortRegistration"),
         FlowNodeDefinition("Activity_ConfirmRegistration"),
-        FlowNodeDefinition("SubProcess_Confirmation"),
+        FlowNodeDefinition("Activity_SendConfirmationMail"),
+        FlowNodeDefinition("Activity_SendWelcomeMail"),
         FlowNodeDefinition("EndEvent_RegistrationAborted"),
-        FlowNodeDefinition("EndEvent_SubscriptionConfirmed"),
         FlowNodeDefinition("EndEvent_RegistrationCompleted"),
         FlowNodeDefinition("EndEvent_RegistrationNotPossible"),
-        FlowNodeDefinition("Activity_AbortRegistration"),
-        FlowNodeDefinition("Activity_SendWelcomeMail"),
-        FlowNodeDefinition("Activity_SendConfirmationMail"),
+        FlowNodeDefinition("EndEvent_SubscriptionConfirmed"),
+        FlowNodeDefinition("ErrorEvent_InvalidMail"),
+        FlowNodeDefinition("StartEvent_RequestReceived"),
         FlowNodeDefinition("StartEvent_SubmitRegistrationForm"),
-        FlowNodeDefinition("StartEvent_RequestReceived")
+        FlowNodeDefinition("SubProcess_Confirmation"),
+        FlowNodeDefinition("Timer_After3Days"),
+        FlowNodeDefinition("Timer_EveryDay")
     ),
     serviceTasks: List<ServiceTaskDefinition> = listOf(
-        ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted"),
-        ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
+        ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail"),
         ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
-        ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail")
+        ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
+        ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
     ),
     messages: List<MessageDefinition> = listOf(
         MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
@@ -77,8 +77,8 @@ fun testNewsletterBpmnModel(
         ErrorDefinition("Error_InvalidMail", "Error_InvalidMail", "500")
     ),
     timers: List<TimerDefinition> = listOf(
-        TimerDefinition("Timer_EveryDay", "Duration", "PT1M"),
-        TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer)
+        TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),
+        TimerDefinition("Timer_EveryDay", "Duration", "PT1M")
     ),
     variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
 ) = testBpmnModel(
