@@ -12,12 +12,11 @@ class ModelMergerService {
      * @return A list of merged BPMN models with sorted elements
      */
     fun mergeModels(models: List<BpmnModel>): List<BpmnModel> {
-        val modelsPerProcessId = models.groupBy { it.processId }
-        val (singleModels, modelsThatRequireMerging) = modelsPerProcessId.entries.partition { it.value.size == 1 }
-        val modelsThatDontRequireMerging = singleModels.flatMap { it.value }.map { it.sortContent() }
-        val mergedModels = modelsThatRequireMerging.map { mergeModelsWithSameProcessId(it.key, it.value).sortContent() }
-        val allModels = mergedModels + modelsThatDontRequireMerging
-        return allModels.sortContent()
+        val modelsPerProcess = models.groupBy { it.processId }
+        return modelsPerProcess.map { (processId, modelList) ->
+            val mergedModels = mergeModelsWithSameProcessId(processId, modelList)
+            mergedModels.sortContent()
+        }
     }
 
     private fun mergeModelsWithSameProcessId(processId: String, models: List<BpmnModel>): BpmnModel {
