@@ -1,0 +1,66 @@
+/* Custom styling for bpmn-to-code docs */
+
+/* Code blocks with better BPMN/Kotlin/Java highlighting */
+.highlight .kt { color: #bb60d5; }  /* Kotlin types */
+.highlight .kd { color: #c792ea; }  /* Kotlin keywords */
+
+/* Admonition customization */
+.md-typeset .admonition.info {
+  border-left-color: #448aff;
+}
+
+/* Custom styling for Process API examples */
+.process-api-example {
+  border-left: 4px solid #4caf50;
+  padding-left: 1rem;
+  margin: 1rem 0;
+}
+
+/* Badge styling for engine/language indicators */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-camunda { background-color: #fc5d0d; color: white; }
+.badge-zeebe { background-color: #00b0ff; color: white; }
+.badge-operaton { background-color: #673ab7; color: white; }
+.badge-kotlin { background-color: #7f52ff; color: white; }
+.badge-java { background-color: #007396; color: white; }
+
+/* Enhanced navigation */
+.md-nav__item--active > .md-nav__link {
+  font-weight: bold;
+}
+
+/* Better table styling */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.25rem;
+}
+
+/* Code copy button enhancement */
+.md-clipboard {
+  transition: opacity 0.2s;
+}
+
+.md-clipboard:hover {
+  opacity: 1;
+}
+
+/* Improve spacing for admonitions */
+.md-typeset .admonition {
+  margin: 1.5625em 0;
+}
+
+/* Custom footer styling */
+.md-footer {
+  margin-top: 2rem;
+}

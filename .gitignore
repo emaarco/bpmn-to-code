@@ -7,3 +7,18 @@ bin
 .DS_Store
 target
 .claude
+
+# MkDocs
+docs-module/site/**
+docs-module/docs/api-reference/core/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+docs-module/venv/
+venv/
+env/
+ENV/
+.venv

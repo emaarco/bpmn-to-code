@@ -1,0 +1,193 @@
+# Project information
+site_name: bpmn-to-code Documentation
+site_url: https://emaarco.github.io/bpmn-to-code/
+site_author: Marco Schäck
+site_description: >-
+  Automated type-safe API generation from BPMN process models.
+  Generate Kotlin and Java code from Camunda 7, Zeebe, and Operaton processes.
+
+# Repository
+repo_name: emaarco/bpmn-to-code
+repo_url: https://github.com/emaarco/bpmn-to-code
+edit_uri: edit/main/docs-module/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025 Marco Schäck
+
+# Build directories
+site_dir: site
+
+# Configuration
+theme:
+  name: material
+  # custom_dir: docs/overrides  # TODO: Add custom overrides later
+  language: en
+
+  # Color scheme
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  # Features
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tooltips
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+
+  # Icons
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+  # Logo and favicon (TODO: Add actual logo and favicon files)
+  # logo: assets/logo.png
+  # favicon: assets/favicon.png
+
+  # Font
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+# Extensions
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+      fallback_to_build_date: true
+      enable_git_follow: false
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true
+  - redirects:
+      redirect_maps: { }
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+      skip_classes:
+        - custom-skip-class-name
+      auto_caption: false
+      caption_position: bottom
+
+# Extra
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/emaarco/bpmn-to-code
+      name: GitHub Repository
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/emaarco/bpmn-to-code-web
+      name: Docker Hub
+    - icon: fontawesome/brands/medium
+      link: https://medium.com/miragon
+      name: Blog on Medium
+
+# Page tree
+nav:
+  - Home: index.md
+  - Gradle: gradle.md
+  - Maven: maven.md
+  - Web: web.md
+  - Architecture: architecture.md
+  - Contributing: contributing.md
+
+# Additional CSS and JavaScript
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js

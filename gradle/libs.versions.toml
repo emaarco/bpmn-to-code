@@ -14,6 +14,7 @@ ant = "1.10.15"
 ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
 logback = "1.5.22"
+dokka = "1.9.20"
 
 [libraries]
 # Plugin dependencies
@@ -54,3 +55,4 @@ gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
