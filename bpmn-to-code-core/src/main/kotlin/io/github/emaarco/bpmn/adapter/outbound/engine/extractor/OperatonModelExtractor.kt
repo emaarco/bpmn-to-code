@@ -14,6 +14,7 @@ import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
+import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
@@ -96,8 +97,10 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
         val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
-        val variableNames = extractInputAndOutputVariables(extensions)
-        return variableNames.distinct().map { VariableDefinition(it) }
+        val ioVariableNames = extractInputAndOutputVariables(extensions)
+        val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
+        val allVariableNames = ioVariableNames + multiInstanceVariableNames
+        return allVariableNames.distinct().map { VariableDefinition(it) }
     }
 
     private fun extractInputAndOutputVariables(
@@ -108,6 +111,15 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
         val variableNames = eitherInputOrOutput.map { it.getAttribute("name") }
         return variableNames.filterNot { it.isNullOrBlank() }
+    }
+
+    private fun extractMultiInstanceVariables(
+        nodes: Collection<FlowNode>
+    ): List<String> {
+        val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
+        val elementVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "elementVariable") }
+        val collectionVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "collection") }
+        return elementVariables + collectionVariables
     }
 
 }

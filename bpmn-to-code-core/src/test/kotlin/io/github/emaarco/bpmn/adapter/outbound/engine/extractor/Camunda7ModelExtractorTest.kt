@@ -31,4 +31,18 @@ class Camunda7ModelExtractorTest {
             )
         )
     }
+
+    @Test
+    fun `extract returns multi-instance variables`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-multi-instance.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
+            VariableDefinition("test"),
+            VariableDefinition("authors"),
+            VariableDefinition("author"),
+            VariableDefinition("subscribers"),
+            VariableDefinition("subscriber"),
+        )
+    }
 }
