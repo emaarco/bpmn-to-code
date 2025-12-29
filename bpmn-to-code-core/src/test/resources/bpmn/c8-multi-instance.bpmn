@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_180pfvm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.42.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="sendNewsletter" isExecutable="true">
+    <bpmn:startEvent id="startEvent_editionCreated" name="Newsletter edition created">
+      <bpmn:outgoing>Flow_0bianz5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0bianz5" sourceRef="startEvent_editionCreated" targetRef="serviceTask_loadSubscribers" />
+    <bpmn:serviceTask id="serviceTask_loadSubscribers" name="Load subscribers">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="newsletter.loadSubscribers" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=subscribers" target="subscribers" />
+          <zeebe:output source="=author" target="author" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bianz5</bpmn:incoming>
+      <bpmn:outgoing>Flow_04andb8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_04andb8" sourceRef="serviceTask_loadSubscribers" targetRef="serviceTask_sendToSubscriber" />
+    <bpmn:serviceTask id="serviceTask_sendToSubscriber" name="Send to subscriber">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="newsletter.sendMailToSubscriber" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04andb8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ruayvl</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=subscribers" inputElement="subscriber" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="endEvent_editionSent" name="Newsletter edition send">
+      <bpmn:incoming>Flow_0v2v55n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ruayvl" sourceRef="serviceTask_sendToSubscriber" targetRef="serviceTask_notifyAuthor" />
+    <bpmn:serviceTask id="serviceTask_notifyAuthor" name="Notify authors">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="newsletter.notifyAuthors" />
+        <zeebe:ioMapping>
+          <zeebe:input source="null" target="test" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ruayvl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v2v55n</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=authors" inputElement="author" outputCollection="results" outputElement="=result" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0v2v55n" sourceRef="serviceTask_notifyAuthor" targetRef="endEvent_editionSent" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sendNewsletter">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="startEvent_editionCreated">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="145" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0egtgj0_di" bpmnElement="serviceTask_loadSubscribers">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mmvsvx_di" bpmnElement="serviceTask_sendToSubscriber">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nlgapd_di" bpmnElement="endEvent_editionSent">
+        <dc:Bounds x="702" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="677" y="145" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o94zo3_di" bpmnElement="serviceTask_notifyAuthor">
+        <dc:Bounds x="550" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0bianz5_di" bpmnElement="Flow_0bianz5">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04andb8_di" bpmnElement="Flow_04andb8">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ruayvl_di" bpmnElement="Flow_1ruayvl">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="550" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v2v55n_di" bpmnElement="Flow_0v2v55n">
+        <di:waypoint x="650" y="120" />
+        <di:waypoint x="702" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

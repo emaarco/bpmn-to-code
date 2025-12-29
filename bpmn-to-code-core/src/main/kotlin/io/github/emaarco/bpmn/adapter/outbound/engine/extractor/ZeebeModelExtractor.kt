@@ -14,6 +14,7 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.FlowNode
+import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.InputStream
@@ -63,8 +64,10 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
         val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "ioMapping") }
-        val variableNames = extractInputAndOutputVariables(extensions)
-        return variableNames.distinct().map { VariableDefinition(it) }
+        val inputOutputVariables = extractInputAndOutputVariables(extensions)
+        val multiInstanceVariables = extractMultiInstanceVariables(flowNodes)
+        val allVariables = inputOutputVariables + multiInstanceVariables
+        return allVariables.distinct().map { VariableDefinition(it) }
     }
 
     private fun extractInputAndOutputVariables(
@@ -75,6 +78,20 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
         val variableNames = eitherInputOrOutput.map { it.getAttribute("target") }
         return variableNames.filterNot { it.isNullOrBlank() }
+    }
+
+    private fun extractMultiInstanceVariables(
+        nodes: Collection<FlowNode>
+    ): List<String> {
+        val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
+        val allExtensions = loops.flatMap { it.extensionElements.elementsQuery.list() }
+        val loopCharacteristics = allExtensions.filter { it.elementType.typeName == "loopCharacteristics" }
+        val inputElements = loopCharacteristics.map { it.domElement.getAttribute("inputElement") }
+        val inputCollections = loopCharacteristics.map { it.domElement.getAttribute("inputCollection") }
+        val outputElements = loopCharacteristics.mapNotNull { it.domElement.getAttribute("outputElement") }
+        val outputCollections = loopCharacteristics.mapNotNull { it.domElement.getAttribute("outputCollection") }
+        val allLoopVariables = inputElements + inputCollections + outputElements + outputCollections
+        return allLoopVariables.map { it.removePrefix("=") }
     }
 
 }

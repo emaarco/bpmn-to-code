@@ -32,4 +32,17 @@ class OperatonModelExtractorTest {
         )
     }
 
+    @Test
+    fun `extract returns multi-instance variables`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-multi-instance.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
+            VariableDefinition("authors"),
+            VariableDefinition("author"),
+            VariableDefinition("subscribers"),
+            VariableDefinition("subscriber"),
+        )
+    }
+
 }
