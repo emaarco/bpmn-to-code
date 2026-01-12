@@ -4,16 +4,16 @@
 [versions]
 kotlin = "2.3.0"
 kotlinpoet = "2.2.0"
-javapoet = "0.9.0"
+javapoet = "0.10.0"
 camunda = "7.24.0"
-jUnit = "6.0.1"
+jUnit = "6.0.2"
 assertJ = "4.0.0-M1"
-junitPlatformLauncher = "6.0.1"
+junitPlatformLauncher = "6.0.2"
 mockk = "1.14.7"
 ant = "1.10.15"
 ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
-logback = "1.5.23"
+logback = "1.5.24"
 
 [libraries]
 # Plugin dependencies
