@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.g
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -119,7 +120,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
         val elementVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "elementVariable") }
         val collectionVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "collection") }
-        return elementVariables + collectionVariables
+        val allVariables = elementVariables + collectionVariables
+        return allVariables.map { it.removeExpressionSyntax() }
     }
 
 }

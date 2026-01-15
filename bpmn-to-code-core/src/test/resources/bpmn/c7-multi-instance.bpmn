@@ -19,7 +19,7 @@
     <bpmn:serviceTask id="serviceTask_sendToSubscriber" name="Send to subscriber" camunda:type="external" camunda:topic="newsletter.sendMailToSubscriber">
       <bpmn:incoming>Flow_04andb8</bpmn:incoming>
       <bpmn:outgoing>Flow_1ruayvl</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="subscribers" camunda:elementVariable="subscriber" />
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="${subscribers}" camunda:elementVariable="subscriber" />
     </bpmn:serviceTask>
     <bpmn:endEvent id="endEvent_editionSent" name="Newsletter edition send">
       <bpmn:incoming>Flow_0v2v55n</bpmn:incoming>
@@ -34,22 +34,22 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ruayvl</bpmn:incoming>
       <bpmn:outgoing>Flow_0v2v55n</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:collection="authors" camunda:elementVariable="author" />
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${authors}" camunda:elementVariable="author" />
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sendNewsletter">
-      <bpmndi:BPMNShape id="Activity_0egtgj0_di" bpmnElement="serviceTask_loadSubscribers">
-        <dc:Bounds x="270" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0mmvsvx_di" bpmnElement="serviceTask_sendToSubscriber">
-        <dc:Bounds x="410" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="startEvent_editionCreated">
         <dc:Bounds x="182" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="157" y="145" width="88" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0egtgj0_di" bpmnElement="serviceTask_loadSubscribers">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mmvsvx_di" bpmnElement="serviceTask_sendToSubscriber">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1nlgapd_di" bpmnElement="endEvent_editionSent">
         <dc:Bounds x="702" y="102" width="36" height="36" />

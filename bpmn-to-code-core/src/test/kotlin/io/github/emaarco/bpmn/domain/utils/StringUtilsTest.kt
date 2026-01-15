@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.domain.utils
 
+import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -41,5 +42,18 @@ class StringUtilsTest {
     fun `toUpperSnakeCase handles already uppercase strings`() {
         assertThat("ALREADY_UPPERCASE".toUpperSnakeCase()).isEqualTo("ALREADY_UPPERCASE")
         assertThat("SEND_MAIL".toUpperSnakeCase()).isEqualTo("SEND_MAIL")
+    }
+
+    @Test
+    fun `removeExpressionSyntax strips expression wrappers`() {
+        assertThat("nothing").isEqualTo("nothing")
+        assertThat("\${authors}".removeExpressionSyntax()).isEqualTo("authors")
+        assertThat("#{sendMailDelegate}".removeExpressionSyntax()).isEqualTo("sendMailDelegate")
+    }
+
+    @Test
+    fun `removeExpressionSyntax leaves normal strings unchanged`() {
+        assertThat("normalString".removeExpressionSyntax()).isEqualTo("normalString")
+        assertThat("someVariable".removeExpressionSyntax()).isEqualTo("someVariable")
     }
 }
