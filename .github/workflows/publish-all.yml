@@ -11,12 +11,10 @@ jobs:
 
   publish-maven:
     name: Publish to Maven Central
-    needs: publish-gradle
     uses: ./.github/workflows/publish-to-maven.yml
     secrets: inherit
 
   publish-docker:
     name: Publish to Docker Hub
-    needs: publish-maven
     uses: ./.github/workflows/publish-to-docker.yml
     secrets: inherit
