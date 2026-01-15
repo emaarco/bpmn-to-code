@@ -1,7 +1,7 @@
 package io.github.emaarco.bpmn.domain.utils
 
+import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
-
 
 object StringUtils {
 
@@ -20,6 +20,20 @@ object StringUtils {
             .replace(Regex("(?<=[0-9])(?=[a-zA-Z])"), "_")
             .replace(Regex("(?<=[a-z])(?=[A-Z])"), "_")
             .uppercase()
+    }
+
+    /**
+     * BPMN process variables are often referenced using ${variableName} or #{beanName} syntax.
+     * These special characters ($, #, {, }) are invalid in generated code identifiers like class- or property names
+     * This function strips the expression wrapper while preserving the core identifier.
+     *
+     * @return The string with expression language syntax removed
+     * @sample removeExpressionSyntax("${authors}") returns "authors"
+     * @sample removeExpressionSyntax("#{sendMailDelegate}") returns "sendMailDelegate"
+     * @sample removeExpressionSyntax("normalString") returns "normalString"
+     */
+    fun String.removeExpressionSyntax(): String {
+        return this.replace(Regex("[#\${}]"), "")
     }
 }
 
