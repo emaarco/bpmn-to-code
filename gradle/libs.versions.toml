@@ -13,7 +13,7 @@ mockk = "1.14.7"
 ant = "1.10.15"
 ktor = "3.3.3"
 kotlinxSerialization = "1.9.0"
-logback = "1.5.24"
+logback = "1.5.25"
 
 [libraries]
 # Plugin dependencies
@@ -52,5 +52,5 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
