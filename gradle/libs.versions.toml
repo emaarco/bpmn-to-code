@@ -11,9 +11,9 @@ assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.2"
 mockk = "1.14.7"
 ant = "1.10.15"
-ktor = "3.3.3"
-kotlinxSerialization = "1.9.0"
-logback = "1.5.25"
+ktor = "3.4.0"
+kotlinxSerialization = "1.10.0"
+logback = "1.5.26"
 
 [libraries]
 # Plugin dependencies
