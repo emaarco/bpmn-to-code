@@ -3,11 +3,10 @@ package io.github.emaarco.bpmn.web.service
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.web.model.GenerateRequest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class WebGenerationServiceTest {
 
@@ -17,7 +16,7 @@ class WebGenerationServiceTest {
     fun `should generate Kotlin API from BPMN file`() {
         // Get sample BPMN from test resources
         val bpmnFile = File("../bpmn-to-code-core/src/test/resources/bpmn/c8-newsletter.bpmn")
-        assertTrue(bpmnFile.exists(), "Sample BPMN file should exist")
+        assertThat(bpmnFile.exists()).describedAs("Sample BPMN file should exist").isTrue()
 
         val bpmnContent = bpmnFile.readBytes()
         val base64Content = Base64.getEncoder().encodeToString(bpmnContent)
@@ -39,14 +38,14 @@ class WebGenerationServiceTest {
         val response = service.generate(request)
 
         // Verify
-        assertTrue(response.success, "Generation should succeed")
-        assertTrue(response.files.isNotEmpty(), "Should generate at least one file")
-        assertEquals(response.error, null, "Should not have errors")
+        assertThat(response.success).describedAs("Generation should succeed").isTrue()
+        assertThat(response.files).describedAs("Should generate at least one file").isNotEmpty()
+        assertThat(response.error).describedAs("Should not have errors").isNull()
 
         val generatedFile = response.files.first()
-        assertTrue(generatedFile.fileName.endsWith(".kt"), "Should generate Kotlin file")
-        assertTrue(generatedFile.content.contains("object"), "Should contain Kotlin object declaration")
-        assertTrue(generatedFile.content.contains("newsletterSubscription"), "Should contain process ID")
+        assertThat(generatedFile.fileName).describedAs("Should generate Kotlin file").endsWith(".kt")
+        assertThat(generatedFile.content).describedAs("Should contain Kotlin object declaration").contains("object")
+        assertThat(generatedFile.content).describedAs("Should contain process ID").contains("newsletterSubscription")
 
         println("Generated file: ${generatedFile.fileName}")
         println("Content preview: ${generatedFile.content.take(200)}...")
@@ -73,12 +72,12 @@ class WebGenerationServiceTest {
 
         val response = service.generate(request)
 
-        assertTrue(response.success)
-        assertTrue(response.files.isNotEmpty())
+        assertThat(response.success).isTrue()
+        assertThat(response.files).isNotEmpty()
 
         val generatedFile = response.files.first()
-        assertTrue(generatedFile.fileName.endsWith(".java"), "Should generate Java file")
-        assertTrue(generatedFile.content.contains("class"), "Should contain Java class declaration")
+        assertThat(generatedFile.fileName).describedAs("Should generate Java file").endsWith(".java")
+        assertThat(generatedFile.content).describedAs("Should contain Java class declaration").contains("class")
     }
 
     @Test
@@ -98,9 +97,9 @@ class WebGenerationServiceTest {
 
         val response = service.generate(request)
 
-        assertEquals(false, response.success)
-        assertTrue(response.error != null)
-        assertTrue(response.files.isEmpty())
+        assertThat(response.success).isFalse()
+        assertThat(response.error).isNotNull()
+        assertThat(response.files).isEmpty()
     }
 
     @Test
@@ -127,8 +126,8 @@ class WebGenerationServiceTest {
 
         val response = service.generate(request)
 
-        assertTrue(response.success, "Should successfully process 3 files")
-        assertTrue(response.files.isNotEmpty(), "Should generate at least one API file")
-        assertEquals(response.error, null)
+        assertThat(response.success).describedAs("Should successfully process 3 files").isTrue()
+        assertThat(response.files).describedAs("Should generate at least one API file").isNotEmpty()
+        assertThat(response.error).isNull()
     }
 }
