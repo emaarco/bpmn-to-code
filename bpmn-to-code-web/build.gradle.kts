@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.logbackClassic)
 
     // Testing
+    testImplementation(kotlin("test"))
     testImplementation(libs.bundles.testing)
     testImplementation(libs.ktorServerTestHost)
     testRuntimeOnly(libs.junitPlatformLauncher)
