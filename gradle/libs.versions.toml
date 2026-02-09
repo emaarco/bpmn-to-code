@@ -2,9 +2,9 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 kotlinpoet = "2.2.0"
-javapoet = "0.10.0"
+javapoet = "0.11.0"
 camunda = "7.24.0"
 jUnit = "6.0.2"
 assertJ = "4.0.0-M1"
@@ -13,7 +13,7 @@ mockk = "1.14.9"
 ant = "1.10.15"
 ktor = "3.4.0"
 kotlinxSerialization = "1.10.0"
-logback = "1.5.27"
+logback = "1.5.28"
 
 [libraries]
 # Plugin dependencies
