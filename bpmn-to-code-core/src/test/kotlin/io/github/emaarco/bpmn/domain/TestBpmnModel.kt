@@ -48,7 +48,7 @@ fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
     testVariableForTimer: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
-        FlowNodeDefinition("Activity_AbortRegistration"),
+        FlowNodeDefinition("CallActivity_AbortRegistration"),
         FlowNodeDefinition("Activity_ConfirmRegistration"),
         FlowNodeDefinition("Activity_SendConfirmationMail"),
         FlowNodeDefinition("Activity_SendWelcomeMail"),
@@ -66,7 +66,6 @@ fun testNewsletterBpmnModel(
     serviceTasks: List<ServiceTaskDefinition> = listOf(
         ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail"),
         ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
-        ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
         ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
     ),
     messages: List<MessageDefinition> = listOf(

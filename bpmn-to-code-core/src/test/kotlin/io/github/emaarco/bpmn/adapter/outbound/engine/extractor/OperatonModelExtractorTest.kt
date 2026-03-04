@@ -23,7 +23,6 @@ class OperatonModelExtractorTest {
                     VariableDefinition("subscriptionId")
                 ),
                 serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
                     ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail"),
                     ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
