@@ -4,14 +4,14 @@
 [versions]
 kotlin = "2.3.10"
 kotlinpoet = "2.2.0"
-javapoet = "0.11.0"
+javapoet = "0.12.0"
 camunda = "7.24.0"
 jUnit = "6.0.3"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.3"
 mockk = "1.14.9"
 ant = "1.10.15"
-ktor = "3.4.0"
+ktor = "3.4.1"
 kotlinxSerialization = "1.10.0"
 logback = "1.5.32"
 
@@ -50,7 +50,7 @@ ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "kt
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
+gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.1.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
