@@ -16,27 +16,6 @@ updates:
           - "minor"
           - "major"
 
-  # Config for backend-dependencies
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    groups:
-      backend-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "patch"
-          - "minor"
-          - "major"
-
-  # Config for Docker Compose dependencies
-  - package-ecosystem: "docker-compose"
-    directories:
-      - "/stack"
-    schedule:
-      interval: "monthly"
-
   # Config for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
