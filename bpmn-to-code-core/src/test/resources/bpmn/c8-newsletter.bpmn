@@ -110,7 +110,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="=subscriptionId" target="subscriptionId" />
         </zeebe:ioMapping>
-        <zeebe:calledElement processId="abort-registration" propagateAllChildVariables="false" />
+        <zeebe:calledElement processId="abort-registration" propagateAllChildVariables="false" propagateAllParentVariables="false" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
@@ -135,9 +135,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="156" y="345" width="88" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t4yzy7_di" bpmnElement="CallActivity_AbortRegistration">
-        <dc:Bounds x="820" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1gbt6dx_di" bpmnElement="SubProcess_Confirmation" isExpanded="true">
         <dc:Bounds x="290" y="220" width="480" height="218" />
@@ -198,6 +195,9 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="822" y="545" width="78" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1t4yzy7_di" bpmnElement="CallActivity_AbortRegistration">
+        <dc:Bounds x="820" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1yodhht_di" bpmnElement="ErrorEvent_InvalidMail">
         <dc:Bounds x="692" y="420" width="36" height="36" />

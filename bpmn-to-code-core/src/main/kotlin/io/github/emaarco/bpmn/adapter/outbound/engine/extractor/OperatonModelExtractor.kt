@@ -8,11 +8,13 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
+import org.camunda.bpm.model.bpmn.instance.CallActivity
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
@@ -38,6 +40,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val messages = modelInstance.findMessages()
         val flowNodes = modelInstance.findFlowNodes()
         val serviceTasks = getServiceTaskTypes(modelInstance)
+        val callActivities = findCallActivities(modelInstance)
         val messageSendEvents = findMessageSendEvents(modelInstance)
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
@@ -46,6 +49,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return BpmnModel(
             processId = processId,
             flowNodes = flowNodes,
+            callActivities = callActivities,
             serviceTasks = serviceTasks + messageSendEvents,
             messages = messages,
             signals = signals,
@@ -53,6 +57,16 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             timers = timers,
             variables = variables
         )
+    }
+
+    private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
+        val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
+        return callActivities.map {
+            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
+            requireNotNull(calledElement) { "calledElement cannot be null for call activity with id: $id" }
+            CallActivityDefinition(id, calledElement)
+        }
     }
 
     private fun getServiceTaskTypes(modelInstance: ModelInstance): List<ServiceTaskDefinition> {

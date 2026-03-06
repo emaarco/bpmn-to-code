@@ -19,6 +19,7 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
         ApiObjectType.PROCESS_ENGINE to ProcessEngineWriter(),
         ApiObjectType.ELEMENTS to ElementsWriter(),
+        ApiObjectType.CALL_ACTIVITIES to CallActivitiesWriter(),
         ApiObjectType.MESSAGES to MessagesWriter(),
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
         ApiObjectType.TIMERS to TimersWriter(),
@@ -79,6 +80,18 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
             val elementsBuilder = TypeSpec.classBuilder("Elements").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addField(createAttribute(flowNode)) }
             builder.addType(elementsBuilder.build())
+        }
+    }
+
+    private inner class CallActivitiesWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.CALL_ACTIVITIES
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val callActivitiesBuilder = TypeSpec.classBuilder("CallActivities").addModifiers(PUBLIC, STATIC, FINAL)
+            modelApi.model.callActivities.forEach { callActivity -> callActivitiesBuilder.addField(createAttribute(callActivity)) }
+            builder.addType(callActivitiesBuilder.build())
         }
     }
 

@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.domain.shared.*
 data class BpmnModel(
     val processId: String,
     val flowNodes: List<FlowNodeDefinition>,
+    val callActivities: List<CallActivityDefinition> = emptyList(),
     val serviceTasks: List<ServiceTaskDefinition>,
     val messages: List<MessageDefinition>,
     val signals: List<SignalDefinition>,
