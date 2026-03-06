@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.domain
 
+import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
@@ -13,6 +14,7 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 fun testBpmnModel(
     processId: String = "order",
     flowNodes: List<FlowNodeDefinition> = listOf(FlowNodeDefinition(id = "create-order")),
+    callActivities: List<CallActivityDefinition> = listOf(CallActivityDefinition(id = "call-activity", calledElement = "called-process")),
     serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", type = "taskType")),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId")),
@@ -22,6 +24,7 @@ fun testBpmnModel(
 ) = BpmnModel(
     processId = processId,
     flowNodes = flowNodes,
+    callActivities = callActivities,
     serviceTasks = serviceTasks,
     messages = messages,
     signals = signals,
@@ -47,6 +50,9 @@ fun testBpmnModelApi(
 fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
     testVariableForTimer: String = "$" + "{testVariable}",
+    callActivities: List<CallActivityDefinition> = listOf(
+        CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")
+    ),
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("CallActivity_AbortRegistration"),
         FlowNodeDefinition("Activity_ConfirmRegistration"),
@@ -86,6 +92,7 @@ fun testNewsletterBpmnModel(
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,
+    callActivities = callActivities,
     serviceTasks = serviceTasks,
     messages = messages,
     signals = signals,

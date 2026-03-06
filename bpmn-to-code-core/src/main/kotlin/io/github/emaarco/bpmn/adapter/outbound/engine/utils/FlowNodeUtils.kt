@@ -9,6 +9,15 @@ import org.camunda.bpm.model.xml.instance.ModelElementInstance
  */
 object FlowNodeUtils {
 
+    fun FlowNode.findExtensionElement(
+        type: String,
+    ): ModelElementInstance {
+        val extensions = this.findExtensionElementsWithType(type)
+        return extensions.firstOrNull() ?: throw IllegalStateException(
+            "No extension element of type $type found for flow node ${this.id}"
+        )
+    }
+
     fun FlowNode.findExtensionElementsWithType(
         type: String,
     ): List<ModelElementInstance> {

@@ -12,9 +12,15 @@ class ZeebeModelExtractorTest {
 
     @Test
     fun `extract returns valid BpmnModel`() {
+
+        // given: prepare bpmn file to be extracted
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
+
+        // when: extracting file to bpmn-model
         val bpmnModel = underTest.extract(file.inputStream())
+
+        // then: assert that the model has expected content
         assertThat(bpmnModel).isNotNull()
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(

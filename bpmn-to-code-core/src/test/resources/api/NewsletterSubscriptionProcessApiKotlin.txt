@@ -41,6 +41,10 @@ object NewsletterSubscriptionProcessApiV1 {
     const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
   }
 
+  object CallActivities {
+    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
+  }
+
   object Messages {
     const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
 
