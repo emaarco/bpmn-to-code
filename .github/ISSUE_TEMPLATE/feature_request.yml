@@ -1,60 +1,56 @@
 name: Feature Request
-description: Suggest a new feature or extension for bpmn-to-code
-title: "[Feature] "
-labels: ["enhancement"]
+description: Suggest a new feature or enhancement for bpmn-to-code
+title: "[Feature]: "
+labels:
+  - enhancement
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature! Please describe what you'd like to see and why it would be valuable.
+        Thanks for suggesting a new feature! Please describe what you'd like to see and why it would be useful.
 
   - type: textarea
     id: summary
     attributes:
       label: Summary
-      description: Brief description of the feature
-      placeholder: What feature would you like to see?
+      description: A clear and concise description of the feature you are requesting.
+      placeholder: As a developer, I want the plugin to generate type-safe constants for BPMN error codes so that I don't have to reference raw strings in my error handlers...
     validations:
       required: true
 
   - type: textarea
-    id: use-case
+    id: motivation
     attributes:
-      label: Use Case
+      label: Motivation
       description: Why is this feature needed? What problem does it solve?
-      placeholder: |
-        Describe the problem or need this feature addresses.
-        Focus on the behavior and outcome, not implementation details.
+      placeholder: Currently, error code values from BPMN error events are not included in the generated API. Referencing them as raw strings is error-prone and breaks when BPMN models are renamed.
     validations:
       required: true
 
   - type: textarea
-    id: proposed-solution
+    id: solution
     attributes:
       label: Proposed Solution
-      description: How should this feature work?
-      placeholder: |
-        Describe how you envision this feature working.
-        What should users be able to do?
+      description: How should the feature work? Include any BPMN/process-specific details.
     validations:
-      required: true
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What conditions must be met for this feature to be considered complete?
+      placeholder: |
+        - [ ] Error code values from BPMN error events appear as constants in the generated API
+        - [ ] Constants follow the existing UPPER_SNAKE_CASE naming convention
+        - [ ] Works for both Camunda 7 and Zeebe engine targets
+    validations:
+      required: false
 
   - type: textarea
     id: alternatives
     attributes:
       label: Alternatives Considered
-      description: Have you considered any alternative approaches?
-      placeholder: |
-        What other solutions have you thought about?
-        Why would the proposed solution be better?
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional Context
-      description: Any other information that might be helpful
-      placeholder: Examples, screenshots, links to similar features in other tools, etc.
+      description: Any alternative solutions or approaches you've considered?
     validations:
       required: false
