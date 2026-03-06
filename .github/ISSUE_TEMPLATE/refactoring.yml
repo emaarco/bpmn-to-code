@@ -1,19 +1,20 @@
-name: Refactoring Proposal
-description: Propose a code refactoring or architectural improvement
-title: "[Refactoring] "
-labels: [ "refactoring" ]
+name: Refactor
+description: Propose a code refactoring or structural improvement
+title: "[Refactor]: "
+labels:
+  - refactor
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for proposing a refactoring! Please focus on behavior and motivation rather than specific implementation details.
+        Thanks for proposing a refactoring! Please describe the current state, the target state, and the motivation.
 
   - type: textarea
     id: summary
     attributes:
       label: Summary
-      description: Brief description of the refactoring
-      placeholder: What needs to be refactored?
+      description: What will be refactored and why?
+      placeholder: Extract collision detection logic into a dedicated domain service so it can be tested independently from the model merger.
     validations:
       required: true
 
@@ -21,61 +22,35 @@ body:
     id: current-state
     attributes:
       label: Current State
-      description: How does the code currently work?
+      description: Describe the current implementation and its shortcomings.
       placeholder: |
-        Describe the current behavior and architecture.
-        Focus on what it does, not specific file paths or line numbers.
+        Collision detection is currently embedded inside the model merging logic. This makes it hard to test in isolation and couples two distinct responsibilities into one service.
     validations:
       required: true
 
   - type: textarea
-    id: desired-state
+    id: target-state
     attributes:
-      label: Desired State
-      description: How should it work after refactoring?
+      label: Target State
+      description: Describe what the code should look like after the refactoring.
       placeholder: |
-        Describe the desired behavior and architecture.
-        What will be improved?
+        A dedicated domain service handles collision detection and is invoked as a separate step before code generation. The model merger focuses solely on merging BPMN data.
     validations:
       required: true
 
   - type: textarea
-    id: motivation
+    id: out-of-scope
     attributes:
-      label: Motivation
-      description: Why is this refactoring needed?
-      placeholder: |
-        Examples: improve performance, enhance maintainability, reduce complexity,
-        better separation of concerns, align with architecture patterns, etc.
-    validations:
-      required: true
-
-  - type: checkboxes
-    id: breaking-changes
-    attributes:
-      label: Breaking Changes
-      description: Will this refactoring introduce breaking changes?
-      options:
-        - label: This refactoring will introduce breaking changes
-          required: false
-
-  - type: textarea
-    id: technical-overview
-    attributes:
-      label: Technical Overview
-      description: High-level approach to the refactoring
-      placeholder: |
-        Provide a high-level overview of the approach.
-        Avoid specific file names, line numbers, or code paths.
-        Focus on the overall strategy and key changes.
+      label: Out of Scope
+      description: What will NOT be changed by this refactor?
+      placeholder: The generated API output and plugin configuration options remain unchanged.
     validations:
       required: false
 
   - type: textarea
-    id: additional-context
+    id: risks
     attributes:
-      label: Additional Context
-      description: Any other information that might be helpful
-      placeholder: Related issues, benchmarks, architectural diagrams, etc.
+      label: Risks / Considerations
+      description: Any breaking changes, migration steps, or risks to be aware of?
     validations:
       required: false
