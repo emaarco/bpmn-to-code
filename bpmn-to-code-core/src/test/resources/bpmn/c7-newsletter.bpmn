@@ -102,8 +102,9 @@
     </bpmn:endEvent>
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration" calledElement="abort-registration">
       <bpmn:extensionElements>
-        <camunda:in sourceExpression="${abortionReason}" target="${abortionReason}" />
-        <camunda:out source="${abortionId}" target="${abortionId}" />
+        <camunda:in sourceExpression="${subscriptionId}" target="subscriptionIdInChild" />
+        <camunda:in source="abortionReason" target="abortionReason" />
+        <camunda:out source="abortionResultInChild" target="abortionId" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>

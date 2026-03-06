@@ -96,7 +96,11 @@ fun testNewsletterBpmnModel(
         TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),
         TimerDefinition("Timer_EveryDay", "Duration", "PT1M")
     ),
-    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
+    variables: List<VariableDefinition> = listOf(
+        VariableDefinition("subscriptionId"),
+        VariableDefinition("abortionReason"),
+        VariableDefinition("abortionId"),
+    )
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,

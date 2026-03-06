@@ -95,6 +95,10 @@ public final class NewsletterSubscriptionProcessApiV1 {
   public static final class Variables {
     public static final String SUBSCRIPTION_ID = "subscriptionId";
 
+    public static final String ABORTION_REASON = "abortionReason";
+
+    public static final String ABORTION_ID = "abortionId";
+
     public static final String TEST_VARIABLE = "testVariable";
   }
 }

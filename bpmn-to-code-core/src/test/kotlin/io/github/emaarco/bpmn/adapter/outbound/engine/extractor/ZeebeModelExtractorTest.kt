@@ -28,7 +28,8 @@ class ZeebeModelExtractorTest {
                 variables = listOf(
                     VariableDefinition("subscriptionId"),
                     VariableDefinition("testVariable"),
-                    VariableDefinition("abortionId")
+                    VariableDefinition("abortionReason"),
+                    VariableDefinition("abortionId"),
                 )
             )
         )

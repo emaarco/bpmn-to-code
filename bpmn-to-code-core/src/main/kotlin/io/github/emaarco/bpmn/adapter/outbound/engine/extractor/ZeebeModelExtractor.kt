@@ -89,11 +89,15 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
-        val allowedDefinitions = listOf("input", "output")
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
-        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
-        val variableNames = eitherInputOrOutput.map { it.getAttribute("target") }
-        return variableNames.filterNot { it.isNullOrBlank() }
+        val inputs = allElementsInContainer.filter { it.localName == "input" }
+        val outputs = allElementsInContainer.filter { it.localName == "output" }
+        val inputSources = inputs.mapNotNull { it.getAttribute("source") }
+            .filterNot { it.isBlank() }
+            .map { it.removePrefix("=") }
+        val outputTargets = outputs.mapNotNull { it.getAttribute("target") }
+            .filterNot { it.isBlank() }
+        return inputSources + outputTargets
     }
 
     private fun extractMultiInstanceVariables(

@@ -22,7 +22,9 @@ class JavaApiBuilderTest {
             model = testNewsletterBpmnModel(
                 variables = listOf(
                     VariableDefinition("subscriptionId"),
-                    VariableDefinition("testVariable")
+                    VariableDefinition("abortionReason"),
+                    VariableDefinition("abortionId"),
+                    VariableDefinition("testVariable"),
                 ),
                 serviceTasks = listOf(
                     ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),

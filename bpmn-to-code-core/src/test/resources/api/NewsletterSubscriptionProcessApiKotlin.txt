@@ -86,6 +86,10 @@ object NewsletterSubscriptionProcessApiV1 {
   object Variables {
     const val SUBSCRIPTION_ID: String = "subscriptionId"
 
+    const val ABORTION_REASON: String = "abortionReason"
+
+    const val ABORTION_ID: String = "abortionId"
+
     const val TEST_VARIABLE: String = "testVariable"
   }
 }
