@@ -30,7 +30,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val processId = modelInstance.getProcessId()
         val messages = modelInstance.findMessages()
         val flowNodes = modelInstance.findFlowNodes()
-        val serviceTasks = getServiceTaskTypes(modelInstance)
+        val serviceTasks = getServiceTaskTypes(modelInstance, processId)
         val callActivities = findCallActivities(modelInstance)
         val messageSendEvents = findMessageSendEvents(modelInstance)
         val signals = modelInstance.findSignalEventDefinitions()
@@ -60,13 +60,14 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    private fun getServiceTaskTypes(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
+    private fun getServiceTaskTypes(modelInstance: ModelInstance, processId: String): List<ServiceTaskDefinition> {
         val serviceTasks = modelInstance.getModelElementsByType(ServiceTask::class.java)
-        return serviceTasks.map { it.toServiceTask() }
+        return serviceTasks.map { it.toServiceTask(processId) }
     }
 
-    private fun ServiceTask.toServiceTask(): ServiceTaskDefinition {
+    private fun ServiceTask.toServiceTask(processId: String): ServiceTaskDefinition {
         val taskId = this.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+        requireNotNull(taskId) { "Service task in process '$processId' is missing an ID attribute" }
         val camundaTopic = this.detectWorkerType()
         return ServiceTaskDefinition(id = taskId, type = camundaTopic)
     }

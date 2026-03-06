@@ -32,7 +32,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allErrorEvents = modelInstance.findErrorEventDefinition()
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
-        val allServiceTasks = findServiceTasks(modelInstance)
+        val allServiceTasks = findServiceTasks(modelInstance, processId)
         val allCallActivities = findCallActivities(modelInstance)
         val allVariables = extractVariables(modelInstance)
         return BpmnModel(
@@ -59,12 +59,14 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    private fun findServiceTasks(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
+    private fun findServiceTasks(modelInstance: ModelInstance, processId: String): List<ServiceTaskDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
         val flowNodesWithServiceTasks = findAllServiceTaskDefinitions(flowNodes)
         return flowNodesWithServiceTasks.map { (event, taskDefinition) ->
             val id = event.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(id) { "Service task in process '$processId' is missing an ID attribute" }
             val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
+            requireNotNull(type) { "Service task '$id' in process '$processId' is missing a type (jobType) attribute" }
             ServiceTaskDefinition(id = id, type = type)
         }
     }
