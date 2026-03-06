@@ -6,7 +6,11 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(
+    because = "Task produces output based on files that can change at any time without the plugin knowing about it"
+)
 abstract class GenerateBpmnModelsTask : DefaultTask() {
 
     @Input

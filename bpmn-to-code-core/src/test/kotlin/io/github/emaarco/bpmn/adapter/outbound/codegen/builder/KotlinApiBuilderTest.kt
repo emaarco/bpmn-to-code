@@ -27,7 +27,6 @@ class KotlinApiBuilderTest {
                 serviceTasks = listOf(
                     ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
-                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
                     ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
                 )
             )

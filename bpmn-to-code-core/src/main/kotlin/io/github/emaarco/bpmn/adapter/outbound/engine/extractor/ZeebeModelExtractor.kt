@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElement
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElements
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
@@ -9,10 +10,12 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
+import org.camunda.bpm.model.bpmn.instance.CallActivity
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.xml.ModelInstance
@@ -30,10 +33,12 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
+        val allCallActivities = findCallActivities(modelInstance)
         val allVariables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
             flowNodes = allFlowNodes,
+            callActivities = allCallActivities,
             serviceTasks = allServiceTasks,
             messages = allMessages,
             signals = allSignalEvents,
@@ -41,6 +46,17 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             timers = allTimerEvents,
             variables = allVariables
         )
+    }
+
+    private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
+        val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
+        return callActivities.map { activity ->
+            val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
+            val processId = extension.getAttributeValue("processId")
+            requireNotNull(processId) { "processId cannot be null for call activity with id: $elementId" }
+            CallActivityDefinition(elementId, processId)
+        }
     }
 
     private fun findServiceTasks(modelInstance: ModelInstance): List<ServiceTaskDefinition> {

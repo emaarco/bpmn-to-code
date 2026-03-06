@@ -23,7 +23,6 @@ class Camunda7ModelExtractorTest {
                     VariableDefinition("subscriptionId")
                 ),
                 serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_AbortRegistration", "newsletter.abortRegistration"),
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
                     ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
                     ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
