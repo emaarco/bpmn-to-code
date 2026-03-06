@@ -27,7 +27,9 @@ class ZeebeModelExtractorTest {
                 testVariableForTimer = "=testVariable",
                 variables = listOf(
                     VariableDefinition("subscriptionId"),
-                    VariableDefinition("testVariable")
+                    VariableDefinition("testVariable"),
+                    VariableDefinition("abortionReason"),
+                    VariableDefinition("abortionId"),
                 )
             )
         )

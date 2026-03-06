@@ -38,7 +38,7 @@
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="newsletter.sendConfirmationMail" />
           <zeebe:ioMapping>
-            <zeebe:input source="=&#34;123&#34;" target="testVariable" />
+            <zeebe:input source="=testVariable" target="testVariable" />
             <zeebe:input source="=subscriptionId" target="subscriptionId" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
@@ -108,7 +108,9 @@
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="=subscriptionId" target="subscriptionId" />
+          <zeebe:input source="=subscriptionId" target="subscriptionIdInChild" />
+          <zeebe:input source="=abortionReason" target="abortionReason" />
+          <zeebe:output source="=abortionResultInChild" target="abortionId" />
         </zeebe:ioMapping>
         <zeebe:calledElement processId="abort-registration" propagateAllChildVariables="false" propagateAllParentVariables="false" />
       </bpmn:extensionElements>

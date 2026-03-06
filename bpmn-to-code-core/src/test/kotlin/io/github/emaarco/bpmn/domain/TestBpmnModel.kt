@@ -14,13 +14,21 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 fun testBpmnModel(
     processId: String = "order",
     flowNodes: List<FlowNodeDefinition> = listOf(FlowNodeDefinition(id = "create-order")),
-    callActivities: List<CallActivityDefinition> = listOf(CallActivityDefinition(id = "call-activity", calledElement = "called-process")),
+    callActivities: List<CallActivityDefinition> = listOf(
+        CallActivityDefinition(
+            id = "call-activity",
+            calledElement = "called-process"
+        )
+    ),
     serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", type = "taskType")),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
     timers: List<TimerDefinition> = listOf(TimerDefinition(id = "timerId", type = "timerType", value = "PT1H")),
-    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
+    variables: List<VariableDefinition> = listOf(
+        VariableDefinition("abortionId"),
+        VariableDefinition("subscriptionId"),
+    )
 ) = BpmnModel(
     processId = processId,
     flowNodes = flowNodes,
@@ -88,7 +96,11 @@ fun testNewsletterBpmnModel(
         TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),
         TimerDefinition("Timer_EveryDay", "Duration", "PT1M")
     ),
-    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
+    variables: List<VariableDefinition> = listOf(
+        VariableDefinition("subscriptionId"),
+        VariableDefinition("abortionReason"),
+        VariableDefinition("abortionId"),
+    )
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,

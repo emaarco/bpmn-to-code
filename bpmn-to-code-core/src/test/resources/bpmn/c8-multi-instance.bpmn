@@ -37,7 +37,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="newsletter.notifyAuthors" />
         <zeebe:ioMapping>
-          <zeebe:input source="null" target="test" />
+          <zeebe:input source="=test" target="test" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ruayvl</bpmn:incoming>

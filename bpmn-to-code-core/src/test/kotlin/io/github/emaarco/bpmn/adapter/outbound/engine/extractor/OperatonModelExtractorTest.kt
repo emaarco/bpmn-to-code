@@ -20,7 +20,9 @@ class OperatonModelExtractorTest {
             testNewsletterBpmnModel(
                 variables = listOf(
                     VariableDefinition("otherVariable"),
-                    VariableDefinition("subscriptionId")
+                    VariableDefinition("subscriptionId"),
+                    VariableDefinition("abortionReason"),
+                    VariableDefinition("abortionId"),
                 ),
                 serviceTasks = listOf(
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
