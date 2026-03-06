@@ -1,4 +1,7 @@
-# ADR 011: Variable Name Collision Detection
+---
+title: "ADR 011: Variable Name Collision Detection"
+description: Detecting and preventing silent data loss from ID normalization conflicts.
+---
 
 ## Status
 Accepted
@@ -24,8 +27,8 @@ Implement comprehensive collision detection that:
 
 ### Implementation
 
-- Created `CollisionDetectionService` as a dedicated domain service following hexagonal architecture to detect collisions and throw errors
-  
+Created `CollisionDetectionService` as a dedicated domain service following hexagonal architecture to detect collisions and throw errors.
+
 ## Consequences
 
 ### Positive

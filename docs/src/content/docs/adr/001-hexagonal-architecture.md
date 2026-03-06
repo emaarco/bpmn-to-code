@@ -1,4 +1,7 @@
-# ADR 002: Hexagonal Architecture (Ports & Adapters)
+---
+title: "ADR 001: Hexagonal Architecture (Ports & Adapters)"
+description: Clean architecture with ports and adapters for separation of concerns.
+---
 
 ## Status
 Accepted

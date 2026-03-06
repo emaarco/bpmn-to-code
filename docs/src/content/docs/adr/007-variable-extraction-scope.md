@@ -1,4 +1,7 @@
-# ADR 007: Variable Extraction Scope - Explicit Definitions Only
+---
+title: "ADR 007: Variable Extraction Scope — Explicit Definitions Only"
+description: Only extracting variables from explicit I/O mappings, not from expressions.
+---
 
 ## Status
 Accepted
@@ -51,16 +54,11 @@ Extract **only explicitly defined variables** from `camunda:inputOutput` / `zeeb
 
 **Extract variables from expressions** (Rejected)
 - Pros: More complete variable list
-- Cons:
-  - Parses complex expression languages (JUEL, FEEL)
-  - Includes variables that may not actually exist in process context
-  - Breaks BPMN as single source of truth
-  - Hides poor modeling practices
+- Cons: Parses complex expression languages (JUEL, FEEL), includes variables that may not exist in process context, breaks BPMN as single source of truth
 
-**Hybrid approach - explicit + annotated expressions** (Deferred)
+**Hybrid approach — explicit + annotated expressions** (Deferred)
 - Could add optional expression parsing behind feature flag
 - Complexity doesn't justify benefit currently
-- Can revisit if user demand emerges
 
 ## Implementation
 - **Camunda 7**: `Camunda7ModelExtractor.extractVariables()` scans `camunda:inputOutput` → `inputParameter`/`outputParameter` elements

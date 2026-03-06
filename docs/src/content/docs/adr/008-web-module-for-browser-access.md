@@ -1,4 +1,7 @@
-# ADR 008: Web Module for Browser-Based Access
+---
+title: "ADR 008: Web Module for Browser-Based Access"
+description: Strategic decision to add a web application interface to bpmn-to-code.
+---
 
 ## Status
 Accepted
@@ -25,52 +28,24 @@ The web module will:
 1. **Hosted Version**: Deploy to public URL (e.g., bpmn-to-code.miragon.io) for immediate access
 2. **Docker Image**: Publish to Docker Hub (`emaarco/bpmn-to-code-web`) for self-hosting
 
-## Rationale
-
-### Lower Entry Barrier
-- No build tool installation required
-- Access via browser with immediate feedback
-- Ideal for quick prototypes and demonstrations
-
-### Broader Reach
-- Hosted version enables immediate trial without setup
-- Increases project visibility through web presence
-
-### Enterprise Self-Hosting
-- Docker deployment keeps BPMN files within customer infrastructure
-- Addresses data security and compliance concerns
-- Enables integration with internal tools and workflows
-
-### Consistent Core Logic
-- 100% reuse of `bpmn-to-code-core` ensures identical output across all interfaces
-- Same BPMN parsing, model merging, and code generation
-- Bugs fixed once benefit all modules
-
 ## Consequences
 
 ### Positive
 - **Accessibility**: Users can try bpmn-to-code immediately without installation
 - **Adoption**: Hosted version lowers friction for new users discovering the project
 - **Flexibility**: Three deployment options (hosted, self-hosted Docker, build plugins) fit different use cases
-- **Visibility**: Web presence increases project awareness and community growth
-- 
-### Negative
-- **Maintenance overhead**: Additional module requires ongoing maintenance and bug fixes
-- **Infrastructure costs**: Hosted version requires server hosting and monitoring
-- **Support burden**: More user touchpoints means more support requests
-- **Security considerations**: Web interface must validate inputs and prevent abuse
+- **Consistent Core Logic**: 100% reuse of `bpmn-to-code-core` ensures identical output across all interfaces
 
-### Neutral
-- **Scope expansion**: Project evolves from "build plugins" to "code generation tool with multiple interfaces"
-- **Documentation split**: Need separate docs for web, Gradle, and Maven users
+### Negative
+- **Maintenance overhead**: Additional module requires ongoing maintenance
+- **Infrastructure costs**: Hosted version requires server hosting and monitoring
+- **Security considerations**: Web interface must validate inputs and prevent abuse
 
 ## Implementation
 - Module: `bpmn-to-code-web`
 - Core dependency: Reuses `bpmn-to-code-core` via `CreateProcessApiInMemoryPlugin`
 - Backend: See ADR 009 for technology choice
 - Deployment: Docker image built via Gradle task, pushed to Docker Hub
-- Hosting: Deployed to `bpmn-to-code.miragon.io` (work in progress)
 
 ## Related ADRs
-- ADR 009: Ktor with Static Frontend (Single Module) - Technical implementation decision
-
+- [ADR 009: Ktor with Static Frontend](009-ktor-static-frontend-single-module) — Technical implementation decision

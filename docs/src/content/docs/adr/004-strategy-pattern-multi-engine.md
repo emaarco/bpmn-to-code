@@ -1,4 +1,7 @@
-# ADR 004: Strategy Pattern for Multi-Engine Support
+---
+title: "ADR 004: Strategy Pattern for Multi-Engine Support"
+description: Using the strategy pattern to support multiple BPMN process engines.
+---
 
 ## Status
 Accepted

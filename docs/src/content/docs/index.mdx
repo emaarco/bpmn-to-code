@@ -1,0 +1,74 @@
+---
+title: bpmn-to-code
+description: Generate type-safe API definitions from BPMN process models.
+template: splash
+hero:
+  tagline: Type-safe constants for all BPMN elements. One source of truth, compile-time safety, IDE autocomplete.
+  actions:
+    - text: Gradle Plugin
+      link: /bpmn-to-code/gradle/
+      icon: right-arrow
+    - text: Maven Plugin
+      link: /bpmn-to-code/maven/
+      icon: right-arrow
+      variant: minimal
+    - text: Web Application
+      link: /bpmn-to-code/web/
+      icon: right-arrow
+      variant: minimal
+---
+
+## Why bpmn-to-code?
+
+**The Problem:** When building process automation with BPMN, developers constantly reference element IDs, messages, and task types using error-prone magic strings. When BPMN models change, finding all affected code is manual and risky.
+
+**The Solution:** bpmn-to-code generates a lightweight "Process API" — type-safe constants for all BPMN elements.
+
+## What It Generates
+
+```kotlin
+object NewsletterSubscriptionProcessApi {
+    const val PROCESS_ID: String = "newsletterSubscription"
+
+    object Elements {
+        const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
+        const val START_EVENT_SUBMIT_REGISTRATION_FORM: String = "StartEvent_SubmitRegistrationForm"
+    }
+
+    object Messages {
+        const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
+    }
+
+    object TaskTypes {
+        const val NEWSLETTER_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
+    }
+
+    object Variables {
+        const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+}
+```
+
+Use it anywhere:
+
+```kotlin
+processEngine.startProcessInstanceByKey(NewsletterSubscriptionProcessApi.PROCESS_ID)
+messageClient.publish(NewsletterSubscriptionProcessApi.Messages.MESSAGE_FORM_SUBMITTED)
+worker.handle(NewsletterSubscriptionProcessApi.TaskTypes.NEWSLETTER_SEND_WELCOME_MAIL)
+```
+
+## Key Features
+
+- **Type Safety** — Compile-time validation, no magic strings
+- **Multi-Engine** — Camunda 7, Zeebe, Operaton support
+- **Multi-Language** — Kotlin and Java code generation
+- **Build Integration** — Gradle and Maven plugins
+- **Zero Install** — Web application for browser-based generation
+- **Model Merging** — Combine BPMN variants (dev/staging/prod) into unified API
+
+## Resources
+
+- [Maven Central](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) — Maven Plugin
+- [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) — Gradle Plugin
+- [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Web Application Container
+- [GitHub](https://github.com/emaarco/bpmn-to-code) — Source code and issues

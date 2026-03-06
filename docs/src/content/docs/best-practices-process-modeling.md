@@ -1,4 +1,7 @@
-# Best Practices for Process Modeling with bpmn-to-code
+---
+title: Best Practices for Process Modeling
+description: Best practices for creating BPMN process models that work optimally with bpmn-to-code.
+---
 
 This guide provides best practices for creating BPMN process models that work optimally with `bpmn-to-code`, while also promoting clean and maintainable process automation in general.
 
@@ -59,7 +62,7 @@ When using bpmn-to-code, your element IDs and names directly shape the generated
 </zeebe:ioMapping>
 ```
 
-**Don't rely on:** 
+**Don't rely on:**
 - Variables only referenced in expressions. They will not be included in the generated API.
 ```xml
 <!-- This variable won't appear in generated API -->

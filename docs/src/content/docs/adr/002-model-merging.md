@@ -1,4 +1,7 @@
-# ADR 002: Model Merging for Environment Variants
+---
+title: "ADR 002: Model Merging for Environment Variants"
+description: Combining multiple BPMN files with the same process ID into a single unified API.
+---
 
 ## Status
 Accepted

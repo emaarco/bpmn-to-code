@@ -1,4 +1,7 @@
-# ADR 006: File-Based API Versioning
+---
+title: "ADR 006: File-Based API Versioning"
+description: Strategy for versioning generated Process APIs using a properties file.
+---
 
 ## Status
 Accepted

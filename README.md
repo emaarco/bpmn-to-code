@@ -11,6 +11,8 @@ such as generating API definition files from BPMN process models —
 to reduce manual effort, simplify testing, promote the creation of clean process models,
 and ensure consistency between your BPMN model and your code.
 
+📚 **[View Full Documentation](https://emaarco.github.io/bpmn-to-code/)** | [Quick Start Guide](https://emaarco.github.io/bpmn-to-code/getting-started/quick-start/) | [Configuration Reference](https://emaarco.github.io/bpmn-to-code/user-guide/configuration/)
+
 ## **🤩** What it can do for you
 
 **Streamlined Process Automation**
@@ -146,7 +148,7 @@ or worker definitions.
 
 ## 📋 Best Practices
 
-For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide. It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
+For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](https://emaarco.github.io/bpmn-to-code/best-practices/process-modeling/) guide. It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
 
 ## 📦 Structure
 

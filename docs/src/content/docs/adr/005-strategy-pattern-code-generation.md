@@ -1,4 +1,7 @@
-# ADR 005: Strategy Pattern for Multi-Language Code Generation
+---
+title: "ADR 005: Strategy Pattern for Multi-Language Code Generation"
+description: Using the strategy pattern to support multiple output languages (Kotlin, Java).
+---
 
 ## Status
 Accepted

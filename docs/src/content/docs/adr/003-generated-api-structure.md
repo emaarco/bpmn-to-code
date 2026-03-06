@@ -1,4 +1,7 @@
-# ADR 003: Generated API Structure and Naming
+---
+title: "ADR 003: Generated API Structure and Naming"
+description: Structure and naming conventions for generated Process APIs.
+---
 
 ## Status
 Accepted
@@ -41,7 +44,7 @@ const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
 
 Constant values preserve original BPMN identifiers unchanged. Conversion adds underscores at case boundaries and between letters/digits, then uppercases.
 
-**Service Tasks & Messages**: For consistency, constant names are derived from the semantic identifier (for instance worker type for service tasks, message name for messages) rather than technical element IDs. This makes constants more meaningful and aligned with their business purpose. Moreover it allows us to generate a distinct list, since workerTypes and messageNames may be reused in multiple elements of a process:
+**Service Tasks & Messages**: For consistency, constant names are derived from the semantic identifier (worker type for service tasks, message name for messages) rather than technical element IDs:
 
 ```kotlin
 // Service task with camunda:topic="newsletter.sendWelcomeMail"
@@ -66,7 +69,7 @@ data class BpmnTimer(val type: String, val timerValue: String)
 ## Consequences
 
 ### Positive
-- **Namespace isolation**: `Elements.TIMER` vs `Messages.TIMER` - no conflicts
+- **Namespace isolation**: `Elements.TIMER` vs `Messages.TIMER` — no conflicts
 - **IDE autocomplete**: Typing `Elements.` shows only relevant constants
 - **Standards compliance**: Eliminates IDE warnings, follows style guides
 - **Improved readability**: `TIMER_AFTER_3_DAYS` clearer than `Timer_After3Days`

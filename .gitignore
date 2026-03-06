@@ -7,3 +7,7 @@ bin
 .DS_Store
 target
 .claude
+
+# Astro docs
+docs/dist/**
+docs/node_modules/**
