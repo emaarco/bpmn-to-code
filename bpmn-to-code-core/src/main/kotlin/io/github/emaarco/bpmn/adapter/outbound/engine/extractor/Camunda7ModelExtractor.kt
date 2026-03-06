@@ -28,8 +28,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
-        val messages = modelInstance.findMessages()
-        val flowNodes = modelInstance.findFlowNodes()
+        val allMessages = modelInstance.findMessages()
+        val allFlowNodes = modelInstance.findFlowNodes()
         val serviceTasks = getServiceTaskTypes(modelInstance)
         val callActivities = findCallActivities(modelInstance)
         val messageSendEvents = findMessageSendEvents(modelInstance)
@@ -39,10 +39,10 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val variables = extractVariables(modelInstance)
         return BpmnModel(
             processId = processId,
-            flowNodes = flowNodes,
+            flowNodes = allFlowNodes,
             callActivities = callActivities,
             serviceTasks = serviceTasks + messageSendEvents,
-            messages = messages,
+            messages = allMessages,
             signals = signals,
             errors = errors,
             timers = timers,
@@ -76,7 +76,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             this.camundaTopic != null -> this.camundaTopic
             this.camundaDelegateExpression != null -> this.camundaDelegateExpression
             this.camundaClass != null -> this.camundaClass
-            else -> throw IllegalStateException("Service task '${this.id}' has no worker valid type")
+            else -> throw IllegalStateException("Service task '${this.id}' has no valid worker type")
         }
     }
 

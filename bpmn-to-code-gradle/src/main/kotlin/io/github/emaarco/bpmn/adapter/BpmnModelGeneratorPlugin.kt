@@ -8,7 +8,7 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.tasks.register("generateBpmnModelApi", GenerateBpmnModelsTask::class.java) {
             group = "BPMN"
-            description = "Generates API-files from BPMN files to interact with a process-engine‚"
+            description = "Generates API-files from BPMN files to interact with a process-engine."
         }
     }
 }

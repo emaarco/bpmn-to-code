@@ -51,7 +51,13 @@ draft. Skip this step if you already have sufficient knowledge.
 
 ### Step 4 – Draft
 
-Draft the issue using the matching template from the Templates section below.
+Read the matching issue template from `.github/ISSUE_TEMPLATE/` to get the exact sections and labels:
+
+- `feature` → `.github/ISSUE_TEMPLATE/feature_request.yml`
+- `bug`     → `.github/ISSUE_TEMPLATE/bug_report.yml`
+- `refactor` → `.github/ISSUE_TEMPLATE/refactoring.yml`
+
+Extract the `title` prefix, `labels`, and every `textarea`/`input`/`dropdown` field (`label` + `description`) from the YAML to compose the issue body. Fill each section with the information gathered in Step 2.
 
 ### Step 5 – Show and confirm
 
@@ -72,78 +78,22 @@ Using the GitHub CLI:
   gh issue reopen <number>
   ```
 
-### Step 7 – Report
+### Step 7 – Create and link a branch
+
+Only for **create-mode** (skip for updates if the issue already has a linked branch):
+
+- Branch name: `<type>/issue-<number>` — e.g. `fix/issue-39` or `feat/issue-120`
+  - Use the same `type` as the issue label (`fix` for bugs, `feat` for features, `refactor` for refactors)
+- Detect the default development branch (prefer `develop` over `main`/`master`):
+  ```bash
+  gh api repos/<owner>/<repo>/branches --jq '.[].name'
+  ```
+- Create the branch and link it to the issue:
+  ```bash
+  gh issue develop <number> --repo <owner>/<repo> --name <branch> --base <dev-branch>
+  ```
+  This creates the branch AND links it to the issue (visible in the issue's Development sidebar).
+
+### Step 8 – Report
 
 Run `gh issue view <number>` and show the final issue state with its URL.
-
----
-
-## Templates
-
-### Feature Request
-
-```
-**Title**: [Feature]: <short imperative title>
-**Label**: enhancement
-
-**Body**:
-## Summary
-<One sentence describing the desired feature>
-
-## Motivation
-<Why is this feature needed? What problem does it solve?>
-
-## Proposed Solution
-<How should the feature work? Include BPMN/process-engine details where relevant>
-
-## Acceptance Criteria
-- [ ] <criterion 1>
-- [ ] <criterion 2>
-```
-
-### Bug Report
-
-```
-**Title**: [Bug]: <short description of the broken behaviour>
-**Label**: bug
-
-**Body**:
-## Description
-<What is going wrong?>
-
-## Steps to Reproduce
-1. <step 1>
-2. <step 2>
-
-## Expected Behaviour
-<What should happen>
-
-## Actual Behaviour
-<What actually happens>
-
-## Environment
-- Plugin version:
-- Build tool: Gradle / Maven
-- Process engine: Camunda 7 / Zeebe / Operaton
-- Output language: Kotlin / Java
-```
-
-### Refactor
-
-```
-**Title**: [Refactor]: <short description of the change>
-**Label**: refactor
-
-**Body**:
-## Summary
-<What will be refactored and why?>
-
-## Current State
-<Describe the current implementation and its shortcomings>
-
-## Target State
-<Describe what the code should look like after the refactor>
-
-## Out of Scope
-<What will NOT be changed>
-```

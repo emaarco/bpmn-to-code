@@ -219,6 +219,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     }
 
     private fun String.escapeDollarInterpolation(): String {
+        // Prevent KotlinPoet from interpreting "${...}" in string literals as interpolation
         return this.replace("\${", "\\\${")
     }
 }
