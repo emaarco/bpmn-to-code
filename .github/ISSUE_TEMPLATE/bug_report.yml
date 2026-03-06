@@ -1,32 +1,49 @@
 name: Bug Report
-description: Report a bug or issue with bpmn-to-code
-title: "[Bug] "
-labels: [ "bug" ]
+description: Report a bug or unexpected behaviour in bpmn-to-code
+title: "[Bug]: "
+labels:
+  - bug
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug! Please provide the following information to help us investigate.
+        Thanks for taking the time to report a bug! Please fill in the details below to help us reproduce and fix the issue.
 
   - type: textarea
-    id: summary
+    id: description
     attributes:
-      label: Summary
-      description: Brief description of the bug
-      placeholder: What's wrong?
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: When generating code from a BPMN with multiple pools, the plugin throws an exception and no code is produced...
     validations:
       required: true
 
-  - type: dropdown
-    id: build-tool
+  - type: textarea
+    id: steps
     attributes:
-      label: Build Tool
-      description: Which build tool are you using?
-      options:
-        - Gradle
-        - Maven
-        - Web (direct API usage)
-        - Other
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the behaviour.
+      placeholder: |
+        1. Add the bpmn-to-code Gradle plugin to your build
+        2. Place a BPMN file with multiple pools under `src/main/resources`
+        3. Run `./gradlew generateProcessApi`
+        4. Observe the following error in the build output...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      description: What actually happened? Include logs, stack traces, or screenshots if relevant.
     validations:
       required: true
 
@@ -34,8 +51,19 @@ body:
     id: plugin-version
     attributes:
       label: Plugin Version
-      description: What version of bpmn-to-code are you using?
-      placeholder: e.g., 1.0.0
+      placeholder: "1.2.0"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: build-tool
+    attributes:
+      label: Build Tool
+      options:
+        - Gradle
+        - Maven
+        - Web UI
+        - Other
     validations:
       required: false
 
@@ -43,73 +71,21 @@ body:
     id: process-engine
     attributes:
       label: Process Engine
-      description: Which process engine are you targeting?
       options:
         - Camunda 7
         - Zeebe
+        - Operaton
         - Not applicable
     validations:
-      required: true
-
-  - type: textarea
-    id: bpmn-model
-    attributes:
-      label: BPMN Model
-      description: Provide relevant details about your BPMN file (structure, elements, etc.) or attach the BPMN file
-      placeholder: |
-        Describe the BPMN process or paste relevant XML snippets.
-        You can also drag and drop BPMN files here.
-    validations:
       required: false
 
-  - type: textarea
-    id: configuration
+  - type: dropdown
+    id: output-language
     attributes:
-      label: Configuration
-      description: Plugin configuration used (output language, package path, etc.)
-      placeholder: |
-        Example:
-        outputLanguage: KOTLIN
-        packagePath: com.example.api
-        processEngine: CAMUNDA_7
-    validations:
-      required: false
-
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: Expected Behavior
-      description: What should happen?
-      placeholder: Describe what you expected to happen
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual-behavior
-    attributes:
-      label: Actual Behavior
-      description: What actually happens?
-      placeholder: Describe what actually happened
-    validations:
-      required: true
-
-  - type: textarea
-    id: error-output
-    attributes:
-      label: Error Output
-      description: Stack traces, build logs, or error messages
-      placeholder: |
-        Paste error output, stack traces, or build logs here.
-        Use code blocks for better readability.
-      render: shell
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional Context
-      description: Any other information that might be helpful
-      placeholder: Screenshots, workarounds, related issues, etc.
+      label: Output Language
+      options:
+        - Kotlin
+        - Java
+        - Not applicable
     validations:
       required: false
