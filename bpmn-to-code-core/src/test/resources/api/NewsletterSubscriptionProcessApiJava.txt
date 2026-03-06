@@ -38,6 +38,10 @@ public final class NewsletterSubscriptionProcessApiV1 {
     public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
   }
 
+  public static final class CallActivities {
+    public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "abort-registration";
+  }
+
   public static final class Messages {
     public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
 

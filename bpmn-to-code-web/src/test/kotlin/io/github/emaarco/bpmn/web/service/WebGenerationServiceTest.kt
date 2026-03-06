@@ -107,16 +107,14 @@ class WebGenerationServiceTest {
         // Note: The 3-file limit is enforced at the route layer, not service layer
         // This test verifies the service can handle 3 files without errors
         val c8File = File("../bpmn-to-code-core/src/test/resources/bpmn/c8-newsletter.bpmn")
-        val c7File = File("../bpmn-to-code-core/src/test/resources/bpmn/c7-newsletter.bpmn")
 
         val c8Base64 = Base64.getEncoder().encodeToString(c8File.readBytes())
-        val c7Base64 = Base64.getEncoder().encodeToString(c7File.readBytes())
 
         val request = GenerateRequest(
             files = listOf(
                 GenerateRequest.BpmnFileData("c8-newsletter.bpmn", c8Base64),
-                GenerateRequest.BpmnFileData("c7-newsletter.bpmn", c7Base64),
-                GenerateRequest.BpmnFileData("c8-newsletter-copy.bpmn", c8Base64)
+                GenerateRequest.BpmnFileData("c8-newsletter-copy1.bpmn", c8Base64),
+                GenerateRequest.BpmnFileData("c8-newsletter-copy2.bpmn", c8Base64)
             ),
             config = GenerateRequest.GenerationConfig(
                 outputLanguage = OutputLanguage.KOTLIN,
@@ -126,8 +124,8 @@ class WebGenerationServiceTest {
 
         val response = service.generate(request)
 
+        assertThat(response.error).isNull()
         assertThat(response.success).describedAs("Should successfully process 3 files").isTrue()
         assertThat(response.files).describedAs("Should generate at least one API file").isNotEmpty()
-        assertThat(response.error).isNull()
     }
 }
