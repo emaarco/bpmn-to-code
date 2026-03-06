@@ -109,6 +109,7 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:input source="=subscriptionId" target="subscriptionId" />
+          <zeebe:output source="=abortionId" target="abortionId" />
         </zeebe:ioMapping>
         <zeebe:calledElement processId="abort-registration" propagateAllChildVariables="false" propagateAllParentVariables="false" />
       </bpmn:extensionElements>

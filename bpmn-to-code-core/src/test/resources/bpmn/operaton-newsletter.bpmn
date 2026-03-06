@@ -103,6 +103,10 @@
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration" calledElement="abort-registration">
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
+      <bpmn:extensionElements>
+        <operaton:in sourceExpression="${abortionReason}" target="${abortionReason}" />
+        <operaton:out source="${abortionId}" target="${abortionId}" />
+      </bpmn:extensionElements>
     </bpmn:callActivity>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
