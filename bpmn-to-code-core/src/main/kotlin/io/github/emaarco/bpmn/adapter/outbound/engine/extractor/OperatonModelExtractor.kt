@@ -114,26 +114,21 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
         val ioVariableNames = extractInputAndOutputVariables(extensions)
         val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
-        val callActivityVariables = extractCallActivityMappingVariables(modelInstance)
-        return (ioVariableNames + multiInstanceVariableNames + callActivityVariables).distinct().map { VariableDefinition(it) }
+        val callActivityVariableNames = extractCallActivityMappingVariables(modelInstance)
+        val allVariableNames = ioVariableNames + multiInstanceVariableNames + callActivityVariableNames
+        return allVariableNames.distinct().map { VariableDefinition(it) }
     }
 
     private fun extractCallActivityMappingVariables(modelInstance: ModelInstance): List<String> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.flatMap { ca ->
-            val elements = ca.extensionElements?.elements ?: emptyList()
-            val inSources = elements
-                .filter { it.domElement.localName == "in" }
-                .mapNotNull { el ->
-                    el.domElement.getAttribute("source")
-                        ?: el.domElement.getAttribute("sourceExpression")
-                }
-            val outTargets = elements
-                .filter { it.domElement.localName == "out" }
-                .mapNotNull { it.domElement.getAttribute("target") }
-            (inSources + outTargets)
-                .filterNot { it.isBlank() }
-                .map { it.removeExpressionSyntax() }
+        return callActivities.flatMap { callActivity ->
+            val extensionElements = callActivity.extensionElements?.elements ?: emptyList()
+            val inMappings = extensionElements.filter { it.domElement.localName == "in" }
+            val outMappings = extensionElements.filter { it.domElement.localName == "out" }
+            val inSources = inMappings.mapNotNull { it.domElement.getAttribute("source") ?: it.domElement.getAttribute("sourceExpression") }
+            val outTargets = outMappings.mapNotNull { it.domElement.getAttribute("target") }
+            val allMappingVariables = inSources + outTargets
+            allMappingVariables.filterNot { it.isBlank() }.map { it.removeExpressionSyntax() }
         }
     }
 
