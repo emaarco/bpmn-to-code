@@ -121,15 +121,16 @@ class OperatonModelExtractor : EngineSpecificExtractor {
 
     private fun extractCallActivityMappingVariables(modelInstance: ModelInstance): List<String> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.flatMap { callActivity ->
-            val extensionElements = callActivity.extensionElements?.elements ?: emptyList()
-            val inMappings = extensionElements.filter { it.domElement.localName == "in" }
-            val outMappings = extensionElements.filter { it.domElement.localName == "out" }
-            val inSources = inMappings.mapNotNull { it.domElement.getAttribute("source") ?: it.domElement.getAttribute("sourceExpression") }
-            val outTargets = outMappings.mapNotNull { it.domElement.getAttribute("target") }
-            val allMappingVariables = inSources + outTargets
-            allMappingVariables.filterNot { it.isBlank() }.map { it.removeExpressionSyntax() }
-        }
+        return callActivities.flatMap { it.extractMappingVariables() }
+    }
+
+    private fun CallActivity.extractMappingVariables(): List<String> {
+        val extensionElements = this.extensionElements?.elements ?: emptyList()
+        val inMappings = extensionElements.filter { it.domElement.localName == "in" }
+        val outMappings = extensionElements.filter { it.domElement.localName == "out" }
+        val inSources = inMappings.mapNotNull { it.domElement.getAttribute("source") ?: it.domElement.getAttribute("sourceExpression") }
+        val outTargets = outMappings.mapNotNull { it.domElement.getAttribute("target") }
+        return (inSources + outTargets).filterNot { it.isBlank() }.map { it.removeExpressionSyntax() }
     }
 
     private fun extractInputAndOutputVariables(

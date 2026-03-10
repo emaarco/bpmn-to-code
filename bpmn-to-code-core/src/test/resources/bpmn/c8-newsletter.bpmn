@@ -108,8 +108,7 @@
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:input source="=subscriptionId" target="subscriptionIdInChild" />
-          <zeebe:input source="=abortionReason" target="abortionReason" />
+          <zeebe:input source="=&#34;timeout&#34;" target="abortionReason" />
           <zeebe:output source="=abortionResultInChild" target="abortionId" />
         </zeebe:ioMapping>
         <zeebe:calledElement processId="abort-registration" propagateAllChildVariables="false" propagateAllParentVariables="false" />
