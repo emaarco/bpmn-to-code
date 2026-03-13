@@ -100,7 +100,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT) }
         val ioVariableNames = extractInputAndOutputVariables(extensions)
         val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
         val allVariableNames = ioVariableNames + multiInstanceVariableNames
@@ -110,10 +110,10 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
-        val allowedDefinitions = listOf("inputParameter", "outputParameter")
+        val allowedDefinitions = listOf(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER, BpmnModelConstants.CAMUNDA_ELEMENT_OUTPUT_PARAMETER)
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
-        val variableNames = eitherInputOrOutput.map { it.getAttribute("name") }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }
         return variableNames.filterNot { it.isNullOrBlank() }
     }
 

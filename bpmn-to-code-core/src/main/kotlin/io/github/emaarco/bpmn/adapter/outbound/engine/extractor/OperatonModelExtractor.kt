@@ -83,9 +83,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     private fun ServiceTask.detectWorkerType(): String {
         val taskExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
         return when {
-            taskExtractor("topic") != null -> taskExtractor("topic")
-            taskExtractor("delegateExpression") != null -> taskExtractor("delegateExpression")
-            taskExtractor("class") != null -> taskExtractor("class")
+            taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC) != null -> taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC)
+            taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION) != null -> taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
+            taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS) != null -> taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
             else -> throw IllegalStateException("Service task '${this.id}' has no valid worker type")
         }
     }
@@ -102,16 +102,16 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     private fun MessageEventDefinition.detectSendEvents(): Pair<String, MessageEventDefinition>? {
         val eventExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
         return when {
-            eventExtractor("topic") != null -> eventExtractor("topic") to this
-            eventExtractor("delegateExpression") != null -> eventExtractor("delegateExpression") to this
-            eventExtractor("class") != null -> eventExtractor("class") to this
+            eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC) != null -> eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC) to this
+            eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION) != null -> eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION) to this
+            eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS) != null -> eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS) to this
             else -> null
         }
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "inputOutput") }
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT) }
         val ioVariableNames = extractInputAndOutputVariables(extensions)
         val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
         val allVariableNames = ioVariableNames + multiInstanceVariableNames
@@ -121,10 +121,10 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
-        val allowedDefinitions = listOf("inputParameter", "outputParameter")
+        val allowedDefinitions = listOf(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER, BpmnModelConstants.CAMUNDA_ELEMENT_OUTPUT_PARAMETER)
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
-        val variableNames = eitherInputOrOutput.map { it.getAttribute("name") }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }
         return variableNames.filterNot { it.isNullOrBlank() }
     }
 
@@ -132,8 +132,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         nodes: Collection<FlowNode>
     ): List<String> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
-        val elementVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "elementVariable") }
-        val collectionVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, "collection") }
+        val elementVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, BpmnModelConstants.CAMUNDA_ATTRIBUTE_ELEMENT_VARIABLE) }
+        val collectionVariables = loops.mapNotNull { it.getAttributeValueNs(NAMESPACE, BpmnModelConstants.CAMUNDA_ATTRIBUTE_COLLECTION) }
         val allVariables = elementVariables + collectionVariables
         return allVariables.map { it.removeExpressionSyntax() }
     }
