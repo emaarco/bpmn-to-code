@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElement
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElements
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ZeebeModelConstants
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -53,7 +54,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         return callActivities.map { activity ->
             val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            val processId = extension.getAttributeValue("processId")
+            val processId = extension.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
             requireNotNull(processId) { "processId cannot be null for call activity with id: $elementId" }
             CallActivityDefinition(elementId, processId)
         }
@@ -72,14 +73,14 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     private fun findAllServiceTaskDefinitions(flowNodes: Collection<FlowNode>): List<Pair<FlowNode, ModelElementInstance>> {
         return flowNodes.mapNotNull { node ->
             val extensionElements = node.findExtensionElements()
-            val taskDefinition = extensionElements.firstOrNull { it.elementType.typeName == "taskDefinition" }
+            val taskDefinition = extensionElements.firstOrNull { it.elementType.typeName == ZeebeModelConstants.ELEMENT_TASK_DEFINITION }
             if (taskDefinition != null) Pair(node, taskDefinition) else null
         }
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = "ioMapping") }
+        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = ZeebeModelConstants.ELEMENT_IO_MAPPING) }
         val inputOutputVariables = extractInputAndOutputVariables(extensions)
         val multiInstanceVariables = extractMultiInstanceVariables(flowNodes)
         val allVariables = inputOutputVariables + multiInstanceVariables
@@ -89,10 +90,10 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
-        val allowedDefinitions = listOf("input", "output")
+        val allowedDefinitions = listOf(ZeebeModelConstants.ELEMENT_INPUT, ZeebeModelConstants.ELEMENT_OUTPUT)
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
-        val variableNames = eitherInputOrOutput.map { it.getAttribute("target") }
+        val variableNames = eitherInputOrOutput.map { it.getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET) }
         return variableNames.filterNot { it.isNullOrBlank() }
     }
 
@@ -101,11 +102,11 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     ): List<String> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
         val allExtensions = loops.flatMap { it.extensionElements.elementsQuery.list() }
-        val loopCharacteristics = allExtensions.filter { it.elementType.typeName == "loopCharacteristics" }
-        val inputElements = loopCharacteristics.map { it.domElement.getAttribute("inputElement") }
-        val inputCollections = loopCharacteristics.map { it.domElement.getAttribute("inputCollection") }
-        val outputElements = loopCharacteristics.mapNotNull { it.domElement.getAttribute("outputElement") }
-        val outputCollections = loopCharacteristics.mapNotNull { it.domElement.getAttribute("outputCollection") }
+        val loopCharacteristics = allExtensions.filter { it.elementType.typeName == ZeebeModelConstants.ELEMENT_LOOP_CHARACTERISTICS }
+        val inputElements = loopCharacteristics.map { it.domElement.getAttribute(ZeebeModelConstants.ATTRIBUTE_INPUT_ELEMENT) }
+        val inputCollections = loopCharacteristics.map { it.domElement.getAttribute(ZeebeModelConstants.ATTRIBUTE_INPUT_COLLECTION) }
+        val outputElements = loopCharacteristics.mapNotNull { it.domElement.getAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_ELEMENT) }
+        val outputCollections = loopCharacteristics.mapNotNull { it.domElement.getAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_COLLECTION) }
         val allLoopVariables = inputElements + inputCollections + outputElements + outputCollections
         return allLoopVariables.map { it.removePrefix("=") }
     }
