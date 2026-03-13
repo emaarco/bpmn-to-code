@@ -22,14 +22,18 @@ object ModelInstanceUtils {
 
     fun ModelInstance.getProcessId(): String {
         val processType = this.model.getType(Process::class.java)
-        return this.getModelElementsByType(processType).first()
-            .getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+        val process = this.getModelElementsByType(processType).firstOrNull()
+        val processId = process?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+        requireNotNull(process) { "BPMN model does not contain a Process element" }
+        requireNotNull(processId) { "Process element is missing an 'id' attribute" }
+        return processId
     }
 
     fun ModelInstance.findFlowNodes(): List<FlowNodeDefinition> {
         val flowNodes = this.getModelElementsByType(FlowNode::class.java)
         return flowNodes.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(id) { "FlowNode is missing an 'id' attribute" }
             FlowNodeDefinition(id)
         }
     }
@@ -37,7 +41,9 @@ object ModelInstanceUtils {
     fun ModelInstance.findMessages(): List<MessageDefinition> {
         val messages = this.getModelElementsByType(Message::class.java)
         return messages.map {
+            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
+            requireNotNull(name) { "Message element (id: $id) is missing a 'name' attribute" }
             MessageDefinition(name, name)
         }
     }
@@ -52,13 +58,22 @@ object ModelInstanceUtils {
 
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
-        return signalEvents.map { SignalDefinition(id = it.signal.name) }
+        return signalEvents.map {
+            val signal = it.signal
+            val name = signal?.name
+            requireNotNull(signal) { "SignalEventDefinition is missing a signal reference" }
+            requireNotNull(name) { "Signal element (id: ${signal.id}) is missing a 'name' attribute" }
+            SignalDefinition(id = name)
+        }
     }
 
     fun ModelInstance.findTimerEventDefinition(): List<TimerDefinition> {
         val timerEvents = this.getModelElementsByType(TimerEventDefinition::class.java)
         return timerEvents.map {
-            val timerId = it.parentElement.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val parent = it.parentElement
+            val timerId = parent?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(parent) { "TimerEventDefinition has no parent element" }
+            requireNotNull(timerId) { "TimerEventDefinition parent is missing an 'id' attribute" }
             val (timerType, timerValue) = it.detectTimerType()
             TimerDefinition(id = timerId, type = timerType, value = timerValue)
         }

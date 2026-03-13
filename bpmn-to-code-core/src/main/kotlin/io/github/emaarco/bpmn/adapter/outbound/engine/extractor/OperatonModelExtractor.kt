@@ -64,7 +64,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return callActivities.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            requireNotNull(calledElement) { "calledElement cannot be null for call activity with id: $id" }
+            requireNotNull(id) { "CallActivity is missing an 'id' attribute" }
+            requireNotNull(calledElement) { "CallActivity '$id' is missing a 'calledElement' attribute" }
             CallActivityDefinition(id, calledElement)
         }
     }
@@ -94,7 +95,10 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val messageEvents = modelInstance.getModelElementsByType(MessageEventDefinition::class.java)
         val sendEvents = messageEvents.mapNotNull { it.detectSendEvents() }
         return sendEvents.map { (type, event) ->
-            val taskId = event.parentElement.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val parent = event.parentElement
+            val taskId = parent?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(parent) { "MessageEventDefinition has no parent element" }
+            requireNotNull(taskId) { "Parent of MessageEventDefinition is missing an 'id' attribute" }
             ServiceTaskDefinition(id = taskId, type = type)
         }
     }
