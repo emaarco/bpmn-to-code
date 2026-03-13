@@ -36,7 +36,7 @@ class BpmnFileLoader : LoadBpmnFilesPort {
         val segments = pattern.split('/')
         val wildcard = checkForWildcard(segments)
 
-        return if (wildcard.hasNone()) {
+        return if (wildcard.hasNoWildcard()) {
             val dirPath = segments.dropLast(1).joinToString("/")
             val fileName = segments.last()
             basePath.resolve(dirPath).normalize() to fileName
@@ -62,6 +62,6 @@ class BpmnFileLoader : LoadBpmnFilesPort {
         val position: Int,
         val isPresent: Boolean
     ) {
-        fun hasNone() = !isPresent
+        fun hasNoWildcard() = !isPresent
     }
 }

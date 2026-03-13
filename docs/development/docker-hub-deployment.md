@@ -32,7 +32,7 @@ cd /path/to/bpmn-to-code
 
 Edit `bpmn-to-code-web/build.gradle.kts`:
 ```kotlin
-version = "0.0.18"  // Increment version
+version = "0.0.19"  // Increment version
 ```
 
 Follow semantic versioning:

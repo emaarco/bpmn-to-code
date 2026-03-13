@@ -8,7 +8,6 @@ object StringUtils {
     /**
      * Converts a string to UPPER_SNAKE_CASE following Kotlin/Java constant naming conventions.
      * Strips expression language syntax (e.g., #{...}, ${...}) and special characters.
-     * @return The string converted to UPPER_SNAKE_CASE
      * @sample toUpperSnakeCase will convert timerAfter3Days to TIMER_AFTER_3_DAYS
      * @sample toUpperSnakeCase will convert #{sendMailDelegate} to SEND_MAIL_DELEGATE
      */
@@ -27,7 +26,6 @@ object StringUtils {
      * These special characters ($, #, {, }) are invalid in generated code identifiers like class- or property names
      * This function strips the expression wrapper while preserving the core identifier.
      *
-     * @return The string with expression language syntax removed
      * @sample removeExpressionSyntax("${authors}") returns "authors"
      * @sample removeExpressionSyntax("#{sendMailDelegate}") returns "sendMailDelegate"
      * @sample removeExpressionSyntax("normalString") returns "normalString"
@@ -36,5 +34,3 @@ object StringUtils {
         return this.replace(Regex("[#\${}]"), "")
     }
 }
-
-

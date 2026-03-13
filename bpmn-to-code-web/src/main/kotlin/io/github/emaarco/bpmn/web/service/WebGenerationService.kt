@@ -19,7 +19,7 @@ class WebGenerationService {
             return GenerateResponse(success = true, files = generatedFiles)
         } catch (e: VariableNameCollisionException) {
             return GenerateResponse.fromCollisionException(e)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             return GenerateResponse.unknownError()
         }
     }

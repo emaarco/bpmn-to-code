@@ -18,8 +18,8 @@ data class BpmnModelApi(
     }
 
     private fun rawFileName(): String {
-        val seperatedProcessId = model.processId.split("_", "-")
-        val processId = seperatedProcessId.joinToString("") { it.camelCase() }
+        val separatedProcessId = model.processId.split("_", "-")
+        val processId = separatedProcessId.joinToString("") { it.camelCase() }
         return "${processId}ProcessApi"
     }
 
