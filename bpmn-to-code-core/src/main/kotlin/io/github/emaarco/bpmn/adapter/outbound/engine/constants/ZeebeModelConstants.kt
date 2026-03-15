@@ -1,5 +1,9 @@
-package io.github.emaarco.bpmn.adapter.outbound.engine.utils
+package io.github.emaarco.bpmn.adapter.outbound.engine.constants
 
+/**
+ * Mimics [org.camunda.bpm.model.bpmn.impl.BpmnModelConstants] for Zeebe
+ * Provies constants used in BPMN models of zeebe, required to extract the model.
+ */
 object ZeebeModelConstants {
 
     const val ELEMENT_TASK_DEFINITION = "taskDefinition"

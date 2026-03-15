@@ -1,6 +1,8 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
-import io.github.emaarco.bpmn.adapter.outbound.engine.utils.FlowNodeUtils.findExtensionElementsWithType
+import io.github.emaarco.bpmn.adapter.outbound.engine.constants.CamundaModelConstants
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.BaseElementUtils.findExtensionElements
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
@@ -85,10 +87,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val messageEvents = modelInstance.getModelElementsByType(MessageEventDefinition::class.java)
         val sendEvents = messageEvents.mapNotNull { it.detectSendEvents() }
         return sendEvents.map { (type, event) ->
-            val parent = event.parentElement
-            val taskId = parent?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(parent) { "MessageEventDefinition has no parent element" }
-            requireNotNull(taskId) { "Parent of MessageEventDefinition is missing an 'id' attribute" }
+            val taskId = event.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(taskId) { "The element the MessageEventDefinition belongs to has no 'id' defined" }
             ServiceTaskDefinition(id = taskId, type = type)
         }
     }
@@ -104,8 +104,9 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(type = BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT) }
-        val ioVariableNames = extractInputAndOutputVariables(extensions)
+        val allExtensions = flowNodes.flatMap { it.findExtensionElements() }
+        val matchingExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
+        val ioVariableNames = extractInputAndOutputVariables(matchingExtensions)
         val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
         val allVariableNames = ioVariableNames + multiInstanceVariableNames
         return allVariableNames.distinct().map { VariableDefinition(it) }
@@ -114,7 +115,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
-        val allowedDefinitions = listOf(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER, BpmnModelConstants.CAMUNDA_ELEMENT_OUTPUT_PARAMETER)
+        val allowedDefinitions = CamundaModelConstants.inputOutputParameters
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
         val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
         val variableNames = eitherInputOrOutput.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }

@@ -70,10 +70,8 @@ object ModelInstanceUtils {
     fun ModelInstance.findTimerEventDefinition(): List<TimerDefinition> {
         val timerEvents = this.getModelElementsByType(TimerEventDefinition::class.java)
         return timerEvents.map {
-            val parent = it.parentElement
-            val timerId = parent?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(parent) { "TimerEventDefinition has no parent element" }
-            requireNotNull(timerId) { "TimerEventDefinition parent is missing an 'id' attribute" }
+            val timerId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            requireNotNull(timerId) { "The element the TimerEventDefinition belongs to has no 'id' defined" }
             val (timerType, timerValue) = it.detectTimerType()
             TimerDefinition(id = timerId, type = timerType, value = timerValue)
         }
