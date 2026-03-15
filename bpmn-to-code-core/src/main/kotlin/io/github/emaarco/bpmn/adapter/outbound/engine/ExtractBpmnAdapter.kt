@@ -5,8 +5,8 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.EngineSpecificEx
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.OperatonModelExtractor
 import io.github.emaarco.bpmn.adapter.outbound.engine.extractor.ZeebeModelExtractor
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
-import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 class ExtractBpmnAdapter(
@@ -31,8 +31,11 @@ class ExtractBpmnAdapter(
 
     private fun getExtractor(file: BpmnResource): Map.Entry<ProcessEngine, EngineSpecificExtractor> {
         val entry = extractors.entries.find { it.key == file.engine }
-        if (entry == null) throw IllegalStateException("No extractor found for engine: ${file.engine}")
-        return entry
+        if (entry == null) {
+            throw IllegalStateException("No extractor found for engine: ${file.engine}")
+        } else {
+            return entry
+        }
     }
 
     companion object {
