@@ -52,6 +52,8 @@ object ModelInstanceUtils {
         val errorEvents = this.getModelElementsByType(ErrorEventDefinition::class.java)
         val configuredErrors = errorEvents.mapNotNull { it.error }
         return configuredErrors.map {
+            requireNotNull(it.errorCode) { "ErrorEventDefinition is missing an error code" }
+            requireNotNull(it.name) { "Error element (id: ${it.id}) is missing a 'name' attribute" }
             ErrorDefinition(id = it.name, name = it.name, code = it.errorCode)
         }
     }
@@ -85,7 +87,7 @@ object ModelInstanceUtils {
         } else if (this.timeCycle != null) {
             Pair("Cycle", this.timeCycle.textContent)
         } else {
-            throw IllegalStateException("Timer event definition has no valid type")
+            error("Timer event definition has no valid type")
         }
     }
 
