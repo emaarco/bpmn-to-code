@@ -89,13 +89,12 @@ Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
 2. Run the specific test suite to verify the changes
 3. Check if other builders or tests are affected
 
-### Productivity Tips:
-- When working with GitHub, you can use the gh cli tool
-- Use context7 for code generation & general questions whenever working with specific frameworks or libraries.
-
 ### GitHub
+- Use the `gh` CLI for GitHub operations.
+- Keep commit messages and PR descriptions short. Focus on what changed and why.
+- For issues: write a summary, current state, and desired state. Give a high-level overview of technical impact (breaking or not). Focus on behavior, not implementation details.
 
-- Keep commit messages and body short and descriptive.
-- When writing pull requests or issues, also write compact. Focus on what changed and why, not on technical details and adding bloat like author notes and co.
-- When writing issues, always write a summary, the current state, and the desired state. moreover, give a high-level overview of the technical details - and whether stuff is breaking or not. Each of these is a compact subchapter. Focus on behavior, not implementation. Avoid specific file names, line numbers, or code paths.
+## AI Skills
+
+Reusable skill definitions live in `.agent/skills/`. A `.claude` symlink points to `.agent` for Claude Code compatibility. New skills should be created under `.agent/skills/<skill-name>/SKILL.md`. See [docs/development/ai-skills.md](docs/development/ai-skills.md) for details.
 

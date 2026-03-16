@@ -6,5 +6,5 @@ bin
 .vscode
 .DS_Store
 target
-.claude/settings.local.json
-.claude/.tmp
+.agent/settings.local.json
+.agent/.tmp
