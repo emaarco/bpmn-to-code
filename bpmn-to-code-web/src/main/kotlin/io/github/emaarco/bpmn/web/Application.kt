@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.web
 
 import io.github.emaarco.bpmn.web.config.AppConfig
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.emaarco.bpmn.web.routes.generateRoutes
 import io.github.emaarco.bpmn.web.service.WebGenerationService
 import io.ktor.http.*
@@ -17,6 +18,8 @@ import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
+
+private val logger = KotlinLogging.logger {}
 
 fun main() {
 
@@ -67,6 +70,7 @@ fun Application.configureApp(
     // Status pages for error handling
     install(StatusPages) {
         exception<Throwable> { call, cause ->
+            logger.error(cause) { "Unhandled exception" }
             val message = mapOf("error" to (cause.message ?: "Unknown error"))
             call.respond(HttpStatusCode.InternalServerError, message)
         }

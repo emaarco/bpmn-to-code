@@ -14,6 +14,8 @@ dependencies {
     implementation(libs.bpmnmodel)
     implementation(libs.bundles.codegen)
     implementation(libs.ant)
+    api(libs.slf4jApi)
+    api(libs.kotlinLogging)
     testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
