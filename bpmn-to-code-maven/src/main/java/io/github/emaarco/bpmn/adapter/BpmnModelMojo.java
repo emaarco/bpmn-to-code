@@ -83,6 +83,7 @@ public class BpmnModelMojo extends AbstractMojo {
 		OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
 		ProcessEngine engine = ProcessEngine.valueOf(processEngine);
 		plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, useVersioning);
+		getLog().info("BPMN models generated successfully");
 	}
 	
 }

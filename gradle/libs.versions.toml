@@ -14,6 +14,8 @@ ant = "1.10.15"
 ktor = "3.4.1"
 kotlinxSerialization = "1.10.0"
 logback = "1.5.32"
+slf4j = "2.0.16"
+kotlinLogging = "7.0.3"
 
 [libraries]
 # Plugin dependencies
@@ -36,6 +38,8 @@ ktorServerSwagger = { module = "io.ktor:ktor-server-swagger", version.ref = "kto
 ktorServerTestHost = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
 # Testing dependencies
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }

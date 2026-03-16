@@ -46,9 +46,6 @@ class WebGenerationServiceTest {
         assertThat(generatedFile.fileName).describedAs("Should generate Kotlin file").endsWith(".kt")
         assertThat(generatedFile.content).describedAs("Should contain Kotlin object declaration").contains("object")
         assertThat(generatedFile.content).describedAs("Should contain process ID").contains("newsletterSubscription")
-
-        println("Generated file: ${generatedFile.fileName}")
-        println("Content preview: ${generatedFile.content.take(200)}...")
     }
 
     @Test
