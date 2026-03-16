@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.kotlinxSerializationJson)
     implementation(libs.logbackClassic)
+    implementation(libs.kotlinLogging)
 
     // Testing
     testImplementation(libs.bundles.testing)

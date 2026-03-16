@@ -46,6 +46,6 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
             processEngine,
             useVersioning,
         )
-        println("BPMN models generated successfully")
+        logger.lifecycle("BPMN models generated successfully")
     }
 }
