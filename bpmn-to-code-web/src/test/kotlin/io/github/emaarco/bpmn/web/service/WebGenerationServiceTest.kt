@@ -5,21 +5,20 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.web.model.GenerateRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.util.*
 
 class WebGenerationServiceTest {
 
     private val service = WebGenerationService()
 
+    private fun loadBpmnBase64(resourcePath: String): String {
+        val bytes = javaClass.classLoader.getResourceAsStream(resourcePath)!!.readBytes()
+        return Base64.getEncoder().encodeToString(bytes)
+    }
+
     @Test
     fun `should generate Kotlin API from BPMN file`() {
-        // Get sample BPMN from test resources
-        val bpmnFile = File("../bpmn-to-code-core/src/test/resources/bpmn/c8-newsletter.bpmn")
-        assertThat(bpmnFile.exists()).describedAs("Sample BPMN file should exist").isTrue()
-
-        val bpmnContent = bpmnFile.readBytes()
-        val base64Content = Base64.getEncoder().encodeToString(bpmnContent)
+        val base64Content = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(
@@ -50,9 +49,7 @@ class WebGenerationServiceTest {
 
     @Test
     fun `should generate Java API from BPMN file`() {
-        val bpmnFile = File("../bpmn-to-code-core/src/test/resources/bpmn/c8-newsletter.bpmn")
-        val bpmnContent = bpmnFile.readBytes()
-        val base64Content = Base64.getEncoder().encodeToString(bpmnContent)
+        val base64Content = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(
@@ -103,9 +100,7 @@ class WebGenerationServiceTest {
     fun `should process up to 3 BPMN files successfully`() {
         // Note: The 3-file limit is enforced at the route layer, not service layer
         // This test verifies the service can handle 3 files without errors
-        val c8File = File("../bpmn-to-code-core/src/test/resources/bpmn/c8-newsletter.bpmn")
-
-        val c8Base64 = Base64.getEncoder().encodeToString(c8File.readBytes())
+        val c8Base64 = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(

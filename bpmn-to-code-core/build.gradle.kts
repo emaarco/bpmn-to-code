@@ -20,6 +20,12 @@ dependencies {
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
+sourceSets {
+    test {
+        resources.srcDir(rootProject.file("shared"))
+    }
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
