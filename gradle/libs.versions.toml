@@ -14,6 +14,8 @@ ant = "1.10.15"
 ktor = "3.4.1"
 kotlinxSerialization = "1.10.0"
 logback = "1.5.32"
+mcpKotlinSdk = "0.9.0"
+shadow = "8.3.8"
 slf4j = "2.0.16"
 kotlinLogging = "7.0.3"
 
@@ -40,6 +42,8 @@ kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serializati
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
+mcpKotlinSdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpKotlinSdk" }
+
 # Testing dependencies
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
@@ -58,3 +62,4 @@ gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.1.0" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
