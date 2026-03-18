@@ -19,8 +19,9 @@ fun main() {
 }
 
 internal fun createMcpServer(): Server {
+    val version = object {}.javaClass.`package`.implementationVersion ?: "unknown"
     val server = Server(
-        Implementation(name = "bpmn-to-code", version = "0.0.19"),
+        Implementation(name = "bpmn-to-code", version = version),
         ServerOptions(
             capabilities = ServerCapabilities(
                 tools = ServerCapabilities.Tools(listChanged = true)
