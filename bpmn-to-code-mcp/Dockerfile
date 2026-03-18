@@ -4,7 +4,7 @@ FROM gcr.io/distroless/java21-debian12:nonroot
 WORKDIR /app
 
 # Copy the pre-built shadow JAR from local build
-COPY bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-*-all.jar app.jar
+COPY bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-*-fat.jar app.jar
 
 # Expose port
 EXPOSE 8080
