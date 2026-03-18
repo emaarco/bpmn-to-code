@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 kotlinpoet = "2.2.0"
 javapoet = "0.12.0"
 camunda = "7.24.0"
@@ -15,13 +15,13 @@ ktor = "3.4.1"
 kotlinxSerialization = "1.10.0"
 logback = "1.5.32"
 mcpKotlinSdk = "0.9.0"
-shadow = "8.3.8"
-slf4j = "2.0.16"
-kotlinLogging = "7.0.3"
+shadow = "9.4.0"
+slf4j = "2.0.17"
+kotlinLogging = "8.0.01"
 
 [libraries]
 # Plugin dependencies
-mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.13" }
+mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.14" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.2" }
 # Production dependencies
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
