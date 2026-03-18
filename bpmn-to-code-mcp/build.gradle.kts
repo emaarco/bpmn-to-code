@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation(project(":bpmn-to-code-core"))
     implementation(libs.mcpKotlinSdk)
+    implementation(libs.kotlinLogging)
     implementation(libs.logbackClassic)
     implementation(libs.ktorServerCore)
     implementation(libs.ktorServerNetty)
@@ -28,7 +29,7 @@ application {
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     isZip64 = true
-    archiveClassifier.set("all")
+    archiveClassifier.set("fat")
     mergeServiceFiles()
 }
 
