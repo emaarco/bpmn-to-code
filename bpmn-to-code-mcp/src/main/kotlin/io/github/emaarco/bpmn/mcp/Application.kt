@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.mcp
 
 import io.github.emaarco.bpmn.mcp.tools.registerGenerateProcessApiTool
+import io.github.oshai.kotlinlogging.KotlinLoggingConfiguration
 import io.ktor.utils.io.streams.*
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
@@ -13,6 +14,7 @@ import kotlinx.io.asSink
 import kotlinx.io.buffered
 
 fun main() {
+    KotlinLoggingConfiguration.logStartupMessage = false
     startStdioServer()
 }
 
