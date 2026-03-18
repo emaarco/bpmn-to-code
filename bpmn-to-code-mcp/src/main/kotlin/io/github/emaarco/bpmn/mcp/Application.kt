@@ -1,7 +1,6 @@
 package io.github.emaarco.bpmn.mcp
 
 import io.github.emaarco.bpmn.mcp.tools.registerGenerateProcessApiTool
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.utils.io.streams.*
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
@@ -13,10 +12,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.io.asSink
 import kotlinx.io.buffered
 
-private val logger = KotlinLogging.logger {}
-
 fun main() {
-    logger.info { "Starting BPMN to Code MCP server..." }
     startStdioServer()
 }
 
@@ -36,7 +32,6 @@ internal fun createMcpServer(): Server {
 private fun startStdioServer() {
     val server = createMcpServer()
     val transport = StdioServerTransport(System.`in`.asInput(), System.out.asSink().buffered())
-    logger.info { "MCP server running on stdio" }
     runBlocking {
         val session = server.createSession(transport)
         val done = Job()
