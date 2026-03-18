@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.19"
+version = property("projectVersion").toString()
 
 repositories {
     mavenCentral()

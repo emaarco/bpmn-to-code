@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
-version = "0.0.19"
+version = property("projectVersion").toString()
 
 repositories {
     mavenCentral()
@@ -31,6 +31,7 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     isZip64 = true
     archiveClassifier.set("fat")
     mergeServiceFiles()
+    manifest { attributes("Implementation-Version" to project.version) }
 }
 
 sourceSets {
