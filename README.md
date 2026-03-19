@@ -158,6 +158,7 @@ bpmn-to-code consists of multiple modules to support different use cases:
 - [bpmn-to-code-maven](bpmn-to-code-maven/README.md): Maven plugin for integrating code generation
   into Maven builds.
 - [bpmn-to-code-web](bpmn-to-code-web/README.md): Web application for browser-based code generation (preview available).
+- [bpmn-to-code-mcp](bpmn-to-code-mcp/README.md): MCP server for AI-assisted code generation (experimental).
 
 ### Core & Examples
 - [bpmn-to-code-core](bpmn-to-code-core): Core logic for parsing BPMN files and generating API code.
@@ -174,6 +175,9 @@ bpmn-to-code consists of multiple modules to support different use cases:
 **Build Plugins:**
 - 📦 [Maven Central Repository](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) - Maven Plugin
 - 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) - Gradle Plugin
+
+**MCP Server (Experimental):**
+- 🤖 [Setup Instructions](bpmn-to-code-mcp/README.md) - Use bpmn-to-code directly from AI assistants via MCP
 
 ## 🤝 Contributing
 

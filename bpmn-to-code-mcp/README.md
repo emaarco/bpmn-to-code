@@ -3,6 +3,8 @@
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that exposes bpmn-to-code's code generation as a tool for AI assistants.
 Feed it BPMN XML and get type-safe process API code back — directly inside your AI-powered editor or chat.
 
+> **Experimental:** This module is an experiment to explore MCP in practice. It is not officially supported for production use alongside the Gradle, Maven, and Web modules. If you're interested in using it, please [leave feedback](https://github.com/emaarco/bpmn-to-code/issues) so it can be promoted to officially supported.
+
 ## Why MCP?
 
 - **No project setup needed** — generate process API code without adding a Gradle or Maven plugin
@@ -21,7 +23,7 @@ Generates type-safe process API code from BPMN XML.
 | `processEngine`  | no       | `ZEEBE`               | `ZEEBE`, `CAMUNDA_7`, or `OPERATON`             |
 | `packagePath`    | no       | `com.example.process` | Target package for generated code               |
 
-## Option 1: Local (stdio)
+## Getting Started
 
 Run the MCP server locally as a JAR. The MCP client launches and communicates with it via stdin/stdout.
 
@@ -39,7 +41,7 @@ The JAR is created at `bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-<version>-al
 java -jar bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-0.0.19-all.jar
 ```
 
-### Configuring Your MCP Client (stdio)
+### Configuring Your MCP Client
 
 #### Claude Code
 
@@ -79,54 +81,3 @@ Most MCP clients follow a similar pattern — point them at the JAR using stdio 
 - **Args:** `["-jar", "/absolute/path/to/bpmn-to-code-mcp-0.0.19-all.jar"]`
 
 Refer to your client's documentation for the exact configuration location.
-
-## Option 2: Remote (HTTP)
-
-Run the MCP server as a remote HTTP service. Useful for shared environments, CI pipelines, or hosting on a server.
-
-**Start with HTTP transport:**
-```bash
-java -jar bpmn-to-code-mcp-0.0.19-all.jar --http
-```
-
-**Custom port (default: 8080):**
-```bash
-java -jar bpmn-to-code-mcp-0.0.19-all.jar --http --port=9090
-```
-
-You can also use environment variables:
-```bash
-MCP_TRANSPORT=http MCP_PORT=9090 java -jar bpmn-to-code-mcp-0.0.19-all.jar
-```
-
-### Docker
-
-**Build the image:**
-```bash
-./gradlew :bpmn-to-code-mcp:dockerBuild
-```
-
-**Run it:**
-```bash
-docker run -p 8080:8080 --rm emaarco/bpmn-to-code-mcp:latest
-```
-
-### Configuring Your MCP Client (HTTP)
-
-Point your MCP client at the server's URL:
-
-```json
-{
-  "mcpServers": {
-    "bpmn-to-code": {
-      "url": "http://localhost:8080/mcp"
-    }
-  }
-}
-```
-
-Replace `localhost:8080` with the actual host and port if deployed remotely.
-
-## Remote Usage
-
-If you don't want to build locally, you can download the JAR from [GitHub Releases](https://github.com/emaarco/bpmn-to-code/releases) (once published) and point your MCP client config at the downloaded file.
