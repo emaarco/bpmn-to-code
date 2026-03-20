@@ -15,6 +15,8 @@ Feed it BPMN XML and get type-safe process API code back — directly inside you
 
 Generates type-safe process API code from BPMN XML.
 
+The tool description instructs the AI client to **ask the user** for `outputLanguage`, `processEngine`, and `packagePath` when they are not already clear from context, rather than silently applying defaults.
+
 | Parameter        | Required | Default               | Description                                     |
 |------------------|----------|-----------------------|-------------------------------------------------|
 | `bpmnXml`        | yes      | —                     | Raw BPMN XML content                            |
