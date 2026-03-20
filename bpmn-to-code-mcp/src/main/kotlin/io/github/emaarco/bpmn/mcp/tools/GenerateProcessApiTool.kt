@@ -4,6 +4,18 @@ import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiInMemoryPlugin
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_BPMN_XML
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_OUTPUT_LANGUAGE
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_PACKAGE_PATH
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_PROCESS_ENGINE
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_PROCESS_NAME
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.PARAM_BPMN_XML
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.PARAM_OUTPUT_LANGUAGE
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.PARAM_PACKAGE_PATH
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.PARAM_PROCESS_ENGINE
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.PARAM_PROCESS_NAME
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.TOOL_DESCRIPTION
+import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.TOOL_NAME
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
@@ -23,42 +35,34 @@ private val plugin = CreateProcessApiInMemoryPlugin()
 
 fun Server.registerGenerateProcessApiTool() {
     addTool(
-        name = "generate_process_api",
-        description = "Generate type-safe process API code from BPMN XML. " +
-                "Returns generated source files for interacting with BPMN process tasks and variables.",
+        name = TOOL_NAME,
+        description = TOOL_DESCRIPTION,
         inputSchema = ToolSchema(
             properties = buildJsonObject {
-                putJsonObject("bpmnXml") {
+                putJsonObject(PARAM_BPMN_XML) {
                     put("type", "string")
-                    put("description", "Raw BPMN XML content")
+                    put("description", DESC_BPMN_XML)
                 }
-                putJsonObject("processName") {
+                putJsonObject(PARAM_PROCESS_NAME) {
                     put("type", "string")
-                    put(
-                        "description",
-                        "Process identifier used for naming generated classes (e.g. 'newsletter-subscription')"
-                    )
+                    put("description", DESC_PROCESS_NAME)
                 }
-                putJsonObject("outputLanguage") {
+                putJsonObject(PARAM_OUTPUT_LANGUAGE) {
                     put("type", "string")
-                    put("description", "Output language: KOTLIN or JAVA")
-                    putJsonArray("enum") { add(JsonPrimitive("KOTLIN")); add(JsonPrimitive("JAVA")) }
+                    put("description", DESC_OUTPUT_LANGUAGE)
+                    putJsonArray("enum") { OutputLanguage.entries.forEach { add(JsonPrimitive(it.name)) } }
                 }
-                putJsonObject("processEngine") {
+                putJsonObject(PARAM_PROCESS_ENGINE) {
                     put("type", "string")
-                    put("description", "Target process engine: ZEEBE, CAMUNDA_7, or OPERATON")
-                    putJsonArray("enum") {
-                        add(JsonPrimitive("ZEEBE")); add(JsonPrimitive("CAMUNDA_7")); add(
-                        JsonPrimitive("OPERATON")
-                    )
-                    }
+                    put("description", DESC_PROCESS_ENGINE)
+                    putJsonArray("enum") { ProcessEngine.entries.forEach { add(JsonPrimitive(it.name)) } }
                 }
-                putJsonObject("packagePath") {
+                putJsonObject(PARAM_PACKAGE_PATH) {
                     put("type", "string")
-                    put("description", "Target package for generated code (e.g. 'com.example.process')")
+                    put("description", DESC_PACKAGE_PATH)
                 }
             },
-            required = listOf("bpmnXml", "processName"),
+            required = listOf(PARAM_BPMN_XML, PARAM_PROCESS_NAME, PARAM_OUTPUT_LANGUAGE, PARAM_PROCESS_ENGINE, PARAM_PACKAGE_PATH),
         ),
         toolAnnotations = ToolAnnotations(readOnlyHint = true),
     ) { request ->
@@ -66,19 +70,19 @@ fun Server.registerGenerateProcessApiTool() {
             val args = request.arguments
                 ?: return@addTool errorResult("No arguments provided.")
 
-            val bpmnXml = args["bpmnXml"]?.jsonPrimitive?.content
-                ?: return@addTool errorResult("Required parameter 'bpmnXml' is missing.")
-            val processName = args["processName"]?.jsonPrimitive?.content
-                ?: return@addTool errorResult("Required parameter 'processName' is missing.")
+            val bpmnXml = args[PARAM_BPMN_XML]?.jsonPrimitive?.content
+                ?: return@addTool errorResult("Required parameter '$PARAM_BPMN_XML' is missing.")
+            val processName = args[PARAM_PROCESS_NAME]?.jsonPrimitive?.content
+                ?: return@addTool errorResult("Required parameter '$PARAM_PROCESS_NAME' is missing.")
 
-            val outputLanguage = args["outputLanguage"]?.jsonPrimitive?.content
-                ?.let { parseEnum<OutputLanguage>(it, "outputLanguage") }
-                ?: OutputLanguage.KOTLIN
-            val processEngine = args["processEngine"]?.jsonPrimitive?.content
-                ?.let { parseEnum<ProcessEngine>(it, "processEngine") }
-                ?: ProcessEngine.ZEEBE
-            val packagePath = args["packagePath"]?.jsonPrimitive?.content
-                ?: "com.example.process"
+            val outputLanguage = args[PARAM_OUTPUT_LANGUAGE]?.jsonPrimitive?.content
+                ?.let { parseEnum<OutputLanguage>(it, PARAM_OUTPUT_LANGUAGE) }
+                ?: return@addTool errorResult("Required parameter '$PARAM_OUTPUT_LANGUAGE' is missing. Valid values: ${OutputLanguage.entries.joinToString { it.name }}")
+            val processEngine = args[PARAM_PROCESS_ENGINE]?.jsonPrimitive?.content
+                ?.let { parseEnum<ProcessEngine>(it, PARAM_PROCESS_ENGINE) }
+                ?: return@addTool errorResult("Required parameter '$PARAM_PROCESS_ENGINE' is missing. Valid values: ${ProcessEngine.entries.joinToString { it.name }}")
+            val packagePath = args[PARAM_PACKAGE_PATH]?.jsonPrimitive?.content
+                ?: return@addTool errorResult("Required parameter '$PARAM_PACKAGE_PATH' is missing. Please specify the target package (e.g. 'com.example.process').")
 
             val generatedFiles = plugin.execute(
                 bpmnContents = listOf(
