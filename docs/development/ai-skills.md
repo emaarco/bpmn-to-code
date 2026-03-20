@@ -11,9 +11,9 @@ Skills live in `.agent/skills/` and are agent-agnostic by design.
     ├── clean-code/SKILL.md
     ├── create-adr/SKILL.md
     ├── create-ticket/SKILL.md
-    ├── migrate-to-api/SKILL.md
-    ├── setup-gradle/SKILL.md
-    └── setup-maven/SKILL.md
+    ├── migrate-to-bpmn-to-code-apis/SKILL.md
+    ├── setup-bpmn-to-code-gradle/SKILL.md
+    └── setup-bpmn-to-code-maven/SKILL.md
 .claude -> .agent              # symlink for Claude Code compatibility
 ```
 

@@ -1,10 +1,10 @@
 ---
-name: setup-maven
+name: setup-bpmn-to-code-maven
 description: "Set up the bpmn-to-code Maven plugin in an existing project. Adds the plugin configuration to pom.xml with code generation goals. Use when the user asks to 'add bpmn-to-code to my Maven project', 'set up BPMN code generation for Maven', or 'configure the Maven plugin'."
 allowed-tools: Read, Write, Edit, Glob
 ---
 
-# Skill: setup-maven
+# Skill: setup-bpmn-to-code-maven
 
 Set up the bpmn-to-code Maven plugin in an existing Maven project.
 

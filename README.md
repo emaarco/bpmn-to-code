@@ -190,11 +190,12 @@ bpmn-to-code includes [AI coding assistant skills](docs/skills.md) that help you
 npx skills add https://github.com/emaarco/bpmn-to-code
 
 # Or pick only what you need
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-gradle
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-maven
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-gradle
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-maven
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/migrate-to-bpmn-to-code-apis
 ```
 
-Available skills include project setup (Gradle & Maven), issue management, ADR writing, and code review.
+Available skills include project setup (Gradle & Maven), API migration, issue management, ADR writing, and code review.
 See the [full skills index](docs/skills.md) for details.
 
 ## 🤝 Contributing

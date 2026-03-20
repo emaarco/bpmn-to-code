@@ -1,10 +1,10 @@
 ---
-name: setup-gradle
+name: setup-bpmn-to-code-gradle
 description: "Set up the bpmn-to-code Gradle plugin in an existing project. Adds the plugin dependency and configures the code generation task. Use when the user asks to 'add bpmn-to-code to my Gradle project', 'set up BPMN code generation', or 'configure the Gradle plugin'."
 allowed-tools: Read, Write, Edit, Glob, Bash(./gradlew *)
 ---
 
-# Skill: setup-gradle
+# Skill: setup-bpmn-to-code-gradle
 
 Set up the bpmn-to-code Gradle plugin in an existing Gradle project.
 
