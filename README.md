@@ -179,6 +179,24 @@ bpmn-to-code consists of multiple modules to support different use cases:
 **MCP Server (Experimental):**
 - 🤖 [Setup Instructions](bpmn-to-code-mcp/README.md) - Use bpmn-to-code directly from AI assistants via MCP
 
+## 🤖 AI Agent Skills
+
+bpmn-to-code includes [AI coding assistant skills](docs/skills.md) that help you set up and work with the project.
+
+**Install skills in [Claude Code](https://docs.anthropic.com/en/docs/claude-code):**
+
+```bash
+# Install all skills at once
+npx skills add https://github.com/emaarco/bpmn-to-code
+
+# Or pick only what you need
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-gradle
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-maven
+```
+
+Available skills include project setup (Gradle & Maven), issue management, ADR writing, and code review.
+See the [full skills index](docs/skills.md) for details.
+
 ## 🤝 Contributing
 
 Community contributions are at the heart of bpmn-to-code’s vision.
