@@ -35,4 +35,5 @@ npx skills add https://github.com/emaarco/bpmn-to-code
 # Or pick only what you need
 npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-gradle
 npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-maven
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/migrate-to-api
 ```
