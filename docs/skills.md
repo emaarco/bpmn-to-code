@@ -7,9 +7,9 @@ Skills are stored under [`.agent/skills/`](../.agent/skills/) and work with [Cla
 
 | Skill | Description |
 |-------|-------------|
-| [setup-gradle](../.agent/skills/setup-gradle/SKILL.md) | Set up the bpmn-to-code Gradle plugin in an existing project |
-| [setup-maven](../.agent/skills/setup-maven/SKILL.md) | Set up the bpmn-to-code Maven plugin in an existing project |
-| [migrate-to-api](../.agent/skills/migrate-to-api/SKILL.md) | Replace hardcoded BPMN strings with generated Process API references |
+| [setup-bpmn-to-code-gradle](../.agent/skills/setup-bpmn-to-code-gradle/SKILL.md) | Set up the bpmn-to-code Gradle plugin in an existing project |
+| [setup-bpmn-to-code-maven](../.agent/skills/setup-bpmn-to-code-maven/SKILL.md) | Set up the bpmn-to-code Maven plugin in an existing project |
+| [migrate-to-bpmn-to-code-apis](../.agent/skills/migrate-to-bpmn-to-code-apis/SKILL.md) | Replace hardcoded BPMN strings with generated Process API references |
 
 ## Project Management
 
@@ -33,7 +33,7 @@ Install skills in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 
 npx skills add https://github.com/emaarco/bpmn-to-code
 
 # Or pick only what you need
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-gradle
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-maven
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/migrate-to-api
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-gradle
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-maven
+npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/migrate-to-bpmn-to-code-apis
 ```

@@ -1,11 +1,11 @@
 ---
-name: migrate-to-api
+name: migrate-to-bpmn-to-code-apis
 argument-hint: "[path/to/scan] | [ProcessApiClassName]"
 description: "Replace hardcoded BPMN strings with references to the generated Process API. Use when the user asks to 'migrate to the process API', 'replace hardcoded strings with API references', 'use the generated BPMN API', or 'refactor to type-safe BPMN constants'."
 allowed-tools: Read, Glob, Grep, Edit
 ---
 
-# Skill: migrate-to-api
+# Skill: migrate-to-bpmn-to-code-apis
 
 Replace hardcoded BPMN string literals in user code with references to the generated Process API.
 
