@@ -155,6 +155,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return commaSeparatedValues.flatMap { it.split(",") }.map { it.trim() }.filter { it.isNotBlank() }
     }
 
+
     /**
      * Extracts parent-scope variables from Call Activity in/out mappings:
      * - operaton:in `source` / `sourceExpression`: variables read from the parent and sent to the child
