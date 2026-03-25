@@ -20,7 +20,9 @@ class Camunda7ModelExtractorTest {
             testNewsletterBpmnModel(
                 variables = listOf(
                     VariableDefinition("otherVariable"),
-                    VariableDefinition("subscriptionId")
+                    VariableDefinition("subscriptionId"),
+                    VariableDefinition("reasonCode"),
+                    VariableDefinition("abortResult")
                 ),
                 serviceTasks = listOf(
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
