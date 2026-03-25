@@ -2,6 +2,8 @@ name: Publish All Artifacts
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   publish-gradle:
