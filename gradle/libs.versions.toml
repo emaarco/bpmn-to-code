@@ -58,7 +58,7 @@ ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "kt
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.1.0" }
+gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
