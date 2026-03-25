@@ -101,6 +101,11 @@
       <bpmn:signalEventDefinition signalRef="Signal_14g8ki5" />
     </bpmn:endEvent>
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration" calledElement="abort-registration">
+      <bpmn:extensionElements>
+        <operaton:in source="subscriptionId" target="childSubscriptionId" />
+        <operaton:in sourceExpression="${reasonCode}" target="childReasonCode" />
+        <operaton:out source="abortResult" target="abortResult" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
     </bpmn:callActivity>

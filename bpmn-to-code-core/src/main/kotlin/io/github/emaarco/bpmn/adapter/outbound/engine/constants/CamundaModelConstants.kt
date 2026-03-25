@@ -12,4 +12,9 @@ object CamundaModelConstants {
         BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER,
         BpmnModelConstants.CAMUNDA_ELEMENT_OUTPUT_PARAMETER
     )
+
+    val callActivityMappingElements = listOf(
+        BpmnModelConstants.CAMUNDA_ELEMENT_IN,
+        BpmnModelConstants.CAMUNDA_ELEMENT_OUT
+    )
 }

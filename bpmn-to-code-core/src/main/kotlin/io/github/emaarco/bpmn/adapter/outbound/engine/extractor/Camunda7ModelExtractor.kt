@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.adapter.outbound.engine.constants.CamundaModelConstants
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.BaseElementUtils.findExtensionElements
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.extractAttribute
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
@@ -108,8 +109,9 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val matchingExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
         val ioVariableNames = extractInputAndOutputVariables(matchingExtensions)
         val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
-        val allVariableNames = ioVariableNames + multiInstanceVariableNames
-        return allVariableNames.distinct().map { VariableDefinition(it) }
+        val callActivityMappingVars = extractCallActivityMappingVariables(allExtensions)
+        val allVariableNames = ioVariableNames + multiInstanceVariableNames + callActivityMappingVars
+        return allVariableNames.map { it.removeExpressionSyntax() }.distinct().map { VariableDefinition(it) }
     }
 
     private fun extractInputAndOutputVariables(
@@ -122,6 +124,22 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return variableNames.filterNot { it.isNullOrBlank() }
     }
 
+    /**
+     * Extracts parent-scope variables from Call Activity in/out mappings:
+     * - camunda:in `source` / `sourceExpression`: variables read from the parent and sent to the child
+     * - camunda:out `target`: variables written back into the parent after the child completes
+     */
+    private fun extractCallActivityMappingVariables(
+        extensions: List<ModelElementInstance>
+    ): List<String> {
+        val inElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
+        val outElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
+        val sourceVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE)
+        val sourceExprVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE_EXPRESSION)
+        val targetVars = outElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TARGET)
+        return sourceVars + sourceExprVars + targetVars
+    }
+
     private fun extractMultiInstanceVariables(
         nodes: Collection<FlowNode>
     ): List<String> {
@@ -129,7 +147,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val elementVariables = loops.mapNotNull { it.camundaElementVariable }
         val collectionVariables = loops.mapNotNull { it.camundaCollection }
         val allVariables = elementVariables + collectionVariables
-        return allVariables.map { it.removeExpressionSyntax() }
+        return allVariables
     }
 
 }
