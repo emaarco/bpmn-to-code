@@ -17,6 +17,7 @@ Skills are stored under [`.agent/skills/`](../.agent/skills/) and work with [Cla
 |-------|-------------|
 | [create-ticket](../.agent/skills/create-ticket/SKILL.md) | Create or update GitHub issues with structured templates |
 | [create-adr](../.agent/skills/create-adr/SKILL.md) | Write Architectural Decision Records (ADRs) |
+| [release](../.agent/skills/release/SKILL.md) | Create a versioned release and publish to Maven, Gradle, and Docker |
 
 ## Code Quality
 
