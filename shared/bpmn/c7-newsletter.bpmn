@@ -104,7 +104,7 @@
       <bpmn:extensionElements>
         <camunda:in source="subscriptionId" target="childSubscriptionId" />
         <camunda:in sourceExpression="${reasonCode}" target="childReasonCode" />
-        <camunda:out source="abortResult" target="abortResult" />
+        <camunda:out source="childAbortResult" target="abortResult" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>
       <bpmn:outgoing>Flow_1bsb8no</bpmn:outgoing>
