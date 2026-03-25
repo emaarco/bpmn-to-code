@@ -20,7 +20,9 @@ class OperatonModelExtractorTest {
             testNewsletterBpmnModel(
                 variables = listOf(
                     VariableDefinition("otherVariable"),
-                    VariableDefinition("subscriptionId")
+                    VariableDefinition("subscriptionId"),
+                    VariableDefinition("reasonCode"),
+                    VariableDefinition("abortResult")
                 ),
                 serviceTasks = listOf(
                     ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
@@ -28,6 +30,19 @@ class OperatonModelExtractorTest {
                     ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
                 )
             )
+        )
+    }
+
+    @Test
+    fun `extract returns additionalVariables from operaton properties`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-additional-variables.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
+            VariableDefinition("orderId"),
+            VariableDefinition("customerEmail"),
+            VariableDefinition("amount"),
+            VariableDefinition("shipmentId"),
         )
     }
 
