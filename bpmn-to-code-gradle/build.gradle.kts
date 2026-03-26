@@ -19,6 +19,8 @@ dependencies {
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
     api(libs.ant)
+    api(libs.slf4jApi)
+    api(libs.kotlinLogging)
     compileOnly(project(":bpmn-to-code-core"))
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.testing)
