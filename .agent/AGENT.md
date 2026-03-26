@@ -8,8 +8,7 @@ bpmn-to-code is a Gradle and Maven plugin that generates type-safe API definitio
 
 - **bpmn-to-code-core**: Core logic for parsing BPMN files and generating API code (Kotlin)
 - **bpmn-to-code-gradle**: Gradle plugin wrapper
-- **bpmn-to-code-maven**: Maven plugin wrapper  
-- **examples/**: Example projects demonstrating plugin usage
+- **bpmn-to-code-maven**: Maven plugin wrapper
 
 ## Architecture
 

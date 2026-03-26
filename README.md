@@ -162,11 +162,9 @@ bpmn-to-code consists of multiple modules to support different use cases:
 - [bpmn-to-code-web](bpmn-to-code-web/README.md): Web application for browser-based code generation (preview available).
 - [bpmn-to-code-mcp](bpmn-to-code-mcp/README.md): MCP server for AI-assisted code generation (experimental).
 
-### Core & Examples
+### Core
 - [bpmn-to-code-core](bpmn-to-code-core): Core logic for parsing BPMN files and generating API code.
   Shared by all user-facing modules.
-- [examples](examples): Example projects demonstrating Gradle & Maven plugin usage.
-  Not part of the monorepo; open as separate projects if cloning the repository.
 
 ## 📬 Get bpmn-to-code
 
