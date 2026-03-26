@@ -14,6 +14,12 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    test {
+        resources.srcDir(rootProject.file("shared"))
+    }
+}
+
 dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
@@ -31,8 +37,14 @@ tasks.jar {
     from(project(":bpmn-to-code-core").sourceSets.main.get().output)
 }
 
+tasks.named<PluginUnderTestMetadata>("pluginUnderTestMetadata") {
+    pluginClasspath.from(project(":bpmn-to-code-core").sourceSets.main.get().output)
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    dependsOn("publishToMavenLocal")
+    systemProperty("pluginVersion", version.toString())
 }
 
 publishing {

@@ -14,6 +14,12 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    test {
+        resources.srcDir(rootProject.file("shared"))
+    }
+}
+
 dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
@@ -24,7 +30,13 @@ dependencies {
     compileOnly(project(":bpmn-to-code-core"))
     implementation(libs.mavenPluginApi)
     implementation(libs.mavenPluginAnnotations)
+    testImplementation(project(":bpmn-to-code-core"))
     testImplementation(libs.bundles.testing)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
 
 mavenPlugin {
