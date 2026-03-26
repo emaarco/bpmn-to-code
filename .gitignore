@@ -8,3 +8,6 @@ bin
 target
 .agent/settings.local.json
 .agent/.tmp
+docs/website/node_modules
+docs/website/src/.vitepress/dist
+docs/website/src/.vitepress/cache
