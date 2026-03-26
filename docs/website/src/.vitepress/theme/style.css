@@ -240,3 +240,28 @@
   background: var(--vp-c-bg);
   border-bottom: 1px solid var(--vp-c-divider);
 }
+
+/**
+ * Version badge in navbar
+ */
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--vp-c-brand-1) !important;
+  background: var(--vp-c-brand-soft);
+  border: 1px solid var(--vp-c-brand-1);
+  border-radius: 999px;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.version-badge:hover {
+  background: var(--vp-c-brand-1);
+  color: #fff !important;
+}
