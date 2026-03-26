@@ -1,7 +1,6 @@
 plugins {
     `maven-publish`
     `kotlin-dsl`
-    signing
     alias(libs.plugins.mavenPluginDevelopment)
     alias(libs.plugins.mavenPublish)
 }
@@ -80,11 +79,4 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/emaarco/bpmn-to-code.git")
         }
     }
-}
-
-signing {
-    val signingKeyId = System.getenv("SIGNING_KEY_ID")
-    val signingPassword = System.getenv("SIGNING_PASSWORD")
-    val signingKey = System.getenv("SIGNING_KEY")
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 }
