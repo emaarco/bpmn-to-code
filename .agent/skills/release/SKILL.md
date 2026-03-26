@@ -108,7 +108,7 @@ gh release edit v<VERSION> --notes "<rewritten notes>"
 
 A maintainer will review and publish the draft.
 Publishing the release triggers the GitHub Action to publish all artifacts automatically:
-- **Maven Central** via `./gradlew publishToMavenCentral`
+- **Maven Central** via `./gradlew publishAndReleaseToMavenCentral`
 - **Gradle Plugin Portal** via `./gradlew publishPlugins`
 - **Docker Hub** via `./gradlew :bpmn-to-code-web:dockerBuild` and `dockerPush`
 
