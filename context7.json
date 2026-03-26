@@ -1,4 +1,53 @@
 {
+  "$schema": "https://context7.com/schema/context7.json",
   "url": "https://context7.com/emaarco/bpmn-to-code",
-  "public_key": "pk_hIxIXlgdj7yE9z5h1Xv0C"
+  "public_key": "pk_hIxIXlgdj7yE9z5h1Xv0C",
+  "projectTitle": "bpmn-to-code",
+  "description": "Gradle and Maven plugin that generates type-safe API definitions from BPMN process models. Supports Camunda 7, Zeebe, and Operaton engines with Kotlin and Java output.",
+  "folders": [
+    "docs/website/src/getting-started",
+    "docs/website/src/guide",
+    "docs/website/src/engines",
+    "docs/website/src/recipes",
+    "docs/website/src/mcp",
+    "docs/website/src/skills",
+    "docs/website/src/web",
+    "docs/adr",
+    "docs/development"
+  ],
+  "excludeFolders": [
+    "build",
+    "target",
+    ".gradle",
+    ".kotlin",
+    "bin",
+    "node_modules",
+    ".vitepress/dist",
+    ".vitepress/cache",
+    ".idea",
+    ".vscode",
+    ".context",
+    ".agent/.tmp",
+    ".run",
+    "src",
+    "gradle/wrapper",
+    ".github",
+    "assets",
+    "shared"
+  ],
+  "excludeFiles": [
+    ".DS_Store",
+    "gradlew",
+    "gradlew.bat",
+    "gradle.properties"
+  ],
+  "rules": [
+    "bpmn-to-code generates type-safe API constants from BPMN files — always use the generated constants instead of hardcoding BPMN element IDs or message names as strings.",
+    "Choose the correct plugin for your build tool: use bpmn-to-code-gradle for Gradle projects and bpmn-to-code-maven for Maven projects. Configuration differs between the two.",
+    "Set the processEngine to match your runtime: CAMUNDA_7 for Camunda Platform 7, ZEEBE for Camunda Platform 8 / Zeebe, or OPERATON for Operaton.",
+    "Set outputLanguage to KOTLIN or JAVA to match your project. The generated code package path (packagePath) must align with your source directory structure.",
+    "Enable versioning (useVersioning = true) when making breaking changes to a BPMN process to maintain backward compatibility with in-flight process instances.",
+    "Run the generation task (generateProcessApi for Gradle, bpmn-to-code:generate for Maven) after modifying BPMN files to regenerate the API definitions.",
+    "bpmn-to-code ships AI agent skills for automated setup and migration. Install them via 'npx skills add https://github.com/emaarco/bpmn-to-code'. Available skills: setup-bpmn-to-code-gradle (auto-configure Gradle plugin), setup-bpmn-to-code-maven (auto-configure Maven plugin), migrate-to-bpmn-to-code-apis (replace hardcoded BPMN strings with generated API constants)."
+  ]
 }
