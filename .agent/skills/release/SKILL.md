@@ -51,20 +51,57 @@ If the build fails, stop and fix the issue before proceeding.
 
 ### 3. Tag and Push
 
-Create an annotated tag and push everything:
+Create an annotated tag and push it:
 
 ```bash
 git tag -a v<VERSION> -m "Release version <VERSION>"
-git push origin main --follow-tags
+git push origin v<VERSION>
 ```
+
+Only push `main` if there are unpushed commits (e.g., a version bump commit). Otherwise, just push the tag.
 
 ### 4. Create a Draft Release
 
-Check previous releases to guide the release notes format, then create the draft:
+First, get the auto-generated notes as a starting point:
 
 ```bash
-gh release view <PREV_TAG>
 gh release create v<VERSION> --title "v<VERSION>" --generate-notes --draft
+```
+
+Then rewrite the release notes to match the project's established format. Use `git log <PREV_TAG>..v<VERSION> --oneline` to understand all changes, and structure the notes using this template:
+
+```markdown
+## 🧑🏽‍💻 Release – bpmn-to-code v<VERSION>
+
+### What's Changed
+
+- **New Features**
+  - <short summary> (<PR refs>)
+  - <short summary> (<PR refs>)
+
+- **Bug Fixes**
+  - <short summary> (<PR refs>)
+
+- **Refactoring**
+  - <short summary> (<PR refs>)
+  - <short summary> (<PR refs>)
+
+- **Dependency Updates**
+  - <short summary> (<PR refs>)
+
+### Migration Notes
+
+<Breaking changes or "No breaking changes. Upgrade to v<VERSION> and regenerate your Process APIs to benefit from ...">
+
+**Full Changelog**: https://github.com/emaarco/bpmn-to-code/compare/<PREV_TAG>...v<VERSION>
+```
+
+Group related PRs into logical categories. Use **New Features**, **Bug Fixes**, **Refactoring**, **Dependency Updates**, or other fitting labels. Omit categories that have no entries.
+
+Update the draft with the rewritten notes:
+
+```bash
+gh release edit v<VERSION> --notes "<rewritten notes>"
 ```
 
 ### 5. Done
