@@ -1,7 +1,6 @@
 plugins {
     `maven-publish`
     `kotlin-dsl`
-    signing
     alias(libs.plugins.mavenPluginDevelopment)
     alias(libs.plugins.mavenPublish)
 }
@@ -20,6 +19,8 @@ dependencies {
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
     api(libs.ant)
+    api(libs.slf4jApi)
+    api(libs.kotlinLogging)
     compileOnly(project(":bpmn-to-code-core"))
     implementation(libs.mavenPluginApi)
     implementation(libs.mavenPluginAnnotations)
@@ -78,11 +79,4 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/emaarco/bpmn-to-code.git")
         }
     }
-}
-
-signing {
-    val signingKeyId = System.getenv("SIGNING_KEY_ID")
-    val signingPassword = System.getenv("SIGNING_PASSWORD")
-    val signingKey = System.getenv("SIGNING_KEY")
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 }
