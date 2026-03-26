@@ -31,15 +31,12 @@ dependencies {
     implementation(libs.mavenPluginApi)
     implementation(libs.mavenPluginAnnotations)
     testImplementation(project(":bpmn-to-code-core"))
-    testImplementation(gradleTestKit())
     testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
-    dependsOn("publishToMavenLocal")
-    systemProperty("pluginVersion", version.toString())
 }
 
 mavenPlugin {
@@ -60,13 +57,6 @@ val sourcesJar by tasks.registering(Jar::class) {
 // Attach the sources JAR as an additional artifact.
 artifacts {
     add("archives", sourcesJar)
-}
-
-// Skip signing when publishing to mavenLocal (e.g., for integration tests)
-tasks.withType<Sign>().configureEach {
-    onlyIf("signing is not required for local publishing") {
-        !gradle.taskGraph.allTasks.any { it.name.contains("MavenLocal") }
-    }
 }
 
 mavenPublishing {

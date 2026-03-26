@@ -11,6 +11,11 @@ import java.io.File
  * Resolves the plugin from mavenLocal (published POM) instead of using withPluginClasspath().
  * This catches missing transitive dependencies that wouldn't surface with classpath-based tests.
  * See: https://github.com/emaarco/bpmn-to-code/issues/159
+ *
+ * Agent note: If this test fails, check whether the missing dependency affects only the Gradle
+ * plugin module, only the Maven plugin module, or both — since they share the same dependency
+ * structure (fat jar with core classes + declared transitive deps in POM). A fix here likely
+ * needs to be mirrored in bpmn-to-code-maven/build.gradle.kts as well.
  */
 class GradlePluginDependencyResolutionSmokeTest {
 
