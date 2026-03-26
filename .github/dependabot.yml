@@ -16,6 +16,20 @@ updates:
           - "minor"
           - "major"
 
+  # Config for docs website (npm)
+  - package-ecosystem: "npm"
+    directory: "/docs/website"
+    schedule:
+      interval: "weekly"
+    groups:
+      docs-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+          - "major"
+
   # Config for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
