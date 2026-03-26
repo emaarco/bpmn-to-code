@@ -75,6 +75,7 @@ export default defineConfig({
       {
         text: 'Extras',
         items: [
+          { text: 'Examples', link: '/recipes/examples' },
           { text: 'AI Skills', link: '/skills/' },
           { text: 'Common Patterns', link: '/recipes/common-patterns' },
         ],

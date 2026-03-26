@@ -166,6 +166,12 @@ bpmn-to-code consists of multiple modules to support different use cases:
 - [bpmn-to-code-core](bpmn-to-code-core): Core logic for parsing BPMN files and generating API code.
   Shared by all user-facing modules.
 
+### Examples
+
+Projects using bpmn-to-code in practice:
+- [easy-zeebe](https://github.com/emaarco/easy-zeebe): Zeebe-based process automation example
+- [engine-safari](https://github.com/emaarco/engine-safari): Multi-engine comparison project
+
 ## 📬 Get bpmn-to-code
 
 **Web Application (Preview):**
