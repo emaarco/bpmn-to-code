@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.web
 
 import io.github.emaarco.bpmn.web.config.AppConfig
+import io.github.emaarco.bpmn.web.model.ConfigResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.emaarco.bpmn.web.routes.generateRoutes
 import io.github.emaarco.bpmn.web.service.WebGenerationService
@@ -97,9 +98,9 @@ fun Application.configureApp(
          * Configuration endpoint for the frontend, to get legal links
          */
         get("/api/config") {
-            val response = mapOf(
-                "legalLinks" to appConfig.legalLinks,
-                "version" to appConfig.version,
+            val response = ConfigResponse(
+                legalLinks = appConfig.legalLinks,
+                version = appConfig.version,
             )
             call.respond(response)
         }
