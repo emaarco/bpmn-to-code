@@ -277,6 +277,12 @@ async function loadConfiguration() {
         const response = await fetch('/api/config');
         const config = await response.json();
 
+        if (config.version) {
+            const badge = document.getElementById('version-badge');
+            badge.textContent = config.version;
+            badge.style.display = 'inline-flex';
+        }
+
         if (config.legalLinks) {
             setupLegalLinks(config.legalLinks);
         }

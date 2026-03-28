@@ -73,6 +73,12 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
+tasks.named<ProcessResources>("processResources") {
+    filesMatching("version.properties") {
+        expand("projectVersion" to project.version.toString())
+    }
+}
+
 // Docker tasks
 val dockerImageName = "emaarco/bpmn-to-code-web"
 val dockerImageTag = project.version.toString()

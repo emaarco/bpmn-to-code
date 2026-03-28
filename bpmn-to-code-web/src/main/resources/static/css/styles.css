@@ -43,6 +43,27 @@ header h1 {
     color: var(--primary-color);
 }
 
+/* Version Badge */
+.version-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 999px;
+    text-decoration: none;
+    vertical-align: middle;
+    transition: background 0.2s, color 0.2s;
+}
+
+.version-badge:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
 .subtitle {
     font-size: 1.25rem;
     color: var(--text-primary);

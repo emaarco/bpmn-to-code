@@ -97,7 +97,10 @@ fun Application.configureApp(
          * Configuration endpoint for the frontend, to get legal links
          */
         get("/api/config") {
-            val response = mapOf("legalLinks" to appConfig.legalLinks)
+            val response = mapOf(
+                "legalLinks" to appConfig.legalLinks,
+                "version" to appConfig.version,
+            )
             call.respond(response)
         }
 
