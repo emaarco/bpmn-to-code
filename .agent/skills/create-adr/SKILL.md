@@ -1,5 +1,5 @@
 ---
-name: bpmn-to-code-create-adr
+name: create-adr
 argument-hint: "\"<short description of the decision>\""
 allowed-tools: Read, Write, Glob
 description: Write a new Architectural Decision Record (ADR) for this project. Use when the user wants to document an architectural or design decision.

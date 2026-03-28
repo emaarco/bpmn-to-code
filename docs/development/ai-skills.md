@@ -19,8 +19,8 @@ bpmn-to-code-skills/           # Claude Code plugin (user-facing skills)
     ├── setup-bpmn-to-code-gradle -> ../../bpmn-to-code-skills/skills/setup-bpmn-to-code-gradle
     ├── setup-bpmn-to-code-maven -> ../../bpmn-to-code-skills/skills/setup-bpmn-to-code-maven
     ├── migrate-to-bpmn-to-code-apis -> ../../bpmn-to-code-skills/skills/migrate-to-bpmn-to-code-apis
-    ├── bpmn-to-code-clean-code/SKILL.md
-    ├── bpmn-to-code-create-adr/SKILL.md
+    ├── clean-code/SKILL.md
+    ├── create-adr/SKILL.md
     ├── create-ticket/SKILL.md
     ├── bpmn-to-code-release/SKILL.md
     └── bpmn-to-code-validate-docs/SKILL.md

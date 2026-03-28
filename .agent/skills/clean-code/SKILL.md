@@ -1,5 +1,5 @@
 ---
-name: bpmn-to-code-clean-code
+name: clean-code
 description: "Applies principles from Robert C. Martin's 'Clean Code'. Use this skill when writing, reviewing, or refactoring code to ensure high quality, readability, and maintainability. Covers naming, functio..."
 risk: safe
 source : https://github.com/sickn33/antigravity-awesome-skills/blob/main/skills/clean-code/SKILL.md

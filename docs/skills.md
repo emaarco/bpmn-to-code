@@ -16,14 +16,14 @@ Skills are stored under [`.agent/skills/`](../.agent/skills/) and work with [Cla
 | Skill | Description |
 |-------|-------------|
 | [create-ticket](../.agent/skills/create-ticket/SKILL.md) | Create or update GitHub issues with structured templates |
-| [bpmn-to-code-create-adr](../.agent/skills/bpmn-to-code-create-adr/SKILL.md) | Write Architectural Decision Records (ADRs) |
+| [create-adr](../.agent/skills/create-adr/SKILL.md) | Write Architectural Decision Records (ADRs) |
 | [bpmn-to-code-release](../.agent/skills/bpmn-to-code-release/SKILL.md) | Create a versioned release and publish to Maven, Gradle, and Docker |
 
 ## Code Quality
 
 | Skill | Description |
 |-------|-------------|
-| [bpmn-to-code-clean-code](../.agent/skills/bpmn-to-code-clean-code/SKILL.md) | Review code against Clean Code principles |
+| [clean-code](../.agent/skills/clean-code/SKILL.md) | Review code against Clean Code principles |
 
 ## Installation
 
