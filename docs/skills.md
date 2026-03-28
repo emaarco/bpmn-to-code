@@ -33,7 +33,7 @@ Install as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugi
 
 ```bash
 /plugin marketplace add emaarco/bpmn-to-code
-/plugin install bpmn-to-code
+/plugin install bpmn-to-code@bpmn-to-code
 ```
 
 ### Alternative: npx skills

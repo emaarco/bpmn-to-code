@@ -4,20 +4,12 @@ Claude Code plugin with AI skills for setting up and using the [bpmn-to-code](ht
 
 ## Installation
 
-### Via Marketplace
-
 ```bash
-# Register the marketplace
+# 1. Register the marketplace (one-time)
 /plugin marketplace add emaarco/bpmn-to-code
 
-# Install the plugin
-/plugin install bpmn-to-code
-```
-
-### Direct Install
-
-```bash
-/plugin install bpmn-to-code@emaarco/bpmn-to-code
+# 2. Install the plugin
+/plugin install bpmn-to-code@bpmn-to-code
 ```
 
 ## Included Skills
