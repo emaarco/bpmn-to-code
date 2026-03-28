@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    {
+      "name": "bpmn-to-code",
+      "description": "AI-assisted setup and migration for the bpmn-to-code Gradle/Maven plugin",
+      "source": { "source": "github", "repo": "emaarco/bpmn-to-code", "path": "bpmn-to-code-skills" }
+    }
+  ]
+}

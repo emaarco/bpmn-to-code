@@ -1,5 +1,5 @@
 ---
-name: release
+name: bpmn-to-code-release
 disable-model-invocation: true
 argument-hint: <version>
 description: Create a new release for bpmn-to-code and publish to Maven Central, Gradle Plugin Portal, and Docker Hub via GitHub Actions. Use when releasing a new version.
