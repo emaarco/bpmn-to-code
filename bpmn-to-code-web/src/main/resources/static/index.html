@@ -11,20 +11,22 @@
 <body>
 <div class="container">
     <header>
-        <h1>bpmn-to-code <a class="version-badge" id="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" style="display: none;"></a></h1>
+        <h1 class="hero-name">bpmn-to-code</h1>
+        <a class="version-badge" id="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" style="display: none;"></a>
         <p class="subtitle">Your BPMN model changes. Your code doesn't break.</p>
         <p class="description">
             Stop hardcoding element IDs, messages, and worker types.
             Generate a type-safe Process API that stays in sync with your BPMN models.
         </p>
+        <div class="header-actions">
+            <a href="https://emaarco.github.io/bpmn-to-code/" target="_blank" class="btn btn-outline">Documentation</a>
+            <a href="https://github.com/emaarco/bpmn-to-code" target="_blank" class="btn btn-outline">GitHub</a>
+        </div>
         <div class="header-features">
             <span class="feature-badge">Compile-Time Safety</span>
             <span class="feature-badge">Zeebe / Camunda 7 / Operaton</span>
             <span class="feature-badge">Java &amp; Kotlin</span>
             <span class="feature-badge">Gradle &amp; Maven</span>
-        </div>
-        <div class="header-links">
-            <a href="https://emaarco.github.io/bpmn-to-code/" target="_blank" class="header-link">Documentation</a>
         </div>
     </header>
 
@@ -65,10 +67,8 @@
             <button class="btn btn-secondary" id="try-sample-btn" type="button">
                 Try with Newsletter Sample
             </button>
-            <div class="file-list" id="file-list"></div>
-
-            <!-- BPMN Diagram Viewer (inline, below file list) -->
-            <div class="bpmn-viewer-inline" id="bpmn-viewer-section" style="display: none;">
+            <div class="bpmn-tabs-container" id="bpmn-tabs-container" style="display: none;">
+                <div class="bpmn-tabs" id="bpmn-tabs"></div>
                 <div id="bpmn-canvas"></div>
             </div>
         </section>

@@ -18,7 +18,8 @@ const generateBtn = document.getElementById('generate-btn');
 const loading = document.getElementById('loading');
 const errorMessage = document.getElementById('error-message');
 const resultsContent = document.getElementById('results-content');
-const bpmnViewerSection = document.getElementById('bpmn-viewer-section');
+const bpmnTabsContainer = document.getElementById('bpmn-tabs-container');
+const bpmnTabs = document.getElementById('bpmn-tabs');
 const ctaSection = document.getElementById('cta-section');
 const trySampleBtn = document.getElementById('try-sample-btn');
 
@@ -72,15 +73,9 @@ function addFiles(newFiles) {
         }
     });
 
-    renderFileList();
-
     // Show config section if files are uploaded
     if (state.files.length > 0) {
         configSection.style.display = 'block';
-    }
-
-    // Render BPMN diagram for the selected file (default: first)
-    if (state.files.length > 0) {
         selectFile(state.selectedFileIndex);
     }
 }
@@ -88,7 +83,7 @@ function addFiles(newFiles) {
 function selectFile(index) {
     if (index < 0 || index >= state.files.length) return;
     state.selectedFileIndex = index;
-    renderFileList();
+    renderTabs();
 
     const file = state.files[index];
     const reader = new FileReader();
@@ -101,18 +96,15 @@ function selectFile(index) {
 
 function removeFile(fileName) {
     state.files = state.files.filter(f => f.name !== fileName);
-    renderFileList();
 
-    // Hide config if no files
     if (state.files.length === 0) {
         configSection.style.display = 'none';
         resultsSection.style.display = 'none';
-        bpmnViewerSection.style.display = 'none';
+        bpmnTabsContainer.style.display = 'none';
         ctaSection.style.display = 'none';
         state.currentBpmnXml = null;
         state.selectedFileIndex = 0;
     } else {
-        // Adjust selected index if needed
         if (state.selectedFileIndex >= state.files.length) {
             state.selectedFileIndex = state.files.length - 1;
         }
@@ -120,20 +112,18 @@ function removeFile(fileName) {
     }
 }
 
-function renderFileList() {
+function renderTabs() {
     if (state.files.length === 0) {
-        fileList.innerHTML = '';
+        bpmnTabsContainer.style.display = 'none';
         return;
     }
 
-    fileList.innerHTML = state.files.map((file, index) => `
-        <div class="file-item ${index === state.selectedFileIndex ? 'file-item-active' : ''}" onclick="selectFile(${index})">
-            <div>
-                <span class="file-item-name">${escapeHtml(file.name)}</span>
-                <span class="file-item-size">(${formatFileSize(file.size)})</span>
-            </div>
-            <button type="button" class="file-item-remove" onclick="event.stopPropagation(); removeFile('${escapeHtml(file.name)}')">&times;</button>
-        </div>
+    bpmnTabsContainer.style.display = 'block';
+    bpmnTabs.innerHTML = state.files.map((file, index) => `
+        <button type="button" class="bpmn-tab ${index === state.selectedFileIndex ? 'bpmn-tab-active' : ''}" onclick="selectFile(${index})">
+            <span class="bpmn-tab-name">${escapeHtml(file.name)}</span>
+            <span class="bpmn-tab-remove" onclick="event.stopPropagation(); removeFile('${escapeHtml(file.name)}')">&times;</span>
+        </button>
     `).join('');
 }
 
@@ -146,7 +136,7 @@ async function renderBpmnDiagram(xml) {
     }
 
     // Container must be visible before bpmn.js can calculate dimensions
-    bpmnViewerSection.style.display = 'block';
+    bpmnTabsContainer.style.display = 'block';
 
     // Wait for browser to lay out the visible container
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -156,7 +146,7 @@ async function renderBpmnDiagram(xml) {
         await state.bpmnViewer.importXML(xml);
     } catch (err) {
         console.error('Failed to import BPMN diagram:', err);
-        bpmnViewerSection.style.display = 'none';
+        bpmnTabsContainer.style.display = 'none';
         return;
     }
 
