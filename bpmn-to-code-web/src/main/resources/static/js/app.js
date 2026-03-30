@@ -1,7 +1,9 @@
 // Application State
 const state = {
     files: [],
-    generatedFiles: []
+    generatedFiles: [],
+    bpmnViewer: null,
+    currentBpmnXml: null
 };
 
 // DOM Elements
@@ -15,6 +17,9 @@ const generateBtn = document.getElementById('generate-btn');
 const loading = document.getElementById('loading');
 const errorMessage = document.getElementById('error-message');
 const resultsContent = document.getElementById('results-content');
+const bpmnViewerSection = document.getElementById('bpmn-viewer-section');
+const ctaSection = document.getElementById('cta-section');
+const trySampleBtn = document.getElementById('try-sample-btn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,6 +52,9 @@ function setupEventListeners() {
 
     // Form submission
     configForm.addEventListener('submit', handleGenerate);
+
+    // Try with sample
+    trySampleBtn.addEventListener('click', loadSample);
 }
 
 function handleFileSelect(e) {
@@ -69,6 +77,17 @@ function addFiles(newFiles) {
     if (state.files.length > 0) {
         configSection.style.display = 'block';
     }
+
+    // Render BPMN diagram for the first file
+    if (state.files.length > 0) {
+        const firstFile = state.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            state.currentBpmnXml = reader.result;
+            renderBpmnDiagram(reader.result);
+        };
+        reader.readAsText(firstFile);
+    }
 }
 
 function removeFile(fileName) {
@@ -79,6 +98,18 @@ function removeFile(fileName) {
     if (state.files.length === 0) {
         configSection.style.display = 'none';
         resultsSection.style.display = 'none';
+        bpmnViewerSection.style.display = 'none';
+        ctaSection.style.display = 'none';
+        state.currentBpmnXml = null;
+    } else {
+        // Re-render diagram for the new first file
+        const firstFile = state.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            state.currentBpmnXml = reader.result;
+            renderBpmnDiagram(reader.result);
+        };
+        reader.readAsText(firstFile);
     }
 }
 
@@ -99,12 +130,60 @@ function renderFileList() {
     `).join('');
 }
 
+// BPMN Viewer
+function initBpmnViewer() {
+    if (state.bpmnViewer) return;
+    state.bpmnViewer = new BpmnJS({ container: '#bpmn-canvas' });
+}
+
+async function renderBpmnDiagram(xml) {
+    initBpmnViewer();
+    try {
+        await state.bpmnViewer.importXML(xml);
+        const canvas = state.bpmnViewer.get('canvas');
+        canvas.zoom('fit-viewport');
+        bpmnViewerSection.style.display = 'block';
+    } catch (err) {
+        console.error('Failed to render BPMN diagram:', err);
+    }
+}
+
+// Sample loading
+async function loadSample() {
+    try {
+        trySampleBtn.disabled = true;
+        trySampleBtn.textContent = 'Loading...';
+
+        const response = await fetch('/samples/c8-newsletter.bpmn');
+        if (!response.ok) throw new Error('Failed to fetch sample');
+        const xml = await response.text();
+
+        // Create a File-like object
+        const blob = new Blob([xml], { type: 'application/xml' });
+        const file = new File([blob], 'c8-newsletter.bpmn', { type: 'application/xml' });
+
+        // Reset state and add sample
+        state.files = [];
+        addFiles([file]);
+
+        // Pre-select Zeebe engine for C8 sample
+        document.getElementById('process-engine').value = 'ZEEBE';
+
+    } catch (err) {
+        showError('Failed to load sample: ' + err.message);
+    } finally {
+        trySampleBtn.disabled = false;
+        trySampleBtn.textContent = 'Try with Newsletter Sample';
+    }
+}
+
 async function handleGenerate(e) {
     e.preventDefault();
 
     // Hide previous results and errors
     resultsSection.style.display = 'none';
     errorMessage.style.display = 'none';
+    ctaSection.style.display = 'none';
     loading.style.display = 'block';
     generateBtn.disabled = true;
 
@@ -141,6 +220,7 @@ async function handleGenerate(e) {
             state.generatedFiles = result.files;
             renderResults(result.files, config.outputLanguage);
             resultsSection.style.display = 'block';
+            ctaSection.style.display = 'block';
 
             // Scroll to results
             resultsSection.scrollIntoView({behavior: 'smooth'});

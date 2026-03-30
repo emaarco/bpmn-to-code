@@ -11,13 +11,21 @@
 <body>
 <div class="container">
     <header>
-        <h1>🚀 bpmn-to-code <a class="version-badge" id="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" style="display: none;"></a></h1>
-        <p class="subtitle">Generate type-safe Process APIs from BPMN models</p>
+        <h1>bpmn-to-code <a class="version-badge" id="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" style="display: none;"></a></h1>
+        <p class="subtitle">Your BPMN model changes. Your code doesn't break.</p>
         <p class="description">
-            Transform your BPMN process diagrams into clean, type-safe Kotlin or Java code.
-            Stop manually referencing element IDs, messages, and task types.
-            Let bpmn-to-code extract them automatically and keep your code in sync with your models.
+            Stop hardcoding element IDs, messages, and worker types.
+            Generate a type-safe Process API that stays in sync with your BPMN models.
         </p>
+        <div class="header-features">
+            <span class="feature-badge">Compile-Time Safety</span>
+            <span class="feature-badge">Zeebe / Camunda 7 / Operaton</span>
+            <span class="feature-badge">Java &amp; Kotlin</span>
+            <span class="feature-badge">Gradle &amp; Maven</span>
+        </div>
+        <div class="header-links">
+            <a href="https://emaarco.github.io/bpmn-to-code/" target="_blank" class="header-link">Documentation</a>
+        </div>
     </header>
 
     <!-- Preview Notice -->
@@ -53,6 +61,10 @@
                     <span class="upload-hint">.bpmn files only</span>
                 </label>
             </div>
+            <div class="sample-divider"><span>or</span></div>
+            <button class="btn btn-secondary" id="try-sample-btn" type="button">
+                Try with Newsletter Sample
+            </button>
             <div class="file-list" id="file-list"></div>
         </section>
 
@@ -85,10 +97,32 @@
             </form>
         </section>
 
+        <!-- BPMN Diagram Viewer -->
+        <section class="card bpmn-viewer-section" id="bpmn-viewer-section" style="display: none;">
+            <h2>BPMN Diagram</h2>
+            <div id="bpmn-canvas"></div>
+        </section>
+
         <!-- Step 3: Results -->
         <section class="card results-section" id="results-section" style="display: none;">
             <h2>3. Generated Code</h2>
             <div id="results-content"></div>
+        </section>
+
+        <!-- Post-Generation CTA -->
+        <section class="card cta-section" id="cta-section" style="display: none;">
+            <h2>Ready for Production?</h2>
+            <p>Install the plugin to generate code automatically during your build.</p>
+            <div class="cta-buttons">
+                <a href="https://emaarco.github.io/bpmn-to-code/getting-started/gradle"
+                   class="btn btn-primary" target="_blank">
+                    Get Started with Gradle
+                </a>
+                <a href="https://emaarco.github.io/bpmn-to-code/getting-started/maven"
+                   class="btn btn-secondary" target="_blank">
+                    Get Started with Maven
+                </a>
+            </div>
         </section>
 
         <!-- Loading State -->
@@ -120,6 +154,8 @@
                 <h4>Resources</h4>
                 <p>This project can be found on GitHub</p>
                 <p>
+                    <a href="https://emaarco.github.io/bpmn-to-code/" target="_blank">Documentation</a>
+                    <span> · </span>
                     <a href="https://github.com/emaarco/bpmn-to-code" target="_blank">GitHub Repository</a>
                     <span id="resources-separator"> · </span>
                     <a href="https://github.com/emaarco/bpmn-to-code/issues" target="_blank">Report Issues</a>
@@ -175,7 +211,7 @@
         </div>
 
         <div class="footer-bottom">
-            <span>👋 Contributions welcome</span>
+            <span>Contributions welcome</span>
             <span> · </span>
             <span>Open source under
                 <a href="https://github.com/emaarco/bpmn-to-code?tab=MIT-1-ov-file#readme"
@@ -187,6 +223,7 @@
     </footer>
 </div>
 
+<script src="https://unpkg.com/bpmn-js@18.6.3/dist/bpmn-navigated-viewer.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
