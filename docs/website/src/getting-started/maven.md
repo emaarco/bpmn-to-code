@@ -12,7 +12,7 @@ Add the following to the `<build>` section of your `pom.xml`:
         <plugin>
             <groupId>io.github.emaarco</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>0.0.18</version>
+            <version>1.0.0</version>
             <executions>
                 <execution>
                     <goals>
