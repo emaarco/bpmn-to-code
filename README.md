@@ -196,7 +196,7 @@ bpmn-to-code includes [AI coding assistant skills](docs/skills.md) that help you
 /plugin install bpmn-to-code@bpmn-to-code
 ```
 
-**Alternative — install individual skills via [`npx skills`](https://github.com/vercel-labs/skills):**
+**Alternative — install via [`npx skills`](https://github.com/vercel-labs/skills):**
 
 ```bash
 npx skills add https://github.com/emaarco/bpmn-to-code
