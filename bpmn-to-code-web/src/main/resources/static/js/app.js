@@ -131,21 +131,40 @@ function renderFileList() {
 }
 
 // BPMN Viewer
-function initBpmnViewer() {
-    if (state.bpmnViewer) return;
-    state.bpmnViewer = new BpmnJS({ container: '#bpmn-canvas' });
-}
-
 async function renderBpmnDiagram(xml) {
-    initBpmnViewer();
+    // Destroy previous viewer instance to get a clean canvas
+    if (state.bpmnViewer) {
+        state.bpmnViewer.destroy();
+        state.bpmnViewer = null;
+    }
+
+    // Container must be visible before bpmn.js can calculate dimensions
+    bpmnViewerSection.style.display = 'block';
+
+    // Wait for browser to lay out the visible container
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    state.bpmnViewer = new BpmnJS({ container: '#bpmn-canvas' });
     try {
         await state.bpmnViewer.importXML(xml);
-        const canvas = state.bpmnViewer.get('canvas');
-        canvas.zoom('fit-viewport');
-        bpmnViewerSection.style.display = 'block';
     } catch (err) {
-        console.error('Failed to render BPMN diagram:', err);
+        console.error('Failed to import BPMN diagram:', err);
+        bpmnViewerSection.style.display = 'none';
+        return;
     }
+
+    // Fit viewport with retry — container may need time to fully render
+    const canvas = state.bpmnViewer.get('canvas');
+    for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+            canvas.zoom('fit-viewport');
+            return;
+        } catch (err) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+    }
+    // If zoom fails, the diagram is still rendered — just not fitted
+    console.warn('Could not fit viewport, diagram rendered at default zoom');
 }
 
 // Sample loading
