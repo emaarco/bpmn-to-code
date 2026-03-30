@@ -28,7 +28,7 @@ Key facts:
 - **Theme**: `docs/website/src/.vitepress/theme/` — custom theme extending DefaultTheme
 - **Vue components**: e.g. `VersionBadge.vue` (fetches latest GitHub release, displays in nav bar)
 - **Custom CSS**: `docs/website/src/.vitepress/theme/style.css`
-- **Dependencies**: VitePress 1.6.4, Vue 3.5.31 (in `docs/website/package.json`)
+- **Dependencies**: Read versions from `docs/website/package.json` (do not hardcode)
 
 ### Step 2 — Review current state
 
@@ -68,44 +68,26 @@ cd docs/website && npm run build
 cd docs/website && npm run preview
 ```
 
-### Step 5 — Visual verification with Playwright MCP
+### Step 5 — Visual verification (only on request)
+
+**Do not run visual verification automatically.** Use `AskUserQuestion` to ask the user what should be verified. Only proceed with the steps below if the user or `$ARGUMENTS` explicitly request visual testing.
 
 **Prerequisite**: Playwright MCP must be configured in the agent's MCP settings.
 
-Use Playwright MCP to visually verify the changes:
-
 1. Ensure the docs site is running (`cd docs/website && npm run dev` in the background)
 2. Navigate to the local dev server URL
-3. Check affected pages: layout, content, navigation, links
-4. Take screenshots at key states
-5. Store screenshots in `.agent/.tmp/screenshots/` (already gitignored)
-6. Name screenshots descriptively: `docs-{page}-{state}.png`
+3. Perform only the verification steps the user requested
+4. Store screenshots in `.tmp/` (gitignored). **Never check screenshots into git.**
+5. Name screenshots descriptively: `docs-{page}-{state}.png`
+6. Clean up `.tmp/` when the skill terminates
 
-Common verification scenarios:
-- **Landing page**: Hero section, feature cards, code comparison
-- **Navigation**: Sidebar links, nav bar, breadcrumbs
-- **Content pages**: Headings, code blocks, tables, callouts
-- **Mobile viewport**: Responsive layout, hamburger menu
-- **Links**: External links open correctly, internal links navigate properly
-
-To attach screenshots to a PR:
-1. Create a draft release to host the images:
-   ```bash
-   gh release create screenshots-pr-<NUMBER> --draft --title "PR #<NUMBER> Screenshots" --notes "Temporary"
-   ```
-2. Upload screenshots as release assets:
-   ```bash
-   gh release upload screenshots-pr-<NUMBER> .agent/.tmp/screenshots/*.png
-   ```
-3. Get the download URLs:
-   ```bash
-   gh release view screenshots-pr-<NUMBER> --json assets --jq '.assets[] | .url'
-   ```
-4. Create a PR comment referencing the URLs:
-   ```bash
-   gh pr comment <NUMBER> --body "![description](https://github.com/.../releases/download/.../image.png)"
-   ```
-5. The draft release can be deleted after the PR is merged.
+To attach screenshots to a PR, upload them as draft release assets:
+```bash
+gh release create screenshots-pr-<NUMBER> --draft --title "PR #<NUMBER> Screenshots" --notes "Temporary" .tmp/*.png
+gh release view screenshots-pr-<NUMBER> --json assets --jq '.assets[] | .url'
+gh pr comment <NUMBER> --body "![description](<asset-url>)"
+```
+The draft release can be deleted after the PR is merged.
 
 ### Step 6 — Report
 

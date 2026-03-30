@@ -67,44 +67,26 @@ Follow these conventions:
 
 The app will be available at `http://localhost:8080/static/index.html`.
 
-### Step 5 — Visual verification with Playwright MCP
+### Step 5 — Visual verification (only on request)
+
+**Do not run visual verification automatically.** Use `AskUserQuestion` to ask the user what should be verified. Only proceed with the steps below if the user or `$ARGUMENTS` explicitly request visual testing.
 
 **Prerequisite**: Playwright MCP must be configured in the agent's MCP settings.
 
-Use Playwright MCP to visually verify the changes:
-
 1. Ensure the web module is running (`./gradlew :bpmn-to-code-web:run` in the background)
 2. Navigate to `http://localhost:8080/static/index.html`
-3. Interact with the page as needed (upload files, click buttons, fill forms)
-4. Take screenshots at key states
-5. Store screenshots in `.agent/.tmp/screenshots/` (already gitignored)
-6. Name screenshots descriptively: `web-{page}-{state}.png`
+3. Perform only the verification steps the user requested
+4. Store screenshots in `.tmp/` (gitignored). **Never check screenshots into git.**
+5. Name screenshots descriptively: `web-{page}-{state}.png`
+6. Clean up `.tmp/` when the skill terminates
 
-Common verification scenarios:
-- **Initial load**: Hero section, feature badges, upload area visible
-- **File uploaded**: File list populated, config section visible, BPMN diagram rendered
-- **Code generated**: Results section with syntax-highlighted code, CTA section visible
-- **Mobile viewport**: Responsive layout at 375px and 640px widths
-- **Error state**: Error message display after invalid input
-
-To attach screenshots to a PR:
-1. Create a draft release to host the images:
-   ```bash
-   gh release create screenshots-pr-<NUMBER> --draft --title "PR #<NUMBER> Screenshots" --notes "Temporary"
-   ```
-2. Upload screenshots as release assets:
-   ```bash
-   gh release upload screenshots-pr-<NUMBER> .agent/.tmp/screenshots/*.png
-   ```
-3. Get the download URLs:
-   ```bash
-   gh release view screenshots-pr-<NUMBER> --json assets --jq '.assets[] | .url'
-   ```
-4. Create a PR comment referencing the URLs:
-   ```bash
-   gh pr comment <NUMBER> --body "![description](https://github.com/.../releases/download/.../image.png)"
-   ```
-5. The draft release can be deleted after the PR is merged.
+To attach screenshots to a PR, upload them as draft release assets:
+```bash
+gh release create screenshots-pr-<NUMBER> --draft --title "PR #<NUMBER> Screenshots" --notes "Temporary" .tmp/*.png
+gh release view screenshots-pr-<NUMBER> --json assets --jq '.assets[] | .url'
+gh pr comment <NUMBER> --body "![description](<asset-url>)"
+```
+The draft release can be deleted after the PR is merged.
 
 ### Step 6 — Report
 
