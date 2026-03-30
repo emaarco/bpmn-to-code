@@ -82,6 +82,9 @@ fun Application.configureApp(
         // Serve static files (frontend)
         staticResources("/static", "static")
 
+        // Serve sample BPMN files
+        staticResources("/samples", "samples")
+
         // Root redirects to static index.html
         get("/") {
             call.respondRedirect("/static/index.html")

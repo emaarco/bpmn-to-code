@@ -212,7 +212,6 @@
 
 .vp-doc div[class*='language-'] pre {
   -webkit-overflow-scrolling: touch;
-  padding: 1rem 1.25rem;
   background:
     linear-gradient(to right, var(--vp-code-block-bg, #f6f6f7), var(--vp-code-block-bg, #f6f6f7)) local,
     linear-gradient(to left, var(--vp-code-block-bg, #f6f6f7), var(--vp-code-block-bg, #f6f6f7)) local,

@@ -1,7 +1,10 @@
 // Application State
 const state = {
     files: [],
-    generatedFiles: []
+    generatedFiles: [],
+    bpmnViewer: null,
+    currentBpmnXml: null,
+    selectedFileIndex: 0
 };
 
 // DOM Elements
@@ -15,6 +18,9 @@ const generateBtn = document.getElementById('generate-btn');
 const loading = document.getElementById('loading');
 const errorMessage = document.getElementById('error-message');
 const resultsContent = document.getElementById('results-content');
+const bpmnViewerContainer = document.getElementById('bpmn-viewer-container');
+const ctaSection = document.getElementById('cta-section');
+const trySampleBtn = document.getElementById('try-sample-btn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,6 +53,9 @@ function setupEventListeners() {
 
     // Form submission
     configForm.addEventListener('submit', handleGenerate);
+
+    // Try with sample
+    trySampleBtn.addEventListener('click', loadSample);
 }
 
 function handleFileSelect(e) {
@@ -56,29 +65,48 @@ function handleFileSelect(e) {
 }
 
 function addFiles(newFiles) {
-    // Add new files to state
     newFiles.forEach(file => {
         if (!state.files.some(f => f.name === file.name)) {
             state.files.push(file);
         }
     });
 
-    renderFileList();
-
-    // Show config section if files are uploaded
     if (state.files.length > 0) {
         configSection.style.display = 'block';
+        selectFile(state.selectedFileIndex);
     }
+}
+
+function selectFile(index) {
+    if (index < 0 || index >= state.files.length) return;
+    state.selectedFileIndex = index;
+    renderFileList();
+
+    const file = state.files[index];
+    const reader = new FileReader();
+    reader.onload = () => {
+        state.currentBpmnXml = reader.result;
+        renderBpmnDiagram(reader.result);
+    };
+    reader.readAsText(file);
 }
 
 function removeFile(fileName) {
     state.files = state.files.filter(f => f.name !== fileName);
-    renderFileList();
 
-    // Hide config if no files
     if (state.files.length === 0) {
         configSection.style.display = 'none';
         resultsSection.style.display = 'none';
+        bpmnViewerContainer.style.display = 'none';
+        ctaSection.style.display = 'none';
+        state.currentBpmnXml = null;
+        state.selectedFileIndex = 0;
+        renderFileList();
+    } else {
+        if (state.selectedFileIndex >= state.files.length) {
+            state.selectedFileIndex = state.files.length - 1;
+        }
+        selectFile(state.selectedFileIndex);
     }
 }
 
@@ -88,28 +116,87 @@ function renderFileList() {
         return;
     }
 
-    fileList.innerHTML = state.files.map(file => `
-        <div class="file-item">
-            <div>
+    fileList.innerHTML = state.files.map((file, index) => `
+        <div class="file-item ${index === state.selectedFileIndex ? 'file-item-active' : ''}" onclick="selectFile(${index})">
+            <div class="file-item-info">
                 <span class="file-item-name">${escapeHtml(file.name)}</span>
-                <span class="file-item-size">(${formatFileSize(file.size)})</span>
+                <span class="file-item-size">${formatFileSize(file.size)}</span>
             </div>
-            <button type="button" class="file-item-remove" onclick="removeFile('${escapeHtml(file.name)}')">&times;</button>
+            <button type="button" class="file-item-remove" onclick="event.stopPropagation(); removeFile('${escapeHtml(file.name)}')">&times;</button>
         </div>
     `).join('');
+}
+
+// BPMN Viewer
+async function renderBpmnDiagram(xml) {
+    if (state.bpmnViewer) {
+        state.bpmnViewer.destroy();
+        state.bpmnViewer = null;
+    }
+
+    bpmnViewerContainer.style.display = 'block';
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    state.bpmnViewer = new BpmnJS({ container: '#bpmn-canvas' });
+    try {
+        await state.bpmnViewer.importXML(xml);
+    } catch (err) {
+        console.error('Failed to import BPMN diagram:', err);
+        bpmnViewerContainer.style.display = 'none';
+        return;
+    }
+
+    const canvas = state.bpmnViewer.get('canvas');
+    for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+            canvas.zoom('fit-viewport');
+            // Zoom out slightly for breathing room around the diagram
+            const currentZoom = canvas.zoom();
+            canvas.zoom(currentZoom * 0.92);
+            return;
+        } catch (err) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+    }
+    console.warn('Could not fit viewport, diagram rendered at default zoom');
+}
+
+// Sample loading
+async function loadSample() {
+    try {
+        trySampleBtn.disabled = true;
+        trySampleBtn.textContent = 'Loading...';
+
+        const response = await fetch('/samples/c8-newsletter.bpmn');
+        if (!response.ok) throw new Error('Failed to fetch sample');
+        const xml = await response.text();
+
+        const blob = new Blob([xml], { type: 'application/xml' });
+        const file = new File([blob], 'c8-newsletter.bpmn', { type: 'application/xml' });
+
+        state.files = [];
+        addFiles([file]);
+
+        document.getElementById('process-engine').value = 'ZEEBE';
+
+    } catch (err) {
+        showError('Failed to load sample: ' + err.message);
+    } finally {
+        trySampleBtn.disabled = false;
+        trySampleBtn.textContent = 'Try with Newsletter Sample';
+    }
 }
 
 async function handleGenerate(e) {
     e.preventDefault();
 
-    // Hide previous results and errors
     resultsSection.style.display = 'none';
     errorMessage.style.display = 'none';
+    ctaSection.style.display = 'none';
     loading.style.display = 'block';
     generateBtn.disabled = true;
 
     try {
-        // Read and encode files
         const filesData = await Promise.all(
             state.files.map(async (file) => ({
                 fileName: file.name,
@@ -117,13 +204,11 @@ async function handleGenerate(e) {
             }))
         );
 
-        // Get config
         const config = {
             outputLanguage: document.getElementById('output-language').value,
             processEngine: document.getElementById('process-engine').value
         };
 
-        // Call API
         const response = await fetch('/api/generate', {
             method: 'POST',
             headers: {
@@ -141,8 +226,7 @@ async function handleGenerate(e) {
             state.generatedFiles = result.files;
             renderResults(result.files, config.outputLanguage);
             resultsSection.style.display = 'block';
-
-            // Scroll to results
+            ctaSection.style.display = 'block';
             resultsSection.scrollIntoView({behavior: 'smooth'});
         } else {
             showError(result.error || 'Unknown error occurred');
@@ -191,7 +275,6 @@ function renderResults(files, language) {
         </div>
     `).join('');
 
-    // Apply syntax highlighting
     document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
     });
@@ -201,7 +284,6 @@ function copyToClipboard(index) {
     const file = state.generatedFiles[index];
 
     navigator.clipboard.writeText(file.content).then(() => {
-        // Visual feedback - change button text temporarily
         const buttons = document.querySelectorAll('.btn-copy');
         const button = buttons[index];
         const originalHTML = button.innerHTML;
@@ -250,7 +332,6 @@ function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
-            // Remove data URL prefix (data:application/octet-stream;base64,)
             const base64 = reader.result.split(',')[1];
             resolve(base64);
         };
@@ -287,7 +368,6 @@ async function loadConfiguration() {
             setupLegalLinks(config.legalLinks);
         }
     } catch (error) {
-        // Silently fail. Legal links are optional
         console.error('Failed to load configuration:', error);
     }
 }
@@ -297,7 +377,6 @@ function setupLegalLinks(legalLinks) {
     const privacyLink = document.getElementById('privacy-link');
     const separator = document.getElementById('legal-separator');
 
-    // Show/hide links based on whether URLs are provided
     if (legalLinks.imprintUrl) {
         imprintLink.href = legalLinks.imprintUrl;
         imprintLink.style.display = 'inline';
@@ -312,7 +391,6 @@ function setupLegalLinks(legalLinks) {
         privacyLink.style.display = 'none';
     }
 
-    // Show separator only if both links are configured
     if (legalLinks.imprintUrl && legalLinks.privacyUrl) {
         separator.style.display = 'inline';
     } else {
