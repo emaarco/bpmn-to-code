@@ -8,13 +8,13 @@ The bpmn-to-code Gradle plugin generates type-safe Process API files from your B
 
 ```kotlin [build.gradle.kts]
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "0.0.19"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "1.0.0"
 }
 ```
 
 ```groovy [build.gradle]
 plugins {
-    id 'io.github.emaarco.bpmn-to-code-gradle' version '0.0.19'
+    id 'io.github.emaarco.bpmn-to-code-gradle' version '1.0.0'
 }
 ```
 
