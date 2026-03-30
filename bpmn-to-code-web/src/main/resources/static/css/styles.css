@@ -7,6 +7,8 @@
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
+    --brand-accent: #3b82f6;
+    --brand-soft: rgba(37, 99, 235, 0.12);
     --success-color: #10b981;
     --error-color: #ef4444;
     --border-color: #e5e7eb;
@@ -24,42 +26,81 @@ body {
     background: var(--bg-gray);
 }
 
-.container {
+/* Navbar — matches docs site nav */
+.navbar {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-inner {
     max-width: 900px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 0 1rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 2rem;
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1rem;
 }
 
-.hero-name {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.navbar-brand img {
+    border-radius: 4px;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.navbar-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+    color: var(--primary-color);
+}
+
+.navbar-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.navbar-icon:hover {
+    color: var(--text-primary);
 }
 
 /* Version Badge */
 .version-badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--primary-color);
-    background: rgba(37, 99, 235, 0.12);
+    background: var(--brand-soft);
     border: 1px solid var(--primary-color);
     border-radius: 999px;
     text-decoration: none;
     transition: background 0.2s, color 0.2s;
-    margin-bottom: 1rem;
+    margin-left: 0.25rem;
 }
 
 .version-badge:hover {
@@ -67,30 +108,45 @@ header {
     color: white;
 }
 
-.subtitle {
-    font-size: 1.25rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
-.description {
+/* Hero — matches docs site hero section */
+.hero {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.hero-description {
     font-size: 1rem;
     color: var(--text-secondary);
     line-height: 1.6;
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto 1.5rem;
 }
 
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-.header-features {
+.hero-features {
     display: flex;
     gap: 0.75rem;
     justify-content: center;
@@ -98,7 +154,7 @@ header {
 }
 
 .feature-badge {
-    background: rgba(37, 99, 235, 0.12);
+    background: var(--brand-soft);
     color: var(--primary-color);
     padding: 0.375rem 0.875rem;
     border-radius: 2rem;
@@ -157,6 +213,7 @@ header {
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
 }
 
 .card h2 {
@@ -220,57 +277,84 @@ header {
     border-top: 1px solid var(--border-color);
 }
 
-/* BPMN File Tabs */
-.bpmn-tabs-container {
-    margin-top: 1.5rem;
+/* File List */
+.file-list {
+    margin-top: 1rem;
 }
 
-.bpmn-tabs {
+.file-item {
     display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border-color);
-    overflow-x: auto;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    background: var(--bg-gray);
+    border-radius: 0.375rem;
+    margin-bottom: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
 }
 
-.bpmn-tab {
-    display: inline-flex;
+.file-item:hover {
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+
+.file-item-active {
+    background: #eff6ff;
+    border-color: var(--primary-color);
+}
+
+.file-item-info {
+    display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    min-width: 0;
+}
+
+.file-item-name {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-item-size {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.file-item-remove {
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
     color: var(--text-secondary);
-    font-size: 0.875rem;
-    font-weight: 500;
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-}
-
-.bpmn-tab:hover {
-    color: var(--text-primary);
-    background: var(--bg-gray);
-}
-
-.bpmn-tab-active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.bpmn-tab-name {
-    pointer-events: none;
-}
-
-.bpmn-tab-remove {
-    color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 1.125rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    transition: all 0.15s;
     line-height: 1;
-    transition: color 0.2s;
 }
 
-.bpmn-tab-remove:hover {
+.file-item-remove:hover {
     color: var(--error-color);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* BPMN Viewer */
+.bpmn-viewer-container {
+    margin-top: 1rem;
+}
+
+#bpmn-canvas {
+    height: 400px;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: white;
 }
 
 /* Form */
@@ -368,32 +452,6 @@ small {
 
 .btn-secondary:hover {
     background: #eff6ff;
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--border-color);
-    padding: 0.5rem 1.25rem;
-    font-size: 0.875rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    width: auto;
-}
-
-.btn-outline:hover {
-    border-color: var(--primary-color);
-    background: rgba(37, 99, 235, 0.06);
-}
-
-/* BPMN Viewer Canvas */
-#bpmn-canvas {
-    height: 400px;
-    border: 1px solid var(--border-color);
-    border-radius: 0 0 0.375rem 0.375rem;
-    overflow: hidden;
-    background: white;
 }
 
 /* Results */
@@ -524,12 +582,8 @@ small {
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Error */
@@ -665,29 +719,32 @@ footer {
 
 /* Responsive */
 @media (max-width: 640px) {
+    .navbar-inner {
+        padding: 0 0.75rem;
+    }
+
+    .navbar-links a:not(.navbar-icon) {
+        display: none;
+    }
+
     .container {
-        padding: 1rem 0.5rem;
+        padding: 1.25rem 0.75rem;
     }
 
     .hero-name {
         font-size: 1.75rem;
     }
 
-    .subtitle {
-        font-size: 1rem;
+    .hero-text {
+        font-size: 1.125rem;
     }
 
-    .description {
+    .hero-description {
         font-size: 0.875rem;
         margin-bottom: 1rem;
     }
 
-    .header-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-features {
+    .hero-features {
         gap: 0.375rem;
     }
 
@@ -725,7 +782,7 @@ footer {
     }
 
     #bpmn-canvas {
-        height: 220px;
+        height: 250px;
     }
 
     .code-file-header {
