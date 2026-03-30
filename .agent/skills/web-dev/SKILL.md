@@ -88,9 +88,23 @@ Common verification scenarios:
 - **Error state**: Error message display after invalid input
 
 To attach screenshots to a PR:
-```bash
-gh pr comment <PR_NUMBER> --body "![screenshot description](path/to/screenshot.png)"
-```
+1. Create a draft release to host the images:
+   ```bash
+   gh release create screenshots-pr-<NUMBER> --draft --title "PR #<NUMBER> Screenshots" --notes "Temporary"
+   ```
+2. Upload screenshots as release assets:
+   ```bash
+   gh release upload screenshots-pr-<NUMBER> .agent/.tmp/screenshots/*.png
+   ```
+3. Get the download URLs:
+   ```bash
+   gh release view screenshots-pr-<NUMBER> --json assets --jq '.assets[] | .url'
+   ```
+4. Create a PR comment referencing the URLs:
+   ```bash
+   gh pr comment <NUMBER> --body "![description](https://github.com/.../releases/download/.../image.png)"
+   ```
+5. The draft release can be deleted after the PR is merged.
 
 ### Step 6 — Report
 
