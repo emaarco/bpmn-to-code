@@ -84,7 +84,7 @@
   bottom: 0;
   background-image: url('/example-process.png');
   background-repeat: no-repeat;
-  background-position: right center;
+  background-position: 70% center;
   background-size: contain;
   opacity: 0.10;
   -webkit-mask-image: linear-gradient(to right, transparent 10%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,1) 80%);
@@ -210,13 +210,35 @@
   border: 1px solid var(--vp-c-divider);
 }
 
+.vp-doc div[class*='language-'] pre {
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem 1.25rem;
+  background:
+    linear-gradient(to right, var(--vp-code-block-bg, #f6f6f7), var(--vp-code-block-bg, #f6f6f7)) local,
+    linear-gradient(to left, var(--vp-code-block-bg, #f6f6f7), var(--vp-code-block-bg, #f6f6f7)) local,
+    linear-gradient(to right, rgba(0,0,0,0.08), transparent) scroll,
+    linear-gradient(to left, rgba(0,0,0,0.08), transparent) scroll;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+  background-position: left, right, left, right;
+  background-repeat: no-repeat;
+}
+
 /**
- * Tables
+ * Tables — scroll-shadow indicators for mobile overflow
  */
 .vp-doc table {
   border-radius: 0.5rem;
   overflow-x: auto;
   display: block;
+  -webkit-overflow-scrolling: touch;
+  background:
+    linear-gradient(to right, var(--vp-c-bg), var(--vp-c-bg)) local,
+    linear-gradient(to left, var(--vp-c-bg), var(--vp-c-bg)) local,
+    linear-gradient(to right, rgba(0,0,0,0.1), transparent) scroll,
+    linear-gradient(to left, rgba(0,0,0,0.1), transparent) scroll;
+  background-size: 20px 100%, 20px 100%, 12px 100%, 12px 100%;
+  background-position: left, right, left, right;
+  background-repeat: no-repeat;
 }
 
 /**
@@ -264,4 +286,31 @@
 .version-badge:hover {
   background: var(--vp-c-brand-1);
   color: #fff !important;
+}
+
+/**
+ * Mobile responsiveness
+ */
+@media (max-width: 768px) {
+  /* Keep hero BPMN illustration visible on mobile */
+  .VPHero::before {
+    background-position: center bottom;
+    background-size: 140% auto;
+    opacity: 0.05;
+    top: 0;
+  }
+
+  /* Hide "On this page" button to reduce nav clutter */
+  .VPLocalNav .outline {
+    display: none;
+  }
+
+  /* Prevent code blocks and code groups from going full-bleed on mobile */
+  .vp-doc div[class*='language-'],
+  .vp-doc .vp-code-group {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 0.5rem !important;
+    overflow: hidden;
+  }
 }
