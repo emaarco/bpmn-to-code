@@ -46,7 +46,7 @@ Add the server config to your client. Replace the JAR path with the absolute pat
   "mcpServers": {
     "bpmn-to-code": {
       "command": "java",
-      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-0.0.19-all.jar"]
+      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-1.0.0-all.jar"]
     }
   }
 }
@@ -58,7 +58,7 @@ Add the server config to your client. Replace the JAR path with the absolute pat
   "mcpServers": {
     "bpmn-to-code": {
       "command": "java",
-      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-0.0.19-all.jar"]
+      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-1.0.0-all.jar"]
     }
   }
 }
@@ -70,7 +70,7 @@ Add the server config to your client. Replace the JAR path with the absolute pat
   "mcpServers": {
     "bpmn-to-code": {
       "command": "java",
-      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-0.0.19-all.jar"]
+      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-1.0.0-all.jar"]
     }
   }
 }
