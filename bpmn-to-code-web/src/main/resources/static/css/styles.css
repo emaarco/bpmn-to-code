@@ -237,6 +237,19 @@ header h1 {
     background: var(--bg-gray);
     border-radius: 0.375rem;
     margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.file-item:hover {
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+
+.file-item-active {
+    background: #eff6ff;
+    border-color: var(--primary-color);
 }
 
 .file-item-name {
@@ -356,12 +369,17 @@ small {
     background: #eff6ff;
 }
 
-/* BPMN Viewer */
+/* BPMN Viewer (inline below file list) */
+.bpmn-viewer-inline {
+    margin-top: 1.5rem;
+}
+
 #bpmn-canvas {
     height: 400px;
     border: 1px solid var(--border-color);
     border-radius: 0.375rem;
     overflow: hidden;
+    background: white;
 }
 
 /* Results */

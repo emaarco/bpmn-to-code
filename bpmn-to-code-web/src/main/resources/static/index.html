@@ -66,6 +66,11 @@
                 Try with Newsletter Sample
             </button>
             <div class="file-list" id="file-list"></div>
+
+            <!-- BPMN Diagram Viewer (inline, below file list) -->
+            <div class="bpmn-viewer-inline" id="bpmn-viewer-section" style="display: none;">
+                <div id="bpmn-canvas"></div>
+            </div>
         </section>
 
         <!-- Step 2: Configure Generation -->
@@ -95,12 +100,6 @@
                     Generate Process API
                 </button>
             </form>
-        </section>
-
-        <!-- BPMN Diagram Viewer -->
-        <section class="card bpmn-viewer-section" id="bpmn-viewer-section" style="display: none;">
-            <h2>BPMN Diagram</h2>
-            <div id="bpmn-canvas"></div>
         </section>
 
         <!-- Step 3: Results -->

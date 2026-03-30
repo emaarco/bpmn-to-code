@@ -3,7 +3,8 @@ const state = {
     files: [],
     generatedFiles: [],
     bpmnViewer: null,
-    currentBpmnXml: null
+    currentBpmnXml: null,
+    selectedFileIndex: 0
 };
 
 // DOM Elements
@@ -78,16 +79,24 @@ function addFiles(newFiles) {
         configSection.style.display = 'block';
     }
 
-    // Render BPMN diagram for the first file
+    // Render BPMN diagram for the selected file (default: first)
     if (state.files.length > 0) {
-        const firstFile = state.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-            state.currentBpmnXml = reader.result;
-            renderBpmnDiagram(reader.result);
-        };
-        reader.readAsText(firstFile);
+        selectFile(state.selectedFileIndex);
     }
+}
+
+function selectFile(index) {
+    if (index < 0 || index >= state.files.length) return;
+    state.selectedFileIndex = index;
+    renderFileList();
+
+    const file = state.files[index];
+    const reader = new FileReader();
+    reader.onload = () => {
+        state.currentBpmnXml = reader.result;
+        renderBpmnDiagram(reader.result);
+    };
+    reader.readAsText(file);
 }
 
 function removeFile(fileName) {
@@ -101,15 +110,13 @@ function removeFile(fileName) {
         bpmnViewerSection.style.display = 'none';
         ctaSection.style.display = 'none';
         state.currentBpmnXml = null;
+        state.selectedFileIndex = 0;
     } else {
-        // Re-render diagram for the new first file
-        const firstFile = state.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-            state.currentBpmnXml = reader.result;
-            renderBpmnDiagram(reader.result);
-        };
-        reader.readAsText(firstFile);
+        // Adjust selected index if needed
+        if (state.selectedFileIndex >= state.files.length) {
+            state.selectedFileIndex = state.files.length - 1;
+        }
+        selectFile(state.selectedFileIndex);
     }
 }
 
@@ -119,13 +126,13 @@ function renderFileList() {
         return;
     }
 
-    fileList.innerHTML = state.files.map(file => `
-        <div class="file-item">
+    fileList.innerHTML = state.files.map((file, index) => `
+        <div class="file-item ${index === state.selectedFileIndex ? 'file-item-active' : ''}" onclick="selectFile(${index})">
             <div>
                 <span class="file-item-name">${escapeHtml(file.name)}</span>
                 <span class="file-item-size">(${formatFileSize(file.size)})</span>
             </div>
-            <button type="button" class="file-item-remove" onclick="removeFile('${escapeHtml(file.name)}')">&times;</button>
+            <button type="button" class="file-item-remove" onclick="event.stopPropagation(); removeFile('${escapeHtml(file.name)}')">&times;</button>
         </div>
     `).join('');
 }
