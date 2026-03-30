@@ -189,16 +189,17 @@ Projects using bpmn-to-code in practice:
 
 bpmn-to-code includes [AI coding assistant skills](docs/skills.md) that help you set up and work with the project.
 
-**Install skills in [Claude Code](https://docs.anthropic.com/en/docs/claude-code):**
+**Install as a Claude Code plugin:**
 
 ```bash
-# Install all skills at once
-npx skills add https://github.com/emaarco/bpmn-to-code
+/plugin marketplace add emaarco/bpmn-to-code
+/plugin install bpmn-to-code@bpmn-to-code
+```
 
-# Or pick only what you need
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-gradle
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/setup-bpmn-to-code-maven
-npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/migrate-to-bpmn-to-code-apis
+**Alternative — install via [`npx skills`](https://github.com/vercel-labs/skills):**
+
+```bash
+npx skills add https://github.com/emaarco/bpmn-to-code
 ```
 
 Available skills include project setup (Gradle & Maven), API migration, issue management, ADR writing, and code review.
