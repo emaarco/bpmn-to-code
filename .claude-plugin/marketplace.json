@@ -1,0 +1,13 @@
+{
+  "name": "bpmn-to-code",
+  "owner": {
+    "name": "emaarco"
+  },
+  "plugins": [
+    {
+      "name": "bpmn-to-code",
+      "source": "./bpmn-to-code-skills",
+      "description": "AI-assisted setup and migration for the bpmn-to-code Gradle/Maven plugin"
+    }
+  ]
+}

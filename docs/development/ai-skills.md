@@ -6,16 +6,28 @@ Skills live in `.agent/skills/` and are agent-agnostic by design.
 ## Directory Layout
 
 ```
+bpmn-to-code-skills/           # Claude Code plugin (user-facing skills)
+├── .claude-plugin/
+│   └── plugin.json
+└── skills/
+    ├── setup-bpmn-to-code-gradle/SKILL.md
+    ├── setup-bpmn-to-code-maven/SKILL.md
+    └── migrate-to-bpmn-to-code-apis/SKILL.md
+
 .agent/
 └── skills/
+    ├── setup-bpmn-to-code-gradle -> ../../bpmn-to-code-skills/skills/setup-bpmn-to-code-gradle
+    ├── setup-bpmn-to-code-maven -> ../../bpmn-to-code-skills/skills/setup-bpmn-to-code-maven
+    ├── migrate-to-bpmn-to-code-apis -> ../../bpmn-to-code-skills/skills/migrate-to-bpmn-to-code-apis
     ├── clean-code/SKILL.md
     ├── create-adr/SKILL.md
     ├── create-ticket/SKILL.md
-    ├── migrate-to-bpmn-to-code-apis/SKILL.md
-    ├── setup-bpmn-to-code-gradle/SKILL.md
-    └── setup-bpmn-to-code-maven/SKILL.md
+    ├── bpmn-to-code-release/SKILL.md
+    └── bpmn-to-code-validate-docs/SKILL.md
 .claude -> .agent              # symlink for Claude Code compatibility
 ```
+
+User-facing skills (setup, migration) live in `bpmn-to-code-skills/` so they can be distributed as a Claude Code plugin. Symlinks in `.agent/skills/` ensure contributors still discover all skills when working in the repo. Internal skills (create-ticket, release, etc.) remain directly in `.agent/skills/`.
 
 ## Claude Code Compatibility
 

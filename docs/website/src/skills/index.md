@@ -12,7 +12,18 @@ bpmn-to-code ships with reusable skills for AI coding assistants. Skills work wi
 
 ## Installation
 
-Install skills in Claude Code using [`npx skills`](https://github.com/vercel-labs/skills):
+### Plugin (recommended)
+
+Install as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin:
+
+```bash
+/plugin marketplace add emaarco/bpmn-to-code
+/plugin install bpmn-to-code@bpmn-to-code
+```
+
+### Alternative: npx skills
+
+Install individual skills using [`npx skills`](https://github.com/vercel-labs/skills):
 
 ```bash
 # Install all skills at once
