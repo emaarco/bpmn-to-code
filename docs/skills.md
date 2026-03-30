@@ -38,7 +38,7 @@ Install as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugi
 
 ### Alternative: npx skills
 
-Install individual skills using [`npx skills`](https://github.com/vercel-labs/skills):
+Install skills using [`npx skills`](https://github.com/vercel-labs/skills):
 
 ```bash
 # Install all skills at once
