@@ -1,7 +1,3 @@
-@file:OptIn(OpenApiPreview::class)
-
-import io.ktor.plugin.*
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
@@ -37,21 +33,7 @@ ktor {
         archiveFileName.set("bpmn-to-code-web-${version}-fat.jar")
     }
 
-    @OptIn(OpenApiPreview::class)
-    openApi {
-        title = "BPMN to Code Web API"
-        version = project.version.toString()
-        summary = "REST API for generating type-safe process APIs from BPMN files"
-        termsOfService = "https://github.com/emaarco/bpmn-to-code"
-        contact = "https://github.com/emaarco/bpmn-to-code"
-        license = "Apache-2.0"
-        description =
-            "Upload BPMN files and generate type-safe API definitions for process engines like Camunda 7 and Zeebe. " +
-                    "Supports both Java and Kotlin output languages with optional API versioning."
 
-        // Location of the generated specification (defaults to openapi/generated.json)
-        target = project.layout.buildDirectory.file("openapi/generated.json")
-    }
 }
 
 // Enable zip64 for shadow JAR (required for archives with >65535 entries)
@@ -74,8 +56,9 @@ tasks.named<Test>("test") {
 }
 
 tasks.named<ProcessResources>("processResources") {
+    val projectVersion = project.version.toString()
     filesMatching("version.properties") {
-        expand("projectVersion" to project.version.toString())
+        expand("projectVersion" to projectVersion)
     }
 }
 
