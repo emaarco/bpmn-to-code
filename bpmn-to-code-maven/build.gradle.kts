@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    `kotlin-dsl`
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.mavenPluginDevelopment)
     alias(libs.plugins.mavenPublish)
 }
@@ -48,16 +48,6 @@ tasks.jar {
     from(project(":bpmn-to-code-core").sourceSets.main.get().output)
 }
 
-// Create a sources jar (required for Maven Central).
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-// Attach the sources JAR as an additional artifact.
-artifacts {
-    add("archives", sourcesJar)
-}
 
 mavenPublishing {
 

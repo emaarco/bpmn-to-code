@@ -37,6 +37,7 @@ ktorServerCors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
 ktorServerCallLogging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktorServerStatusPages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktorServerSwagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
+ktorServerOpenapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
 ktorServerTestHost = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -53,7 +54,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 [bundles]
 codegen = ["kotlinpoet", "javapoet"]
 testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
-ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "ktorSerializationKotlinxJson", "ktorServerCors", "ktorServerCallLogging", "ktorServerStatusPages", "ktorServerSwagger"]
+ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "ktorSerializationKotlinxJson", "ktorServerCors", "ktorServerCallLogging", "ktorServerStatusPages", "ktorServerSwagger", "ktorServerOpenapi"]
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
