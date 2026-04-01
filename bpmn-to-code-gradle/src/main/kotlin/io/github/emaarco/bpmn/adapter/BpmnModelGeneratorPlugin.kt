@@ -7,8 +7,8 @@ import org.gradle.api.Project
 class BpmnModelGeneratorPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.tasks.register("generateBpmnModelApi", GenerateBpmnModelsTask::class.java) {
-            group = "BPMN"
-            description = "Generates API-files from BPMN files to interact with a process-engine."
+            it.group = "BPMN"
+            it.description = "Generates API-files from BPMN files to interact with a process-engine."
         }
     }
 }

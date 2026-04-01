@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalKtorApi::class)
+
 package io.github.emaarco.bpmn.web
 
 import io.github.emaarco.bpmn.web.config.AppConfig
@@ -15,9 +17,12 @@ import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.openapi.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.openapi.*
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.serialization.json.Json
 
 private val logger = KotlinLogging.logger {}
@@ -88,28 +93,37 @@ fun Application.configureApp(
         // Root redirects to static index.html
         get("/") {
             call.respondRedirect("/static/index.html")
-        }
+        }.hide()
 
-        /**
-         * Health check endpoint
-         */
         get("/health") {
             call.respond(HttpStatusCode.OK, mapOf("status" to "UP"))
+        }.describe {
+            summary = "Health check"
+            description = "Returns the health status of the service"
+            responses {
+                HttpStatusCode.OK { description = "Service is healthy" }
+            }
         }
 
-        /**
-         * Configuration endpoint for the frontend, to get legal links
-         */
         get("/api/config") {
             val response = ConfigResponse(
                 legalLinks = appConfig.legalLinks,
                 version = appConfig.version,
             )
             call.respond(response)
+        }.describe {
+            summary = "Get configuration"
+            description = "Returns application configuration including legal links and current version"
+            responses {
+                HttpStatusCode.OK { description = "Configuration retrieved successfully" }
+            }
         }
 
-        // Swagger UI endpoint (provides interactive API documentation)
-        swaggerUI(path = "swagger", swaggerFile = "openapi/generated.json")
+        // Swagger UI (served from runtime-generated spec)
+        swaggerUI("swagger") {
+            info = OpenApiInfo("BPMN to Code Web API", appConfig.version)
+            source = OpenApiDocSource.Routing(ContentType.Application.Json)
+        }
 
         // API routes
         val generationService = WebGenerationService()
