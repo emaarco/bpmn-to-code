@@ -1,7 +1,7 @@
 ---
 name: create-ticket
 argument-hint: "[feature|bug|refactor] \"<description>\" | update <issue-number-or-url>"
-allowed-tools: Bash(gh *)
+allowed-tools: Bash(gh *), AskUserQuestion
 description: Create or update a GitHub issue for bpmn-to-code using the `gh` CLI. Use when the user asks to "file a bug", "create a feature request", "open a GitHub issue", or "update an existing one". Supports feature, bug, and refactor issue types with structured templates; shows a draft for confirmation before creating or editing; looks up existing issues by number or URL for updates.
 ---
 
@@ -61,8 +61,7 @@ Extract the `title` prefix, `labels`, and every `textarea`/`input`/`dropdown` fi
 
 ### Step 5 – Show and confirm
 
-Present the full draft (create) or the current state + proposed changes (update) and ask:
-*"Proceed? (yes / edit / cancel)"*. Apply edits and show again if requested.
+Use `AskUserQuestion` to present the full draft (create) or the current state + proposed changes (update) and ask whether to proceed, edit, or cancel. Apply any requested edits and ask again before continuing.
 
 ### Step 6 – Create or update
 
