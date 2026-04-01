@@ -16,7 +16,7 @@ jobs:
 
       # Step 2: Setup Gradle
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       # Step 3: Set up JDK 21
       - name: Set up JDK 21
