@@ -4,7 +4,7 @@ Projects using bpmn-to-code in practice.
 
 ## easy-zeebe
 
-A Zeebe-based process automation example showing how bpmn-to-code integrates into a typical Camunda 8 / Zeebe workflow project.
+A Zeebe-based process automation example showing how bpmn-to-code integrates into a typical Camunda 8 / Zeebe workflow project. easy-zeebe also ships with Claude Skills that scaffold worker implementations, REST controllers, and test boilerplate around the generated Process API — a practical example of using [deterministic code generation and AI skills as complementary layers](/guide/why-a-plugin).
 
 [GitHub Repository](https://github.com/emaarco/easy-zeebe)
 

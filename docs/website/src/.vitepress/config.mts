@@ -29,6 +29,12 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: 'Overview',
+        items: [
+          { text: 'Why bpmn-to-code', link: '/overview/why' },
+        ],
+      },
+      {
         text: 'Build Plugins',
         items: [
           {

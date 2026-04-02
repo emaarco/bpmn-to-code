@@ -10,12 +10,14 @@ hero:
       text: ✨ Try in Browser
       link: https://bpmn-to-code.miragon.io/static/index.html
     - theme: alt
+      text: Why bpmn-to-code
+      link: /overview/why
+    - theme: alt
       text: Get Started (Gradle)
       link: /getting-started/gradle
     - theme: alt
       text: Get Started (Maven)
       link: /getting-started/maven
-      title: test
 
 features:
   - title: 🛡️ Compile-Time Safety
@@ -65,5 +67,4 @@ fun sendConfirmationMail() { /* ... */ }
 ```
 
 :::
-
 
