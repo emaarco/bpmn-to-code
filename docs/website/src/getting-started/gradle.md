@@ -90,7 +90,7 @@ See [Configuration](/guide/configuration) for all available parameters.
 
 The generated Process API file(s) will appear in your configured output folder.
 
-## Automated setup with AI Skills
+## 4. Automated setup with AI Skills
 
 Using [Claude Code](https://docs.anthropic.com/en/docs/claude-code)? The `setup-bpmn-to-code-gradle` skill can configure the plugin for you automatically — it detects your project structure, finds your BPMN files, and adds the right configuration.
 
@@ -103,6 +103,6 @@ npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/
 
 See [AI Skills](/skills/) for all available skills.
 
-## Advanced configuration
+## 5. Advanced configuration
 
 Need multiple engines, separate packages per domain, or file filtering? See [Gradle Advanced Configuration](/getting-started/gradle-advanced).
