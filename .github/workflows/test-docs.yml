@@ -1,0 +1,32 @@
+name: Documentation Build
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/website/**'
+      - '.github/workflows/test-docs.yml'
+
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/website/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+        working-directory: docs/website
+
+      - name: Build Documentation
+        run: npm run build
+        working-directory: docs/website

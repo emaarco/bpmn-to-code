@@ -1,4 +1,4 @@
-name: Pre-Merge Checks
+name: Backend Build
 
 on:
   pull_request:
