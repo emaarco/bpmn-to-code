@@ -3,7 +3,6 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
-import io.github.emaarco.bpmn.domain.validation.BpmnValidationRule
 import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.ValidationContext
@@ -21,16 +20,14 @@ import io.github.emaarco.bpmn.domain.validation.rules.MissingProcessIdRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingSignalNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingTimerDefinitionRule
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.ServiceLoader
 
 class BpmnValidationService(
     private val config: ValidationConfig = ValidationConfig(),
-    customRules: List<BpmnValidationRule> = loadCustomRules(),
 ) {
 
     private val logger = KotlinLogging.logger {}
 
-    private val allRules: List<BpmnValidationRule> = builtInRules() + customRules
+    private val allRules = builtInRules()
 
     fun validate(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
         val activeRules = allRules
@@ -68,7 +65,7 @@ class BpmnValidationService(
 
     companion object {
 
-        private fun builtInRules(): List<BpmnValidationRule> = listOf(
+        private fun builtInRules() = listOf(
             MissingServiceTaskImplementationRule(),
             MissingMessageNameRule(),
             MissingErrorDefinitionRule(),
@@ -81,11 +78,5 @@ class BpmnValidationService(
             MissingProcessIdRule(),
             CollisionDetectionRule(),
         )
-
-        private fun loadCustomRules(): List<BpmnValidationRule> = try {
-            ServiceLoader.load(BpmnValidationRule::class.java).toList()
-        } catch (e: Exception) {
-            emptyList()
-        }
     }
 }
