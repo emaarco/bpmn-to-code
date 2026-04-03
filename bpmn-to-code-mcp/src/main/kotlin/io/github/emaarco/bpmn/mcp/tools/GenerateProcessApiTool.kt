@@ -3,7 +3,7 @@ package io.github.emaarco.bpmn.mcp.tools
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiInMemoryPlugin
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
+import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_BPMN_XML
 import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_OUTPUT_LANGUAGE
 import io.github.emaarco.bpmn.mcp.tools.GenerateProcessApiToolSchema.DESC_PACKAGE_PATH
@@ -101,8 +101,8 @@ fun Server.registerGenerateProcessApiTool() {
             }
 
             CallToolResult(content = listOf(TextContent(output)))
-        } catch (e: VariableNameCollisionException) {
-            errorResult("Variable name collision: ${e.message}")
+        } catch (e: BpmnValidationException) {
+            errorResult("BPMN validation failed: ${e.message}")
         } catch (e: IllegalArgumentException) {
             errorResult("Invalid argument: ${e.message}")
         } catch (e: Exception) {

@@ -54,33 +54,27 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.map { activity ->
-            val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+        return callActivities.mapNotNull { activity ->
+            val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
             val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
             val processId = extension.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
-            requireNotNull(elementId) { "CallActivity is missing an 'id' attribute" }
-            requireNotNull(processId) { "CallActivity '$elementId' is missing a 'processId' attribute" }
             CallActivityDefinition(elementId, processId)
         }
     }
 
     private fun findServiceTasks(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val flowNodesWithServiceTasks = findAllServiceTaskDefinitions(flowNodes)
-        return flowNodesWithServiceTasks.map { (event, taskDefinition) ->
-            val id = event.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
-            requireNotNull(id) { "FlowNode with task definition is missing an 'id' attribute" }
-            requireNotNull(type) { "Task definition on element '$id' is missing a 'type' attribute" }
-            ServiceTaskDefinition(id = id, type = type)
-        }
-    }
-
-    private fun findAllServiceTaskDefinitions(flowNodes: Collection<FlowNode>): List<Pair<FlowNode, ModelElementInstance>> {
         return flowNodes.mapNotNull { node ->
             val extensionElements = node.findExtensionElements()
             val taskDefinition = extensionElements.findFirstByType(ZeebeModelConstants.ELEMENT_TASK_DEFINITION)
-            if (taskDefinition != null) Pair(node, taskDefinition) else null
+            val id = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
+            if (taskDefinition != null) {
+                val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
+                    ?.takeIf { it.isNotBlank() }
+                ServiceTaskDefinition(id = id, type = type)
+            } else {
+                null
+            }
         }
     }
 

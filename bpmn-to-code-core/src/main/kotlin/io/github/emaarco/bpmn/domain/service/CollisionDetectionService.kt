@@ -31,7 +31,7 @@ class CollisionDetectionService {
         }
     }
 
-    private fun findCollisions(model: BpmnModel): List<CollisionDetail> {
+    fun findCollisions(model: BpmnModel): List<CollisionDetail> {
         val modelId = model.processId
         val collisions = mutableListOf<CollisionDetail>()
         collisions.addAll(findCollisionsIn(modelId, model.flowNodes, "FlowNode"))
@@ -49,7 +49,7 @@ class CollisionDetectionService {
         items: List<T>,
         variableType: String,
     ): List<CollisionDetail> {
-        val distinctItems = items.distinctBy { it.getRawName() }
+        val distinctItems = items.filter { it.getRawName().isNotEmpty() }.distinctBy { it.getRawName() }
         val itemsPerVariableName = distinctItems.groupBy { it.getName() }
         val collisions = itemsPerVariableName.filterValues { it.size > 1 }
         return collisions.mapNotNull { (constantName, itemsWithSameName) ->

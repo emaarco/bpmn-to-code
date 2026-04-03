@@ -9,13 +9,13 @@ import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
-import io.github.emaarco.bpmn.domain.service.CollisionDetectionService
+import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
+import io.github.emaarco.bpmn.domain.validation.ValidationPhase
 
 class GenerateProcessApiInMemoryService(
     private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
     private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
-    private val collisionDetectionService: CollisionDetectionService = CollisionDetectionService(),
 ) : GenerateProcessApiInMemoryUseCase {
 
     private val modelMergerService = ModelMergerService()
@@ -23,10 +23,12 @@ class GenerateProcessApiInMemoryService(
     override fun generateProcessApi(
         command: GenerateProcessApiInMemoryUseCase.Command
     ): List<GeneratedApiFile> {
+        val validationService = BpmnValidationService(command.validationConfig)
         val modelsAsFiles = toBpmnFiles(command)
         val models = modelsAsFiles.map { bpmnService.extract(it) }
+        validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
-        collisionDetectionService.detectCollisions(mergedModels)
+        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
         return mergedModels.map {
             val api = this.toModelApi(command, it)
             this.codeGenerator.generateCode(api)

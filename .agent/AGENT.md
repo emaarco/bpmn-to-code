@@ -74,6 +74,10 @@ The project uses JUnit 5, AssertJ, and MockK for testing.
 
 ## Best Practices
 
+### Verify After Each Task
+
+After completing each discrete task (e.g., a phase in a plan, a refactor step, a bug fix), run a Gradle build on the affected modules to confirm compilation and tests still pass. Use targeted module builds (e.g., `./gradlew :bpmn-to-code-core:test`) rather than a full project build when only specific modules were changed.
+
 ### Always Consider Testing Impact
 
 When making code changes, always think about the testing implications:

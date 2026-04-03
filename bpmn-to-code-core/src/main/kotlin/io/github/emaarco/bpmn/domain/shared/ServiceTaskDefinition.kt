@@ -3,10 +3,11 @@ package io.github.emaarco.bpmn.domain.shared
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 
 data class ServiceTaskDefinition(
-    private val id: String,
-    private val type: String,
+    val id: String,
+    private val type: String?,
 ) : VariableMapping<String> {
-    override fun getName() = type.toUpperSnakeCase()
-    override fun getValue() = type
-    override fun getRawName() = type
+    override fun getName() = type?.toUpperSnakeCase() ?: ""
+    override fun getValue() = type ?: ""
+    override fun getRawName() = type ?: ""
+    fun hasImplementation() = type != null
 }

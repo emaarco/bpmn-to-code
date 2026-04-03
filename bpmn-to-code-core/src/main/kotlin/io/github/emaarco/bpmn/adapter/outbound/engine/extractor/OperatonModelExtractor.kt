@@ -66,11 +66,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.map {
-            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+        return callActivities.mapNotNull {
+            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
             val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            requireNotNull(id) { "CallActivity is missing an 'id' attribute" }
-            requireNotNull(calledElement) { "CallActivity '$id' is missing a 'calledElement' attribute" }
             CallActivityDefinition(id, calledElement)
         }
     }
@@ -86,7 +84,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return ServiceTaskDefinition(id = taskId, type = workerType)
     }
 
-    private fun ServiceTask.detectWorkerType(): String {
+    private fun ServiceTask.detectWorkerType(): String? {
         val taskExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
         val delegateBasedTask = taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
         val classBasedTask = taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
@@ -95,7 +93,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             delegateBasedTask != null -> delegateBasedTask
             classBasedTask != null -> classBasedTask
             topicBasedTask != null -> topicBasedTask
-            else -> error("Service task '${this.id}' has no valid worker type")
+            else -> null
         }
     }
 

@@ -6,6 +6,7 @@ package io.github.emaarco.bpmn.domain.validation
  * This exception aggregates all collisions found during validation, allowing users to see
  * and fix all issues in a single iteration rather than discovering them one at a time.
  */
+@Deprecated("Replaced by BpmnValidationException", ReplaceWith("BpmnValidationException"))
 class VariableNameCollisionException(
     val collisions: List<CollisionDetail>,
 ) : RuntimeException() {

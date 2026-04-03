@@ -41,10 +41,8 @@ object ModelInstanceUtils {
     fun ModelInstance.findMessages(): List<MessageDefinition> {
         val messages = this.getModelElementsByType(Message::class.java)
         return messages.map {
-            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
-            requireNotNull(name) { "Message element (id: $id) is missing a 'name' attribute" }
-            MessageDefinition(name, name)
+            MessageDefinition(id = name, name = name)
         }
     }
 
@@ -52,34 +50,29 @@ object ModelInstanceUtils {
         val errorEvents = this.getModelElementsByType(ErrorEventDefinition::class.java)
         val configuredErrors = errorEvents.mapNotNull { it.error }
         return configuredErrors.map {
-            requireNotNull(it.errorCode) { "ErrorEventDefinition is missing an error code" }
-            requireNotNull(it.name) { "Error element (id: ${it.id}) is missing a 'name' attribute" }
             ErrorDefinition(id = it.name, name = it.name, code = it.errorCode)
         }
     }
 
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
-        return signalEvents.map {
-            val signal = it.signal
-            val name = signal?.name
-            requireNotNull(signal) { "SignalEventDefinition is missing a signal reference" }
-            requireNotNull(name) { "Signal element (id: ${signal.id}) is missing a 'name' attribute" }
-            SignalDefinition(id = name)
+        return signalEvents.mapNotNull {
+            val signal = it.signal ?: return@mapNotNull null
+            SignalDefinition(id = signal.name)
         }
     }
 
     fun ModelInstance.findTimerEventDefinition(): List<TimerDefinition> {
         val timerEvents = this.getModelElementsByType(TimerEventDefinition::class.java)
-        return timerEvents.map {
+        return timerEvents.mapNotNull {
             val timerId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(timerId) { "The element the TimerEventDefinition belongs to has no 'id' defined" }
-            val (timerType, timerValue) = it.detectTimerType()
-            TimerDefinition(id = timerId, type = timerType, value = timerValue)
+                ?: return@mapNotNull null
+            val timerTypeValue = it.detectTimerType()
+            TimerDefinition(id = timerId, type = timerTypeValue?.first, value = timerTypeValue?.second)
         }
     }
 
-    private fun TimerEventDefinition.detectTimerType(): Pair<String, String> {
+    private fun TimerEventDefinition.detectTimerType(): Pair<String, String>? {
         return if (this.timeDate != null) {
             Pair("Date", this.timeDate.textContent)
         } else if (this.timeDuration != null) {
@@ -87,7 +80,7 @@ object ModelInstanceUtils {
         } else if (this.timeCycle != null) {
             Pair("Cycle", this.timeCycle.textContent)
         } else {
-            error("Timer event definition has no valid type")
+            null
         }
     }
 
