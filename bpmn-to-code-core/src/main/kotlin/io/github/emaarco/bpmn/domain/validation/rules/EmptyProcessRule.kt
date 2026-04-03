@@ -11,14 +11,14 @@ class EmptyProcessRule : BpmnValidationRule {
     override val severity = Severity.WARN
 
     override fun validate(context: ValidationContext): List<ValidationViolation> {
-        if (context.model.serviceTasks.isEmpty()) {
+        if (context.model.flowNodes.isEmpty()) {
             return listOf(
                 ValidationViolation(
                     ruleId = id,
                     severity = severity,
                     elementId = null,
                     processId = context.model.processId,
-                    message = "Process has no service tasks defined.",
+                    message = "Process has no elements defined.",
                 )
             )
         }

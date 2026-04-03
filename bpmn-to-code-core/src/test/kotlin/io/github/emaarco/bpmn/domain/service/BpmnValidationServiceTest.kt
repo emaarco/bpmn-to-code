@@ -33,12 +33,12 @@ class BpmnValidationServiceTest {
         val exception = assertThrows<BpmnValidationException> {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
         }
-        assertThat(exception.violations).anyMatch { it.ruleId == "missing-implementation" }
+        assertThat(exception.violations).anyMatch { it.ruleId == "missing-service-task-implementation" }
     }
 
     @Test
     fun `disabled rule is skipped`() {
-        val config = ValidationConfig(disabledRules = setOf("missing-implementation"))
+        val config = ValidationConfig(disabledRules = setOf("missing-service-task-implementation"))
         val service = BpmnValidationService(config)
         val model = testBpmnModel(
             serviceTasks = listOf(ServiceTaskDefinition(id = "task1", type = null))
@@ -51,7 +51,7 @@ class BpmnValidationServiceTest {
     @Test
     fun `warnings do not throw by default`() {
         val service = BpmnValidationService()
-        val model = testBpmnModel(serviceTasks = emptyList())
+        val model = testBpmnModel(flowNodes = emptyList())
         assertDoesNotThrow {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
         }
@@ -61,7 +61,7 @@ class BpmnValidationServiceTest {
     fun `failOnWarning promotes warnings to failures`() {
         val config = ValidationConfig(failOnWarning = true)
         val service = BpmnValidationService(config)
-        val model = testBpmnModel(serviceTasks = emptyList())
+        val model = testBpmnModel(flowNodes = emptyList())
         val exception = assertThrows<BpmnValidationException> {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
         }
@@ -78,7 +78,7 @@ class BpmnValidationServiceTest {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
         }
         assertThat(exception.violations).anyMatch {
-            it.ruleId == "invalid-identifier" && it.severity == Severity.ERROR
+            it.ruleId == "missing-element-id" && it.severity == Severity.ERROR
         }
     }
 

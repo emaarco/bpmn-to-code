@@ -8,9 +8,9 @@ import io.github.emaarco.bpmn.domain.validation.ValidationContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class MissingImplementationRuleTest {
+class MissingServiceTaskImplementationRuleTest {
 
-    private val rule = MissingImplementationRule()
+    private val rule = MissingServiceTaskImplementationRule()
 
     @Test
     fun `reports error for service task with null type`() {

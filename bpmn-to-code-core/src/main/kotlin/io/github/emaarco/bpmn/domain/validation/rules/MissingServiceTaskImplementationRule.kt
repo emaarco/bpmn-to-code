@@ -6,9 +6,9 @@ import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationContext
 import io.github.emaarco.bpmn.domain.validation.ValidationViolation
 
-class MissingImplementationRule : BpmnValidationRule {
+class MissingServiceTaskImplementationRule : BpmnValidationRule {
 
-    override val id = "missing-implementation"
+    override val id = "missing-service-task-implementation"
     override val severity = Severity.ERROR
 
     override fun validate(context: ValidationContext): List<ValidationViolation> {

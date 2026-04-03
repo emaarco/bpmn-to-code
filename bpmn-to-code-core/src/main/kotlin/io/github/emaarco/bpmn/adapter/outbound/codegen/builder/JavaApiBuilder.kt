@@ -86,11 +86,11 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private inner class CallActivitiesWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.CALL_ACTIVITIES
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.any { it.hasCalledElement() }
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val callActivitiesBuilder = TypeSpec.classBuilder("CallActivities").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.callActivities.filter { it.hasCalledElement() }.forEach { callActivity -> callActivitiesBuilder.addField(createAttribute(callActivity)) }
+            modelApi.model.callActivities.forEach { callActivity -> callActivitiesBuilder.addField(createAttribute(callActivity)) }
             builder.addType(callActivitiesBuilder.build())
         }
     }
@@ -98,11 +98,11 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private inner class MessagesWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.MESSAGES
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.any { it.hasName() }
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val messagesBuilder = TypeSpec.classBuilder("Messages").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.messages.filter { it.hasName() }.forEach { message -> messagesBuilder.addField(createAttribute(message)) }
+            modelApi.model.messages.forEach { message -> messagesBuilder.addField(createAttribute(message)) }
             builder.addType(messagesBuilder.build())
         }
     }
@@ -110,11 +110,11 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private inner class ServiceTasksWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SERVICE_TASKS
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.serviceTasks.any { it.hasImplementation() }
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.serviceTasks.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.classBuilder("TaskTypes").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.serviceTasks.filter { it.hasImplementation() }.forEach { task -> tasksBuilder.addField(createAttribute(task)) }
+            modelApi.model.serviceTasks.forEach { task -> tasksBuilder.addField(createAttribute(task)) }
             builder.addType(tasksBuilder.build())
         }
     }
@@ -122,11 +122,11 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private inner class SignalsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SIGNALS
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.any { it.hasName() }
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val signalsBuilder = TypeSpec.classBuilder("Signals").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.signals.filter { it.hasName() }.forEach { signal -> signalsBuilder.addField(createAttribute(signal)) }
+            modelApi.model.signals.forEach { signal -> signalsBuilder.addField(createAttribute(signal)) }
             builder.addType(signalsBuilder.build())
         }
     }
@@ -146,12 +146,12 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private class ErrorsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.ERRORS
-        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.any { it.hasRequiredFields() }
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val errorsBuilder = TypeSpec.classBuilder("Errors").addModifiers(PUBLIC, STATIC, FINAL)
             errorsBuilder.addType(buildErrorClass())
-            modelApi.model.errors.filter { it.hasRequiredFields() }.forEach {
+            modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
                 val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnError"), it.getName())
                 val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)
@@ -179,12 +179,12 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
     private class TimersWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.TIMERS
-        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.any { it.hasTimerType() }
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val timersBuilder = TypeSpec.classBuilder("Timers").addModifiers(PUBLIC, STATIC, FINAL)
             timersBuilder.addType(buildTimerClass())
-            modelApi.model.timers.filter { it.hasTimerType() }.forEach {
+            modelApi.model.timers.forEach {
                 val (timerType, timerValue) = it.getValue()
                 val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnTimer"), it.getName())
                 val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)

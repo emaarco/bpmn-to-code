@@ -13,8 +13,9 @@ import io.github.emaarco.bpmn.domain.validation.rules.CollisionDetectionRule
 import io.github.emaarco.bpmn.domain.validation.rules.EmptyProcessRule
 import io.github.emaarco.bpmn.domain.validation.rules.InvalidIdentifierRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingCalledElementRule
+import io.github.emaarco.bpmn.domain.validation.rules.MissingElementIdRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingErrorDefinitionRule
-import io.github.emaarco.bpmn.domain.validation.rules.MissingImplementationRule
+import io.github.emaarco.bpmn.domain.validation.rules.MissingServiceTaskImplementationRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingMessageNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingProcessIdRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingSignalNameRule
@@ -68,12 +69,13 @@ class BpmnValidationService(
     companion object {
 
         private fun builtInRules(): List<BpmnValidationRule> = listOf(
-            MissingImplementationRule(),
+            MissingServiceTaskImplementationRule(),
             MissingMessageNameRule(),
             MissingErrorDefinitionRule(),
             MissingSignalNameRule(),
             MissingTimerDefinitionRule(),
             MissingCalledElementRule(),
+            MissingElementIdRule(),
             InvalidIdentifierRule(),
             EmptyProcessRule(),
             MissingProcessIdRule(),
