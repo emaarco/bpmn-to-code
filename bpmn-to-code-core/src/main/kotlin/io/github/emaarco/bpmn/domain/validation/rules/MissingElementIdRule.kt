@@ -6,7 +6,9 @@ import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationContext
 import io.github.emaarco.bpmn.domain.validation.ValidationViolation
 
-/** Checks that every BPMN element has an 'id' attribute set. */
+/**
+ * Checks that every BPMN element has an 'id' attribute set.
+ */
 class MissingElementIdRule : BpmnValidationRule {
 
     override val id = "missing-element-id"

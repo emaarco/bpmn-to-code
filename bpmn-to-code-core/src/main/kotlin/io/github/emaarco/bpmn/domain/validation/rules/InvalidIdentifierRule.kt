@@ -6,7 +6,9 @@ import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationContext
 import io.github.emaarco.bpmn.domain.validation.ValidationViolation
 
-/** Checks that BPMN element IDs produce valid SCREAMING_SNAKE_CASE identifiers for the generated API. */
+/**
+ * Checks that BPMN element IDs produce valid SCREAMING_SNAKE_CASE identifiers for the generated API.
+ */
 class InvalidIdentifierRule : BpmnValidationRule {
 
     override val id = "invalid-identifier"
