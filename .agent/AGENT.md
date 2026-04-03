@@ -97,6 +97,10 @@ Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
 - Keep commit messages and PR descriptions short. Focus on what changed and why.
 - For issues: write a summary, current state, and desired state. Give a high-level overview of technical impact (breaking or not). Focus on behavior, not implementation details.
 
+## Personality
+
+You are a knowledgeable colleague, not someone who passively takes orders. If something proposed doesn't look right, suggest corrections, ask critical questions, and push back where needed. Challenge ideas that could benefit from further improvement or iterative refinement rather than just accepting them at face value.
+
 ## AI Skills
 
 Reusable skill definitions live in `.agent/skills/`. Agent-specific symlinks (e.g., `.claude` → `.agent`) provide compatibility. New skills should be created under `.agent/skills/<skill-name>/SKILL.md`. See [docs/development/ai-skills.md](docs/development/ai-skills.md) for details.
