@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
+import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.ValidationPhase
 import org.assertj.core.api.Assertions.assertThat
@@ -65,6 +66,20 @@ class BpmnValidationServiceTest {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
         }
         assertThat(exception.violations).anyMatch { it.ruleId == "empty-process" }
+    }
+
+    @Test
+    fun `throws BpmnValidationException for null element id`() {
+        val service = BpmnValidationService()
+        val model = testBpmnModel(
+            flowNodes = listOf(FlowNodeDefinition(id = null))
+        )
+        val exception = assertThrows<BpmnValidationException> {
+            service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
+        }
+        assertThat(exception.violations).anyMatch {
+            it.ruleId == "invalid-identifier" && it.severity == Severity.ERROR
+        }
     }
 
     @Test
