@@ -54,8 +54,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.mapNotNull { activity ->
-            val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
+        return callActivities.map { activity ->
+            val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
             val processId = extension.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
             CallActivityDefinition(elementId, processId)
@@ -67,14 +67,11 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         return flowNodes.mapNotNull { node ->
             val extensionElements = node.findExtensionElements()
             val taskDefinition = extensionElements.findFirstByType(ZeebeModelConstants.ELEMENT_TASK_DEFINITION)
-            val id = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
-            if (taskDefinition != null) {
-                val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
-                    ?.takeIf { it.isNotBlank() }
-                ServiceTaskDefinition(id = id, type = type)
-            } else {
-                null
-            }
+                ?: return@mapNotNull null
+            val id = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
+                ?.takeIf { it.isNotBlank() }
+            ServiceTaskDefinition(id = id, type = type)
         }
     }
 

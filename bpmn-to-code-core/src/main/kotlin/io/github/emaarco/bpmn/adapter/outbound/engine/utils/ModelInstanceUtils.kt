@@ -33,7 +33,6 @@ object ModelInstanceUtils {
         val flowNodes = this.getModelElementsByType(FlowNode::class.java)
         return flowNodes.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(id) { "FlowNode is missing an 'id' attribute" }
             FlowNodeDefinition(id)
         }
     }
@@ -56,17 +55,15 @@ object ModelInstanceUtils {
 
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
-        return signalEvents.mapNotNull {
-            val signal = it.signal ?: return@mapNotNull null
-            SignalDefinition(id = signal.name)
+        return signalEvents.map {
+            SignalDefinition(id = it.signal?.name)
         }
     }
 
     fun ModelInstance.findTimerEventDefinition(): List<TimerDefinition> {
         val timerEvents = this.getModelElementsByType(TimerEventDefinition::class.java)
-        return timerEvents.mapNotNull {
+        return timerEvents.map {
             val timerId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-                ?: return@mapNotNull null
             val timerTypeValue = it.detectTimerType()
             TimerDefinition(id = timerId, type = timerTypeValue?.first, value = timerTypeValue?.second)
         }

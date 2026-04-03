@@ -57,8 +57,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.mapNotNull {
-            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID) ?: return@mapNotNull null
+        return callActivities.map {
+            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
             CallActivityDefinition(id, calledElement)
         }
