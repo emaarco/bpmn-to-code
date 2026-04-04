@@ -54,7 +54,7 @@ class MissingElementIdRuleTest {
     @Test
     fun `reports error for signal with null id`() {
         val model = testBpmnModel(
-            signals = listOf(SignalDefinition(id = null))
+            signals = listOf(SignalDefinition(id = null, name = "someName"))
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)

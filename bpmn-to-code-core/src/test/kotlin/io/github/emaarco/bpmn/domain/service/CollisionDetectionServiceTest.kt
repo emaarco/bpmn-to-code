@@ -118,8 +118,8 @@ class CollisionDetectionServiceTest {
         val model = testBpmnModel(
             processId = "TestProcess",
             messages = listOf(
-                MessageDefinition("message_formSubmitted", "FormSubmitted"),
-                MessageDefinition("message-formSubmitted", "FormSubmitted"),
+                MessageDefinition(id = "msg1", name = "message_formSubmitted"),
+                MessageDefinition(id = "msg2", name = "message-formSubmitted"),
             ),
         )
 
@@ -150,8 +150,8 @@ class CollisionDetectionServiceTest {
         val model = testBpmnModel(
             processId = "TestProcess",
             signals = listOf(
-                SignalDefinition("signal.complete"),
-                SignalDefinition("signal_complete"),
+                SignalDefinition(id = "sig1", name = "signal.complete"),
+                SignalDefinition(id = "sig2", name = "signal_complete"),
             ),
         )
 
@@ -166,8 +166,8 @@ class CollisionDetectionServiceTest {
         val model = testBpmnModel(
             processId = "TestProcess",
             errors = listOf(
-                ErrorDefinition("Error_InvalidMail", "InvalidMail", "400"),
-                ErrorDefinition("Error-InvalidMail", "InvalidMail", "400"),
+                ErrorDefinition(id = "err1", name = "Error_InvalidMail", code = "400"),
+                ErrorDefinition(id = "err2", name = "Error-InvalidMail", code = "400"),
             ),
         )
 
@@ -218,12 +218,12 @@ class CollisionDetectionServiceTest {
                 FlowNodeDefinition("endEvent-complete"),
             ),
             messages = listOf(
-                MessageDefinition("message_sent", "SentMessage1"),
-                MessageDefinition("message-sent", "SentMessage2"),
+                MessageDefinition(id = "msg1", name = "message_sent"),
+                MessageDefinition(id = "msg2", name = "message-sent"),
             ),
             signals = listOf(
-                SignalDefinition("signal_ready"),
-                SignalDefinition("signal-ready"),
+                SignalDefinition(id = "sig1", name = "signal_ready"),
+                SignalDefinition(id = "sig2", name = "signal-ready"),
             ),
         )
 

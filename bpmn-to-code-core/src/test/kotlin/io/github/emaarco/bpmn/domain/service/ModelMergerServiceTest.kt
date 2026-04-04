@@ -109,8 +109,8 @@ class ModelMergerServiceTest {
                 ErrorDefinition(id = "TEST_ERROR", name = "TEST_ERROR", code = "400") // duplicate
             ),
             signals = listOf(
-                SignalDefinition(id = "TEST_SIGNAL"),
-                SignalDefinition(id = "TEST_SIGNAL") // duplicate
+                SignalDefinition(id = "TEST_SIGNAL", name = "TEST_SIGNAL"),
+                SignalDefinition(id = "TEST_SIGNAL", name = "TEST_SIGNAL") // duplicate
             ),
             messages = listOf(
                 MessageDefinition(id = "TEST_MESSAGE", name = "TEST_MESSAGE"),
@@ -134,7 +134,7 @@ class ModelMergerServiceTest {
             testBpmnModel(
                 processId = "test-process",
                 errors = listOf(ErrorDefinition(id = "TEST_ERROR", name = "TEST_ERROR", code = "400")),
-                signals = listOf(SignalDefinition(id = "TEST_SIGNAL")),
+                signals = listOf(SignalDefinition(id = "TEST_SIGNAL", name = "TEST_SIGNAL")),
                 messages = listOf(MessageDefinition(id = "TEST_MESSAGE", name = "TEST_MESSAGE")),
                 timers = listOf(TimerDefinition(id = "TIMER_1", type = "Date", value = "2024-01-01")),
                 flowNodes = listOf(FlowNodeDefinition(id = "node-1"))
@@ -153,8 +153,8 @@ class ModelMergerServiceTest {
                 ErrorDefinition(id = "ERROR_2", name = "ERROR_2", code = "500")
             ),
             signals = listOf(
-                SignalDefinition(id = "SIGNAL_1"),
-                SignalDefinition(id = "SIGNAL_2")
+                SignalDefinition(id = "SIGNAL_1", name = "SIGNAL_1"),
+                SignalDefinition(id = "SIGNAL_2", name = "SIGNAL_2")
             ),
             messages = listOf(
                 MessageDefinition(id = "MSG_1", name = "MSG_1"),
@@ -173,8 +173,8 @@ class ModelMergerServiceTest {
                 ErrorDefinition(id = "ERROR_3", name = "ERROR_3", code = "600")
             ),
             signals = listOf(
-                SignalDefinition(id = "SIGNAL_2"), // duplicate from the first model
-                SignalDefinition(id = "SIGNAL_3")
+                SignalDefinition(id = "SIGNAL_2", name = "SIGNAL_2"), // duplicate from the first model
+                SignalDefinition(id = "SIGNAL_3", name = "SIGNAL_3")
             ),
             messages = listOf(
                 MessageDefinition(id = "MSG_2", name = "MSG_2"), // duplicate from first model
@@ -199,9 +199,9 @@ class ModelMergerServiceTest {
                     ErrorDefinition(id = "ERROR_3", name = "ERROR_3", code = "600")
                 ),
                 signals = listOf(
-                    SignalDefinition(id = "SIGNAL_1"),
-                    SignalDefinition(id = "SIGNAL_2"),
-                    SignalDefinition(id = "SIGNAL_3")
+                    SignalDefinition(id = "SIGNAL_1", name = "SIGNAL_1"),
+                    SignalDefinition(id = "SIGNAL_2", name = "SIGNAL_2"),
+                    SignalDefinition(id = "SIGNAL_3", name = "SIGNAL_3")
                 ),
                 messages = listOf(
                     MessageDefinition(id = "MSG_1", name = "MSG_1"),

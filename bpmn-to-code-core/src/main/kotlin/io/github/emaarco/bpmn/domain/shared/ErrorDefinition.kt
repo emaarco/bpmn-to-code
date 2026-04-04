@@ -7,8 +7,8 @@ data class ErrorDefinition(
     private val name: String?,
     private val code: String?,
 ) : VariableMapping<Pair<String, String>> {
-    override fun getName() = id?.toUpperSnakeCase() ?: ""
+    override fun getName() = name?.toUpperSnakeCase() ?: ""
     override fun getValue() = (name ?: "") to (code ?: "")
-    override fun getRawName() = id ?: ""
+    override fun getRawName() = name ?: ""
     fun hasRequiredFields() = name != null && code != null
 }

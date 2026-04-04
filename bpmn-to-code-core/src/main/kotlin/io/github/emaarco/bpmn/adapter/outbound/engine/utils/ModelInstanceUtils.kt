@@ -40,8 +40,9 @@ object ModelInstanceUtils {
     fun ModelInstance.findMessages(): List<MessageDefinition> {
         val messages = this.getModelElementsByType(Message::class.java)
         return messages.map {
+            val elementId = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
-            MessageDefinition(id = name, name = name)
+            MessageDefinition(id = elementId, name = name)
         }
     }
 
@@ -49,14 +50,17 @@ object ModelInstanceUtils {
         val errorEvents = this.getModelElementsByType(ErrorEventDefinition::class.java)
         val configuredErrors = errorEvents.mapNotNull { it.error }
         return configuredErrors.map {
-            ErrorDefinition(id = it.name, name = it.name, code = it.errorCode)
+            val elementId = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            ErrorDefinition(id = elementId, name = it.name, code = it.errorCode)
         }
     }
 
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
         return signalEvents.map {
-            SignalDefinition(id = it.signal?.name)
+            val elementId = it.signal?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val name = it.signal?.name
+            SignalDefinition(id = elementId, name = name)
         }
     }
 

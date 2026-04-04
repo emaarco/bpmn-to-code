@@ -17,7 +17,7 @@ fun testBpmnModel(
     callActivities: List<CallActivityDefinition> = listOf(CallActivityDefinition(id = "call-activity", calledElement = "called-process")),
     serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", type = "taskType")),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
-    signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId")),
+    signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId", name = "signalName")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
     timers: List<TimerDefinition> = listOf(TimerDefinition(id = "timerId", type = "timerType", value = "PT1H")),
     variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
@@ -75,14 +75,14 @@ fun testNewsletterBpmnModel(
         ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
     ),
     messages: List<MessageDefinition> = listOf(
-        MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
-        MessageDefinition("Message_SubscriptionConfirmed", "Message_SubscriptionConfirmed")
+        MessageDefinition("Message_04tc0t0", "Message_FormSubmitted"),
+        MessageDefinition("Message_36dkcng", "Message_SubscriptionConfirmed")
     ),
     signals: List<SignalDefinition> = listOf(
-        SignalDefinition("Signal_RegistrationNotPossible")
+        SignalDefinition("Signal_14g8ki5", "Signal_RegistrationNotPossible")
     ),
     errors: List<ErrorDefinition> = listOf(
-        ErrorDefinition("Error_InvalidMail", "Error_InvalidMail", "500")
+        ErrorDefinition("Error_0uxgmyc", "Error_InvalidMail", "500")
     ),
     timers: List<TimerDefinition> = listOf(
         TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),
