@@ -8,6 +8,7 @@ on:
       - 'bpmn-to-code-gradle/**'
       - 'bpmn-to-code-maven/**'
       - 'bpmn-to-code-mcp/**'
+      - 'bpmn-to-code-web/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
       - '.github/workflows/build-backend.yml'
