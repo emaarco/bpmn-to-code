@@ -3,6 +3,15 @@ name: Backend Build
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - 'bpmn-to-code-core/**'
+      - 'bpmn-to-code-gradle/**'
+      - 'bpmn-to-code-maven/**'
+      - 'bpmn-to-code-mcp/**'
+      - 'bpmn-to-code-web/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - '.github/workflows/build-backend.yml'
 
 jobs:
   build:
