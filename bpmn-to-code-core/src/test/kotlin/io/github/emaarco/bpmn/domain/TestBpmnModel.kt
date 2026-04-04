@@ -75,14 +75,14 @@ fun testNewsletterBpmnModel(
         ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
     ),
     messages: List<MessageDefinition> = listOf(
-        MessageDefinition("Message_04tc0t0", "Message_FormSubmitted"),
-        MessageDefinition("Message_36dkcng", "Message_SubscriptionConfirmed")
+        MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
+        MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed")
     ),
     signals: List<SignalDefinition> = listOf(
-        SignalDefinition("Signal_14g8ki5", "Signal_RegistrationNotPossible")
+        SignalDefinition("EndEvent_RegistrationNotPossible", "Signal_RegistrationNotPossible")
     ),
     errors: List<ErrorDefinition> = listOf(
-        ErrorDefinition("Error_0uxgmyc", "Error_InvalidMail", "500")
+        ErrorDefinition("ErrorEvent_InvalidMail", "Error_InvalidMail", "500")
     ),
     timers: List<TimerDefinition> = listOf(
         TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),

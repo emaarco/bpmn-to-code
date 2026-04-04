@@ -8,8 +8,9 @@ import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.FlowNode
-import org.camunda.bpm.model.bpmn.instance.Message
+import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.Process
+import org.camunda.bpm.model.bpmn.instance.ReceiveTask
 import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
 import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
 import org.camunda.bpm.model.xml.ModelInstance
@@ -38,27 +39,40 @@ object ModelInstanceUtils {
     }
 
     fun ModelInstance.findMessages(): List<MessageDefinition> {
-        val messages = this.getModelElementsByType(Message::class.java)
-        return messages.map {
-            val elementId = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
-            MessageDefinition(id = elementId, name = name)
-        }
+        return findEventBasedMessages() + findTaskBasedMessages()
+    }
+
+    private fun ModelInstance.findEventBasedMessages(): List<MessageDefinition> {
+        return this.getModelElementsByType(MessageEventDefinition::class.java)
+            .mapNotNull { med ->
+                val message = med.message ?: return@mapNotNull null
+                val elementId = med.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+                val name = message.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
+                MessageDefinition(id = elementId, name = name)
+            }
+    }
+
+    private fun ModelInstance.findTaskBasedMessages(): List<MessageDefinition> {
+        return this.getModelElementsByType(ReceiveTask::class.java)
+            .map { task ->
+                val elementId = task.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+                val name = task.message?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
+                MessageDefinition(id = elementId, name = name)
+            }
     }
 
     fun ModelInstance.findErrorEventDefinition(): List<ErrorDefinition> {
         val errorEvents = this.getModelElementsByType(ErrorEventDefinition::class.java)
-        val configuredErrors = errorEvents.mapNotNull { it.error }
-        return configuredErrors.map {
-            val elementId = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            ErrorDefinition(id = elementId, name = it.name, code = it.errorCode)
+        return errorEvents.map {
+            val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            ErrorDefinition(id = elementId, name = it.error?.name, code = it.error?.errorCode)
         }
     }
 
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
         return signalEvents.map {
-            val elementId = it.signal?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val name = it.signal?.name
             SignalDefinition(id = elementId, name = name)
         }
