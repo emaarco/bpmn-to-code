@@ -60,8 +60,6 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return callActivities.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            requireNotNull(id) { "CallActivity is missing an 'id' attribute" }
-            requireNotNull(calledElement) { "CallActivity '$id' is missing a 'calledElement' attribute" }
             CallActivityDefinition(id, calledElement)
         }
     }
@@ -77,12 +75,12 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return ServiceTaskDefinition(id = taskId, type = camundaTopic)
     }
 
-    private fun ServiceTask.detectWorkerType(): String {
+    private fun ServiceTask.detectWorkerType(): String? {
         return when {
             this.camundaTopic != null -> this.camundaTopic
             this.camundaDelegateExpression != null -> this.camundaDelegateExpression
             this.camundaClass != null -> this.camundaClass
-            else -> throw IllegalStateException("Service task '${this.id}' has no valid worker type")
+            else -> null
         }
     }
 

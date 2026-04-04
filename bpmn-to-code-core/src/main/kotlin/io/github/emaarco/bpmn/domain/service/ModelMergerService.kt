@@ -45,7 +45,9 @@ class ModelMergerService {
         models: List<BpmnModel>,
         selector: (BpmnModel) -> List<T>,
     ): List<T> {
-        return models.flatMap(selector).distinctBy { it.getRawName() }
+        return models.flatMap(selector)
+            .filter { it.getRawName().isNotEmpty() }
+            .distinctBy { it.getRawName() }
     }
 
     private fun List<BpmnModel>.sortContent(): List<BpmnModel> {

@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.application.port.inbound
 
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.github.emaarco.bpmn.domain.validation.ValidationConfig
 
 interface GenerateProcessApiFromFilesystemUseCase {
     fun generateProcessApi(command: Command)
@@ -13,5 +14,6 @@ interface GenerateProcessApiFromFilesystemUseCase {
         val outputLanguage: OutputLanguage,
         val engine: ProcessEngine,
         val useVersioning: Boolean = false,
+        val validationConfig: ValidationConfig = ValidationConfig(),
     )
 }

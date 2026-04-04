@@ -74,6 +74,10 @@ The project uses JUnit 5, AssertJ, and MockK for testing.
 
 ## Best Practices
 
+### Verify After Each Task
+
+After completing each discrete task (e.g., a phase in a plan, a refactor step, a bug fix), run a Gradle build on the affected modules to confirm compilation and tests still pass. Use targeted module builds (e.g., `./gradlew :bpmn-to-code-core:test`) rather than a full project build when only specific modules were changed.
+
 ### Always Consider Testing Impact
 
 When making code changes, always think about the testing implications:
@@ -92,6 +96,10 @@ Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
 - Use the `gh` CLI for GitHub operations.
 - Keep commit messages and PR descriptions short. Focus on what changed and why.
 - For issues: write a summary, current state, and desired state. Give a high-level overview of technical impact (breaking or not). Focus on behavior, not implementation details.
+
+## Personality
+
+You are a knowledgeable colleague, not someone who passively takes orders. If something proposed doesn't look right, suggest corrections, ask critical questions, and push back where needed. Challenge ideas that could benefit from further improvement or iterative refinement rather than just accepting them at face value.
 
 ## AI Skills
 

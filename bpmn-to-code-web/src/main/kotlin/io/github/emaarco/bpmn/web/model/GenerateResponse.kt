@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.web.model
 
-import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
+import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -40,12 +40,12 @@ data class GenerateResponse(
             statusCode = HttpStatusCode.InternalServerError
         )
 
-        fun fromCollisionException(
-            collisions: VariableNameCollisionException
+        fun fromValidationException(
+            exception: BpmnValidationException
         ) = GenerateResponse(
             success = false,
             files = emptyList(),
-            error = collisions.message,
+            error = exception.message,
             statusCode = HttpStatusCode.BadRequest
         )
     }

@@ -3,7 +3,6 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.validation.CollisionDetail
-import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
 
 /**
  * Domain service responsible for detecting name collisions in BPMN models.
@@ -14,24 +13,10 @@ import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
  * because the variables could have different values and only the first would be included.
  *
  * Thus, this class is responsible for detecting such collisions.
- * It throws an exception if any collisions are found.
  */
 class CollisionDetectionService {
 
-    /**
-     * Validates that no variable name collisions exist in the provided models.
-     *
-     * @param models The BPMN models to validate
-     * @throws VariableNameCollisionException if any collisions are detected
-     */
-    fun detectCollisions(models: List<BpmnModel>) {
-        val allCollisions = models.flatMap { this.findCollisions(it) }
-        if (allCollisions.isNotEmpty()) {
-            throw VariableNameCollisionException(allCollisions)
-        }
-    }
-
-    private fun findCollisions(model: BpmnModel): List<CollisionDetail> {
+    fun findCollisions(model: BpmnModel): List<CollisionDetail> {
         val modelId = model.processId
         val collisions = mutableListOf<CollisionDetail>()
         collisions.addAll(findCollisionsIn(modelId, model.flowNodes, "FlowNode"))
@@ -49,7 +34,7 @@ class CollisionDetectionService {
         items: List<T>,
         variableType: String,
     ): List<CollisionDetail> {
-        val distinctItems = items.distinctBy { it.getRawName() }
+        val distinctItems = items.filter { it.getRawName().isNotEmpty() }.distinctBy { it.getRawName() }
         val itemsPerVariableName = distinctItems.groupBy { it.getName() }
         val collisions = itemsPerVariableName.filterValues { it.size > 1 }
         return collisions.mapNotNull { (constantName, itemsWithSameName) ->

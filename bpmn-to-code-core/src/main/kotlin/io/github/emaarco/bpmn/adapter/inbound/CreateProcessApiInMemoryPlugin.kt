@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.application.service.GenerateProcessApiInMemoryServ
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.github.emaarco.bpmn.domain.validation.ValidationConfig
 
 class CreateProcessApiInMemoryPlugin(
     private val useCase: GenerateProcessApiInMemoryUseCase = GenerateProcessApiInMemoryService(),
@@ -15,12 +16,14 @@ class CreateProcessApiInMemoryPlugin(
         packagePath: String,
         outputLanguage: OutputLanguage,
         engine: ProcessEngine,
+        validationConfig: ValidationConfig = ValidationConfig(),
     ): List<GeneratedApiFile> {
         return useCase.generateProcessApi(
             GenerateProcessApiInMemoryUseCase.Command(
                 packagePath = packagePath,
                 outputLanguage = outputLanguage,
                 engine = engine,
+                validationConfig = validationConfig,
                 bpmnContents = bpmnContents.map {
                     GenerateProcessApiInMemoryUseCase.BpmnInput(
                         bpmnXml = it.bpmnXml,

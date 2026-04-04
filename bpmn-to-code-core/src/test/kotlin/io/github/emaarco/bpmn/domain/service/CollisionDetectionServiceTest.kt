@@ -8,18 +8,15 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
-import io.github.emaarco.bpmn.domain.validation.VariableNameCollisionException
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class CollisionDetectionServiceTest {
 
     private val service = CollisionDetectionService()
 
     @Test
-    fun `detectCollisions should not throw when no collisions exist`() {
+    fun `findCollisions returns empty when no collisions exist`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -36,12 +33,11 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        assertThatCode { service.detectCollisions(listOf(model)) }
-            .doesNotThrowAnyException()
+        assertThat(service.findCollisions(model)).isEmpty()
     }
 
     @Test
-    fun `detectCollisions should allow true duplicates with same original ID`() {
+    fun `findCollisions allows true duplicates with same original ID`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             messages = listOf(
@@ -54,13 +50,11 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        assertThatCode {
-            service.detectCollisions(listOf(model))
-        }.doesNotThrowAnyException()
+        assertThat(service.findCollisions(model)).isEmpty()
     }
 
     @Test
-    fun `detectCollisions should detect collision with case variation in FlowNodes`() {
+    fun `findCollisions detects collision with case variation in FlowNodes`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -69,23 +63,16 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("FlowNode")
-        assertThat(exception.collisions[0].constantName).isEqualTo("EVENT_DATA")
-        assertThat(exception.collisions[0].conflictingIds).containsExactlyInAnyOrder("EventData", "eventData")
-        assertThat(exception.collisions[0].processId).isEqualTo("TestProcess")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [FlowNode] EVENT_DATA")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("FlowNode")
+        assertThat(collisions[0].constantName).isEqualTo("EVENT_DATA")
+        assertThat(collisions[0].conflictingIds).containsExactlyInAnyOrder("EventData", "eventData")
+        assertThat(collisions[0].processId).isEqualTo("TestProcess")
     }
 
     @Test
-    fun `detectCollisions should detect collision with separator variation in FlowNodes`() {
+    fun `findCollisions detects collision with separator variation in FlowNodes`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -94,25 +81,18 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("FlowNode")
-        assertThat(exception.collisions[0].constantName).isEqualTo("END_EVENT_DATA_PROCESSED")
-        assertThat(exception.collisions[0].conflictingIds).containsExactlyInAnyOrder(
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("FlowNode")
+        assertThat(collisions[0].constantName).isEqualTo("END_EVENT_DATA_PROCESSED")
+        assertThat(collisions[0].conflictingIds).containsExactlyInAnyOrder(
             "endEvent-dataProcessed",
             "endEvent_dataProcessed",
         )
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [FlowNode] END_EVENT_DATA_PROCESSED")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
     }
 
     @Test
-    fun `detectCollisions should detect collision with mixed case and separator variation`() {
+    fun `findCollisions detects collision with mixed case and separator variation`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -122,49 +102,35 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("FlowNode")
-        assertThat(exception.collisions[0].constantName).isEqualTo("EVENT_DATA")
-        assertThat(exception.collisions[0].conflictingIds).containsExactlyInAnyOrder(
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("FlowNode")
+        assertThat(collisions[0].constantName).isEqualTo("EVENT_DATA")
+        assertThat(collisions[0].conflictingIds).containsExactlyInAnyOrder(
             "event-data",
             "eventData",
             "event_Data",
         )
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [FlowNode] EVENT_DATA")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in Messages`() {
+    fun `findCollisions detects collisions in Messages`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             messages = listOf(
-                MessageDefinition("message_formSubmitted", "FormSubmitted"),
-                MessageDefinition("message-formSubmitted", "FormSubmitted"),
+                MessageDefinition(id = "msg1", name = "message_formSubmitted"),
+                MessageDefinition(id = "msg2", name = "message-formSubmitted"),
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("Message")
-        assertThat(exception.collisions[0].constantName).isEqualTo("MESSAGE_FORM_SUBMITTED")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [Message] MESSAGE_FORM_SUBMITTED")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("Message")
+        assertThat(collisions[0].constantName).isEqualTo("MESSAGE_FORM_SUBMITTED")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in ServiceTasks`() {
+    fun `findCollisions detects collisions in ServiceTasks`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             serviceTasks = listOf(
@@ -173,67 +139,46 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("ServiceTask")
-        assertThat(exception.collisions[0].constantName).isEqualTo("NEWSLETTER_SEND_MAIL")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [ServiceTask] NEWSLETTER_SEND_MAIL")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("ServiceTask")
+        assertThat(collisions[0].constantName).isEqualTo("NEWSLETTER_SEND_MAIL")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in Signals`() {
+    fun `findCollisions detects collisions in Signals`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             signals = listOf(
-                SignalDefinition("signal.complete"),
-                SignalDefinition("signal_complete"),
+                SignalDefinition(id = "sig1", name = "signal.complete"),
+                SignalDefinition(id = "sig2", name = "signal_complete"),
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("Signal")
-        assertThat(exception.collisions[0].constantName).isEqualTo("SIGNAL_COMPLETE")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [Signal] SIGNAL_COMPLETE")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("Signal")
+        assertThat(collisions[0].constantName).isEqualTo("SIGNAL_COMPLETE")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in Errors`() {
+    fun `findCollisions detects collisions in Errors`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             errors = listOf(
-                ErrorDefinition("Error_InvalidMail", "InvalidMail", "400"),
-                ErrorDefinition("Error-InvalidMail", "InvalidMail", "400"),
+                ErrorDefinition(id = "err1", name = "Error_InvalidMail", code = "400"),
+                ErrorDefinition(id = "err2", name = "Error-InvalidMail", code = "400"),
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("Error")
-        assertThat(exception.collisions[0].constantName).isEqualTo("ERROR_INVALID_MAIL")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [Error] ERROR_INVALID_MAIL")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("Error")
+        assertThat(collisions[0].constantName).isEqualTo("ERROR_INVALID_MAIL")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in Timers`() {
+    fun `findCollisions detects collisions in Timers`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             timers = listOf(
@@ -242,21 +187,14 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("Timer")
-        assertThat(exception.collisions[0].constantName).isEqualTo("DURATION")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [Timer] DURATION")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("Timer")
+        assertThat(collisions[0].constantName).isEqualTo("DURATION")
     }
 
     @Test
-    fun `detectCollisions should detect collisions in Variables`() {
+    fun `findCollisions detects collisions in Variables`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             variables = listOf(
@@ -265,21 +203,14 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].variableType).isEqualTo("Variable")
-        assertThat(exception.collisions[0].constantName).isEqualTo("USER_ID")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [Variable] USER_ID")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].variableType).isEqualTo("Variable")
+        assertThat(collisions[0].constantName).isEqualTo("USER_ID")
     }
 
     @Test
-    fun `detectCollisions should detect multiple collisions across different variable types`() {
+    fun `findCollisions detects multiple collisions across different variable types`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -287,34 +218,26 @@ class CollisionDetectionServiceTest {
                 FlowNodeDefinition("endEvent-complete"),
             ),
             messages = listOf(
-                MessageDefinition("message_sent", "SentMessage1"),
-                MessageDefinition("message-sent", "SentMessage2"),
+                MessageDefinition(id = "msg1", name = "message_sent"),
+                MessageDefinition(id = "msg2", name = "message-sent"),
             ),
             signals = listOf(
-                SignalDefinition("signal_ready"),
-                SignalDefinition("signal-ready"),
+                SignalDefinition(id = "sig1", name = "signal_ready"),
+                SignalDefinition(id = "sig2", name = "signal-ready"),
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(3)
-        assertThat(exception.collisions.map { it.variableType }).containsExactlyInAnyOrder(
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(3)
+        assertThat(collisions.map { it.variableType }).containsExactlyInAnyOrder(
             "FlowNode",
             "Message",
             "Signal",
         )
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [FlowNode] END_EVENT_COMPLETE")
-        assertThat(exception.message).contains("  [Message] MESSAGE_SENT")
-        assertThat(exception.message).contains("  [Signal] SIGNAL_READY")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
     }
 
     @Test
-    fun `detectCollisions should handle mixed valid and collision cases`() {
+    fun `findCollisions handles mixed valid and collision cases`() {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
@@ -326,47 +249,9 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model))
-        }
-
-        assertThat(exception.collisions).hasSize(1)
-        assertThat(exception.collisions[0].constantName).isEqualTo("END_EVENT_COMPLETE")
-        assertThat(exception.message).contains("Process: TestProcess")
-        assertThat(exception.message).contains("  [FlowNode] END_EVENT_COMPLETE")
-        assertThat(exception.message).contains("    Conflicting IDs:")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
-    }
-
-    @Test
-    fun `detectCollisions should detect collisions across multiple models`() {
-        val model1 = testBpmnModel(
-            processId = "Process1",
-            flowNodes = listOf(
-                FlowNodeDefinition("endEvent_complete"),
-                FlowNodeDefinition("endEvent-complete"),
-            ),
-        )
-
-        val model2 = testBpmnModel(
-            processId = "Process2",
-            flowNodes = listOf(
-                FlowNodeDefinition("startEvent_begin"),
-                FlowNodeDefinition("startEvent-begin"),
-            ),
-        )
-
-        val exception = assertThrows<VariableNameCollisionException> {
-            service.detectCollisions(listOf(model1, model2))
-        }
-
-        assertThat(exception.collisions).hasSize(2)
-        assertThat(exception.collisions.map { it.processId }).containsExactlyInAnyOrder("Process1", "Process2")
-        assertThat(exception.message).contains("Process: Process1")
-        assertThat(exception.message).contains("  [FlowNode] END_EVENT_COMPLETE")
-        assertThat(exception.message).contains("Process: Process2")
-        assertThat(exception.message).contains("  [FlowNode] START_EVENT_BEGIN")
-        assertThat(exception.message).contains("Please update your BPMN files to use consistent naming.")
+        val collisions = service.findCollisions(model)
+        assertThat(collisions).hasSize(1)
+        assertThat(collisions[0].constantName).isEqualTo("END_EVENT_COMPLETE")
     }
 
     private fun testBpmnModel(
