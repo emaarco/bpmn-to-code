@@ -6,7 +6,7 @@ package de.emaarco.example
 import kotlin.String
 import kotlin.Suppress
 
-object NewsletterSubscriptionProcessApiV1 {
+object NewsletterSubscriptionProcessApi {
   const val PROCESS_ID: String = "newsletterSubscription"
 
   const val PROCESS_ENGINE: String = "ZEEBE"

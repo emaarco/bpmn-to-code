@@ -17,7 +17,6 @@ class CreateProcessApiFilesystemPlugin(
         packagePath: String,
         outputLanguage: OutputLanguage,
         engine: ProcessEngine,
-        useVersioning: Boolean,
         validationConfig: ValidationConfig = ValidationConfig(),
     ) = useCase.generateProcessApi(
         GenerateProcessApiFromFilesystemUseCase.Command(
@@ -27,7 +26,6 @@ class CreateProcessApiFilesystemPlugin(
             packagePath = packagePath,
             outputLanguage = outputLanguage,
             engine = engine,
-            useVersioning = useVersioning,
             validationConfig = validationConfig,
         )
     )

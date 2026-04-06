@@ -31,9 +31,6 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
     @Input
     lateinit var processEngine: ProcessEngine
 
-    @Input
-    var useVersioning: Boolean = false
-
     @TaskAction
     fun execute() {
         val service = CreateProcessApiFilesystemPlugin()
@@ -44,7 +41,6 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
             packagePath,
             outputLanguage,
             processEngine,
-            useVersioning,
         )
         logger.lifecycle("BPMN models generated successfully")
     }

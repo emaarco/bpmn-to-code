@@ -3,7 +3,7 @@ package de.emaarco.example;
 
 import java.lang.String;
 
-public final class NewsletterSubscriptionProcessApiV1 {
+public final class NewsletterSubscriptionProcessApi {
   public static final String PROCESS_ID = "newsletterSubscription";
 
   public static final String PROCESS_ENGINE = "ZEEBE";

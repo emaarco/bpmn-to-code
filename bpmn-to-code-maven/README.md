@@ -37,7 +37,6 @@ where to output the generated API files, and how to format the output
                 <packagePath>org.example</packagePath>
                 <outputLanguage>KOTLIN</outputLanguage>
                 <processEngine>ZEEBE</processEngine>
-                <useVersioning>true</useVersioning>
             </configuration>
         </plugin>
     </plugins>

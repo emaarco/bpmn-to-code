@@ -45,7 +45,6 @@ class GradlePluginSmokeTest {
                 packagePath = 'io.github.emaarco.smoketest'
                 outputLanguage = io.github.emaarco.bpmn.domain.shared.OutputLanguage.$language
                 processEngine = io.github.emaarco.bpmn.domain.shared.ProcessEngine.$engine
-                useVersioning = false
             }
             """.trimIndent()
         )

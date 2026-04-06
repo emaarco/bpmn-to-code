@@ -25,7 +25,7 @@ class GenerateProcessApiInMemoryServiceTest {
     )
 
     @Test
-    fun `service generates API files from BPMN content with apiVersion null`() {
+    fun `service generates API files from BPMN content`() {
 
         // given: BPMN content
         val bpmnInput = GenerateProcessApiInMemoryUseCase.BpmnInput(
@@ -50,9 +50,9 @@ class GenerateProcessApiInMemoryServiceTest {
         // when: generateProcessApi is called
         val result = underTest.generateProcessApi(command)
 
-        // then: BpmnFile is created, models are extracted, code is generated with apiVersion=null
+        // then: BpmnFile is created, models are extracted, code is generated
         verify { bpmnService.extract(match { it.fileName == "test.bpmn" && it.engine == ProcessEngine.ZEEBE }) }
-        verify { codeGenerator.generateCode(match { it.model == dummyModel && it.apiVersion == null }) }
+        verify { codeGenerator.generateCode(match { it.model == dummyModel }) }
         assertThat(result).hasSize(1)
         assertThat(result[0]).isEqualTo(expectedGeneratedFile)
         confirmVerified(codeGenerator, bpmnService)
