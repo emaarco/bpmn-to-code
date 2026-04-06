@@ -10,6 +10,10 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
             it.group = "BPMN"
             it.description = "Generates API-files from BPMN files to interact with a process-engine."
         }
+        project.tasks.register("validateBpmnModels", ValidateBpmnModelsTask::class.java) {
+            it.group = "BPMN"
+            it.description = "Validates BPMN models against built-in rules without generating code."
+        }
     }
 }
 
