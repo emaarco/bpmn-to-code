@@ -3,20 +3,44 @@ name: Backend Build
 on:
   pull_request:
     branches: [ main ]
-    paths:
-      - 'bpmn-to-code-core/**'
-      - 'bpmn-to-code-gradle/**'
-      - 'bpmn-to-code-maven/**'
-      - 'bpmn-to-code-mcp/**'
-      - 'bpmn-to-code-web/**'
-      - 'build.gradle.kts'
-      - 'settings.gradle.kts'
-      - 'gradle/libs.versions.toml'
-      - '.github/workflows/build-backend.yml'
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # Step 2: Check if backend files changed
+      - name: Check for backend changes
+        id: filter
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- \
+            'bpmn-to-code-core/' \
+            'bpmn-to-code-gradle/' \
+            'bpmn-to-code-maven/' \
+            'bpmn-to-code-mcp/' \
+            'bpmn-to-code-web/' \
+            'build.gradle.kts' \
+            'settings.gradle.kts' \
+            'gradle/libs.versions.toml' \
+            '.github/workflows/build-backend.yml')
+          if [ -n "$CHANGED" ]; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: Build with Gradle
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
 
     steps:
