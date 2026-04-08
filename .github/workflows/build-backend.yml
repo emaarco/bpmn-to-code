@@ -11,6 +11,7 @@ on:
       - 'bpmn-to-code-web/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
+      - 'gradle/libs.versions.toml'
       - '.github/workflows/build-backend.yml'
 
 jobs:
