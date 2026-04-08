@@ -29,7 +29,7 @@ The core follows hexagonal architecture with clear separation of concerns:
 - `outbound/codegen/`: Code generation adapters with Java/Kotlin builders
 - `outbound/engine/`: BPMN parsing adapters for Camunda 7 and Zeebe
 - `outbound/filesystem/BpmnFileLoader.kt`: File system operations
-- `outbound/versioning/VersionService.kt`: API versioning logic
+
 
 ## Common Commands
 
@@ -61,7 +61,7 @@ The plugins generate code from BPMN files. Key configuration parameters:
 - `packagePath`: Generated code package
 - `outputLanguage`: KOTLIN or JAVA
 - `processEngine`: CAMUNDA_7 or ZEEBE
-- `useVersioning`: Enable API versioning
+
 
 ## Testing Strategy
 

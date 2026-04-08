@@ -29,16 +29,19 @@ class BpmnValidationService(
 
     private val allRules = builtInRules()
 
-    fun validate(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
+    fun collectViolations(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase): List<ValidationViolation> {
         val activeRules = allRules
             .filter { it.phase == phase }
             .filterNot { it.id in config.disabledRules }
 
-        val violations = models.flatMap { model ->
+        return models.flatMap { model ->
             val ctx = ValidationContext(model, engine)
             activeRules.flatMap { it.validate(ctx) }
         }
+    }
 
+    fun validate(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
+        val violations = collectViolations(models, engine, phase)
         logViolations(violations)
         throwIfNeeded(violations)
     }

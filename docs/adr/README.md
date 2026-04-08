@@ -59,7 +59,7 @@ Document decisions that:
 - [ADR 010: Operaton Namespace-Only Extractor](010-operaton-namespace-only-extractor.md) - Dedicated extractor for Operaton engine
 
 ### Features
-- [ADR 006: File-Based Versioning](006-file-based-versioning.md) - API versioning strategy
+- [ADR 006: File-Based Versioning](006-file-based-versioning.md) - API versioning strategy (deprecated — feature removed)
 - [ADR 007: Variable Extraction Scope](007-variable-extraction-scope.md) - Explicit variable definitions only
 
 ### Web Module
