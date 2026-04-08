@@ -80,35 +80,6 @@ bpmn-to-code **only extracts variables from I/O mappings**, not from expressions
 
 **Impact:** If a variable isn't explicitly defined in I/O mappings, it won't appear in your generated Process API's `Variables` object.
 
-## API Versioning
-
-The plugin provides a `useVersioning` configuration option that generates versioned API classes (e.g., `ProcessApiV1`, `ProcessApiV2`).
-
-### Why useVersioning Is Often Not Worth It
-
-When versioning is enabled, every time you increase the version, you must migrate **all imports** to the new version. If you don't, your codebase will spread imports across multiple versions over time, creating maintenance burden and confusion.
-
-**The migration effort typically outweighs the benefits.**
-
-### Recommended Approach: Fail Fast
-
-Instead of using versioning, keep `useVersioning=false` (the default) and let breaking changes fail at compile time:
-
-1. Make breaking changes to your BPMN model (rename/delete elements)
-2. Regenerate the Process API
-3. Compilation errors immediately show you where code needs updating
-4. Fix the errors and update your code
-5. Put deprecated elements in a separate file if needed for backwards compatibility
-
-**Benefits:**
-- Immediate feedback on what needs to be updated
-- No version management overhead
-- Single source of truth (always using latest API)
-- Forces you to keep code in sync with models
-
-**Drawbacks:**
-- Breaking changes require manual intervention
-
 ## Multi-Environment Modeling
 
 ### Process Variants Across Environments
@@ -153,8 +124,7 @@ If process variants are significantly different, consider:
 **Key Takeaways:**
 1. Name elements descriptively and consistently using prefix patterns
 2. Define all process variables explicitly in I/O mappings
-3. Avoid API versioning unless absolutely necessary; prefer fail-fast compilation errors
-4. Keep process variants aligned when using the same process ID
+3. Keep process variants aligned when using the same process ID
 5. Let your BPMN model be the single source of truth
 
 Following these practices ensures clean generated APIs, maintainable process models, and seamless integration with bpmn-to-code.

@@ -27,7 +27,6 @@ Add the following to the `<build>` section of your `pom.xml`:
                 <packagePath>com.example.process</packagePath>
                 <outputLanguage>KOTLIN</outputLanguage>
                 <processEngine>ZEEBE</processEngine>
-                <useVersioning>false</useVersioning>
             </configuration>
         </plugin>
     </plugins>

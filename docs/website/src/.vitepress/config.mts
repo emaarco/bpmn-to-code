@@ -67,7 +67,6 @@ export default defineConfig({
         items: [
           { text: 'Configuration', link: '/guide/configuration' },
           { text: 'Generated API', link: '/guide/generated-api' },
-          { text: 'Versioning', link: '/guide/versioning' },
         ],
       },
       {

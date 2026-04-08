@@ -17,7 +17,7 @@ class KotlinApiBuilderTest {
 
         // given: a BPMN model and a model API
         val modelApi = testBpmnModelApi(
-            apiVersion = 1,
+
             packagePath = "de.emaarco.example",
             model = testNewsletterBpmnModel(
                 variables = listOf(

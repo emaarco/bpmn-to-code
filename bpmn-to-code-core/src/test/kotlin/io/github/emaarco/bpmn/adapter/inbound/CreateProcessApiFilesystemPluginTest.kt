@@ -24,7 +24,6 @@ class CreateProcessApiFilesystemPluginTest {
             packagePath = "com.example.api",
             outputLanguage = OutputLanguage.KOTLIN,
             engine = ProcessEngine.ZEEBE,
-            useVersioning = true
         )
 
         // then: use case is called with correct command mapping
@@ -37,7 +36,6 @@ class CreateProcessApiFilesystemPluginTest {
                     packagePath = "com.example.api",
                     outputLanguage = OutputLanguage.KOTLIN,
                     engine = ProcessEngine.ZEEBE,
-                    useVersioning = true
                 )
             )
         }

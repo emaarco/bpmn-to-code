@@ -36,7 +36,6 @@ class MavenMojoSmokeTest {
         setField(mojo, "packagePath", "io.github.emaarco.smoketest")
         setField(mojo, "outputLanguage", language)
         setField(mojo, "processEngine", engine)
-        setField(mojo, "useVersioning", false)
 
         // Execute
         mojo.execute()

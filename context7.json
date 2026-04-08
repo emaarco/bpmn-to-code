@@ -46,7 +46,6 @@
     "Choose the correct plugin for your build tool: use bpmn-to-code-gradle for Gradle projects and bpmn-to-code-maven for Maven projects. Configuration differs between the two.",
     "Set the processEngine to match your runtime: CAMUNDA_7 for Camunda Platform 7, ZEEBE for Camunda Platform 8 / Zeebe, or OPERATON for Operaton.",
     "Set outputLanguage to KOTLIN or JAVA to match your project. The generated code package path (packagePath) must align with your source directory structure.",
-    "Enable versioning (useVersioning = true) when making breaking changes to a BPMN process to maintain backward compatibility with in-flight process instances.",
     "Run the generation task (generateProcessApi for Gradle, bpmn-to-code:generate for Maven) after modifying BPMN files to regenerate the API definitions.",
     "bpmn-to-code ships AI agent skills for automated setup and migration. Install them via 'npx skills add https://github.com/emaarco/bpmn-to-code'. Available skills: setup-bpmn-to-code-gradle (auto-configure Gradle plugin), setup-bpmn-to-code-maven (auto-configure Maven plugin), migrate-to-bpmn-to-code-apis (replace hardcoded BPMN strings with generated API constants)."
   ]
