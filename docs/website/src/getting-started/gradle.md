@@ -58,7 +58,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     packagePath = "com.example.process"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
-    useVersioning = false
 }
 ```
 
@@ -74,7 +73,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask) {
     packagePath = "com.example.process"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
-    useVersioning = false
 }
 ```
 

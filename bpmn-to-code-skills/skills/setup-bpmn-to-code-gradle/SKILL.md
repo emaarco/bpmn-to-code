@@ -33,7 +33,6 @@ Ask the user for the following parameters (skip any already provided in `$ARGUME
 - **Output language**: `KOTLIN` or `JAVA` (default: based on detected source directories)
 - **Package path**: Java/Kotlin package for generated code (suggest based on existing packages)
 - **File pattern**: Glob pattern for BPMN files (suggest based on found `.bpmn` files, default: `src/main/resources/**/*.bpmn`)
-- **Versioning**: Whether to enable API versioning (default: `false`)
 
 ### Step 3 – Look up latest version
 
@@ -66,7 +65,6 @@ Prepare the following changes to the build file. Use the example at `examples/gr
        packagePath = "<user-chosen-package>"
        outputLanguage = OutputLanguage.<KOTLIN|JAVA>
        processEngine = ProcessEngine.<engine>
-       useVersioning = <true|false>
    }
    ```
 

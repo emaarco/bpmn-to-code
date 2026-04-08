@@ -12,7 +12,6 @@ All plugin parameters, available for both the Gradle and Maven plugins.
 | `packagePath` | `String` | yes | — | Package name for generated classes (e.g. `com.example.process`) |
 | `outputLanguage` | `OutputLanguage` | yes | — | `KOTLIN` or `JAVA` |
 | `processEngine` | `ProcessEngine` | yes | — | `ZEEBE`, `CAMUNDA_7`, or `OPERATON` |
-| `useVersioning` | `Boolean` | no | `false` | Append version suffix to generated class names (e.g. `ProcessApiV1`) |
 
 ## Process Engines
 
@@ -45,7 +44,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     packagePath = "com.example.process"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
-    useVersioning = false
 }
 ```
 
@@ -57,7 +55,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     <packagePath>com.example.process</packagePath>
     <outputLanguage>KOTLIN</outputLanguage>
     <processEngine>ZEEBE</processEngine>
-    <useVersioning>false</useVersioning>
 </configuration>
 ```
 
