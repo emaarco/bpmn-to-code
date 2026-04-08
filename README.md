@@ -65,7 +65,7 @@ package de.emaarco.example
 import kotlin.String
 import kotlin.Suppress
 
-object NewsletterSubscriptionProcessApiV1 {
+object NewsletterSubscriptionProcessApi {
     const val PROCESS_ID: String = "newsletterSubscription"
 
     object Elements {
@@ -138,7 +138,6 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     packagePath = "de.emaarco.example"
     outputLanguage = OutputLanguage.KOTLIN
     processEngine = ProcessEngine.ZEEBE
-    useVersioning = false
 }
 ```
 
@@ -148,7 +147,7 @@ or worker definitions.
 
 ## 📋 Best Practices
 
-For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide. It covers naming conventions, variable management, versioning strategies, and multi-environment modeling.
+For guidance on how to model BPMN processes that work optimally with bpmn-to-code, check out our [Best Practices for Process Modeling](docs/best-practices-process-modeling.md) guide. It covers naming conventions, variable management, and multi-environment modeling.
 
 ## 📦 Structure
 

@@ -34,7 +34,6 @@ Ask the user for the following parameters (skip any already provided in `$ARGUME
 - **Output language**: `KOTLIN` or `JAVA` (default: based on detected source directories)
 - **Package path**: Java/Kotlin package for generated code (suggest based on existing packages)
 - **File pattern**: Glob pattern for BPMN files (suggest based on found `.bpmn` files, default: `src/main/resources/**/*.bpmn`)
-- **Versioning**: Whether to enable API versioning (default: `false`)
 - **Included elements** (optional): Filter which API objects to generate. Available values: `ELEMENTS`, `SERVICE_TASKS`, `MESSAGES`, `TIMERS`, `ERRORS`, `SIGNALS`, `VARIABLES`. Default: all elements.
 
 ### Step 3 – Look up latest version
@@ -66,7 +65,6 @@ Add the plugin block inside `<build><plugins>`:
         <packagePath>USER_PACKAGE</packagePath>
         <outputLanguage>LANGUAGE</outputLanguage>
         <processEngine>ENGINE</processEngine>
-        <useVersioning>BOOLEAN</useVersioning>
     </configuration>
 </plugin>
 ```

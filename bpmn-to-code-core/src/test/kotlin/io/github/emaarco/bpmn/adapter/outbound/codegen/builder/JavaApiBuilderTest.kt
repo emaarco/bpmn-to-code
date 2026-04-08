@@ -17,7 +17,7 @@ class JavaApiBuilderTest {
 
         // given: a BPMN model and a model API
         val modelApi = testBpmnModelApi(
-            apiVersion = 1,
+
             packagePath = "de.emaarco.example",
             model = testNewsletterBpmnModel(
                 variables = listOf(
@@ -51,7 +51,7 @@ class JavaApiBuilderTest {
         val modifiedNodes = defaultModel.flowNodes.map { it.copy(id = it.getName().replace("_", "-")) }
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
-            apiVersion = 1,
+
             packagePath = "de.emaarco.example"
         )
 

@@ -35,13 +35,11 @@ fun testBpmnModel(
 
 fun testBpmnModelApi(
     model: BpmnModel = testBpmnModel(),
-    apiVersion: Int? = 1,
     packagePath: String = "packagePath",
     language: OutputLanguage = OutputLanguage.KOTLIN,
     engine: ProcessEngine = ProcessEngine.ZEEBE,
 ) = BpmnModelApi(
     model = model,
-    apiVersion = apiVersion,
     packagePath = packagePath,
     outputLanguage = language,
     engine = engine,

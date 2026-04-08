@@ -42,7 +42,6 @@ class GenerateProcessApiInMemoryService(
         model = model,
         outputLanguage = command.outputLanguage,
         packagePath = command.packagePath,
-        apiVersion = null,
         engine = command.engine,
     )
 

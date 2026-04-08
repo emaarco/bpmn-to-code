@@ -62,13 +62,6 @@ public class BpmnModelMojo extends AbstractMojo {
 	private String processEngine;
 	
 	/**
-	 * Enable API versioning for the generated code.
-	 * Defaults to false.
-	 */
-	@Parameter(property = "useVersioning", defaultValue = "false")
-	private Boolean useVersioning;
-	
-	/**
 	 * Default constructor for maven purposes
 	 */
 	@SuppressWarnings("unused")
@@ -83,7 +76,7 @@ public class BpmnModelMojo extends AbstractMojo {
 		CreateProcessApiFilesystemPlugin plugin = new CreateProcessApiFilesystemPlugin();
 		OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
 		ProcessEngine engine = ProcessEngine.valueOf(processEngine);
-		plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, useVersioning, new ValidationConfig());
+		plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, new ValidationConfig());
 		getLog().info("BPMN models generated successfully");
 	}
 	

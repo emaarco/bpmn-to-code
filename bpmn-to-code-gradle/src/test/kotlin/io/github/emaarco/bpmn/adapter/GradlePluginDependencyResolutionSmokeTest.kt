@@ -55,7 +55,6 @@ class GradlePluginDependencyResolutionSmokeTest {
                 packagePath = 'io.github.emaarco.smoketest'
                 outputLanguage = io.github.emaarco.bpmn.domain.shared.OutputLanguage.KOTLIN
                 processEngine = io.github.emaarco.bpmn.domain.shared.ProcessEngine.ZEEBE
-                useVersioning = false
             }
             """.trimIndent()
         )
