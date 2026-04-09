@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  id="Definitions_2"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:message id="Message_1" />
+  <bpmn:process id="invalidProcess" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_NoImpl" name="Missing implementation">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateThrowEvent id="Event_Message" name="Send message">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="EndEvent_1" name="End">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_NoImpl" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_NoImpl" targetRef="Event_Message" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Event_Message" targetRef="EndEvent_1" />
+  </bpmn:process>
+</bpmn:definitions>
