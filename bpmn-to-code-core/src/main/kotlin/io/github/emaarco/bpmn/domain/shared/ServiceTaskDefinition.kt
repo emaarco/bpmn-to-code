@@ -4,10 +4,17 @@ import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 
 data class ServiceTaskDefinition(
     val id: String?,
-    private val type: String?,
+    val customProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<String> {
-    override fun getName() = type?.toUpperSnakeCase() ?: ""
-    override fun getValue() = type ?: ""
-    override fun getRawName() = type ?: ""
-    fun hasImplementation() = type != null
+    override fun getName() = implementationType?.toUpperSnakeCase() ?: ""
+    override fun getValue() = implementationType ?: ""
+    override fun getRawName() = implementationType ?: ""
+    fun hasImplementation() = implementationType != null
+
+    private val implementationType: String? get() = customProperties[IMPL_VALUE_KEY] as? String
+
+    companion object {
+        const val IMPL_VALUE_KEY = "implementationValue"
+        const val IMPL_KIND_KEY = "implementationKind"
+    }
 }

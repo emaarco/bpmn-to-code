@@ -6,14 +6,15 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.DomElementUtils.with
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.DomElementUtils.withElementName
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.extractAttribute
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
-import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
@@ -30,10 +31,13 @@ import java.io.InputStream
 
 class Camunda7ModelExtractor : EngineSpecificExtractor {
 
+    private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
+    private val implValueKey = ServiceTaskDefinition.IMPL_VALUE_KEY
+
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
-        val allMessages = modelInstance.findMessages()
+        val allMessages = findMessages(modelInstance)
         val allFlowNodes = modelInstance.findFlowNodes()
         val serviceTasks = getServiceTaskTypes(modelInstance)
         val callActivities = findCallActivities(modelInstance)
@@ -55,6 +59,12 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         )
     }
 
+    private fun findMessages(modelInstance: ModelInstance): List<MessageDefinition> {
+        return modelInstance.findAllMessagesWithSource().map { (elementId, name, _) ->
+            MessageDefinition(id = elementId, name = name)
+        }
+    }
+
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
         return callActivities.map {
@@ -71,36 +81,46 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun ServiceTask.toServiceTask(): ServiceTaskDefinition {
         val taskId = this.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-        val camundaTopic = this.detectWorkerType()
-        return ServiceTaskDefinition(id = taskId, type = camundaTopic)
+        val (kind, implValue) = this.detectImplementation()
+        return ServiceTaskDefinition(
+            id = taskId,
+            customProperties = buildMap {
+                put(implValueKey, implValue)
+                put(implKindKey, kind)
+            }
+        )
     }
 
-    private fun ServiceTask.detectWorkerType(): String? {
-        return when {
-            this.camundaTopic != null -> this.camundaTopic
-            this.camundaDelegateExpression != null -> this.camundaDelegateExpression
-            this.camundaClass != null -> this.camundaClass
-            else -> null
-        }
+    private fun ServiceTask.detectImplementation(): Pair<String?, String?> = when {
+        this.camundaTopic != null -> Camunda7ImplementationKind.EXTERNAL_TASK.name to this.camundaTopic
+        this.camundaDelegateExpression != null -> Camunda7ImplementationKind.DELEGATE_EXPRESSION.name to this.camundaDelegateExpression
+        this.camundaClass != null -> Camunda7ImplementationKind.JAVA_DELEGATE.name to this.camundaClass
+        this.camundaExpression != null -> Camunda7ImplementationKind.EXPRESSION.name to this.camundaExpression
+        else -> null to null
     }
 
     private fun findMessageSendEvents(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
         val messageEvents = modelInstance.getModelElementsByType(MessageEventDefinition::class.java)
-        val sendEvents = messageEvents.mapNotNull { it.detectSendEvents() }
-        return sendEvents.map { (type, event) ->
+        return messageEvents.mapNotNull { event ->
+            val (kind, implValue) = event.detectImplementation()
+            if (implValue == null) return@mapNotNull null
             val taskId = event.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(taskId) { "The element the MessageEventDefinition belongs to has no 'id' defined" }
-            ServiceTaskDefinition(id = taskId, type = type)
+            ServiceTaskDefinition(
+                id = taskId,
+                customProperties = buildMap {
+                    put(implValueKey, implValue)
+                    put(implKindKey, kind)
+                }
+            )
         }
     }
 
-    private fun MessageEventDefinition.detectSendEvents(): Pair<String, MessageEventDefinition>? {
-        return when {
-            this.camundaTopic != null -> this.camundaTopic to this
-            this.camundaDelegateExpression != null -> this.camundaDelegateExpression to this
-            this.camundaClass != null -> this.camundaClass to this
-            else -> null
-        }
+    private fun MessageEventDefinition.detectImplementation(): Pair<String?, String?> = when {
+        this.camundaTopic != null -> Camunda7ImplementationKind.EXTERNAL_TASK.name to this.camundaTopic
+        this.camundaDelegateExpression != null -> Camunda7ImplementationKind.DELEGATE_EXPRESSION.name to this.camundaDelegateExpression
+        this.camundaClass != null -> Camunda7ImplementationKind.JAVA_DELEGATE.name to this.camundaClass
+        this.camundaExpression != null -> Camunda7ImplementationKind.EXPRESSION.name to this.camundaExpression
+        else -> null to null
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
@@ -132,10 +152,9 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val propertyElements = allChildElements.withElementName(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTY)
         val filter = BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME to CamundaModelConstants.ADDITIONAL_VARIABLES_PROPERTY_NAME
         val matchingProperties = propertyElements.withAttribute(filter)
-        val commaSeparatedValues = matchingProperties.mapNotNull { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_VALUE) }
-        return commaSeparatedValues.flatMap { it.split(",") }.map { it.trim() }.filter { it.isNotBlank() }
+        val rawValues = matchingProperties.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_VALUE) }
+        return rawValues.flatMap { it?.split(",") ?: emptyList() }.map { it.trim() }.filter { it.isNotBlank() }
     }
-
 
     /**
      * Extracts parent-scope variables from Call Activity in/out mappings:
