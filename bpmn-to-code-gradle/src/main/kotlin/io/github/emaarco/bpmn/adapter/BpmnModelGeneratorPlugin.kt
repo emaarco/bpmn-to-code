@@ -12,7 +12,7 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
         }
         project.tasks.register("validateBpmnModels", ValidateBpmnModelsTask::class.java) {
             it.group = "BPMN"
-            it.description = "Validates BPMN models against built-in rules without generating code."
+            it.description = "[Experimental] Validates BPMN models against built-in rules without generating code."
         }
     }
 }

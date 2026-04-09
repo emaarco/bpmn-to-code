@@ -6,10 +6,12 @@ import io.github.emaarco.bpmn.domain.validation.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.ValidationViolation
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.Incubating
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 
+@Incubating
 @DisableCachingByDefault(
     because = "Validation depends on BPMN files that can change at any time without the plugin knowing about it"
 )
@@ -32,6 +34,7 @@ abstract class ValidateBpmnModelsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        logger.warn("[EXPERIMENTAL] The 'validateBpmnModels' task is experimental and may change in future releases.")
         val plugin = ValidateBpmnFilesystemPlugin()
         val config = ValidationConfig(
             failOnWarning = failOnWarning,

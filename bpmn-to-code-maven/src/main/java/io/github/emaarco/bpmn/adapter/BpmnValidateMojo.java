@@ -15,7 +15,8 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Maven Mojo for validating BPMN models against built-in rules without generating code
+ * [Experimental] Maven Mojo for validating BPMN models against built-in rules without generating code.
+ * This goal is experimental and may change in future releases.
  */
 @Mojo(
 		name = "validate-bpmn",
@@ -70,6 +71,7 @@ public class BpmnValidateMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoFailureException {
+		getLog().warn("[EXPERIMENTAL] The 'validate-bpmn' goal is experimental and may change in future releases.");
 		if (processEngine == null || processEngine.isBlank()) {
 			throw new MojoFailureException("processEngine is required (valid values: CAMUNDA_7, ZEEBE, OPERATON)");
 		}
