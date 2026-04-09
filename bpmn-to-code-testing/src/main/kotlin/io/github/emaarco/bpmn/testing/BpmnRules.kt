@@ -58,17 +58,19 @@ object BpmnRules {
      * Returns all built-in BPMN validation rules.
      */
     @JvmStatic
-    fun all(): List<BpmnValidationRule> = listOf(
-        MISSING_SERVICE_TASK_IMPLEMENTATION,
-        MISSING_MESSAGE_NAME,
-        MISSING_ERROR_DEFINITION,
-        MISSING_SIGNAL_NAME,
-        MISSING_TIMER_DEFINITION,
-        MISSING_CALLED_ELEMENT,
-        MISSING_ELEMENT_ID,
-        INVALID_IDENTIFIER,
-        EMPTY_PROCESS,
-        MISSING_PROCESS_ID,
-        COLLISION_DETECTION,
-    )
+    fun all(): List<BpmnValidationRule> {
+        return listOf(
+            MISSING_SERVICE_TASK_IMPLEMENTATION,
+            MISSING_MESSAGE_NAME,
+            MISSING_ERROR_DEFINITION,
+            MISSING_SIGNAL_NAME,
+            MISSING_TIMER_DEFINITION,
+            MISSING_CALLED_ELEMENT,
+            MISSING_ELEMENT_ID,
+            INVALID_IDENTIFIER,
+            EMPTY_PROCESS,
+            MISSING_PROCESS_ID,
+            COLLISION_DETECTION,
+        )
+    }
 }

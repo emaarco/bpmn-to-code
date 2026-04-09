@@ -36,36 +36,41 @@ class BpmnValidator private constructor(
     /**
      * Sets the process engine used to parse BPMN files.
      */
-    fun engine(engine: ProcessEngine): BpmnValidator = apply {
+    fun engine(engine: ProcessEngine): BpmnValidator {
         this.engine = engine
+        return this
     }
 
     /**
      * Sets the validation rules to use. Defaults to [BpmnRules.all] if not called.
      */
-    fun withRules(vararg rules: BpmnValidationRule): BpmnValidator = apply {
+    fun withRules(vararg rules: BpmnValidationRule): BpmnValidator {
         this.rules = rules.toList()
+        return this
     }
 
     /**
      * Sets the validation rules to use. Defaults to [BpmnRules.all] if not called.
      */
-    fun withRules(rules: List<BpmnValidationRule>): BpmnValidator = apply {
+    fun withRules(rules: List<BpmnValidationRule>): BpmnValidator {
         this.rules = rules
+        return this
     }
 
     /**
      * Disables the given rules by their IDs.
      */
-    fun disableRules(vararg ruleIds: String): BpmnValidator = apply {
+    fun disableRules(vararg ruleIds: String): BpmnValidator {
         this.disabledRuleIds = ruleIds.toSet()
+        return this
     }
 
     /**
      * Treats warnings as failures during validation.
      */
-    fun failOnWarning(): BpmnValidator = apply {
+    fun failOnWarning(): BpmnValidator {
         this.failOnWarning = true
+        return this
     }
 
     /**
@@ -121,14 +126,16 @@ class BpmnValidator private constructor(
          * Loads BPMN files from the classpath at the given path.
          */
         @JvmStatic
-        fun fromClasspath(path: String): BpmnValidator =
-            BpmnValidator { engine -> ClasspathBpmnLoader.load(path, engine) }
+        fun fromClasspath(path: String): BpmnValidator {
+            return BpmnValidator { engine -> ClasspathBpmnLoader.load(path, engine) }
+        }
 
         /**
          * Loads BPMN files from a filesystem directory.
          */
         @JvmStatic
-        fun fromDirectory(directory: Path): BpmnValidator =
-            BpmnValidator { engine -> FilesystemBpmnLoader.load(directory, engine) }
+        fun fromDirectory(directory: Path): BpmnValidator {
+            return BpmnValidator { engine -> FilesystemBpmnLoader.load(directory, engine) }
+        }
     }
 }

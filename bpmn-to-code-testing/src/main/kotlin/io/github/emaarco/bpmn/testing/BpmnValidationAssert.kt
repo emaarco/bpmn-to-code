@@ -18,7 +18,6 @@ class BpmnValidationAssert(
      * Asserts that the validation produced no violations at all.
      */
     fun assertNoViolations(): BpmnValidationAssert {
-        isNotNull
         if (actual.violations.isNotEmpty()) {
             failWithMessage(
                 "Expected no violations but found %d:\n%s",
@@ -33,7 +32,6 @@ class BpmnValidationAssert(
      * Asserts that the validation produced no violations for the given rule.
      */
     fun assertNoViolations(ruleId: String): BpmnValidationAssert {
-        isNotNull
         val matching = actual.violations.filter { it.ruleId == ruleId }
         if (matching.isNotEmpty()) {
             failWithMessage(
@@ -50,7 +48,6 @@ class BpmnValidationAssert(
      * Asserts the exact total number of violations.
      */
     fun assertViolationCount(expected: Int): BpmnValidationAssert {
-        isNotNull
         val actualCount = actual.violations.size
         if (actualCount != expected) {
             failWithMessage(
@@ -67,7 +64,6 @@ class BpmnValidationAssert(
      * Asserts the exact number of violations for a specific rule.
      */
     fun assertViolationCount(ruleId: String, expected: Int): BpmnValidationAssert {
-        isNotNull
         val matching = actual.violations.filter { it.ruleId == ruleId }
         if (matching.size != expected) {
             failWithMessage(
@@ -85,7 +81,6 @@ class BpmnValidationAssert(
      * Asserts that the validation produced no ERROR-severity violations.
      */
     fun assertNoErrors(): BpmnValidationAssert {
-        isNotNull
         if (actual.errors.isNotEmpty()) {
             failWithMessage(
                 "Expected no errors but found %d:\n%s",
@@ -100,7 +95,6 @@ class BpmnValidationAssert(
      * Asserts that the validation produced no WARN-severity violations.
      */
     fun assertNoWarnings(): BpmnValidationAssert {
-        isNotNull
         if (actual.warnings.isNotEmpty()) {
             failWithMessage(
                 "Expected no warnings but found %d:\n%s",
@@ -114,7 +108,9 @@ class BpmnValidationAssert(
     /**
      * Returns the underlying [ValidationResult] for custom assertions.
      */
-    fun result(): ValidationResult = actual
+    fun result(): ValidationResult {
+        return actual
+    }
 
     companion object {
 
@@ -122,11 +118,12 @@ class BpmnValidationAssert(
          * Entry point for [BpmnValidationAssert].
          */
         @JvmStatic
-        fun assertThat(result: ValidationResult): BpmnValidationAssert =
-            BpmnValidationAssert(result)
+        fun assertThat(result: ValidationResult): BpmnValidationAssert {
+            return BpmnValidationAssert(result)
+        }
 
-        private fun formatViolations(violations: List<ValidationViolation>): String =
-            violations.joinToString("\n") { violation ->
+        private fun formatViolations(violations: List<ValidationViolation>): String {
+            return violations.joinToString("\n") { violation ->
                 val severity = if (violation.severity == Severity.ERROR) "ERROR" else "WARN"
                 val location = if (violation.elementId != null) {
                     "${violation.processId}/${violation.elementId}"
@@ -135,5 +132,6 @@ class BpmnValidationAssert(
                 }
                 "[$severity] $location: ${violation.message} (rule: ${violation.ruleId})"
             }
+        }
     }
 }
