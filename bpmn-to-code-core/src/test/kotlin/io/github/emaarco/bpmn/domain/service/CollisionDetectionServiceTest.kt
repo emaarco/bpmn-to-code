@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
@@ -24,8 +25,8 @@ class CollisionDetectionServiceTest {
                 FlowNodeDefinition("Activity_Task2"),
             ),
             serviceTasks = listOf(
-                ServiceTaskDefinition("Task1", "newsletter.sendMail"),
-                ServiceTaskDefinition("Task2", "newsletter.sendConfirmationMail"),
+                ServiceTaskDefinition("Task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")),
+                ServiceTaskDefinition("Task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")),
             ),
             messages = listOf(
                 MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
@@ -134,8 +135,8 @@ class CollisionDetectionServiceTest {
         val model = testBpmnModel(
             processId = "TestProcess",
             serviceTasks = listOf(
-                ServiceTaskDefinition("task1", "newsletter.sendMail"),
-                ServiceTaskDefinition("task2", "newsletter_sendMail"),
+                ServiceTaskDefinition("task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")),
+                ServiceTaskDefinition("task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")),
             ),
         )
 

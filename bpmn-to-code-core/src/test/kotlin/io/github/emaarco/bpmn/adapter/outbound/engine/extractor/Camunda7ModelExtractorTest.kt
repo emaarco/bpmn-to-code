@@ -1,6 +1,8 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -25,9 +27,9 @@ class Camunda7ModelExtractorTest {
                     VariableDefinition("abortResult")
                 ),
                 serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
-                    ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
-                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "\${newsletterSendWelcomeMail}", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
+                    ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "#{newsletterSendConfirmationMail}", IMPL_KIND_KEY to "EXTERNAL_TASK")),
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "EXTERNAL_TASK")),
                 )
             )
         )

@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.domain.validation.Severity
@@ -28,7 +29,7 @@ class BpmnValidationServiceTest {
     fun `throws BpmnValidationException for missing implementation`() {
         val service = BpmnValidationService()
         val model = testBpmnModel(
-            serviceTasks = listOf(ServiceTaskDefinition(id = "task1", type = null))
+            serviceTasks = listOf(ServiceTaskDefinition(id = "task1"))
         )
         val exception = assertThrows<BpmnValidationException> {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)
@@ -41,7 +42,7 @@ class BpmnValidationServiceTest {
         val config = ValidationConfig(disabledRules = setOf("missing-service-task-implementation"))
         val service = BpmnValidationService(config)
         val model = testBpmnModel(
-            serviceTasks = listOf(ServiceTaskDefinition(id = "task1", type = null))
+            serviceTasks = listOf(ServiceTaskDefinition(id = "task1"))
         )
         assertDoesNotThrow {
             service.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE)

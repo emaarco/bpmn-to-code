@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
@@ -19,9 +20,9 @@ class ModelMergerServiceTest {
     fun `should merge processes with same id`() {
 
         // given
-        val firstTask = ServiceTaskDefinition(id = "firstTaskId", type = "firstTaskType")
-        val secondTask = ServiceTaskDefinition(id = "secondTaskId", type = "secondTaskType")
-        val thirdTask = ServiceTaskDefinition(id = "thirdTaskId", type = "thirdTaskType")
+        val firstTask = ServiceTaskDefinition(id = "firstTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "firstTaskType"))
+        val secondTask = ServiceTaskDefinition(id = "secondTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "secondTaskType"))
+        val thirdTask = ServiceTaskDefinition(id = "thirdTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "thirdTaskType"))
         val firstMessage = MessageDefinition(id = "firstMessageId", name = "firstMessageName")
         val secondMessage = MessageDefinition(id = "secondMessageId", name = "secondMessageName")
         val thirdMessage = MessageDefinition(id = "thirdMessageId", name = "thirdMessageName")

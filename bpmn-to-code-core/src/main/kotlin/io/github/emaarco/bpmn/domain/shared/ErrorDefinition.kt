@@ -6,6 +6,7 @@ data class ErrorDefinition(
     val id: String?,
     private val name: String?,
     private val code: String?,
+    val customProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<Pair<String, String>> {
     override fun getName() = name?.toUpperSnakeCase() ?: ""
     override fun getValue() = (name ?: "") to (code ?: "")

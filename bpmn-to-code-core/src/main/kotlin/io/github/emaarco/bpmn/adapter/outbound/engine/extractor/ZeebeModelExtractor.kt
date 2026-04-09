@@ -7,20 +7,22 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.BaseElementUtils.fin
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.extractAttribute
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.findFirstByType
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
-import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.CallActivity
 import org.camunda.bpm.model.bpmn.instance.FlowNode
+import org.camunda.bpm.model.bpmn.instance.Message
 import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
@@ -28,11 +30,14 @@ import java.io.InputStream
 
 class ZeebeModelExtractor : EngineSpecificExtractor {
 
+    private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
+    private val implValueKey = ServiceTaskDefinition.IMPL_VALUE_KEY
+
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
         val allFlowNodes = modelInstance.findFlowNodes()
-        val allMessages = modelInstance.findMessages()
+        val allMessages = extractZeebeMessages(modelInstance)
         val allErrorEvents = modelInstance.findErrorEventDefinition()
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
@@ -71,8 +76,29 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             val id = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val type = taskDefinition.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_TYPE)
                 ?.takeIf { it.isNotBlank() }
-            ServiceTaskDefinition(id = id, type = type)
+            ServiceTaskDefinition(
+                id = id,
+                customProperties = buildMap {
+                    put(implValueKey, type)
+                    put(implKindKey, ZeebeImplementationKind.JOB_WORKER.name)
+                }
+            )
         }
+    }
+
+    private fun extractZeebeMessages(modelInstance: ModelInstance): List<MessageDefinition> {
+        return modelInstance.findAllMessagesWithSource().map { (elementId, name, message) ->
+            val customProperties = message?.zeebeSubscriptionProperties() ?: emptyMap()
+            MessageDefinition(id = elementId, name = name, customProperties = customProperties)
+        }
+    }
+
+    private fun Message.zeebeSubscriptionProperties(): Map<String, Any?> {
+        val subscription = this.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_SUBSCRIPTION).firstOrNull()
+            ?: return emptyMap()
+        val correlationKey = subscription.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_CORRELATION_KEY)
+            ?: return emptyMap()
+        return mapOf(ZeebeModelConstants.ATTRIBUTE_CORRELATION_KEY to correlationKey)
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {

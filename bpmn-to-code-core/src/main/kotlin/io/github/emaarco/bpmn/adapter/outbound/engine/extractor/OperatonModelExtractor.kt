@@ -6,14 +6,15 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.DomElementUtils.with
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.DomElementUtils.withElementName
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.extractAttribute
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
-import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findMessages
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
@@ -35,6 +36,9 @@ import java.io.InputStream
  */
 class OperatonModelExtractor : EngineSpecificExtractor {
 
+    private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
+    private val implValueKey = ServiceTaskDefinition.IMPL_VALUE_KEY
+
     companion object {
         private const val NAMESPACE = "http://operaton.org/schema/1.0/bpmn"
     }
@@ -42,7 +46,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
-        val messages = modelInstance.findMessages()
+        val messages = findMessages(modelInstance)
         val flowNodes = modelInstance.findFlowNodes()
         val serviceTasks = getServiceTaskTypes(modelInstance)
         val callActivities = findCallActivities(modelInstance)
@@ -64,6 +68,12 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         )
     }
 
+    private fun findMessages(modelInstance: ModelInstance): List<MessageDefinition> {
+        return modelInstance.findAllMessagesWithSource().map { (elementId, name, _) ->
+            MessageDefinition(id = elementId, name = name)
+        }
+    }
+
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
         return callActivities.map {
@@ -80,43 +90,59 @@ class OperatonModelExtractor : EngineSpecificExtractor {
 
     private fun ServiceTask.toServiceTask(): ServiceTaskDefinition {
         val taskId = this.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-        val workerType = this.detectWorkerType()
-        return ServiceTaskDefinition(id = taskId, type = workerType)
+        val (kind, implValue) = this.detectImplementation()
+        return ServiceTaskDefinition(
+            id = taskId,
+            customProperties = buildMap {
+                put(implValueKey, implValue)
+                put(implKindKey, kind)
+            }
+        )
     }
 
-    private fun ServiceTask.detectWorkerType(): String? {
-        val taskExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
-        val delegateBasedTask = taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
-        val classBasedTask = taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
-        val topicBasedTask = taskExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC)
+    private fun ServiceTask.detectImplementation(): Pair<String?, String?> {
+        val extractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
+        val delegateExpression = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
+        val javaClass = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
+        val topic = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC)
+        val expression = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_EXPRESSION)
         return when {
-            delegateBasedTask != null -> delegateBasedTask
-            classBasedTask != null -> classBasedTask
-            topicBasedTask != null -> topicBasedTask
-            else -> null
+            delegateExpression != null -> OperatonImplementationKind.DELEGATE_EXPRESSION.name to delegateExpression
+            javaClass != null -> OperatonImplementationKind.JAVA_DELEGATE.name to javaClass
+            topic != null -> OperatonImplementationKind.EXTERNAL_TASK.name to topic
+            expression != null -> OperatonImplementationKind.EXPRESSION.name to expression
+            else -> null to null
         }
     }
 
     private fun findMessageSendEvents(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
         val messageEvents = modelInstance.getModelElementsByType(MessageEventDefinition::class.java)
-        val sendEvents = messageEvents.mapNotNull { it.detectSendEvents() }
-        return sendEvents.map { (type, event) ->
+        return messageEvents.mapNotNull { event ->
+            val (kind, implValue) = event.detectImplementation()
+            if (implValue == null) return@mapNotNull null
             val taskId = event.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            requireNotNull(taskId) { "The element the MessageEventDefinition belongs to has no 'id' defined" }
-            ServiceTaskDefinition(id = taskId, type = type)
+            ServiceTaskDefinition(
+                id = taskId,
+                customProperties = buildMap {
+                    put(implValueKey, implValue)
+                    put(implKindKey, kind)
+                }
+            )
         }
     }
 
-    private fun MessageEventDefinition.detectSendEvents(): Pair<String, MessageEventDefinition>? {
-        val eventExtractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
-        val topicBasedEvent = eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC)
-        val delegateBasedEvent = eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
-        val classBasedEvent = eventExtractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
+    private fun MessageEventDefinition.detectImplementation(): Pair<String?, String?> {
+        val extractor = { attrName: String -> this.getAttributeValueNs(NAMESPACE, attrName) }
+        val topic = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TOPIC)
+        val delegateExpression = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_DELEGATE_EXPRESSION)
+        val javaClass = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_CLASS)
+        val expression = extractor(BpmnModelConstants.CAMUNDA_ATTRIBUTE_EXPRESSION)
         return when {
-            topicBasedEvent != null -> topicBasedEvent to this
-            delegateBasedEvent != null -> delegateBasedEvent to this
-            classBasedEvent != null -> classBasedEvent to this
-            else -> null
+            topic != null -> OperatonImplementationKind.EXTERNAL_TASK.name to topic
+            delegateExpression != null -> OperatonImplementationKind.DELEGATE_EXPRESSION.name to delegateExpression
+            javaClass != null -> OperatonImplementationKind.JAVA_DELEGATE.name to javaClass
+            expression != null -> OperatonImplementationKind.EXPRESSION.name to expression
+            else -> null to null
         }
     }
 
@@ -149,10 +175,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val propertyElements = allChildElements.withElementName(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTY)
         val filter = BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME to CamundaModelConstants.ADDITIONAL_VARIABLES_PROPERTY_NAME
         val matchingProperties = propertyElements.withAttribute(filter)
-        val commaSeparatedValues = matchingProperties.mapNotNull { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_VALUE) }
-        return commaSeparatedValues.flatMap { it.split(",") }.map { it.trim() }.filter { it.isNotBlank() }
+        val rawValues = matchingProperties.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_VALUE) }
+        return rawValues.flatMap { it?.split(",") ?: emptyList() }.map { it.trim() }.filter { it.isNotBlank() }
     }
-
 
     /**
      * Extracts parent-scope variables from Call Activity in/out mappings:

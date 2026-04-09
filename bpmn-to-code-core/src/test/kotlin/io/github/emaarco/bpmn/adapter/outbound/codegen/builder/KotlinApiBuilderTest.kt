@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
@@ -25,9 +26,9 @@ class KotlinApiBuilderTest {
                     VariableDefinition("testVariable")
                 ),
                 serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_SendConfirmationMail", "#{newsletterSendConfirmationMail}"),
-                    ServiceTaskDefinition("Activity_SendWelcomeMail", "\${newsletterSendWelcomeMail}"),
-                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
+                    ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "#{newsletterSendConfirmationMail}")),
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "\${newsletterSendWelcomeMail}")),
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted"))
                 )
             )
         )

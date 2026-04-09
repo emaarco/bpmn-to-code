@@ -11,8 +11,10 @@ object ZeebeModelConstants {
     const val ELEMENT_INPUT = "input"
     const val ELEMENT_OUTPUT = "output"
     const val ELEMENT_LOOP_CHARACTERISTICS = "loopCharacteristics"
+    const val ELEMENT_SUBSCRIPTION = "subscription"
 
     const val ATTRIBUTE_PROCESS_ID = "processId"
+    const val ATTRIBUTE_CORRELATION_KEY = "correlationKey"
     const val ATTRIBUTE_TARGET = "target"
     const val ATTRIBUTE_INPUT_ELEMENT = "inputElement"
     const val ATTRIBUTE_INPUT_COLLECTION = "inputCollection"

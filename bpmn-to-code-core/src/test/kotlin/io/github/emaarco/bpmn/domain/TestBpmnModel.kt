@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.domain
 
+import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
@@ -7,6 +8,7 @@ import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
@@ -15,7 +17,7 @@ fun testBpmnModel(
     processId: String = "order",
     flowNodes: List<FlowNodeDefinition> = listOf(FlowNodeDefinition(id = "create-order")),
     callActivities: List<CallActivityDefinition> = listOf(CallActivityDefinition(id = "call-activity", calledElement = "called-process")),
-    serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", type = "taskType")),
+    serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", customProperties = mapOf(IMPL_VALUE_KEY to "taskType"))),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId", name = "signalName")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
@@ -52,25 +54,25 @@ fun testNewsletterBpmnModel(
         CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")
     ),
     flowNodes: List<FlowNodeDefinition> = listOf(
-        FlowNodeDefinition("CallActivity_AbortRegistration"),
-        FlowNodeDefinition("Activity_ConfirmRegistration"),
-        FlowNodeDefinition("Activity_SendConfirmationMail"),
-        FlowNodeDefinition("Activity_SendWelcomeMail"),
-        FlowNodeDefinition("EndEvent_RegistrationAborted"),
-        FlowNodeDefinition("EndEvent_RegistrationCompleted"),
-        FlowNodeDefinition("EndEvent_RegistrationNotPossible"),
-        FlowNodeDefinition("EndEvent_SubscriptionConfirmed"),
-        FlowNodeDefinition("ErrorEvent_InvalidMail"),
-        FlowNodeDefinition("StartEvent_RequestReceived"),
-        FlowNodeDefinition("StartEvent_SubmitRegistrationForm"),
-        FlowNodeDefinition("SubProcess_Confirmation"),
-        FlowNodeDefinition("Timer_After3Days"),
-        FlowNodeDefinition("Timer_EveryDay")
+        FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY),
+        FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK),
+        FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK),
+        FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK),
+        FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT),
+        FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT),
+        FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT),
+        FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT),
+        FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT),
+        FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT),
+        FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT),
+        FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS),
+        FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT),
+        FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT),
     ),
     serviceTasks: List<ServiceTaskDefinition> = listOf(
-        ServiceTaskDefinition("Activity_SendConfirmationMail", "newsletter.sendConfirmationMail"),
-        ServiceTaskDefinition("Activity_SendWelcomeMail", "newsletter.sendWelcomeMail"),
-        ServiceTaskDefinition("EndEvent_RegistrationCompleted", "newsletter.registrationCompleted")
+        ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")),
+        ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail")),
+        ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted"))
     ),
     messages: List<MessageDefinition> = listOf(
         MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),

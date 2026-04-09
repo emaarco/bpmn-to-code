@@ -1,5 +1,9 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -28,6 +32,15 @@ class ZeebeModelExtractorTest {
                 variables = listOf(
                     VariableDefinition("subscriptionId"),
                     VariableDefinition("testVariable")
+                ),
+                serviceTasks = listOf(
+                    ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "JOB_WORKER")),
+                    ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "JOB_WORKER")),
+                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
+                ),
+                messages = listOf(
+                    MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
+                    MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed", customProperties = mapOf("correlationKey" to "=subscriptionId")),
                 )
             )
         )
