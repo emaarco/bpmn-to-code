@@ -60,6 +60,13 @@ internal object ClasspathBpmnLoader {
             .toList()
     }
 
+    /**
+     * Loads BPMN files from inside a jar archive.
+     *
+     * Jar loading is required when the classpath resource is packaged inside a jar rather than
+     * expanded onto the filesystem — for example, when `bpmn-to-code-testing` is used as a
+     * library dependency and the user's BPMN test files are bundled in their own test jar.
+     */
     private fun loadFromJar(url: java.net.URL, engine: ProcessEngine): List<BpmnResource> {
         val jarUri = url.toURI()
         val env = emptyMap<String, Any>()

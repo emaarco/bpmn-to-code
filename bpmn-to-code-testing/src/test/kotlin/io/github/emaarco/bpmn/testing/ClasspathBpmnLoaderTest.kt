@@ -9,14 +9,14 @@ class ClasspathBpmnLoaderTest {
 
     @Test
     fun `loads bpmn files from classpath directory`() {
-        val resources = ClasspathBpmnLoader.load("processes", ProcessEngine.CAMUNDA_7)
+        val resources = ClasspathBpmnLoader.load("bpmn", ProcessEngine.CAMUNDA_7)
         assertThat(resources).isNotEmpty
         assertThat(resources).allMatch { it.fileName.endsWith(".bpmn") }
     }
 
     @Test
     fun `sets the correct engine on loaded resources`() {
-        val resources = ClasspathBpmnLoader.load("processes", ProcessEngine.ZEEBE)
+        val resources = ClasspathBpmnLoader.load("bpmn", ProcessEngine.ZEEBE)
         assertThat(resources).allMatch { it.engine == ProcessEngine.ZEEBE }
     }
 
@@ -30,7 +30,7 @@ class ClasspathBpmnLoaderTest {
 
     @Test
     fun `handles trailing slash in path`() {
-        val resources = ClasspathBpmnLoader.load("processes/", ProcessEngine.CAMUNDA_7)
+        val resources = ClasspathBpmnLoader.load("bpmn/", ProcessEngine.CAMUNDA_7)
         assertThat(resources).isNotEmpty
     }
 }

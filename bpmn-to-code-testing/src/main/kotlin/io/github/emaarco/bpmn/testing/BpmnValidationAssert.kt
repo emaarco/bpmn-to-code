@@ -78,6 +78,16 @@ class BpmnValidationAssert(
     }
 
     /**
+     * Asserts that the validation produced at least one violation.
+     */
+    fun assertHasViolations(): BpmnValidationAssert {
+        if (actual.violations.isEmpty()) {
+            failWithMessage("Expected at least one violation but found none")
+        }
+        return this
+    }
+
+    /**
      * Asserts that the validation produced no ERROR-severity violations.
      */
     fun assertNoErrors(): BpmnValidationAssert {

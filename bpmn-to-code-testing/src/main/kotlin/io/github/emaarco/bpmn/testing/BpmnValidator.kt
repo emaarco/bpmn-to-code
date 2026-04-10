@@ -18,7 +18,7 @@ import java.nio.file.Path
  * Example usage:
  * ```kotlin
  * BpmnValidator
- *     .fromClasspath("processes/")
+ *     .fromClasspath("bpmn/")
  *     .engine(ProcessEngine.CAMUNDA_7)
  *     .validate()
  *     .assertNoViolations()

@@ -78,7 +78,7 @@ class BpmnProcessArchitectureTest {
     @Test
     fun `disableRules filters violations and assertNoViolations confirms`() {
         val assert = BpmnValidator
-            .fromClasspath("processes/invalid-process.bpmn")
+            .fromClasspath("bpmn/invalid-process.bpmn")
             .engine(ProcessEngine.CAMUNDA_7)
             .withRules(BpmnRules.MISSING_SERVICE_TASK_IMPLEMENTATION, BpmnRules.MISSING_MESSAGE_NAME)
             .disableRules("missing-service-task-implementation")
@@ -92,7 +92,7 @@ class BpmnProcessArchitectureTest {
         val allRules = BpmnRules.all() + serviceTaskNamingRule
 
         val assert = BpmnValidator
-            .fromClasspath("processes/valid-process.bpmn")
+            .fromClasspath("bpmn/valid-process.bpmn")
             .engine(ProcessEngine.CAMUNDA_7)
             .withRules(allRules)
             .validate()
@@ -103,7 +103,7 @@ class BpmnProcessArchitectureTest {
     @Test
     fun `result escape hatch provides raw ValidationResult`() {
         val assert = BpmnValidator
-            .fromClasspath("processes/valid-process.bpmn")
+            .fromClasspath("bpmn/valid-process.bpmn")
             .engine(ProcessEngine.CAMUNDA_7)
             .withRules(BpmnRules.MISSING_SERVICE_TASK_IMPLEMENTATION)
             .validate()

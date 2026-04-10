@@ -37,7 +37,7 @@ mavenPublishing {
     pom {
         name.set("bpmn-to-code-testing")
         description.set("Test utilities for validating BPMN process models — like ArchUnit but for BPMN")
-        inceptionYear.set("2025")
+        inceptionYear.set("2026")
         url.set("https://github.com/emaarco/bpmn-to-code")
         licenses {
             license {

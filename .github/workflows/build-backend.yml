@@ -26,6 +26,7 @@ jobs:
             'bpmn-to-code-gradle/' \
             'bpmn-to-code-maven/' \
             'bpmn-to-code-mcp/' \
+            'bpmn-to-code-testing/' \
             'bpmn-to-code-web/' \
             'build.gradle.kts' \
             'settings.gradle.kts' \
