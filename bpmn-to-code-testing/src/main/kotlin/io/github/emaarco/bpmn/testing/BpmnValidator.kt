@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.domain.validation.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationContext
 import io.github.emaarco.bpmn.domain.validation.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
+import io.github.emaarco.bpmn.domain.validation.ValidationViolation
 import java.nio.file.Path
 
 /**
@@ -89,6 +90,14 @@ class BpmnValidator private constructor(
         return BpmnValidationAssert.assertThat(result)
     }
 
+    private fun applyPolicy(violations: List<ValidationViolation>): List<ValidationViolation> {
+        return if (failOnWarning) {
+            violations.map { if (it.severity == Severity.WARN) it.copy(severity = Severity.ERROR) else it }
+        } else {
+            violations
+        }
+    }
+
     private fun resolveRules(): List<BpmnValidationRule> {
         val base = rules ?: BpmnRules.all()
         return base.filterNot { it.id in disabledRuleIds }
@@ -103,8 +112,9 @@ class BpmnValidator private constructor(
         val postMergeRules = activeRules.filter { it.phase == ValidationPhase.POST_MERGE }
 
         val preMergeViolations = models.flatMap { model ->
-            val ctx = ValidationContext(model, engine)
-            preMergeRules.flatMap { it.validate(ctx) }
+            val ctx = ValidationContext(model, engine, failOnWarning)
+            val violations = preMergeRules.flatMap { it.validate(ctx) }
+            applyPolicy(violations)
         }
 
         if (preMergeViolations.any { it.severity == Severity.ERROR }) {
@@ -113,8 +123,9 @@ class BpmnValidator private constructor(
 
         val mergedModels = ModelMergerService().mergeModels(models)
         val postMergeViolations = mergedModels.flatMap { model ->
-            val ctx = ValidationContext(model, engine)
-            postMergeRules.flatMap { it.validate(ctx) }
+            val ctx = ValidationContext(model, engine, failOnWarning)
+            val violations = postMergeRules.flatMap { it.validate(ctx) }
+            applyPolicy(violations)
         }
 
         return ValidationResult(preMergeViolations + postMergeViolations)
