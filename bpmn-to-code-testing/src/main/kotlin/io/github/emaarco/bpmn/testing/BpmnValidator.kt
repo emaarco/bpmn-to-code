@@ -138,7 +138,7 @@ class BpmnValidator private constructor(
          */
         @JvmStatic
         fun fromClasspath(path: String): BpmnValidator {
-            return BpmnValidator { engine -> ClasspathBpmnLoader.load(path, engine) }
+            return BpmnValidator { engine -> BpmnResourceLoader.fromClasspath(path, engine) }
         }
 
         /**
@@ -146,7 +146,7 @@ class BpmnValidator private constructor(
          */
         @JvmStatic
         fun fromDirectory(directory: Path): BpmnValidator {
-            return BpmnValidator { engine -> FilesystemBpmnLoader.load(directory, engine) }
+            return BpmnValidator { engine -> BpmnResourceLoader.fromDirectory(directory, engine) }
         }
     }
 }
