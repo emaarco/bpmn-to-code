@@ -112,7 +112,7 @@ class BpmnValidator private constructor(
         val postMergeRules = activeRules.filter { it.phase == ValidationPhase.POST_MERGE }
 
         val preMergeViolations = models.flatMap { model ->
-            val ctx = ValidationContext(model, engine, failOnWarning)
+            val ctx = ValidationContext(model, engine)
             val violations = preMergeRules.flatMap { it.validate(ctx) }
             applyPolicy(violations)
         }
@@ -123,7 +123,7 @@ class BpmnValidator private constructor(
 
         val mergedModels = ModelMergerService().mergeModels(models)
         val postMergeViolations = mergedModels.flatMap { model ->
-            val ctx = ValidationContext(model, engine, failOnWarning)
+            val ctx = ValidationContext(model, engine)
             val violations = postMergeRules.flatMap { it.validate(ctx) }
             applyPolicy(violations)
         }
