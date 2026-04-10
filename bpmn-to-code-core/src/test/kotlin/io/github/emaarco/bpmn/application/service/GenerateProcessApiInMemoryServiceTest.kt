@@ -38,7 +38,7 @@ class GenerateProcessApiInMemoryServiceTest {
             content = "// generated code",
             language = OutputLanguage.KOTLIN
         )
-        every { bpmnService.extract(any()) } returns dummyModel
+        every { bpmnService.extract(any(), any()) } returns dummyModel
         every { codeGenerator.generateCode(any()) } returns expectedGeneratedFile
         val command = GenerateProcessApiInMemoryUseCase.Command(
             bpmnContents = listOf(bpmnInput),
@@ -51,7 +51,7 @@ class GenerateProcessApiInMemoryServiceTest {
         val result = underTest.generateProcessApi(command)
 
         // then: BpmnFile is created, models are extracted, code is generated
-        verify { bpmnService.extract(match { it.fileName == "test.bpmn" && it.engine == ProcessEngine.ZEEBE }) }
+        verify { bpmnService.extract(match { it.fileName == "test.bpmn" }, eq(ProcessEngine.ZEEBE)) }
         verify { codeGenerator.generateCode(match { it.model == dummyModel }) }
         assertThat(result).hasSize(1)
         assertThat(result[0]).isEqualTo(expectedGeneratedFile)

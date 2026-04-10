@@ -20,15 +20,16 @@ class BpmnFileLoaderTest {
     fun `loadFrom returns matching files in base directory`(@TempDir tempDir: Path) {
 
         // given: a directory with files where some match the pattern
-        val file1 = Files.createFile(tempDir.resolve("process1.bpmn")).toFile()
-        val file2 = Files.createFile(tempDir.resolve("process2.bpmn")).toFile()
+        Files.createFile(tempDir.resolve("process1.bpmn"))
+        Files.createFile(tempDir.resolve("process2.bpmn"))
         Files.createFile(tempDir.resolve("other.txt"))
 
         // when: we call loadFrom with pattern "*.bpmn"
         val result = underTest.loadFrom(tempDir.toString(), "*.bpmn")
 
         // then: expect the list to contain only BPMN files
-        assertThat(result).containsExactlyInAnyOrder(file1, file2)
+        assertThat(result).hasSize(2)
+        assertThat(result.map { it.fileName }).containsExactlyInAnyOrder("process1.bpmn", "process2.bpmn")
     }
 
     @Test
@@ -37,15 +38,16 @@ class BpmnFileLoaderTest {
         // given: a base directory with a subdirectory containing a matching file
         val subDir = Files.createDirectory(tempDir.resolve("subDir"))
         val subSubDir = Files.createDirectory(subDir.resolve("subSubDir"))
-        val subFile = Files.createFile(subDir.resolve("diagram.bpmn")).toFile()
-        val otherSubFile = Files.createFile(subSubDir.resolve("process.bpmn")).toFile()
+        Files.createFile(subDir.resolve("diagram.bpmn"))
+        Files.createFile(subSubDir.resolve("process.bpmn"))
         Files.createFile(tempDir.resolve("process.txt"))
 
         // when: we call loadFrom with pattern "**/*.bpmn"
         val result = underTest.loadFrom(tempDir.toString(), "**/*.bpmn")
 
-        // then: expect the list to contain the matching subdirectory file
-        assertThat(result).containsExactlyInAnyOrder(subFile, otherSubFile)
+        // then: expect the list to contain the matching subdirectory files
+        assertThat(result).hasSize(2)
+        assertThat(result.map { it.fileName }).containsExactlyInAnyOrder("diagram.bpmn", "process.bpmn")
     }
 
     @Test
@@ -54,14 +56,15 @@ class BpmnFileLoaderTest {
         // given: a directory structure with files outside the base directory
         val baseDir = Files.createDirectory(tempDir.resolve("project"))
         val externalDir = Files.createDirectory(tempDir.resolve("external"))
-        val externalFile = Files.createFile(externalDir.resolve("external-process.bpmn")).toFile()
+        Files.createFile(externalDir.resolve("external-process.bpmn"))
         Files.createFile(externalDir.resolve("other.txt"))
 
         // when: we call loadFrom with a relative path pattern going outside the root
         val result = underTest.loadFrom(baseDir.toString(), "../external/*.bpmn")
 
         // then: expect the list to contain the external BPMN file
-        assertThat(result).containsExactly(externalFile)
+        assertThat(result).hasSize(1)
+        assertThat(result[0].fileName).isEqualTo("external-process.bpmn")
     }
 
     @Test
@@ -74,10 +77,10 @@ class BpmnFileLoaderTest {
         val subDir2 = Files.createDirectory(externalDir.resolve("subdir2"))
         val deepDir = Files.createDirectory(subDir1.resolve("deep"))
 
-        val externalFile1 = Files.createFile(externalDir.resolve("root-process.bpmn")).toFile()
-        val externalFile2 = Files.createFile(subDir1.resolve("sub1-process.bpmn")).toFile()
-        val externalFile3 = Files.createFile(subDir2.resolve("sub2-process.bpmn")).toFile()
-        val externalFile4 = Files.createFile(deepDir.resolve("deep-process.bpmn")).toFile()
+        Files.createFile(externalDir.resolve("root-process.bpmn"))
+        Files.createFile(subDir1.resolve("sub1-process.bpmn"))
+        Files.createFile(subDir2.resolve("sub2-process.bpmn"))
+        Files.createFile(deepDir.resolve("deep-process.bpmn"))
         Files.createFile(externalDir.resolve("other.txt"))
         Files.createFile(subDir1.resolve("readme.md"))
 
@@ -85,7 +88,10 @@ class BpmnFileLoaderTest {
         val result = underTest.loadFrom(baseDir.toString(), "../external/**/*.bpmn")
 
         // then: expect the list to contain all BPMN files from external directory tree
-        assertThat(result).containsExactlyInAnyOrder(externalFile1, externalFile2, externalFile3, externalFile4)
+        assertThat(result).hasSize(4)
+        assertThat(result.map { it.fileName }).containsExactlyInAnyOrder(
+            "root-process.bpmn", "sub1-process.bpmn", "sub2-process.bpmn", "deep-process.bpmn"
+        )
     }
 
     @Test
@@ -98,15 +104,16 @@ class BpmnFileLoaderTest {
         val nestedDir = Files.createDirectory(deepDir.resolve("resources"))
         val bpmnDir = Files.createDirectory(nestedDir.resolve("bpmn"))
 
-        val deepFile1 = Files.createFile(bpmnDir.resolve("shared-process.bpmn")).toFile()
-        val deepFile2 = Files.createFile(nestedDir.resolve("resource-process.bpmn")).toFile()
+        Files.createFile(bpmnDir.resolve("shared-process.bpmn"))
+        Files.createFile(nestedDir.resolve("resource-process.bpmn"))
         Files.createFile(bpmnDir.resolve("config.xml"))
 
         // when: we call loadFrom with a deep relative path pattern
         val result = underTest.loadFrom(baseDir.toString(), "../../shared/**/*.bpmn")
 
         // then: expect the list to contain all BPMN files from the deep external path
-        assertThat(result).containsExactlyInAnyOrder(deepFile1, deepFile2)
+        assertThat(result).hasSize(2)
+        assertThat(result.map { it.fileName }).containsExactlyInAnyOrder("shared-process.bpmn", "resource-process.bpmn")
     }
 
     @Test
@@ -117,7 +124,7 @@ class BpmnFileLoaderTest {
         val externalDir = Files.createDirectory(tempDir.resolve("external"))
         val specificDir = Files.createDirectory(externalDir.resolve("specific"))
 
-        val targetFile = Files.createFile(specificDir.resolve("target.bpmn")).toFile()
+        Files.createFile(specificDir.resolve("target.bpmn"))
         Files.createFile(specificDir.resolve("other.bpmn"))
         Files.createFile(externalDir.resolve("different.bpmn"))
 
@@ -125,6 +132,7 @@ class BpmnFileLoaderTest {
         val result = underTest.loadFrom(baseDir.toString(), "../external/specific/target.bpmn")
 
         // then: expect the list to contain only the specific target file
-        assertThat(result).containsExactly(targetFile)
+        assertThat(result).hasSize(1)
+        assertThat(result[0].fileName).isEqualTo("target.bpmn")
     }
 }

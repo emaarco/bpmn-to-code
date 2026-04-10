@@ -1,35 +1,47 @@
 package io.github.emaarco.bpmn.adapter.outbound.filesystem
 
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.apache.tools.ant.DirectoryScanner
-import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.PathMatcher
 import kotlin.io.path.absolute
+import kotlin.io.path.name
+import kotlin.streams.toList
 
 class BpmnFileLoader : LoadBpmnFilesPort {
 
     private val logger = KotlinLogging.logger {}
 
-    /**
-     * Retrieves all files from the specified base-directory
-     * that match the given wildcard pattern.
-     * @param baseDirectory The root directory to start the search.
-     * @param filePattern The wildcard pattern to match the files.
-     */
-    override fun loadFrom(baseDirectory: String, filePattern: String): List<File> {
+    override fun loadFrom(baseDirectory: String, filePattern: String): List<BpmnResource> {
         val basePath = Path.of(baseDirectory).absolute().normalize()
         val (searchDir, pattern) = resolvePattern(basePath, filePattern)
 
-        val scanner = DirectoryScanner()
-        scanner.basedir = searchDir.toFile()
-        scanner.setIncludes(arrayOf(pattern))
-        scanner.scan()
-        
-        val files = scanner.includedFiles.map { File(searchDir.toFile(), it) }
+        val matcher = createMatcher(pattern)
+        val files = Files.walk(searchDir)
+            .filter { Files.isRegularFile(it) }
+            .filter { matcher.matches(searchDir.relativize(it)) }
+            .toList()
+
         logger.info { "Found ${files.size} files matching pattern $pattern in directory $searchDir" }
 
-        return files
+        return files.map { file ->
+            BpmnResource(
+                fileName = file.name,
+                content = file.toFile().inputStream(),
+            )
+        }
+    }
+
+    private fun createMatcher(pattern: String): PathMatcher {
+        val fs = FileSystems.getDefault()
+        val primary = fs.getPathMatcher("glob:$pattern")
+        if (!pattern.startsWith("**/")) return primary
+        val rootPattern = pattern.removePrefix("**/")
+        val rootMatcher = fs.getPathMatcher("glob:$rootPattern")
+        return PathMatcher { path -> primary.matches(path) || rootMatcher.matches(path) }
     }
 
     private fun resolvePattern(basePath: Path, pattern: String): Pair<Path, String> {
