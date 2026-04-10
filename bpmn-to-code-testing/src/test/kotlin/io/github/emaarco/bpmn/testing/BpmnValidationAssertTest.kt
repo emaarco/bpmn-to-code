@@ -92,48 +92,6 @@ class BpmnValidationAssertTest {
     }
 
     @Nested
-    inner class AssertViolationCount {
-
-        @Test
-        fun `passes with correct count`() {
-            val result = ValidationResult(listOf(error, warning))
-            assertThatCode {
-                BpmnValidationAssert.assertThat(result).assertViolationCount(2)
-            }.doesNotThrowAnyException()
-        }
-
-        @Test
-        fun `fails with wrong count`() {
-            val result = ValidationResult(listOf(error))
-            assertThatThrownBy {
-                BpmnValidationAssert.assertThat(result).assertViolationCount(5)
-            }.isInstanceOf(AssertionError::class.java)
-                .hasMessageContaining("Expected 5 violations but found 1")
-        }
-    }
-
-    @Nested
-    inner class AssertViolationCountForRule {
-
-        @Test
-        fun `passes with correct count`() {
-            val result = ValidationResult(listOf(error, warning))
-            assertThatCode {
-                BpmnValidationAssert.assertThat(result).assertViolationCount("test-rule", 1)
-            }.doesNotThrowAnyException()
-        }
-
-        @Test
-        fun `fails with wrong count`() {
-            val result = ValidationResult(listOf(error))
-            assertThatThrownBy {
-                BpmnValidationAssert.assertThat(result).assertViolationCount("test-rule", 3)
-            }.isInstanceOf(AssertionError::class.java)
-                .hasMessageContaining("Expected 3 violations for rule 'test-rule' but found 1")
-        }
-    }
-
-    @Nested
     inner class AssertNoErrors {
 
         @Test

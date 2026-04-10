@@ -45,39 +45,6 @@ class BpmnValidationAssert(
     }
 
     /**
-     * Asserts the exact total number of violations.
-     */
-    fun assertViolationCount(expected: Int): BpmnValidationAssert {
-        val actualCount = actual.violations.size
-        if (actualCount != expected) {
-            failWithMessage(
-                "Expected %d violations but found %d:\n%s",
-                expected,
-                actualCount,
-                formatViolations(actual.violations),
-            )
-        }
-        return this
-    }
-
-    /**
-     * Asserts the exact number of violations for a specific rule.
-     */
-    fun assertViolationCount(ruleId: String, expected: Int): BpmnValidationAssert {
-        val matching = actual.violations.filter { it.ruleId == ruleId }
-        if (matching.size != expected) {
-            failWithMessage(
-                "Expected %d violations for rule '%s' but found %d:\n%s",
-                expected,
-                ruleId,
-                matching.size,
-                formatViolations(matching),
-            )
-        }
-        return this
-    }
-
-    /**
      * Asserts that the validation produced at least one violation.
      */
     fun assertHasViolations(): BpmnValidationAssert {
