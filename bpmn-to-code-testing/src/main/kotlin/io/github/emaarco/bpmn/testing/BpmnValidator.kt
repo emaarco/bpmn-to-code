@@ -26,7 +26,7 @@ import java.nio.file.Path
  * ```
  */
 class BpmnValidator private constructor(
-    private val resourceLoader: (ProcessEngine) -> List<BpmnResource>,
+    private val resourceLoader: () -> List<BpmnResource>,
 ) {
 
     private var engine: ProcessEngine? = null
@@ -83,8 +83,8 @@ class BpmnValidator private constructor(
         }
 
         val extractor = ExtractBpmnAdapter()
-        val resources = resourceLoader(selectedEngine)
-        val models = resources.map { extractor.extract(it) }
+        val resources = resourceLoader()
+        val models = resources.map { extractor.extract(it, selectedEngine) }
         val activeRules = resolveRules()
         val result = runValidation(models, selectedEngine, activeRules)
         return BpmnValidationAssert.assertThat(result)
@@ -138,7 +138,7 @@ class BpmnValidator private constructor(
          */
         @JvmStatic
         fun fromClasspath(path: String): BpmnValidator {
-            return BpmnValidator { engine -> BpmnResourceLoader.fromClasspath(path, engine) }
+            return BpmnValidator { BpmnResourceLoader.fromClasspath(path) }
         }
 
         /**
@@ -146,7 +146,7 @@ class BpmnValidator private constructor(
          */
         @JvmStatic
         fun fromDirectory(directory: Path): BpmnValidator {
-            return BpmnValidator { engine -> BpmnResourceLoader.fromDirectory(directory, engine) }
+            return BpmnValidator { BpmnResourceLoader.fromDirectory(directory) }
         }
     }
 }

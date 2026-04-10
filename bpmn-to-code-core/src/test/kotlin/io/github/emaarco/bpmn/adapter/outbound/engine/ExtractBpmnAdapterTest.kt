@@ -26,11 +26,11 @@ class ExtractBpmnAdapterTest {
         val expectedModel = testBpmnModel(processId = "dummyProcess")
         val dummyFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
         val inputStream = dummyFile.inputStream()
-        val bpmnFile = BpmnResource(fileName = "dummy.bpmn", content = inputStream, engine = ProcessEngine.ZEEBE)
+        val bpmnFile = BpmnResource(fileName = "dummy.bpmn", content = inputStream)
         every { extractor.extract(any()) } returns expectedModel
 
         // when: extract is invoked
-        val result = underTest.extract(bpmnFile)
+        val result = underTest.extract(bpmnFile, ProcessEngine.ZEEBE)
 
         // then: the extractor is used and the expected model is returned
         verify { extractor.extract(any()) }
@@ -46,8 +46,8 @@ class ExtractBpmnAdapterTest {
                 BpmnResource(
                     fileName = "dummy.bpmn",
                     content = inputStream,
-                    engine = ProcessEngine.CAMUNDA_7
-                )
+                ),
+                ProcessEngine.CAMUNDA_7
             )
         }
     }

@@ -10,7 +10,6 @@ jUnit = "6.0.3"
 assertJ = "4.0.0-M1"
 junitPlatformLauncher = "6.0.3"
 mockk = "1.14.9"
-ant = "1.10.16"
 ktor = "3.4.2"
 kotlinxSerialization = "1.10.0"
 logback = "1.5.32"
@@ -27,7 +26,7 @@ mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 javapoet = { module = "com.palantir.javapoet:javapoet", version.ref = "javapoet" }
 bpmnmodel = { module = "org.camunda.bpm.model:camunda-bpmn-model", version.ref = "camunda" }
-ant = { module = "org.apache.ant:ant", version.ref = "ant" }
+
 # Web module dependencies
 ktorServerCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktorServerNetty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }

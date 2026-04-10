@@ -15,10 +15,11 @@ class ExtractBpmnAdapter(
 ) : ExtractBpmnPort {
 
     override fun extract(
-        bpmnFile: BpmnResource
+        bpmnFile: BpmnResource,
+        engine: ProcessEngine,
     ): BpmnModel {
         val content = bpmnFile.content
-        val (engine, extractor) = getExtractor(bpmnFile)
+        val extractor = getExtractor(engine)
         return try {
             logger.info { "Extracting model '${bpmnFile.fileName}' with extractor for '$engine'" }
             extractor.extract(content)
@@ -30,13 +31,9 @@ class ExtractBpmnAdapter(
         }
     }
 
-    private fun getExtractor(file: BpmnResource): Map.Entry<ProcessEngine, EngineSpecificExtractor> {
-        val entry = extractors.entries.find { it.key == file.engine }
-        if (entry == null) {
-            throw IllegalStateException("No extractor found for engine: ${file.engine}")
-        } else {
-            return entry
-        }
+    private fun getExtractor(engine: ProcessEngine): EngineSpecificExtractor {
+        return extractors[engine]
+            ?: throw IllegalStateException("No extractor found for engine: $engine")
     }
 
     companion object {

@@ -24,7 +24,6 @@ dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
     api(libs.bundles.codegen)
-    api(libs.ant)
     api(libs.slf4jApi)
     api(libs.kotlinLogging)
     compileOnly(project(":bpmn-to-code-core"))

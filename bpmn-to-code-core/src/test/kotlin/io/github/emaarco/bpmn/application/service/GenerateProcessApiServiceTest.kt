@@ -6,6 +6,7 @@ import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
@@ -15,7 +16,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class GenerateProcessApiServiceTest {
 
@@ -34,19 +34,19 @@ class GenerateProcessApiServiceTest {
     @Test
     fun `generateProcessApi generates API file`() {
 
-        // given: a dummy BPMN model and a command
-        val dummyFile = File.createTempFile("dummy", ".bpmn").apply {
-            writeText("<bpmn></bpmn>")
-            deleteOnExit()
-        }
+        // given: a dummy BPMN resource and a command
+        val dummyResource = BpmnResource(
+            fileName = "dummy.bpmn",
+            content = "<bpmn></bpmn>".byteInputStream(),
+        )
         val expectedGeneratedFile = GeneratedApiFile(
             fileName = "NewsletterSubscriptionProcessApi.kt",
             packagePath = "de.emaarco.example",
             content = "// generated code",
             language = OutputLanguage.KOTLIN
         )
-        every { bpmnFileLoader.loadFrom("baseDir", "*.bpmn") } returns listOf(dummyFile)
-        every { bpmnService.extract(any()) } returns dummyModel
+        every { bpmnFileLoader.loadFrom("baseDir", "*.bpmn") } returns listOf(dummyResource)
+        every { bpmnService.extract(any(), any()) } returns dummyModel
         every { codeGenerator.generateCode(any()) } returns expectedGeneratedFile
         val command = GenerateProcessApiFromFilesystemUseCase.Command(
             baseDir = "baseDir",

@@ -25,7 +25,7 @@ class GenerateProcessApiInMemoryService(
     ): List<GeneratedApiFile> {
         val validationService = BpmnValidationService(command.validationConfig)
         val modelsAsFiles = toBpmnFiles(command)
-        val models = modelsAsFiles.map { bpmnService.extract(it) }
+        val models = modelsAsFiles.map { bpmnService.extract(it, command.engine) }
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
         validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
@@ -51,7 +51,6 @@ class GenerateProcessApiInMemoryService(
         BpmnResource(
             fileName = it.processName,
             content = it.bpmnXml.byteInputStream(),
-            engine = command.engine,
         )
     }
 
