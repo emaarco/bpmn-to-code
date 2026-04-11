@@ -138,15 +138,15 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        return flowNodes.mapNotNull { node ->
+        return flowNodes.associate { node ->
             val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val ioMappings = node.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING)
             val ioVars = extractInputAndOutputVariables(ioMappings)
             val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
-            val allVars = (ioVars + multiInstanceVars).distinct()
-            if (allVars.isEmpty()) return@mapNotNull null
-            nodeId to allVars.map { VariableDefinition(it) }
-        }.toMap()
+            val allVars = ioVars + multiInstanceVars
+            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+            nodeId to distinctVars
+        }
     }
 
 private fun extractInputAndOutputVariables(

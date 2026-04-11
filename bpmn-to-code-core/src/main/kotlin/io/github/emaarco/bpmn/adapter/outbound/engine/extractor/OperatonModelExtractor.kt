@@ -180,7 +180,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
 
     private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        return flowNodes.mapNotNull { node ->
+        return flowNodes.associate { node ->
             val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val extensions = node.findExtensionElements()
             val ioExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
@@ -191,10 +191,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             val additionalVars = extractAdditionalVariables(propertiesExtensions)
             val allVars = (ioVars + multiInstanceVars + callActivityMappingVars + additionalVars)
                 .map { it.removeExpressionSyntax() }
-                .distinct()
-            if (allVars.isEmpty()) return@mapNotNull null
-            nodeId to allVars.map { VariableDefinition(it) }
-        }.toMap()
+            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+            nodeId to distinctVars
+        }
     }
 
 private fun extractInputAndOutputVariables(
