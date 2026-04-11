@@ -42,8 +42,12 @@ object ModelInstanceUtils {
             val incoming = it.incoming.mapNotNull { flow -> flow.source?.id }
             val outgoing = it.outgoing.mapNotNull { flow -> flow.target?.id }
             FlowNodeDefinition(
-                id = id, elementType = elementType, attachedToRef = attachedToRef,
-                parentId = parentId, incoming = incoming, outgoing = outgoing,
+                id = id,
+                elementType = elementType,
+                attachedToRef = attachedToRef,
+                parentId = parentId,
+                incoming = incoming,
+                outgoing = outgoing,
             )
         }
     }
@@ -56,7 +60,13 @@ object ModelInstanceUtils {
             val targetRef = flow.target?.id ?: return@mapNotNull null
             val flowName = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)?.takeIf { it.isNotBlank() }
             val condition = flow.conditionExpression?.textContent?.takeIf { it.isNotBlank() }
-            SequenceFlowDefinition(id = id, sourceRef = sourceRef, targetRef = targetRef, flowName = flowName, conditionExpression = condition)
+            SequenceFlowDefinition(
+                id = id,
+                sourceRef = sourceRef,
+                targetRef = targetRef,
+                flowName = flowName,
+                conditionExpression = condition,
+            )
         }
     }
 
