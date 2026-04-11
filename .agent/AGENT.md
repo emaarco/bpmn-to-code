@@ -65,6 +65,8 @@ The plugins generate code from BPMN files. Key configuration parameters:
 
 ## Testing Strategy
 
+Follow **test-driven development (TDD)**: update the domain model first, then write/update tests to express the expected behavior (RED phase), then implement the production code to make them pass (GREEN phase).
+
 Tests are organized by layer:
 - Unit tests for domain services and builders
 - Integration tests for adapters and extractors
