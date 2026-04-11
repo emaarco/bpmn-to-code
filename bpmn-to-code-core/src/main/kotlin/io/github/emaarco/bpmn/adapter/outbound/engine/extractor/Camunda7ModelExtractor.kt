@@ -14,8 +14,11 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.Bpmn
@@ -45,18 +48,52 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
-        val variables = extractVariables(modelInstance)
+        val variablesPerNode = extractVariablesPerNode(modelInstance)
+        val variables = variablesPerNode.values.flatten().distinct()
+
+        val allServiceTasks = serviceTasks + messageSendEvents
+        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
+
         return BpmnModel(
             processId = processId,
-            flowNodes = allFlowNodes,
+            flowNodes = enrichedFlowNodes,
             callActivities = callActivities,
-            serviceTasks = serviceTasks + messageSendEvents,
+            serviceTasks = allServiceTasks,
             messages = allMessages,
             signals = signals,
             errors = errors,
             timers = timers,
             variables = variables
         )
+    }
+
+    private fun enrichFlowNodes(
+        flowNodes: List<FlowNodeDefinition>,
+        serviceTasks: List<ServiceTaskDefinition>,
+        callActivities: List<CallActivityDefinition>,
+        timers: List<TimerDefinition>,
+        variablesPerNode: Map<String?, List<VariableDefinition>>,
+    ): List<FlowNodeDefinition> {
+        val serviceTaskById = serviceTasks.associateBy { it.id }
+        val callActivityById = callActivities.associateBy { it.id }
+        val timerById = timers.associateBy { it.id }
+        return flowNodes.map { node ->
+            val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
+            val variables = variablesPerNode[node.id] ?: emptyList()
+            node.copy(properties = properties, variables = variables)
+        }
+    }
+
+    private fun resolveProperties(
+        nodeId: String?,
+        serviceTasks: Map<String?, ServiceTaskDefinition>,
+        callActivities: Map<String?, CallActivityDefinition>,
+        timers: Map<String?, TimerDefinition>,
+    ): FlowNodeProperties {
+        serviceTasks[nodeId]?.let { return FlowNodeProperties.ServiceTask(it) }
+        callActivities[nodeId]?.let { return FlowNodeProperties.CallActivity(it) }
+        timers[nodeId]?.let { return FlowNodeProperties.Timer(it) }
+        return FlowNodeProperties.None
     }
 
     private fun findMessages(modelInstance: ModelInstance): List<MessageDefinition> {
@@ -123,20 +160,25 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         else -> null to null
     }
 
-    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+    private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val allExtensions = flowNodes.flatMap { it.findExtensionElements() }
-        val ioExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
-        val ioVariableNames = extractInputAndOutputVariables(ioExtensions)
-        val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
-        val callActivityMappingVars = extractCallActivityMappingVariables(allExtensions)
-        val propertiesExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
-        val additionalVariableNames = extractAdditionalVariables(propertiesExtensions)
-        val allVariableNames = ioVariableNames + multiInstanceVariableNames + callActivityMappingVars + additionalVariableNames
-        return allVariableNames.map { it.removeExpressionSyntax() }.distinct().map { VariableDefinition(it) }
+        return flowNodes.associate { node ->
+            val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val extensions = node.findExtensionElements()
+            val ioExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
+            val ioVars = extractInputAndOutputVariables(ioExtensions)
+            val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
+            val callActivityMappingVars = extractCallActivityMappingVariables(extensions)
+            val propertiesExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
+            val additionalVars = extractAdditionalVariables(propertiesExtensions)
+            val allVars = (ioVars + multiInstanceVars + callActivityMappingVars + additionalVars)
+                .map { it.removeExpressionSyntax() }
+            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+            nodeId to distinctVars
+        }
     }
 
-    private fun extractInputAndOutputVariables(
+private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }
@@ -156,11 +198,6 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return rawValues.flatMap { it?.split(",") ?: emptyList() }.map { it.trim() }.filter { it.isNotBlank() }
     }
 
-    /**
-     * Extracts parent-scope variables from Call Activity in/out mappings:
-     * - camunda:in `source` / `sourceExpression`: variables read from the parent and sent to the child
-     * - camunda:out `target`: variables written back into the parent after the child completes
-     */
     private fun extractCallActivityMappingVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {

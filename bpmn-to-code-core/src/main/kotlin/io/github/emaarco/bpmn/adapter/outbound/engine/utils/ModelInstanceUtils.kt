@@ -7,6 +7,7 @@ import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
+import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
@@ -33,7 +34,8 @@ object ModelInstanceUtils {
         return flowNodes.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val elementType = BpmnElementType.fromTypeName(it.elementType.typeName)
-            FlowNodeDefinition(id = id, elementType = elementType)
+            val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
+            FlowNodeDefinition(id = id, elementType = elementType, attachedToRef = attachedToRef)
         }
     }
 

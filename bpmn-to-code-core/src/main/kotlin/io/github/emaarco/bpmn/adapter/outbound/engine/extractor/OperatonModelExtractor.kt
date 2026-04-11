@@ -14,8 +14,11 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.Bpmn
@@ -29,11 +32,6 @@ import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.InputStream
 
-/**
- * Model extractor for Operaton BPMN engine
- * If you are using operaton, but your models are still camunda-7 based, you cannot use this extractor.
- * Instead, you must use the [Camunda7ModelExtractor].
- */
 class OperatonModelExtractor : EngineSpecificExtractor {
 
     private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
@@ -54,18 +52,52 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
-        val variables = extractVariables(modelInstance)
+        val variablesPerNode = extractVariablesPerNode(modelInstance)
+        val variables = variablesPerNode.values.flatten().distinct()
+
+        val allServiceTasks = serviceTasks + messageSendEvents
+        val enrichedFlowNodes = enrichFlowNodes(flowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
+
         return BpmnModel(
             processId = processId,
-            flowNodes = flowNodes,
+            flowNodes = enrichedFlowNodes,
             callActivities = callActivities,
-            serviceTasks = serviceTasks + messageSendEvents,
+            serviceTasks = allServiceTasks,
             messages = messages,
             signals = signals,
             errors = errors,
             timers = timers,
             variables = variables
         )
+    }
+
+    private fun enrichFlowNodes(
+        flowNodes: List<FlowNodeDefinition>,
+        serviceTasks: List<ServiceTaskDefinition>,
+        callActivities: List<CallActivityDefinition>,
+        timers: List<TimerDefinition>,
+        variablesPerNode: Map<String?, List<VariableDefinition>>,
+    ): List<FlowNodeDefinition> {
+        val serviceTaskById = serviceTasks.associateBy { it.id }
+        val callActivityById = callActivities.associateBy { it.id }
+        val timerById = timers.associateBy { it.id }
+        return flowNodes.map { node ->
+            val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
+            val variables = variablesPerNode[node.id] ?: emptyList()
+            node.copy(properties = properties, variables = variables)
+        }
+    }
+
+    private fun resolveProperties(
+        nodeId: String?,
+        serviceTasks: Map<String?, ServiceTaskDefinition>,
+        callActivities: Map<String?, CallActivityDefinition>,
+        timers: Map<String?, TimerDefinition>,
+    ): FlowNodeProperties {
+        serviceTasks[nodeId]?.let { return FlowNodeProperties.ServiceTask(it) }
+        callActivities[nodeId]?.let { return FlowNodeProperties.CallActivity(it) }
+        timers[nodeId]?.let { return FlowNodeProperties.Timer(it) }
+        return FlowNodeProperties.None
     }
 
     private fun findMessages(modelInstance: ModelInstance): List<MessageDefinition> {
@@ -146,20 +178,25 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         }
     }
 
-    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
+    private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val allExtensions = flowNodes.flatMap { it.findExtensionElements() }
-        val ioExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
-        val ioVariableNames = extractInputAndOutputVariables(ioExtensions)
-        val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
-        val callActivityMappingVars = extractCallActivityMappingVariables(allExtensions)
-        val propertiesExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
-        val additionalVariableNames = extractAdditionalVariables(propertiesExtensions)
-        val allVariableNames = ioVariableNames + multiInstanceVariableNames + callActivityMappingVars + additionalVariableNames
-        return allVariableNames.map { it.removeExpressionSyntax() }.distinct().map { VariableDefinition(it) }
+        return flowNodes.associate { node ->
+            val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val extensions = node.findExtensionElements()
+            val ioExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
+            val ioVars = extractInputAndOutputVariables(ioExtensions)
+            val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
+            val callActivityMappingVars = extractCallActivityMappingVariables(extensions)
+            val propertiesExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
+            val additionalVars = extractAdditionalVariables(propertiesExtensions)
+            val allVars = (ioVars + multiInstanceVars + callActivityMappingVars + additionalVars)
+                .map { it.removeExpressionSyntax() }
+            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+            nodeId to distinctVars
+        }
     }
 
-    private fun extractInputAndOutputVariables(
+private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }
@@ -179,11 +216,6 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return rawValues.flatMap { it?.split(",") ?: emptyList() }.map { it.trim() }.filter { it.isNotBlank() }
     }
 
-    /**
-     * Extracts parent-scope variables from Call Activity in/out mappings:
-     * - operaton:in `source` / `sourceExpression`: variables read from the parent and sent to the child
-     * - operaton:out `target`: variables written back into the parent after the child completes
-     */
     private fun extractCallActivityMappingVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
