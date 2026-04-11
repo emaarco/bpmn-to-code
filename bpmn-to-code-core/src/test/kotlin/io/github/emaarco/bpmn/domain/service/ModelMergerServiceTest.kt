@@ -21,50 +21,47 @@ class ModelMergerServiceTest {
     fun `should merge processes with same id`() {
 
         // given
-        val firstTask = ServiceTaskDefinition(id = "firstTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "firstTaskType"))
-        val secondTask = ServiceTaskDefinition(id = "secondTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "secondTaskType"))
-        val thirdTask = ServiceTaskDefinition(id = "thirdTaskId", customProperties = mapOf(IMPL_VALUE_KEY to "thirdTaskType"))
         val firstMessage = MessageDefinition(id = "firstMessageId", name = "firstMessageName")
         val secondMessage = MessageDefinition(id = "secondMessageId", name = "secondMessageName")
         val thirdMessage = MessageDefinition(id = "thirdMessageId", name = "thirdMessageName")
-        val firstFlowNode = FlowNodeDefinition(id = "create-order")
-        val secondFlowNode = FlowNodeDefinition(id = "update-order")
-        val thirdFlowNode = FlowNodeDefinition(id = "delete-order")
-        val firstServiceFlowNode = FlowNodeDefinition(id = "firstTaskId", properties = FlowNodeProperties.ServiceTask(firstTask))
-        val secondServiceFlowNode = FlowNodeDefinition(id = "secondTaskId", properties = FlowNodeProperties.ServiceTask(secondTask))
-        val thirdServiceFlowNode = FlowNodeDefinition(id = "thirdTaskId", properties = FlowNodeProperties.ServiceTask(thirdTask))
+        val firstFlowNode = FlowNodeDefinition(id = "create-order",
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "create-order", customProperties = mapOf(IMPL_VALUE_KEY to "firstTaskType"))))
+        val secondFlowNode = FlowNodeDefinition(id = "update-order",
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "update-order", customProperties = mapOf(IMPL_VALUE_KEY to "secondTaskType"))))
+        val thirdFlowNode = FlowNodeDefinition(id = "delete-order",
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "delete-order", customProperties = mapOf(IMPL_VALUE_KEY to "thirdTaskType"))))
 
         val firstModel = testBpmnModel(
             processId = "order-process",
-            flowNodes = listOf(firstFlowNode, secondFlowNode, firstServiceFlowNode, secondServiceFlowNode),
+            flowNodes = listOf(firstFlowNode, secondFlowNode),
             messages = listOf(firstMessage, secondMessage),
         )
 
         val secondModel = testBpmnModel(
             processId = "order-process",
-            flowNodes = listOf(secondFlowNode, thirdFlowNode, secondServiceFlowNode, thirdServiceFlowNode),
+            flowNodes = listOf(secondFlowNode, thirdFlowNode),
             messages = listOf(secondMessage, thirdMessage),
         )
 
         val otherModel = testBpmnModel(
             processId = "other-order-process",
-            flowNodes = listOf(firstFlowNode, secondFlowNode, firstServiceFlowNode, secondServiceFlowNode),
+            flowNodes = listOf(firstFlowNode, secondFlowNode),
             messages = listOf(firstMessage, secondMessage),
         )
 
         // when
         val result = underTest.mergeModels(listOf(firstModel, secondModel, otherModel))
 
-        // then (flow nodes sorted alphabetically by raw name: create-order, delete-order, firstTaskId, secondTaskId, thirdTaskId, update-order)
+        // then
         Assertions.assertThat(result).containsExactlyInAnyOrder(
             testBpmnModel(
                 processId = "order-process",
-                flowNodes = listOf(firstFlowNode, thirdFlowNode, firstServiceFlowNode, secondServiceFlowNode, thirdServiceFlowNode, secondFlowNode),
+                flowNodes = listOf(firstFlowNode, thirdFlowNode, secondFlowNode),
                 messages = listOf(firstMessage, secondMessage, thirdMessage),
             ),
             testBpmnModel(
                 processId = "other-order-process",
-                flowNodes = listOf(firstFlowNode, firstServiceFlowNode, secondServiceFlowNode, secondFlowNode),
+                flowNodes = listOf(firstFlowNode, secondFlowNode),
                 messages = listOf(firstMessage, secondMessage),
             )
         )
