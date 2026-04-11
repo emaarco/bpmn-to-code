@@ -9,6 +9,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstance
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSequenceFlows
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
@@ -42,6 +43,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val processId = modelInstance.getProcessId()
         val allMessages = findMessages(modelInstance)
         val allFlowNodes = modelInstance.findFlowNodes()
+        val allSequenceFlows = modelInstance.findSequenceFlows()
         val serviceTasks = getServiceTaskTypes(modelInstance)
         val callActivities = findCallActivities(modelInstance)
         val messageSendEvents = findMessageSendEvents(modelInstance)
@@ -56,6 +58,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return BpmnModel(
             processId = processId,
             flowNodes = enrichedFlowNodes,
+            sequenceFlows = allSequenceFlows,
             messages = allMessages,
             signals = signals,
             errors = errors,
