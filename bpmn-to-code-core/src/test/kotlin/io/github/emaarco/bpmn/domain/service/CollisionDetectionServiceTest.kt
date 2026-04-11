@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
@@ -23,10 +24,10 @@ class CollisionDetectionServiceTest {
             flowNodes = listOf(
                 FlowNodeDefinition("Activity_Task1"),
                 FlowNodeDefinition("Activity_Task2"),
-            ),
-            serviceTasks = listOf(
-                ServiceTaskDefinition("Task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")),
-                ServiceTaskDefinition("Task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")),
+                FlowNodeDefinition("Task1",
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
+                FlowNodeDefinition("Task2",
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")))),
             ),
             messages = listOf(
                 MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
@@ -134,9 +135,11 @@ class CollisionDetectionServiceTest {
     fun `findCollisions detects collisions in ServiceTasks`() {
         val model = testBpmnModel(
             processId = "TestProcess",
-            serviceTasks = listOf(
-                ServiceTaskDefinition("task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")),
-                ServiceTaskDefinition("task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")),
+            flowNodes = listOf(
+                FlowNodeDefinition("task1",
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
+                FlowNodeDefinition("task2",
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")))),
             ),
         )
 
@@ -182,9 +185,11 @@ class CollisionDetectionServiceTest {
     fun `findCollisions detects collisions in Timers`() {
         val model = testBpmnModel(
             processId = "TestProcess",
-            timers = listOf(
-                TimerDefinition("Duration", "Duration", "PT1M"),
-                TimerDefinition("duration", "Duration", "PT2M"),
+            flowNodes = listOf(
+                FlowNodeDefinition("timer1",
+                    properties = FlowNodeProperties.Timer(TimerDefinition("Duration", "Duration", "PT1M"))),
+                FlowNodeDefinition("timer2",
+                    properties = FlowNodeProperties.Timer(TimerDefinition("duration", "Duration", "PT2M"))),
             ),
         )
 
@@ -198,9 +203,9 @@ class CollisionDetectionServiceTest {
     fun `findCollisions detects collisions in Variables`() {
         val model = testBpmnModel(
             processId = "TestProcess",
-            variables = listOf(
-                VariableDefinition("userId"),
-                VariableDefinition("user_id"),
+            flowNodes = listOf(
+                FlowNodeDefinition("node1", variables = listOf(VariableDefinition("userId"))),
+                FlowNodeDefinition("node2", variables = listOf(VariableDefinition("user_id"))),
             ),
         )
 
@@ -258,20 +263,14 @@ class CollisionDetectionServiceTest {
     private fun testBpmnModel(
         processId: String,
         flowNodes: List<FlowNodeDefinition> = emptyList(),
-        serviceTasks: List<ServiceTaskDefinition> = emptyList(),
         messages: List<MessageDefinition> = emptyList(),
         signals: List<SignalDefinition> = emptyList(),
         errors: List<ErrorDefinition> = emptyList(),
-        timers: List<TimerDefinition> = emptyList(),
-        variables: List<VariableDefinition> = emptyList(),
     ) = BpmnModel(
         processId = processId,
         flowNodes = flowNodes,
-        serviceTasks = serviceTasks,
         messages = messages,
         signals = signals,
         errors = errors,
-        timers = timers,
-        variables = variables,
     )
 }

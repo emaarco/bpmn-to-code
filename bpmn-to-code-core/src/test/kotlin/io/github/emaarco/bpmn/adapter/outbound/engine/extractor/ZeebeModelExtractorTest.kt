@@ -38,12 +38,6 @@ class ZeebeModelExtractorTest {
         )
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
-                testVariableForTimer = "=testVariable",
-                variables = listOf(
-                    VariableDefinition("subscriptionId"),
-                    VariableDefinition("testVariable")
-                ),
-                serviceTasks = zeebeServiceTasks,
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),

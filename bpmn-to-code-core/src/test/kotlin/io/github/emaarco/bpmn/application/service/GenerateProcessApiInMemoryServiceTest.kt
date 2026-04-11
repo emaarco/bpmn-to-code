@@ -61,11 +61,8 @@ class GenerateProcessApiInMemoryServiceTest {
     private val dummyModel = BpmnModel(
         processId = "testProcess",
         flowNodes = emptyList(),
-        serviceTasks = emptyList(),
         messages = emptyList(),
         signals = emptyList(),
         errors = emptyList(),
-        timers = emptyList(),
-        variables = emptyList()
     )
 }

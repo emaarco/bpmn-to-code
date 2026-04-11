@@ -1,5 +1,7 @@
 package io.github.emaarco.bpmn.domain.validation.rules
 
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModel
@@ -15,7 +17,9 @@ class MissingTimerDefinitionRuleTest {
     @Test
     fun `reports error for timer with null type`() {
         val model = testBpmnModel(
-            timers = listOf(TimerDefinition(id = "timer1", type = null, value = null))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "timer1", properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = null, value = null)))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
@@ -25,7 +29,9 @@ class MissingTimerDefinitionRuleTest {
     @Test
     fun `no violations for timer with type and value`() {
         val model = testBpmnModel(
-            timers = listOf(TimerDefinition(id = "timer1", type = "Duration", value = "PT1H"))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "timer1", properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = "Duration", value = "PT1H")))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()

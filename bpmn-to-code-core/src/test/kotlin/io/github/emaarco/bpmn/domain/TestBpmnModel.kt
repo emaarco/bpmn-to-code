@@ -17,23 +17,15 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 fun testBpmnModel(
     processId: String = "order",
     flowNodes: List<FlowNodeDefinition> = listOf(FlowNodeDefinition(id = "create-order")),
-    callActivities: List<CallActivityDefinition> = listOf(CallActivityDefinition(id = "call-activity", calledElement = "called-process")),
-    serviceTasks: List<ServiceTaskDefinition> = listOf(ServiceTaskDefinition(id = "taskId", customProperties = mapOf(IMPL_VALUE_KEY to "taskType"))),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId", name = "signalName")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
-    timers: List<TimerDefinition> = listOf(TimerDefinition(id = "timerId", type = "timerType", value = "PT1H")),
-    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
 ) = BpmnModel(
     processId = processId,
     flowNodes = flowNodes,
-    callActivities = callActivities,
-    serviceTasks = serviceTasks,
     messages = messages,
     signals = signals,
     errors = errors,
-    timers = timers,
-    variables = variables
 )
 
 fun testBpmnModelApi(
@@ -51,9 +43,6 @@ fun testBpmnModelApi(
 fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
     testVariableForTimer: String = "$" + "{testVariable}",
-    callActivities: List<CallActivityDefinition> = listOf(
-        CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")
-    ),
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
             properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
@@ -85,11 +74,6 @@ fun testNewsletterBpmnModel(
             properties = FlowNodeProperties.Timer(TimerDefinition("Timer_EveryDay", "Duration", "PT1M")),
             attachedToRef = "Activity_ConfirmRegistration"),
     ),
-    serviceTasks: List<ServiceTaskDefinition> = listOf(
-        ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")),
-        ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail")),
-        ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted"))
-    ),
     messages: List<MessageDefinition> = listOf(
         MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
         MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed")
@@ -100,19 +84,10 @@ fun testNewsletterBpmnModel(
     errors: List<ErrorDefinition> = listOf(
         ErrorDefinition("ErrorEvent_InvalidMail", "Error_InvalidMail", "500")
     ),
-    timers: List<TimerDefinition> = listOf(
-        TimerDefinition("Timer_After3Days", "Duration", testVariableForTimer),
-        TimerDefinition("Timer_EveryDay", "Duration", "PT1M")
-    ),
-    variables: List<VariableDefinition> = listOf(VariableDefinition("subscriptionId"))
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,
-    callActivities = callActivities,
-    serviceTasks = serviceTasks,
     messages = messages,
     signals = signals,
     errors = errors,
-    timers = timers,
-    variables = variables
 )

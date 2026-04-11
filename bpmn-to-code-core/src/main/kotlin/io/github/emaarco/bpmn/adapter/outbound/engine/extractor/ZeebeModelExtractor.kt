@@ -46,20 +46,15 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allServiceTasks = findServiceTasks(modelInstance)
         val allCallActivities = findCallActivities(modelInstance)
         val variablesPerNode = extractVariablesPerNode(modelInstance)
-        val allVariables = variablesPerNode.values.flatten().distinct()
 
         val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, allCallActivities, allTimerEvents, variablesPerNode)
 
         return BpmnModel(
             processId = processId,
             flowNodes = enrichedFlowNodes,
-            callActivities = allCallActivities,
-            serviceTasks = allServiceTasks,
             messages = allMessages,
             signals = allSignalEvents,
             errors = allErrorEvents,
-            timers = allTimerEvents,
-            variables = allVariables
         )
     }
 

@@ -1,6 +1,8 @@
 package io.github.emaarco.bpmn.domain.validation.rules
 
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import io.github.emaarco.bpmn.domain.validation.Severity
@@ -15,7 +17,9 @@ class MissingCalledElementRuleTest {
     @Test
     fun `reports error for call activity with null calledElement`() {
         val model = testBpmnModel(
-            callActivities = listOf(CallActivityDefinition(id = "call1", calledElement = null))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "call1", properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = null)))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
@@ -25,7 +29,9 @@ class MissingCalledElementRuleTest {
     @Test
     fun `no violations for call activity with calledElement`() {
         val model = testBpmnModel(
-            callActivities = listOf(CallActivityDefinition(id = "call1", calledElement = "my-sub-process"))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "call1", properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = "my-sub-process")))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()
