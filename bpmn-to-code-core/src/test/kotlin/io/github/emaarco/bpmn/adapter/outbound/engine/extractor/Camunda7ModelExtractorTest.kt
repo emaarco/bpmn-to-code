@@ -33,13 +33,6 @@ class Camunda7ModelExtractorTest {
 
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
-                variables = listOf(
-                    VariableDefinition("otherVariable"),
-                    VariableDefinition("subscriptionId"),
-                    VariableDefinition("reasonCode"),
-                    VariableDefinition("abortResult")
-                ),
-                serviceTasks = c7ServiceTasks,
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),

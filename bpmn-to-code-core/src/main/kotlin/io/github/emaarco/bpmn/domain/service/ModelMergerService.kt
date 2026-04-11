@@ -21,23 +21,15 @@ class ModelMergerService {
 
     private fun mergeModelsWithSameProcessId(processId: String, models: List<BpmnModel>): BpmnModel {
         val mergedFlowNodes = mergeDistinctBy(models) { it.flowNodes }
-        val mergedCallActivities = mergeDistinctBy(models) { it.callActivities }
         val mergedMessages = mergeDistinctBy(models) { it.messages }
-        val mergedServiceTasks = mergeDistinctBy(models) { it.serviceTasks }
         val mergedSignals = mergeDistinctBy(models) { it.signals }
         val mergedErrors = mergeDistinctBy(models) { it.errors }
-        val mergedTimers = mergeDistinctBy(models) { it.timers }
-        val mergedVariables = mergeDistinctBy(models) { it.variables }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
-            callActivities = mergedCallActivities,
             messages = mergedMessages,
-            serviceTasks = mergedServiceTasks,
             signals = mergedSignals,
             errors = mergedErrors,
-            timers = mergedTimers,
-            variables = mergedVariables
         )
     }
 
@@ -56,12 +48,8 @@ class ModelMergerService {
 
     private fun BpmnModel.sortContent() = this.copy(
         flowNodes = flowNodes.sortedBy { it.getRawName() },
-        callActivities = callActivities.sortedBy { it.getRawName() },
-        serviceTasks = serviceTasks.sortedBy { it.getRawName() },
         messages = messages.sortedBy { it.getRawName() },
         signals = signals.sortedBy { it.getRawName() },
         errors = errors.sortedBy { it.getRawName() },
-        timers = timers.sortedBy { it.getRawName() },
-        variables = variables.sortedBy { it.getRawName() }
     )
 }

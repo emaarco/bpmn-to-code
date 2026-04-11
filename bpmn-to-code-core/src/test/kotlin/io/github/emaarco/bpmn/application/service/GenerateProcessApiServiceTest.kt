@@ -71,12 +71,9 @@ class GenerateProcessApiServiceTest {
     private val dummyModel = BpmnModel(
         processId = "newsletterSubscription",
         flowNodes = emptyList(),
-        serviceTasks = emptyList(),
         messages = emptyList(),
         signals = emptyList(),
         errors = emptyList(),
-        timers = emptyList(),
-        variables = emptyList()
     )
 
     private fun getExpectedModelApi() = testBpmnModelApi(

@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.domain.validation.rules
 
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModel
@@ -27,7 +28,9 @@ class InvalidIdentifierRuleTest {
     @Test
     fun `reports warning for timer producing invalid identifier`() {
         val model = testBpmnModel(
-            timers = listOf(TimerDefinition(id = "123-timer", type = "Duration", value = "PT1H"))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "123-timer", properties = FlowNodeProperties.Timer(TimerDefinition(id = "123-timer", type = "Duration", value = "PT1H")))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
@@ -47,7 +50,9 @@ class InvalidIdentifierRuleTest {
     @Test
     fun `no violations for timer with valid identifier`() {
         val model = testBpmnModel(
-            timers = listOf(TimerDefinition(id = "Timer_After3Days", type = "Duration", value = "PT1H"))
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "Timer_After3Days", properties = FlowNodeProperties.Timer(TimerDefinition(id = "Timer_After3Days", type = "Duration", value = "PT1H")))
+            )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()

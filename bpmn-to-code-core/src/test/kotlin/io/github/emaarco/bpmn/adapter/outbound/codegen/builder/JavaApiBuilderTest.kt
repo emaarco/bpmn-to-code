@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
-import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
@@ -16,19 +15,15 @@ class JavaApiBuilderTest {
     @Test
     fun `buildApiFile generates correct API file content`() {
 
-        // given: a BPMN model and a model API
+        // given: a BPMN model with custom service task implementations
         val modelApi = testBpmnModelApi(
-
             packagePath = "de.emaarco.example",
             model = testNewsletterBpmnModel(
-                variables = listOf(
-                    VariableDefinition("subscriptionId"),
-                    VariableDefinition("testVariable")
-                ),
-                serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "#{newsletterSendConfirmationMail}")),
-                    ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "\${newsletterSendWelcomeMail}")),
-                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted"))
+                flowNodes = buildNewsletterFlowNodes(
+                    confirmationMailImpl = "#{newsletterSendConfirmationMail}",
+                    welcomeMailImpl = "\${newsletterSendWelcomeMail}",
+                    registrationCompletedImpl = "newsletter.registrationCompleted",
+                    extraVariables = listOf(VariableDefinition("testVariable")),
                 )
             )
         )
@@ -52,7 +47,6 @@ class JavaApiBuilderTest {
         val modifiedNodes = defaultModel.flowNodes.map { it.copy(id = it.getName().replace("_", "-")) }
         val modelApi = testBpmnModelApi(
             model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
-
             packagePath = "de.emaarco.example"
         )
 

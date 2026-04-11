@@ -53,7 +53,6 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
         val variablesPerNode = extractVariablesPerNode(modelInstance)
-        val variables = variablesPerNode.values.flatten().distinct()
 
         val allServiceTasks = serviceTasks + messageSendEvents
         val enrichedFlowNodes = enrichFlowNodes(flowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
@@ -61,13 +60,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         return BpmnModel(
             processId = processId,
             flowNodes = enrichedFlowNodes,
-            callActivities = callActivities,
-            serviceTasks = allServiceTasks,
             messages = messages,
             signals = signals,
             errors = errors,
-            timers = timers,
-            variables = variables
         )
     }
 
@@ -196,7 +191,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         }
     }
 
-private fun extractInputAndOutputVariables(
+    private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }

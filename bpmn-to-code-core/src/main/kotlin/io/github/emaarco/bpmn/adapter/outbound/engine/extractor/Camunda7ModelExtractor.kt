@@ -49,7 +49,6 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
         val variablesPerNode = extractVariablesPerNode(modelInstance)
-        val variables = variablesPerNode.values.flatten().distinct()
 
         val allServiceTasks = serviceTasks + messageSendEvents
         val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
@@ -57,13 +56,9 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         return BpmnModel(
             processId = processId,
             flowNodes = enrichedFlowNodes,
-            callActivities = callActivities,
-            serviceTasks = allServiceTasks,
             messages = allMessages,
             signals = signals,
             errors = errors,
-            timers = timers,
-            variables = variables
         )
     }
 
@@ -178,7 +173,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         }
     }
 
-private fun extractInputAndOutputVariables(
+    private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }
