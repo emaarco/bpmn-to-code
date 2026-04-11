@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.emaarco"
@@ -12,6 +13,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.bpmnmodel)
     implementation(libs.bundles.codegen)
+    implementation(libs.kotlinxSerializationJson)
 
     api(libs.slf4jApi)
     api(libs.kotlinLogging)
