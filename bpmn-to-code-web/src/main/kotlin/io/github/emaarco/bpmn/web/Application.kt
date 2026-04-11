@@ -5,8 +5,10 @@ package io.github.emaarco.bpmn.web
 import io.github.emaarco.bpmn.web.config.AppConfig
 import io.github.emaarco.bpmn.web.model.ConfigResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.emaarco.bpmn.web.routes.generateJsonRoutes
 import io.github.emaarco.bpmn.web.routes.generateRoutes
 import io.github.emaarco.bpmn.web.service.WebGenerationService
+import io.github.emaarco.bpmn.web.service.WebJsonGenerationService
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -128,5 +130,8 @@ fun Application.configureApp(
         // API routes
         val generationService = WebGenerationService()
         generateRoutes(generationService)
+
+        val jsonService = WebJsonGenerationService()
+        generateJsonRoutes(jsonService)
     }
 }
