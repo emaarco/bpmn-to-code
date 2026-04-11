@@ -10,6 +10,7 @@ import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
+import org.camunda.bpm.model.bpmn.instance.SubProcess
 import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
 import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
 import org.camunda.bpm.model.xml.ModelInstance
@@ -35,7 +36,8 @@ object ModelInstanceUtils {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val elementType = BpmnElementType.fromTypeName(it.elementType.typeName)
             val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
-            FlowNodeDefinition(id = id, elementType = elementType, attachedToRef = attachedToRef)
+            val parentId = (it.parentElement as? SubProcess)?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            FlowNodeDefinition(id = id, elementType = elementType, attachedToRef = attachedToRef, parentId = parentId)
         }
     }
 

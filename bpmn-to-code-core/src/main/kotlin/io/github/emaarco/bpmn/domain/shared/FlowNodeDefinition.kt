@@ -8,6 +8,7 @@ data class FlowNodeDefinition(
     val properties: FlowNodeProperties = FlowNodeProperties.None,
     val variables: List<VariableDefinition> = emptyList(),
     val attachedToRef: String? = null,
+    val parentId: String? = null,
 ) : VariableMapping<String> {
     override fun getName() = id?.toUpperSnakeCase() ?: ""
     override fun getValue() = id ?: ""
