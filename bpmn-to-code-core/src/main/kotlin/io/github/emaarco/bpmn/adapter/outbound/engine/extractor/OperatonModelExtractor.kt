@@ -52,8 +52,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
-        val variables = extractVariables(modelInstance)
         val variablesPerNode = extractVariablesPerNode(modelInstance)
+        val variables = variablesPerNode.values.flatten().distinct()
 
         val allServiceTasks = serviceTasks + messageSendEvents
         val enrichedFlowNodes = enrichFlowNodes(flowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
@@ -197,20 +197,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         }.toMap()
     }
 
-    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
-        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val allExtensions = flowNodes.flatMap { it.findExtensionElements() }
-        val ioExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
-        val ioVariableNames = extractInputAndOutputVariables(ioExtensions)
-        val multiInstanceVariableNames = extractMultiInstanceVariables(flowNodes)
-        val callActivityMappingVars = extractCallActivityMappingVariables(allExtensions)
-        val propertiesExtensions = allExtensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
-        val additionalVariableNames = extractAdditionalVariables(propertiesExtensions)
-        val allVariableNames = ioVariableNames + multiInstanceVariableNames + callActivityMappingVars + additionalVariableNames
-        return allVariableNames.map { it.removeExpressionSyntax() }.distinct().map { VariableDefinition(it) }
-    }
-
-    private fun extractInputAndOutputVariables(
+private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }

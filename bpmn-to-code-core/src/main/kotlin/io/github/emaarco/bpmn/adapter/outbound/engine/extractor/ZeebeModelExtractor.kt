@@ -45,8 +45,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
         val allCallActivities = findCallActivities(modelInstance)
-        val allVariables = extractVariables(modelInstance)
         val variablesPerNode = extractVariablesPerNode(modelInstance)
+        val allVariables = variablesPerNode.values.flatten().distinct()
 
         val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, allCallActivities, allTimerEvents, variablesPerNode)
 
@@ -149,16 +149,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         }.toMap()
     }
 
-    private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
-        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
-        val extensions = flowNodes.flatMap { it.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING) }
-        val inputOutputVariables = extractInputAndOutputVariables(extensions)
-        val multiInstanceVariables = extractMultiInstanceVariables(flowNodes)
-        val allVariables = inputOutputVariables + multiInstanceVariables
-        return allVariables.distinct().map { VariableDefinition(it) }
-    }
-
-    private fun extractInputAndOutputVariables(
+private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allowedDefinitions = listOf(ZeebeModelConstants.ELEMENT_INPUT, ZeebeModelConstants.ELEMENT_OUTPUT)
