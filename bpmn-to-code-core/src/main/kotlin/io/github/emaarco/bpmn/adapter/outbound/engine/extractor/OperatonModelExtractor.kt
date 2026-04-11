@@ -191,7 +191,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         }
     }
 
-private fun extractInputAndOutputVariables(
+    private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }

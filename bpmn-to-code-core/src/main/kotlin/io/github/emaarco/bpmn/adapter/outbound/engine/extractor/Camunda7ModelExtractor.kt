@@ -173,7 +173,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         }
     }
 
-private fun extractInputAndOutputVariables(
+    private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }

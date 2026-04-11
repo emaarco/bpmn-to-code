@@ -144,7 +144,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         }
     }
 
-private fun extractInputAndOutputVariables(
+    private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
     ): List<String> {
         val allowedDefinitions = listOf(ZeebeModelConstants.ELEMENT_INPUT, ZeebeModelConstants.ELEMENT_OUTPUT)
