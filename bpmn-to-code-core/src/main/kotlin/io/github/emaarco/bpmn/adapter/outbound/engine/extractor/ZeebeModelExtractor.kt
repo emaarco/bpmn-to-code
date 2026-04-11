@@ -46,8 +46,9 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allServiceTasks = findServiceTasks(modelInstance)
         val allCallActivities = findCallActivities(modelInstance)
         val allVariables = extractVariables(modelInstance)
+        val variablesPerNode = extractVariablesPerNode(modelInstance)
 
-        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, allCallActivities, allTimerEvents)
+        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, allCallActivities, allTimerEvents, variablesPerNode)
 
         return BpmnModel(
             processId = processId,
@@ -67,13 +68,15 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         serviceTasks: List<ServiceTaskDefinition>,
         callActivities: List<CallActivityDefinition>,
         timers: List<io.github.emaarco.bpmn.domain.shared.TimerDefinition>,
+        variablesPerNode: Map<String?, List<VariableDefinition>>,
     ): List<FlowNodeDefinition> {
         val serviceTaskById = serviceTasks.associateBy { it.id }
         val callActivityById = callActivities.associateBy { it.id }
         val timerById = timers.associateBy { it.id }
         return flowNodes.map { node ->
             val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
-            node.copy(properties = properties)
+            val variables = variablesPerNode[node.id] ?: emptyList()
+            node.copy(properties = properties, variables = variables)
         }
     }
 
@@ -131,6 +134,19 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val correlationKey = subscription.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_CORRELATION_KEY)
             ?: return emptyMap()
         return mapOf(ZeebeModelConstants.ATTRIBUTE_CORRELATION_KEY to correlationKey)
+    }
+
+    private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        return flowNodes.mapNotNull { node ->
+            val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val ioMappings = node.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING)
+            val ioVars = extractInputAndOutputVariables(ioMappings)
+            val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
+            val allVars = (ioVars + multiInstanceVars).distinct()
+            if (allVars.isEmpty()) return@mapNotNull null
+            nodeId to allVars.map { VariableDefinition(it) }
+        }.toMap()
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {

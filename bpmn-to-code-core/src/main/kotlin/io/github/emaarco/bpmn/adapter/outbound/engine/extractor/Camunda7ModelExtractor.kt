@@ -49,9 +49,10 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val errors = modelInstance.findErrorEventDefinition()
         val timers = modelInstance.findTimerEventDefinition()
         val variables = extractVariables(modelInstance)
+        val variablesPerNode = extractVariablesPerNode(modelInstance)
 
         val allServiceTasks = serviceTasks + messageSendEvents
-        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, callActivities, timers)
+        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
 
         return BpmnModel(
             processId = processId,
@@ -71,13 +72,15 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         serviceTasks: List<ServiceTaskDefinition>,
         callActivities: List<CallActivityDefinition>,
         timers: List<TimerDefinition>,
+        variablesPerNode: Map<String?, List<VariableDefinition>>,
     ): List<FlowNodeDefinition> {
         val serviceTaskById = serviceTasks.associateBy { it.id }
         val callActivityById = callActivities.associateBy { it.id }
         val timerById = timers.associateBy { it.id }
         return flowNodes.map { node ->
             val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
-            node.copy(properties = properties)
+            val variables = variablesPerNode[node.id] ?: emptyList()
+            node.copy(properties = properties, variables = variables)
         }
     }
 
@@ -155,6 +158,25 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         this.camundaClass != null -> Camunda7ImplementationKind.JAVA_DELEGATE.name to this.camundaClass
         this.camundaExpression != null -> Camunda7ImplementationKind.EXPRESSION.name to this.camundaExpression
         else -> null to null
+    }
+
+    private fun extractVariablesPerNode(modelInstance: ModelInstance): Map<String?, List<VariableDefinition>> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        return flowNodes.mapNotNull { node ->
+            val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val extensions = node.findExtensionElements()
+            val ioExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_OUTPUT)
+            val ioVars = extractInputAndOutputVariables(ioExtensions)
+            val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
+            val callActivityMappingVars = extractCallActivityMappingVariables(extensions)
+            val propertiesExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
+            val additionalVars = extractAdditionalVariables(propertiesExtensions)
+            val allVars = (ioVars + multiInstanceVars + callActivityMappingVars + additionalVars)
+                .map { it.removeExpressionSyntax() }
+                .distinct()
+            if (allVars.isEmpty()) return@mapNotNull null
+            nodeId to allVars.map { VariableDefinition(it) }
+        }.toMap()
     }
 
     private fun extractVariables(modelInstance: ModelInstance): List<VariableDefinition> {
