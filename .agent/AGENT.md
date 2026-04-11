@@ -74,6 +74,12 @@ The project uses JUnit 5, AssertJ, and MockK for testing.
 
 ## Best Practices
 
+### Test-Driven Development
+
+Follow **TDD** when planning and implementing changes: update the domain model first (if applicable), then write/update tests to express the expected behavior (RED phase), then implement the production code to make them pass (GREEN phase).
+
+
+
 ### Verify After Each Task
 
 After completing each discrete task (e.g., a phase in a plan, a refactor step, a bug fix), run a Gradle build on the affected modules to confirm compilation and tests still pass. Use targeted module builds (e.g., `./gradlew :bpmn-to-code-core:test`) rather than a full project build when only specific modules were changed.
