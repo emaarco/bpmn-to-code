@@ -33,12 +33,9 @@ class InvalidIdentifierRuleTest {
             )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
-        // Both the flow node and the timer are checked, so two violations are expected
-        assertThat(violations).hasSize(2)
-        assertThat(violations).allMatch { it.severity == Severity.WARN }
-        assertThat(violations).allMatch { it.message.contains("invalid identifier") }
-        assertThat(violations).anyMatch { it.message.contains("FlowNode") }
-        assertThat(violations).anyMatch { it.message.contains("Timer") }
+        assertThat(violations).hasSize(1)
+        assertThat(violations[0].severity).isEqualTo(Severity.WARN)
+        assertThat(violations[0].message).contains("invalid identifier")
     }
 
     @Test

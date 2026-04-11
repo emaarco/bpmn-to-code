@@ -11,13 +11,17 @@ data class BpmnModel(
 ) {
     val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }
+            .sortedBy { it.getRawName() }
 
     val callActivities: List<CallActivityDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.CallActivity)?.definition }
+            .sortedBy { it.getRawName() }
 
     val timers: List<TimerDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.Timer)?.definition }
+            .sortedBy { it.getRawName() }
 
     val variables: List<VariableDefinition>
         get() = flowNodes.flatMap { it.variables }.distinct()
+            .sortedBy { it.getRawName() }
 }

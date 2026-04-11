@@ -77,8 +77,8 @@ class ModelMergerServiceTest {
         val model = testBpmnModel(
             processId = "test-process",
             flowNodes = listOf(
-                FlowNodeDefinition(id = "z-node", variables = listOf(VariableDefinition("zVariable"))),
-                FlowNodeDefinition(id = "a-node", variables = listOf(VariableDefinition("aVariable"))),
+                FlowNodeDefinition(id = "z-node", variables = listOf(VariableDefinition("alphaVar"))),
+                FlowNodeDefinition(id = "a-node", variables = listOf(VariableDefinition("zetaVar"))),
                 FlowNodeDefinition(id = "m-node")
             ),
         )
@@ -86,12 +86,12 @@ class ModelMergerServiceTest {
         // when
         val result = underTest.mergeModels(listOf(model))
 
-        // then: collections should be sorted
+        // then: collections should be sorted independently by their own raw name
         val sortedModel = result.first()
         val actualFlowNodes = sortedModel.flowNodes.map { it.getRawName() }
         val actualVariables = sortedModel.variables.map { it.getRawName() }
         Assertions.assertThat(actualFlowNodes).containsExactly("a-node", "m-node", "z-node")
-        Assertions.assertThat(actualVariables).containsExactly("aVariable", "zVariable")
+        Assertions.assertThat(actualVariables).containsExactly("alphaVar", "zetaVar")
     }
 
     @Test
