@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstance
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSequenceFlows
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
@@ -39,6 +40,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
         val allFlowNodes = modelInstance.findFlowNodes()
+        val allSequenceFlows = modelInstance.findSequenceFlows()
         val allMessages = extractZeebeMessages(modelInstance)
         val allErrorEvents = modelInstance.findErrorEventDefinition()
         val allTimerEvents = modelInstance.findTimerEventDefinition()
@@ -52,6 +54,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         return BpmnModel(
             processId = processId,
             flowNodes = enrichedFlowNodes,
+            sequenceFlows = allSequenceFlows,
             messages = allMessages,
             signals = allSignalEvents,
             errors = allErrorEvents,

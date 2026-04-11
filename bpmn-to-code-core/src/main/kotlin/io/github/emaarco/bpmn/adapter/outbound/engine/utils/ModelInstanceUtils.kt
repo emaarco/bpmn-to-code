@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
@@ -10,6 +11,7 @@ import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
+import org.camunda.bpm.model.bpmn.instance.SequenceFlow
 import org.camunda.bpm.model.bpmn.instance.SubProcess
 import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
 import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
@@ -37,7 +39,34 @@ object ModelInstanceUtils {
             val elementType = BpmnElementType.fromTypeName(it.elementType.typeName)
             val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
             val parentId = (it.parentElement as? SubProcess)?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            FlowNodeDefinition(id = id, elementType = elementType, attachedToRef = attachedToRef, parentId = parentId)
+            val incoming = it.incoming.mapNotNull { flow -> flow.source?.id }
+            val outgoing = it.outgoing.mapNotNull { flow -> flow.target?.id }
+            FlowNodeDefinition(
+                id = id,
+                elementType = elementType,
+                attachedToRef = attachedToRef,
+                parentId = parentId,
+                incoming = incoming,
+                outgoing = outgoing,
+            )
+        }
+    }
+
+    fun ModelInstance.findSequenceFlows(): List<SequenceFlowDefinition> {
+        val sequenceFlows = this.getModelElementsByType(SequenceFlow::class.java)
+        return sequenceFlows.mapNotNull { flow ->
+            val id = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val sourceRef = flow.source?.id ?: return@mapNotNull null
+            val targetRef = flow.target?.id ?: return@mapNotNull null
+            val flowName = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)?.takeIf { it.isNotBlank() }
+            val condition = flow.conditionExpression?.textContent?.takeIf { it.isNotBlank() }
+            SequenceFlowDefinition(
+                id = id,
+                sourceRef = sourceRef,
+                targetRef = targetRef,
+                flowName = flowName,
+                conditionExpression = condition,
+            )
         }
     }
 

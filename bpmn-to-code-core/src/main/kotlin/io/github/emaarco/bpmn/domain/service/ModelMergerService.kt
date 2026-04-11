@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.domain.service
 
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 
 class ModelMergerService {
@@ -21,16 +22,23 @@ class ModelMergerService {
 
     private fun mergeModelsWithSameProcessId(processId: String, models: List<BpmnModel>): BpmnModel {
         val mergedFlowNodes = mergeDistinctBy(models) { it.flowNodes }
+        val mergedSequenceFlows = mergeSequenceFlows(models)
         val mergedMessages = mergeDistinctBy(models) { it.messages }
         val mergedSignals = mergeDistinctBy(models) { it.signals }
         val mergedErrors = mergeDistinctBy(models) { it.errors }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
+            sequenceFlows = mergedSequenceFlows,
             messages = mergedMessages,
             signals = mergedSignals,
             errors = mergedErrors,
         )
+    }
+
+    private fun mergeSequenceFlows(models: List<BpmnModel>): List<SequenceFlowDefinition> {
+        return models.flatMap { it.sequenceFlows }
+            .distinctBy { it.sourceRef to it.targetRef }
     }
 
     private fun <T : VariableMapping<*>> mergeDistinctBy(
@@ -48,6 +56,7 @@ class ModelMergerService {
 
     private fun BpmnModel.sortContent() = this.copy(
         flowNodes = flowNodes.sortedBy { it.getRawName() },
+        sequenceFlows = sequenceFlows.sortedBy { it.getRawName() },
         messages = messages.sortedBy { it.getRawName() },
         signals = signals.sortedBy { it.getRawName() },
         errors = errors.sortedBy { it.getRawName() },
