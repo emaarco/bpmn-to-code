@@ -15,6 +15,8 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
@@ -44,9 +46,12 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allServiceTasks = findServiceTasks(modelInstance)
         val allCallActivities = findCallActivities(modelInstance)
         val allVariables = extractVariables(modelInstance)
+
+        val enrichedFlowNodes = enrichFlowNodes(allFlowNodes, allServiceTasks, allCallActivities, allTimerEvents)
+
         return BpmnModel(
             processId = processId,
-            flowNodes = allFlowNodes,
+            flowNodes = enrichedFlowNodes,
             callActivities = allCallActivities,
             serviceTasks = allServiceTasks,
             messages = allMessages,
@@ -55,6 +60,33 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             timers = allTimerEvents,
             variables = allVariables
         )
+    }
+
+    private fun enrichFlowNodes(
+        flowNodes: List<FlowNodeDefinition>,
+        serviceTasks: List<ServiceTaskDefinition>,
+        callActivities: List<CallActivityDefinition>,
+        timers: List<io.github.emaarco.bpmn.domain.shared.TimerDefinition>,
+    ): List<FlowNodeDefinition> {
+        val serviceTaskById = serviceTasks.associateBy { it.id }
+        val callActivityById = callActivities.associateBy { it.id }
+        val timerById = timers.associateBy { it.id }
+        return flowNodes.map { node ->
+            val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
+            node.copy(properties = properties)
+        }
+    }
+
+    private fun resolveProperties(
+        nodeId: String?,
+        serviceTasks: Map<String?, ServiceTaskDefinition>,
+        callActivities: Map<String?, CallActivityDefinition>,
+        timers: Map<String?, io.github.emaarco.bpmn.domain.shared.TimerDefinition>,
+    ): FlowNodeProperties {
+        serviceTasks[nodeId]?.let { return FlowNodeProperties.ServiceTask(it) }
+        callActivities[nodeId]?.let { return FlowNodeProperties.CallActivity(it) }
+        timers[nodeId]?.let { return FlowNodeProperties.Timer(it) }
+        return FlowNodeProperties.None
     }
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {

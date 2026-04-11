@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
@@ -54,20 +55,29 @@ fun testNewsletterBpmnModel(
         CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")
     ),
     flowNodes: List<FlowNodeDefinition> = listOf(
-        FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY),
+        FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
+            properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration"))),
         FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK),
-        FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK),
-        FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK),
+        FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")))),
+        FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail")))),
         FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT),
-        FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT),
+        FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted")))),
         FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT),
         FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT),
-        FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT),
+        FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT,
+            attachedToRef = "SubProcess_Confirmation"),
         FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT),
         FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT),
         FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS),
-        FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT),
-        FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT),
+        FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT,
+            properties = FlowNodeProperties.Timer(TimerDefinition("Timer_After3Days", "Duration", "$" + "{testVariable}")),
+            attachedToRef = "SubProcess_Confirmation"),
+        FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT,
+            properties = FlowNodeProperties.Timer(TimerDefinition("Timer_EveryDay", "Duration", "PT1M")),
+            attachedToRef = "Activity_ConfirmRegistration"),
     ),
     serviceTasks: List<ServiceTaskDefinition> = listOf(
         ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")),

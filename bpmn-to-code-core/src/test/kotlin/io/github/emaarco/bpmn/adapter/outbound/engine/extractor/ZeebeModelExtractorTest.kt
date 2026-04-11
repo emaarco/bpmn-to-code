@@ -1,9 +1,14 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
+import io.github.emaarco.bpmn.domain.shared.BpmnElementType
+import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -26,6 +31,11 @@ class ZeebeModelExtractorTest {
 
         // then: assert that the model has expected content
         assertThat(bpmnModel).isNotNull()
+        val zeebeServiceTasks = listOf(
+            ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
+        )
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
                 testVariableForTimer = "=testVariable",
@@ -33,10 +43,31 @@ class ZeebeModelExtractorTest {
                     VariableDefinition("subscriptionId"),
                     VariableDefinition("testVariable")
                 ),
-                serviceTasks = listOf(
-                    ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "JOB_WORKER")),
-                    ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "JOB_WORKER")),
-                    ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
+                serviceTasks = zeebeServiceTasks,
+                flowNodes = listOf(
+                    FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
+                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration"))),
+                    FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK),
+                    FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
+                        properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[0])),
+                    FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
+                        properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[1])),
+                    FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT),
+                    FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
+                        properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[2])),
+                    FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT),
+                    FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT),
+                    FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT,
+                        attachedToRef = "SubProcess_Confirmation"),
+                    FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT),
+                    FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT),
+                    FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS),
+                    FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT,
+                        properties = FlowNodeProperties.Timer(TimerDefinition("Timer_After3Days", "Duration", "=testVariable")),
+                        attachedToRef = "SubProcess_Confirmation"),
+                    FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT,
+                        properties = FlowNodeProperties.Timer(TimerDefinition("Timer_EveryDay", "Duration", "PT1M")),
+                        attachedToRef = "Activity_ConfirmRegistration"),
                 ),
                 messages = listOf(
                     MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
