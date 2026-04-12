@@ -73,11 +73,9 @@ object NewsletterSubscriptionProcessApi {
     }
 
     object Containers {
-      const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
-    }
-
-    object CallActivities {
       const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"
+
+      const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
     }
   }
 
