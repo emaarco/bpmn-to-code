@@ -1,15 +1,18 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import com.palantir.javapoet.ClassName
+import com.palantir.javapoet.CodeBlock
 import com.palantir.javapoet.FieldSpec
 import com.palantir.javapoet.JavaFile
 import com.palantir.javapoet.MethodSpec
+import com.palantir.javapoet.ParameterizedTypeName
 import com.palantir.javapoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import javax.lang.model.element.Modifier.*
@@ -20,6 +23,8 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
         ApiObjectType.PROCESS_ENGINE to ProcessEngineWriter(),
         ApiObjectType.ELEMENTS to ElementsWriter(),
+        ApiObjectType.FLOWS to FlowsWriter(),
+        ApiObjectType.RELATIONS to RelationsWriter(),
         ApiObjectType.CALL_ACTIVITIES to CallActivitiesWriter(),
         ApiObjectType.MESSAGES to MessagesWriter(),
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
@@ -81,6 +86,129 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
             val elementsBuilder = TypeSpec.classBuilder("Elements").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addField(createAttribute(flowNode)) }
             builder.addType(elementsBuilder.build())
+        }
+    }
+
+    private inner class FlowsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.FLOWS
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
+            flowsBuilder.addType(buildFlowClass())
+            modelApi.model.sequenceFlows.forEach { flow ->
+                val initCode = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression)
+                val fieldBuilder = FieldSpec.builder(ClassName.get("", "BpmnFlow"), flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
+                flowsBuilder.addField(fieldBuilder.initializer(initCode).build())
+            }
+            builder.addType(flowsBuilder.build())
+        }
+
+        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?): CodeBlock {
+            val conditionBlock = if (condition != null) CodeBlock.of("\$S", condition) else CodeBlock.of("null")
+            return CodeBlock.builder()
+                .add("new BpmnFlow(\$S, \$S, \$S, ", id, sourceRef, targetRef)
+                .add(conditionBlock)
+                .add(")")
+                .build()
+        }
+
+        private fun buildFlowClass(): TypeSpec {
+            val builder = TypeSpec.classBuilder("BpmnFlow").addModifiers(PUBLIC, STATIC)
+            builder.addField(FieldSpec.builder(String::class.java, "id").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "sourceRef").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "targetRef").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "condition").addModifiers(PUBLIC, FINAL).build())
+            builder.addMethod(
+                MethodSpec.constructorBuilder()
+                    .addParameter(String::class.java, "id")
+                    .addParameter(String::class.java, "sourceRef")
+                    .addParameter(String::class.java, "targetRef")
+                    .addParameter(String::class.java, "condition")
+                    .addStatement("this.id = id")
+                    .addStatement("this.sourceRef = sourceRef")
+                    .addStatement("this.targetRef = targetRef")
+                    .addStatement("this.condition = condition")
+                    .build()
+            )
+            return builder.build()
+        }
+    }
+
+    private inner class RelationsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        private val listClass = ClassName.get("java.util", "List")
+        private val listType = ParameterizedTypeName.get(listClass, ClassName.get("java.lang", "String"))
+
+        override val objectType = ApiObjectType.RELATIONS
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val relationsBuilder = TypeSpec.classBuilder("Relations").addModifiers(PUBLIC, STATIC, FINAL)
+            relationsBuilder.addType(buildRelationsClass())
+            modelApi.model.flowNodes
+                .filter { it.id != null }
+                .sortedBy { it.getRawName() }
+                .forEach { node ->
+                    val initCode = buildRelationsInitializer(node)
+                    val fieldBuilder = FieldSpec.builder(ClassName.get("", "BpmnRelations"), node.getName()).addModifiers(PUBLIC, STATIC, FINAL)
+                    relationsBuilder.addField(fieldBuilder.initializer(initCode).build())
+                }
+            builder.addType(relationsBuilder.build())
+        }
+
+        private fun buildRelationsInitializer(node: FlowNodeDefinition): CodeBlock {
+            val parentIdBlock = if (node.parentId != null) CodeBlock.of("\$S", node.parentId) else CodeBlock.of("null")
+            val attachedToRefBlock = if (node.attachedToRef != null) CodeBlock.of("\$S", node.attachedToRef) else CodeBlock.of("null")
+            return CodeBlock.builder()
+                .add("new BpmnRelations(")
+                .add(javaListLiteral(node.incoming))
+                .add(", ")
+                .add(javaListLiteral(node.outgoing))
+                .add(", ")
+                .add(parentIdBlock)
+                .add(", ")
+                .add(attachedToRefBlock)
+                .add(", ")
+                .add(javaListLiteral(node.attachedElements))
+                .add(")")
+                .build()
+        }
+
+        private fun javaListLiteral(items: List<String>): CodeBlock {
+            if (items.isEmpty()) return CodeBlock.of("\$T.of()", listClass)
+            val builder = CodeBlock.builder().add("\$T.of(", listClass)
+            items.forEachIndexed { i, item ->
+                if (i > 0) builder.add(", ")
+                builder.add("\$S", item)
+            }
+            builder.add(")")
+            return builder.build()
+        }
+
+        private fun buildRelationsClass(): TypeSpec {
+            val builder = TypeSpec.classBuilder("BpmnRelations").addModifiers(PUBLIC, STATIC)
+            builder.addField(FieldSpec.builder(listType, "incoming").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(listType, "outgoing").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "parentId").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "attachedToRef").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(listType, "attachedElements").addModifiers(PUBLIC, FINAL).build())
+            builder.addMethod(
+                MethodSpec.constructorBuilder()
+                    .addParameter(listType, "incoming")
+                    .addParameter(listType, "outgoing")
+                    .addParameter(String::class.java, "parentId")
+                    .addParameter(String::class.java, "attachedToRef")
+                    .addParameter(listType, "attachedElements")
+                    .addStatement("this.incoming = incoming")
+                    .addStatement("this.outgoing = outgoing")
+                    .addStatement("this.parentId = parentId")
+                    .addStatement("this.attachedToRef = attachedToRef")
+                    .addStatement("this.attachedElements = attachedElements")
+                    .build()
+            )
+            return builder.build()
         }
     }
 
