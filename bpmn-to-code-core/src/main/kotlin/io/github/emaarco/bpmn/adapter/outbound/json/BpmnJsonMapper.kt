@@ -23,6 +23,7 @@ class BpmnJsonMapper {
             elementType = elementType.name,
             parentId = parentId,
             attachedToRef = attachedToRef,
+            attachedElements = attachedElements,
             incoming = incoming,
             outgoing = outgoing,
             variables = variables.map { it.getRawName() },

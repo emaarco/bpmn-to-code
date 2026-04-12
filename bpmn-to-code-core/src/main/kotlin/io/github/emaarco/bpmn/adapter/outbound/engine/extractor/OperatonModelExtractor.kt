@@ -79,10 +79,15 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val serviceTaskById = serviceTasks.associateBy { it.id }
         val callActivityById = callActivities.associateBy { it.id }
         val timerById = timers.associateBy { it.id }
+        val attachedElementsById = flowNodes
+            .filter { it.attachedToRef != null }
+            .groupBy { it.attachedToRef!! }
+            .mapValues { (_, nodes) -> nodes.mapNotNull { it.id } }
         return flowNodes.map { node ->
             val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
             val variables = variablesPerNode[node.id] ?: emptyList()
-            node.copy(properties = properties, variables = variables)
+            val attachedElements = attachedElementsById[node.id] ?: emptyList()
+            node.copy(properties = properties, variables = variables, attachedElements = attachedElements)
         }
     }
 
