@@ -163,8 +163,8 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
                 .forEach { node ->
                     val objectName = (node.getRawName()).toCamelCase()
                     val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                    val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addProperty(createAttribute(it)) }
+                    node.variables.sortedBy { it.getRawName() }
+                        .forEach { nodeVarsBuilder.addProperty(createAttribute(it)) }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
@@ -235,34 +235,22 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     companion object {
         private val elementGroups = linkedMapOf(
             "Tasks" to setOf(
-                BpmnElementType.SERVICE_TASK,
-                BpmnElementType.USER_TASK,
-                BpmnElementType.RECEIVE_TASK,
-                BpmnElementType.SEND_TASK,
-                BpmnElementType.SCRIPT_TASK,
-                BpmnElementType.MANUAL_TASK,
+                BpmnElementType.SERVICE_TASK, BpmnElementType.USER_TASK, BpmnElementType.RECEIVE_TASK,
+                BpmnElementType.SEND_TASK, BpmnElementType.SCRIPT_TASK, BpmnElementType.MANUAL_TASK,
                 BpmnElementType.BUSINESS_RULE_TASK,
             ),
             "Events" to setOf(
-                BpmnElementType.START_EVENT,
-                BpmnElementType.END_EVENT,
-                BpmnElementType.INTERMEDIATE_CATCH_EVENT,
-                BpmnElementType.INTERMEDIATE_THROW_EVENT,
+                BpmnElementType.START_EVENT, BpmnElementType.END_EVENT,
+                BpmnElementType.INTERMEDIATE_CATCH_EVENT, BpmnElementType.INTERMEDIATE_THROW_EVENT,
                 BpmnElementType.BOUNDARY_EVENT,
             ),
             "Gateways" to setOf(
-                BpmnElementType.EXCLUSIVE_GATEWAY,
-                BpmnElementType.PARALLEL_GATEWAY,
-                BpmnElementType.INCLUSIVE_GATEWAY,
-                BpmnElementType.EVENT_BASED_GATEWAY,
+                BpmnElementType.EXCLUSIVE_GATEWAY, BpmnElementType.PARALLEL_GATEWAY,
+                BpmnElementType.INCLUSIVE_GATEWAY, BpmnElementType.EVENT_BASED_GATEWAY,
                 BpmnElementType.COMPLEX_GATEWAY,
             ),
             "Containers" to setOf(
-                BpmnElementType.SUB_PROCESS,
-                BpmnElementType.TRANSACTION,
-            ),
-            "CallActivities" to setOf(
-                BpmnElementType.CALL_ACTIVITY,
+                BpmnElementType.SUB_PROCESS, BpmnElementType.CALL_ACTIVITY, BpmnElementType.TRANSACTION,
             ),
         )
     }
