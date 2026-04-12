@@ -14,6 +14,10 @@
         {
             "id": "SubProcess_Confirmation",
             "elementType": "SUB_PROCESS",
+            "attachedElements": [
+                "ErrorEvent_InvalidMail",
+                "Timer_After3Days"
+            ],
             "incoming": [
                 "StartEvent_SubmitRegistrationForm"
             ],
@@ -55,6 +59,9 @@
             "id": "Activity_ConfirmRegistration",
             "elementType": "RECEIVE_TASK",
             "parentId": "SubProcess_Confirmation",
+            "attachedElements": [
+                "Timer_EveryDay"
+            ],
             "incoming": [
                 "Activity_SendConfirmationMail"
             ],
