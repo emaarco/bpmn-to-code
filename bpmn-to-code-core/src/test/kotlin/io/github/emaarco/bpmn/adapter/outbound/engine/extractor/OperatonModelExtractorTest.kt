@@ -8,6 +8,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
@@ -118,6 +119,21 @@ class OperatonModelExtractorTest {
             VariableDefinition("author"),
             VariableDefinition("subscribers"),
             VariableDefinition("subscriber"),
+        )
+    }
+
+    @Test
+    fun `extract marks default sequence flow correctly`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-multi-instance.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+
+        val flowsById = bpmnModel.sequenceFlows.associateBy { it.id }
+        assertThat(flowsById["Flow_1jogut0"]).isEqualTo(
+            SequenceFlowDefinition("Flow_1jogut0", "gateway_hasSubscribers", "serviceTask_sendToSubscriber", flowName = "Yes", isDefault = true)
+        )
+        assertThat(flowsById["Flow_1gsz7wd"]).isEqualTo(
+            SequenceFlowDefinition("Flow_1gsz7wd", "gateway_hasSubscribers", "endEvent_noSubscribers", flowName = "No", conditionExpression = "\${subscribers.size() > 0}")
         )
     }
 
