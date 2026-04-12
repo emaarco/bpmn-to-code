@@ -9,7 +9,9 @@ import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
+import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway
 import org.camunda.bpm.model.bpmn.instance.FlowNode
+import org.camunda.bpm.model.bpmn.instance.InclusiveGateway
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow
 import org.camunda.bpm.model.bpmn.instance.SubProcess
@@ -53,6 +55,7 @@ object ModelInstanceUtils {
     }
 
     fun ModelInstance.findSequenceFlows(): List<SequenceFlowDefinition> {
+        val defaultFlowIds = buildDefaultFlowIdSet()
         val sequenceFlows = this.getModelElementsByType(SequenceFlow::class.java)
         return sequenceFlows.mapNotNull { flow ->
             val id = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
@@ -66,8 +69,15 @@ object ModelInstanceUtils {
                 targetRef = targetRef,
                 flowName = flowName,
                 conditionExpression = condition,
+                isDefault = id != null && id in defaultFlowIds,
             )
         }
+    }
+
+    private fun ModelInstance.buildDefaultFlowIdSet(): Set<String> {
+        val exclusiveDefaults = getModelElementsByType(ExclusiveGateway::class.java).mapNotNull { it.default?.id }
+        val inclusiveDefaults = getModelElementsByType(InclusiveGateway::class.java).mapNotNull { it.default?.id }
+        return (exclusiveDefaults + inclusiveDefaults).toSet()
     }
 
     fun ModelInstance.findErrorEventDefinition(): List<ErrorDefinition> {

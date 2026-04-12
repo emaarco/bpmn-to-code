@@ -42,6 +42,7 @@ data class SequenceFlowJson(
     val targetRef: String,
     val name: String? = null,
     val conditionExpression: String? = null,
+    val isDefault: Boolean,
 )
 
 @Serializable

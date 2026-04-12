@@ -179,52 +179,62 @@
         {
             "id": "Flow_05i3x1y",
             "sourceRef": "StartEvent_RequestReceived",
-            "targetRef": "Activity_SendConfirmationMail"
+            "targetRef": "Activity_SendConfirmationMail",
+            "isDefault": false
         },
         {
             "id": "Flow_09cuvzp",
             "sourceRef": "SubProcess_Confirmation",
-            "targetRef": "Activity_SendWelcomeMail"
+            "targetRef": "Activity_SendWelcomeMail",
+            "isDefault": false
         },
         {
             "id": "Flow_0i2ctuv",
             "sourceRef": "ErrorEvent_InvalidMail",
-            "targetRef": "EndEvent_RegistrationNotPossible"
+            "targetRef": "EndEvent_RegistrationNotPossible",
+            "isDefault": false
         },
         {
             "id": "Flow_0x4ewvb",
             "sourceRef": "Timer_EveryDay",
-            "targetRef": "Activity_SendConfirmationMail"
+            "targetRef": "Activity_SendConfirmationMail",
+            "isDefault": false
         },
         {
             "id": "Flow_1bckm43",
             "sourceRef": "Activity_SendConfirmationMail",
-            "targetRef": "Activity_ConfirmRegistration"
+            "targetRef": "Activity_ConfirmRegistration",
+            "isDefault": false
         },
         {
             "id": "Flow_1bsb8no",
             "sourceRef": "CallActivity_AbortRegistration",
-            "targetRef": "EndEvent_RegistrationAborted"
+            "targetRef": "EndEvent_RegistrationAborted",
+            "isDefault": false
         },
         {
             "id": "Flow_1cpwe57",
             "sourceRef": "Activity_ConfirmRegistration",
-            "targetRef": "EndEvent_SubscriptionConfirmed"
+            "targetRef": "EndEvent_SubscriptionConfirmed",
+            "isDefault": false
         },
         {
             "id": "Flow_1csfyyz",
             "sourceRef": "StartEvent_SubmitRegistrationForm",
-            "targetRef": "SubProcess_Confirmation"
+            "targetRef": "SubProcess_Confirmation",
+            "isDefault": false
         },
         {
             "id": "Flow_1i7hjid",
             "sourceRef": "Activity_SendWelcomeMail",
-            "targetRef": "EndEvent_RegistrationCompleted"
+            "targetRef": "EndEvent_RegistrationCompleted",
+            "isDefault": false
         },
         {
             "id": "Flow_1l1lj4m",
             "sourceRef": "Timer_After3Days",
-            "targetRef": "CallActivity_AbortRegistration"
+            "targetRef": "CallActivity_AbortRegistration",
+            "isDefault": false
         }
     ],
     "messages": [

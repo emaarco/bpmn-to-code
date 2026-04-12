@@ -40,25 +40,25 @@ public final class NewsletterSubscriptionProcessApi {
   }
 
   public static final class Flows {
-    public static final BpmnFlow FLOW_05_I_3_X_1_Y = new BpmnFlow("Flow_05i3x1y", "StartEvent_RequestReceived", "Activity_SendConfirmationMail", null);
+    public static final BpmnFlow FLOW_05_I_3_X_1_Y = new BpmnFlow("Flow_05i3x1y", "StartEvent_RequestReceived", "Activity_SendConfirmationMail", null, false);
 
-    public static final BpmnFlow FLOW_09_CUVZP = new BpmnFlow("Flow_09cuvzp", "SubProcess_Confirmation", "Activity_SendWelcomeMail", null);
+    public static final BpmnFlow FLOW_09_CUVZP = new BpmnFlow("Flow_09cuvzp", "SubProcess_Confirmation", "Activity_SendWelcomeMail", null, false);
 
-    public static final BpmnFlow FLOW_0_I_2_CTUV = new BpmnFlow("Flow_0i2ctuv", "ErrorEvent_InvalidMail", "EndEvent_RegistrationNotPossible", null);
+    public static final BpmnFlow FLOW_0_I_2_CTUV = new BpmnFlow("Flow_0i2ctuv", "ErrorEvent_InvalidMail", "EndEvent_RegistrationNotPossible", null, false);
 
-    public static final BpmnFlow FLOW_0_X_4_EWVB = new BpmnFlow("Flow_0x4ewvb", "Timer_EveryDay", "Activity_SendConfirmationMail", null);
+    public static final BpmnFlow FLOW_0_X_4_EWVB = new BpmnFlow("Flow_0x4ewvb", "Timer_EveryDay", "Activity_SendConfirmationMail", null, false);
 
-    public static final BpmnFlow FLOW_1_BCKM_43 = new BpmnFlow("Flow_1bckm43", "Activity_SendConfirmationMail", "Activity_ConfirmRegistration", null);
+    public static final BpmnFlow FLOW_1_BCKM_43 = new BpmnFlow("Flow_1bckm43", "Activity_SendConfirmationMail", "Activity_ConfirmRegistration", null, false);
 
-    public static final BpmnFlow FLOW_1_BSB_8_NO = new BpmnFlow("Flow_1bsb8no", "CallActivity_AbortRegistration", "EndEvent_RegistrationAborted", null);
+    public static final BpmnFlow FLOW_1_BSB_8_NO = new BpmnFlow("Flow_1bsb8no", "CallActivity_AbortRegistration", "EndEvent_RegistrationAborted", null, false);
 
-    public static final BpmnFlow FLOW_1_CPWE_57 = new BpmnFlow("Flow_1cpwe57", "Activity_ConfirmRegistration", "EndEvent_SubscriptionConfirmed", null);
+    public static final BpmnFlow FLOW_1_CPWE_57 = new BpmnFlow("Flow_1cpwe57", "Activity_ConfirmRegistration", "EndEvent_SubscriptionConfirmed", null, false);
 
-    public static final BpmnFlow FLOW_1_CSFYYZ = new BpmnFlow("Flow_1csfyyz", "StartEvent_SubmitRegistrationForm", "SubProcess_Confirmation", null);
+    public static final BpmnFlow FLOW_1_CSFYYZ = new BpmnFlow("Flow_1csfyyz", "StartEvent_SubmitRegistrationForm", "SubProcess_Confirmation", null, false);
 
-    public static final BpmnFlow FLOW_1_I_7_HJID = new BpmnFlow("Flow_1i7hjid", "Activity_SendWelcomeMail", "EndEvent_RegistrationCompleted", null);
+    public static final BpmnFlow FLOW_1_I_7_HJID = new BpmnFlow("Flow_1i7hjid", "Activity_SendWelcomeMail", "EndEvent_RegistrationCompleted", null, false);
 
-    public static final BpmnFlow FLOW_1_L_1_LJ_4_M = new BpmnFlow("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration", null);
+    public static final BpmnFlow FLOW_1_L_1_LJ_4_M = new BpmnFlow("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration", null, false);
 
     public static class BpmnFlow {
       public final String id;
@@ -69,11 +69,14 @@ public final class NewsletterSubscriptionProcessApi {
 
       public final String condition;
 
-      BpmnFlow(String id, String sourceRef, String targetRef, String condition) {
+      public final boolean isDefault;
+
+      BpmnFlow(String id, String sourceRef, String targetRef, String condition, boolean isDefault) {
         this.id = id;
         this.sourceRef = sourceRef;
         this.targetRef = targetRef;
         this.condition = condition;
+        this.isDefault = isDefault;
       }
     }
   }
