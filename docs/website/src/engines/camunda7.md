@@ -39,20 +39,6 @@ The `name` attribute of each parameter becomes a variable.
 `camunda:inputOutput` is **not supported** on message start events in Camunda 7. Use extension properties with `additionalVariables` instead (see below).
 :::
 
-### Additional Variables (Extension Properties)
-
-For elements where I/O mappings aren't supported (like message start events), you can declare variables via `camunda:properties`:
-
-```xml
-<bpmn:extensionElements>
-  <camunda:properties>
-    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
-  </camunda:properties>
-</bpmn:extensionElements>
-```
-
-The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.
-
 ### Call Activity Mappings
 
 Call activity variables come from `camunda:in` and `camunda:out` mappings, **not** from `camunda:inputOutput`:
@@ -79,3 +65,17 @@ Multi-instance variables come from attributes on the `multiInstanceLoopCharacter
 ```
 
 **Extracted variables:** `subscribers` (from collection expression), `subscriber` (element variable)
+
+### Additional Variables (Extension Properties)
+
+For elements where I/O mappings aren't supported (like message start events), you can declare variables via `camunda:properties`:
+
+```xml
+<bpmn:extensionElements>
+  <camunda:properties>
+    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </camunda:properties>
+</bpmn:extensionElements>
+```
+
+The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.

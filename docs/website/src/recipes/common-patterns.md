@@ -20,7 +20,14 @@ Your element IDs directly shape the generated API. Use consistent prefixes for c
 
 ## Explicit Variable Definitions
 
-bpmn-to-code only extracts variables from I/O mappings — not from expressions in sequence flows, gateways, or script tasks.
+bpmn-to-code only extracts variables from **explicit variable definitions** in the BPMN model — not from expressions in sequence flows, gateways, or script tasks. The supported sources depend on the engine:
+
+| Source | Camunda 7 / Operaton | Zeebe |
+|--------|----------------------|-------|
+| I/O mappings | ✅ | ✅ |
+| Multi-instance attributes | ✅ | ✅ |
+| Call activity in/out mappings | ✅ | — |
+| `additionalVariables` extension properties | ✅ | — |
 
 **Do:** Define variables explicitly in I/O mappings.
 
@@ -53,15 +60,35 @@ bpmn-to-code only extracts variables from I/O mappings — not from expressions 
 
 ## Additional Variables (Camunda 7 / Operaton)
 
-For elements where I/O mappings aren't supported (e.g. message start events in Camunda 7), use extension properties:
+Some elements don't support I/O mappings — for example, **message start events** in Camunda 7 and Operaton. Variables arriving with the triggering message won't be captured by `camunda:inputOutput` / `operaton:inputOutput`, so they would be missing from the generated API.
 
-```xml
-<camunda:properties>
-  <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
-</camunda:properties>
+The workaround is to declare them explicitly using `additionalVariables` extension properties:
+
+::: code-group
+
+```xml [Camunda 7]
+<bpmn:extensionElements>
+  <camunda:properties>
+    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </camunda:properties>
+</bpmn:extensionElements>
 ```
 
-See [Camunda 7 engine page](/engines/camunda7#additional-variables-extension-properties) for details.
+```xml [Operaton]
+<bpmn:extensionElements>
+  <operaton:properties>
+    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </operaton:properties>
+</bpmn:extensionElements>
+```
+
+:::
+
+The comma-separated list is parsed and each value becomes a variable in the generated API. This works on any BPMN element, not just start events.
+
+::: tip
+See the engine pages for full details: [Camunda 7](/engines/camunda7#additional-variables-extension-properties) · [Operaton](/engines/operaton#additional-variables-extension-properties)
+:::
 
 ## Multi-Environment Modeling
 
