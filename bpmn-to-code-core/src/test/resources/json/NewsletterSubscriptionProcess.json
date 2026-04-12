@@ -2,31 +2,34 @@
     "processId": "newsletterSubscription",
     "flowNodes": [
         {
-            "id": "CallActivity_AbortRegistration",
-            "elementType": "CALL_ACTIVITY",
-            "incoming": [
-                "Timer_After3Days"
-            ],
+            "id": "StartEvent_SubmitRegistrationForm",
+            "elementType": "START_EVENT",
             "outgoing": [
-                "EndEvent_RegistrationAborted"
+                "SubProcess_Confirmation"
             ],
             "variables": [
                 "subscriptionId"
-            ],
-            "properties": {
-                "type": "CallActivity",
-                "calledElement": "abort-registration"
-            }
+            ]
         },
         {
-            "id": "Activity_ConfirmRegistration",
-            "elementType": "RECEIVE_TASK",
-            "parentId": "SubProcess_Confirmation",
+            "id": "SubProcess_Confirmation",
+            "elementType": "SUB_PROCESS",
             "incoming": [
-                "Activity_SendConfirmationMail"
+                "StartEvent_SubmitRegistrationForm"
             ],
             "outgoing": [
-                "EndEvent_SubscriptionConfirmed"
+                "Activity_SendWelcomeMail"
+            ]
+        },
+        {
+            "id": "StartEvent_RequestReceived",
+            "elementType": "START_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
+            ],
+            "variables": [
+                "subscriptionId"
             ]
         },
         {
@@ -49,49 +52,29 @@
             }
         },
         {
-            "id": "Activity_SendWelcomeMail",
-            "elementType": "SERVICE_TASK",
+            "id": "Activity_ConfirmRegistration",
+            "elementType": "RECEIVE_TASK",
+            "parentId": "SubProcess_Confirmation",
             "incoming": [
-                "SubProcess_Confirmation"
+                "Activity_SendConfirmationMail"
             ],
             "outgoing": [
-                "EndEvent_RegistrationCompleted"
-            ],
-            "variables": [
-                "subscriptionId"
-            ],
-            "properties": {
-                "type": "ServiceTask",
-                "implementationValue": "newsletter.sendWelcomeMail"
-            }
-        },
-        {
-            "id": "EndEvent_RegistrationAborted",
-            "elementType": "END_EVENT",
-            "incoming": [
-                "CallActivity_AbortRegistration"
+                "EndEvent_SubscriptionConfirmed"
             ]
         },
         {
-            "id": "EndEvent_RegistrationCompleted",
-            "elementType": "END_EVENT",
-            "incoming": [
-                "Activity_SendWelcomeMail"
-            ],
-            "variables": [
-                "subscriptionId"
+            "id": "Timer_EveryDay",
+            "elementType": "BOUNDARY_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "attachedToRef": "Activity_ConfirmRegistration",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
             ],
             "properties": {
-                "type": "ServiceTask",
-                "implementationValue": "newsletter.registrationCompleted"
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "PT1M"
             }
-        },
-        {
-            "id": "EndEvent_RegistrationNotPossible",
-            "elementType": "END_EVENT",
-            "incoming": [
-                "ErrorEvent_InvalidMail"
-            ]
         },
         {
             "id": "EndEvent_SubscriptionConfirmed",
@@ -110,34 +93,10 @@
             ]
         },
         {
-            "id": "StartEvent_RequestReceived",
-            "elementType": "START_EVENT",
-            "parentId": "SubProcess_Confirmation",
-            "outgoing": [
-                "Activity_SendConfirmationMail"
-            ],
-            "variables": [
-                "subscriptionId"
-            ]
-        },
-        {
-            "id": "StartEvent_SubmitRegistrationForm",
-            "elementType": "START_EVENT",
-            "outgoing": [
-                "SubProcess_Confirmation"
-            ],
-            "variables": [
-                "subscriptionId"
-            ]
-        },
-        {
-            "id": "SubProcess_Confirmation",
-            "elementType": "SUB_PROCESS",
+            "id": "EndEvent_RegistrationNotPossible",
+            "elementType": "END_EVENT",
             "incoming": [
-                "StartEvent_SubmitRegistrationForm"
-            ],
-            "outgoing": [
-                "Activity_SendWelcomeMail"
+                "ErrorEvent_InvalidMail"
             ]
         },
         {
@@ -154,17 +113,58 @@
             }
         },
         {
-            "id": "Timer_EveryDay",
-            "elementType": "BOUNDARY_EVENT",
-            "parentId": "SubProcess_Confirmation",
-            "attachedToRef": "Activity_ConfirmRegistration",
+            "id": "CallActivity_AbortRegistration",
+            "elementType": "CALL_ACTIVITY",
+            "incoming": [
+                "Timer_After3Days"
+            ],
             "outgoing": [
-                "Activity_SendConfirmationMail"
+                "EndEvent_RegistrationAborted"
+            ],
+            "variables": [
+                "subscriptionId"
             ],
             "properties": {
-                "type": "Timer",
-                "timerType": "Duration",
-                "timerValue": "PT1M"
+                "type": "CallActivity",
+                "calledElement": "abort-registration"
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationAborted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "CallActivity_AbortRegistration"
+            ]
+        },
+        {
+            "id": "Activity_SendWelcomeMail",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "SubProcess_Confirmation"
+            ],
+            "outgoing": [
+                "EndEvent_RegistrationCompleted"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendWelcomeMail"
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationCompleted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "Activity_SendWelcomeMail"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.registrationCompleted"
             }
         }
     ],

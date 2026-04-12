@@ -9,7 +9,7 @@ class BpmnJsonMapper {
     fun toJson(model: BpmnModel): BpmnModelJson {
         return BpmnModelJson(
             processId = model.processId,
-            flowNodes = model.flowNodes.map { it.toJson() },
+            flowNodes = FlowNodeSorter.sort(model.flowNodes).map { it.toJson() },
             sequenceFlows = model.sequenceFlows.map { it.toJson() },
             messages = model.messages.mapNotNull { it.toJson() },
             signals = model.signals.mapNotNull { it.toJson() },
