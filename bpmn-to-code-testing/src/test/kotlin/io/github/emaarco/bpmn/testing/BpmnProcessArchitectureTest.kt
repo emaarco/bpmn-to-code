@@ -44,7 +44,7 @@ class BpmnProcessArchitectureTest {
     @Test
     fun `validate shared bpmn files with Camunda 7 using built-in and custom rules`() {
         val assert = BpmnValidator
-            .fromClasspath("bpmn/c7-newsletter.bpmn")
+            .fromClasspath("bpmn/c7-subscribe-newsletter.bpmn")
             .engine(ProcessEngine.CAMUNDA_7)
             .withRules(
                 BpmnRules.MISSING_SERVICE_TASK_IMPLEMENTATION,
@@ -63,7 +63,7 @@ class BpmnProcessArchitectureTest {
     @Test
     fun `validate shared bpmn files with Zeebe`() {
         val assert = BpmnValidator
-            .fromClasspath("bpmn/c8-newsletter.bpmn")
+            .fromClasspath("bpmn/c8-subscribe-newsletter.bpmn")
             .engine(ProcessEngine.ZEEBE)
             .withRules(
                 BpmnRules.MISSING_SERVICE_TASK_IMPLEMENTATION,

@@ -11,9 +11,9 @@ class MavenValidateMojoSmokeTest {
 
     @ParameterizedTest(name = "{0}")
     @CsvSource(
-        "ZEEBE, c8-newsletter.bpmn",
-        "CAMUNDA_7, c7-newsletter.bpmn",
-        "OPERATON, operaton-newsletter.bpmn",
+        "ZEEBE, c8-subscribe-newsletter.bpmn",
+        "CAMUNDA_7, c7-subscribe-newsletter.bpmn",
+        "OPERATON, operaton-subscribe-newsletter.bpmn",
     )
     fun `mojo validates BPMN files without errors`(
         engine: String,

@@ -13,7 +13,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `generates Kotlin API from Zeebe BPMN`() {
         val result = generate(
-            bpmnFile = "c8-newsletter.bpmn",
+            bpmnFile = "c8-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
         )
         assertThat(result).isNotEmpty()
@@ -25,7 +25,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `generates Java API from Zeebe BPMN`() {
         val result = generate(
-            bpmnFile = "c8-newsletter.bpmn",
+            bpmnFile = "c8-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
             outputLanguage = OutputLanguage.JAVA,
         )
@@ -37,7 +37,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `generates API for Camunda 7 engine`() {
         val result = generate(
-            bpmnFile = "c7-newsletter.bpmn",
+            bpmnFile = "c7-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
             processEngine = ProcessEngine.CAMUNDA_7,
         )
@@ -48,7 +48,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `generates API for Operaton engine`() {
         val result = generate(
-            bpmnFile = "operaton-newsletter.bpmn",
+            bpmnFile = "operaton-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
             processEngine = ProcessEngine.OPERATON,
         )
@@ -59,7 +59,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `uses custom packagePath`() {
         val result = generate(
-            bpmnFile = "c8-newsletter.bpmn",
+            bpmnFile = "c8-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
             packagePath = "com.myapp.workflows",
         )
@@ -70,7 +70,7 @@ class GenerateProcessApiToolTest {
     @Test
     fun `formats output with filename headers`() {
         val result = generate(
-            bpmnFile = "c8-newsletter.bpmn",
+            bpmnFile = "c8-subscribe-newsletter.bpmn",
             processName = "newsletter-subscription",
         )
         val formatted = result.joinToString("\n\n") { "// === ${it.fileName} ===\n${it.content}" }

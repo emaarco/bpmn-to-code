@@ -21,7 +21,7 @@ class OperatonModelExtractorTest {
 
     @Test
     fun `extract returns valid BpmnModel with operaton namespace`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-newsletter.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
 
@@ -111,7 +111,7 @@ class OperatonModelExtractorTest {
 
     @Test
     fun `extract returns multi-instance variables`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-multi-instance.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
@@ -124,7 +124,7 @@ class OperatonModelExtractorTest {
 
     @Test
     fun `extract marks default sequence flow correctly`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-multi-instance.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
 

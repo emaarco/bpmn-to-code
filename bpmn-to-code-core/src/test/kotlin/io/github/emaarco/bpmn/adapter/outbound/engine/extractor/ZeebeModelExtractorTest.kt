@@ -24,7 +24,7 @@ class ZeebeModelExtractorTest {
     fun `extract returns valid BpmnModel`() {
 
         // given: prepare bpmn file to be extracted
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-newsletter.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
 
         // when: extracting file to bpmn-model
@@ -107,7 +107,7 @@ class ZeebeModelExtractorTest {
 
     @Test
     fun `extract returns multi-instance variables`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-multi-instance.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
@@ -123,7 +123,7 @@ class ZeebeModelExtractorTest {
 
     @Test
     fun `extract marks default sequence flow correctly`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-multi-instance.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
 
