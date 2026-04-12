@@ -41,44 +41,6 @@ object NewsletterSubscriptionProcessApi {
     const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
 
     const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
-
-    object Tasks {
-      const val ACTIVITY_CONFIRM_REGISTRATION: String = "Activity_ConfirmRegistration"
-
-      const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "Activity_SendConfirmationMail"
-
-      const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
-    }
-
-    object Events {
-      const val END_EVENT_REGISTRATION_ABORTED: String = "EndEvent_RegistrationAborted"
-
-      const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
-
-      const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String =
-          "EndEvent_RegistrationNotPossible"
-
-      const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
-
-      const val ERROR_EVENT_INVALID_MAIL: String = "ErrorEvent_InvalidMail"
-
-      const val START_EVENT_REQUEST_RECEIVED: String = "StartEvent_RequestReceived"
-
-      const val START_EVENT_SUBMIT_REGISTRATION_FORM: String =
-          "StartEvent_SubmitRegistrationForm"
-
-      const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
-
-      const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
-    }
-
-    object Containers {
-      const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
-    }
-
-    object CallActivities {
-      const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"
-    }
   }
 
   object CallActivities {
