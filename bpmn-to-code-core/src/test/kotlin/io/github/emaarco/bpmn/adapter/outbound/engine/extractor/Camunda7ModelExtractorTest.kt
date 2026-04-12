@@ -125,16 +125,16 @@ class Camunda7ModelExtractorTest {
 
     @Test
     fun `extract marks default sequence flow correctly`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-default-flow.bpmn"))
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-multi-instance.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
 
         val flowsById = bpmnModel.sequenceFlows.associateBy { it.id }
-        assertThat(flowsById["Flow_Default"]).isEqualTo(
-            SequenceFlowDefinition("Flow_Default", "Gateway_Decision", "Task_Default", isDefault = true)
+        assertThat(flowsById["Flow_1jogut0"]).isEqualTo(
+            SequenceFlowDefinition("Flow_1jogut0", "gateway_hasSubscribers", "serviceTask_sendToSubscriber", flowName = "Yes", isDefault = true)
         )
-        assertThat(flowsById["Flow_Condition"]).isEqualTo(
-            SequenceFlowDefinition("Flow_Condition", "Gateway_Decision", "Task_Condition", conditionExpression = "\${someVar == true}")
+        assertThat(flowsById["Flow_1gsz7wd"]).isEqualTo(
+            SequenceFlowDefinition("Flow_1gsz7wd", "gateway_hasSubscribers", "endEvent_noSubscribers", flowName = "No", conditionExpression = "\${subscribers.size() > 0}")
         )
     }
 }

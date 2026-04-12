@@ -9,6 +9,8 @@ bpmn-to-code is a Gradle and Maven plugin that generates type-safe API definitio
 - **bpmn-to-code-core**: Core logic for parsing BPMN files and generating API code (Kotlin)
 - **bpmn-to-code-gradle**: Gradle plugin wrapper
 - **bpmn-to-code-maven**: Maven plugin wrapper
+- **bpmn-to-code-web**: Web plugin wrapper
+- **bpmn-to-code-testing**: Arch-Unit like feature that allows us to test bpmnModels for specific rules
 
 ## Architecture
 
@@ -29,7 +31,6 @@ The core follows hexagonal architecture with clear separation of concerns:
 - `outbound/codegen/`: Code generation adapters with Java/Kotlin builders
 - `outbound/engine/`: BPMN parsing adapters for Camunda 7 and Zeebe
 - `outbound/filesystem/BpmnFileLoader.kt`: File system operations
-
 
 ## Common Commands
 
@@ -77,8 +78,6 @@ The project uses JUnit 5, AssertJ, and MockK for testing.
 ### Test-Driven Development
 
 Follow **TDD** when planning and implementing changes: update the domain model first (if applicable), then write/update tests to express the expected behavior (RED phase), then implement the production code to make them pass (GREEN phase).
-
-
 
 ### Verify After Each Task
 
