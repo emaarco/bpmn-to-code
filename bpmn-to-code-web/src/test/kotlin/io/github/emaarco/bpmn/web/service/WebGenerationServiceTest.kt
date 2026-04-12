@@ -18,12 +18,12 @@ class WebGenerationServiceTest {
 
     @Test
     fun `should generate Kotlin API from BPMN file`() {
-        val base64Content = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
+        val base64Content = loadBpmnBase64("bpmn/c8-subscribe-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(
                 GenerateRequest.BpmnFileData(
-                    fileName = "c8-newsletter.bpmn",
+                    fileName = "c8-subscribe-newsletter.bpmn",
                     content = base64Content
                 )
             ),
@@ -49,12 +49,12 @@ class WebGenerationServiceTest {
 
     @Test
     fun `should generate Java API from BPMN file`() {
-        val base64Content = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
+        val base64Content = loadBpmnBase64("bpmn/c8-subscribe-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(
                 GenerateRequest.BpmnFileData(
-                    fileName = "c8-newsletter.bpmn",
+                    fileName = "c8-subscribe-newsletter.bpmn",
                     content = base64Content
                 )
             ),
@@ -100,11 +100,11 @@ class WebGenerationServiceTest {
     fun `should process up to 3 BPMN files successfully`() {
         // Note: The 3-file limit is enforced at the route layer, not service layer
         // This test verifies the service can handle 3 files without errors
-        val c8Base64 = loadBpmnBase64("bpmn/c8-newsletter.bpmn")
+        val c8Base64 = loadBpmnBase64("bpmn/c8-subscribe-newsletter.bpmn")
 
         val request = GenerateRequest(
             files = listOf(
-                GenerateRequest.BpmnFileData("c8-newsletter.bpmn", c8Base64),
+                GenerateRequest.BpmnFileData("c8-subscribe-newsletter.bpmn", c8Base64),
                 GenerateRequest.BpmnFileData("c8-newsletter-copy1.bpmn", c8Base64),
                 GenerateRequest.BpmnFileData("c8-newsletter-copy2.bpmn", c8Base64)
             ),

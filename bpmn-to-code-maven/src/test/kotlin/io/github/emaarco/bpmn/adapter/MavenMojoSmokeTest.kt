@@ -10,10 +10,10 @@ class MavenMojoSmokeTest {
 
     @ParameterizedTest(name = "{0} / {1}")
     @CsvSource(
-        "ZEEBE, KOTLIN, c8-newsletter.bpmn",
-        "CAMUNDA_7, KOTLIN, c7-newsletter.bpmn",
-        "OPERATON, KOTLIN, operaton-newsletter.bpmn",
-        "ZEEBE, JAVA, c8-newsletter.bpmn",
+        "ZEEBE, KOTLIN, c8-subscribe-newsletter.bpmn",
+        "CAMUNDA_7, KOTLIN, c7-subscribe-newsletter.bpmn",
+        "OPERATON, KOTLIN, operaton-subscribe-newsletter.bpmn",
+        "ZEEBE, JAVA, c8-subscribe-newsletter.bpmn",
     )
     fun `mojo generates output files`(
         engine: String,

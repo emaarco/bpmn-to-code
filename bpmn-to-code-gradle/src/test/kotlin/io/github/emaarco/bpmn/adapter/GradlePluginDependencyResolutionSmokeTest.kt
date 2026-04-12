@@ -25,8 +25,8 @@ class GradlePluginDependencyResolutionSmokeTest {
     fun `plugin resolves all dependencies from published artifact`(@TempDir projectDir: File) {
         // Copy BPMN file into the temp project
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
-        val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/c8-newsletter.bpmn")!!
-        File(resourcesDir, "c8-newsletter.bpmn").writeBytes(bpmnStream.readBytes())
+        val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/c8-subscribe-newsletter.bpmn")!!
+        File(resourcesDir, "c8-subscribe-newsletter.bpmn").writeBytes(bpmnStream.readBytes())
 
         // Write settings.gradle with pluginManagement resolving from mavenLocal
         File(projectDir, "settings.gradle").writeText(

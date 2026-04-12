@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_180pfvm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.45.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:process id="sendNewsletter" isExecutable="true">
+    <bpmn:startEvent id="startEvent_editionCreated" name="Newsletter edition created">
+      <bpmn:outgoing>Flow_0bianz5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0bianz5" sourceRef="startEvent_editionCreated" targetRef="serviceTask_loadSubscribers" />
+    <bpmn:serviceTask id="serviceTask_loadSubscribers" name="Load subscribers" camunda:type="external" camunda:topic="newsletter.loadSubscribers">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="subscribers">${subscribers}</camunda:outputParameter>
+          <camunda:outputParameter name="author">${author}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bianz5</bpmn:incoming>
+      <bpmn:outgoing>Flow_04andb8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_04andb8" sourceRef="serviceTask_loadSubscribers" targetRef="gateway_hasSubscribers" />
+    <bpmn:serviceTask id="serviceTask_sendToSubscriber" name="Send to subscriber" camunda:type="external" camunda:topic="newsletter.sendMailToSubscriber">
+      <bpmn:incoming>Flow_1jogut0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ruayvl</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="${subscribers}" camunda:elementVariable="subscriber" />
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="endEvent_editionSent" name="Newsletter edition send">
+      <bpmn:incoming>Flow_0v2v55n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ruayvl" sourceRef="serviceTask_sendToSubscriber" targetRef="serviceTask_notifyAuthor" />
+    <bpmn:sequenceFlow id="Flow_0v2v55n" sourceRef="serviceTask_notifyAuthor" targetRef="endEvent_editionSent" />
+    <bpmn:serviceTask id="serviceTask_notifyAuthor" name="Notify authors" camunda:type="external" camunda:topic="newsletter.notifyAuthor">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="test">null</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ruayvl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v2v55n</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${authors}" camunda:elementVariable="author" />
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="gateway_hasSubscribers" name="Has subscribers?" default="Flow_1jogut0">
+      <bpmn:incoming>Flow_04andb8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jogut0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1gsz7wd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1jogut0" name="Yes" sourceRef="gateway_hasSubscribers" targetRef="serviceTask_sendToSubscriber">
+      <bpmn:extensionElements />
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="endEvent_noSubscribers" name="No subscribers found">
+      <bpmn:incoming>Flow_1gsz7wd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1gsz7wd" name="No" sourceRef="gateway_hasSubscribers" targetRef="endEvent_noSubscribers">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${subscribers.size() &gt; 0}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:subProcess id="eventSubProcess_errorHandling" name="Error handling" triggeredByEvent="true">
+      <bpmn:startEvent id="event_mailRejected" name="Mail rejected">
+        <bpmn:outgoing>Flow_0vtppnk</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_12zsezj" messageRef="Message_3bq0n3s" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0vtppnk" sourceRef="event_mailRejected" targetRef="serviceTask_analyzeError" />
+      <bpmn:serviceTask id="serviceTask_analyzeError" name="Analyze error" camunda:type="external" camunda:topic="newsletter.analyzeSendError">
+        <bpmn:incoming>Flow_0vtppnk</bpmn:incoming>
+        <bpmn:outgoing>Flow_13nmnag</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="gateway_canSendAgain" name="Can re-send?" default="Flow_1izucof">
+        <bpmn:incoming>Flow_13nmnag</bpmn:incoming>
+        <bpmn:outgoing>Flow_1izucof</bpmn:outgoing>
+        <bpmn:outgoing>Flow_18nf2jh</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_13nmnag" sourceRef="serviceTask_analyzeError" targetRef="gateway_canSendAgain" />
+      <bpmn:sequenceFlow id="Flow_1izucof" name="Yes" sourceRef="gateway_canSendAgain" targetRef="serviceTask_sendMailAgain" />
+      <bpmn:sequenceFlow id="Flow_0vym6nu" sourceRef="serviceTask_sendMailAgain" targetRef="eventGateway_afterSendingAgain" />
+      <bpmn:eventBasedGateway id="eventGateway_afterSendingAgain">
+        <bpmn:incoming>Flow_0vym6nu</bpmn:incoming>
+        <bpmn:outgoing>Flow_0enjkoe</bpmn:outgoing>
+        <bpmn:outgoing>Flow_081cykl</bpmn:outgoing>
+      </bpmn:eventBasedGateway>
+      <bpmn:sequenceFlow id="Flow_18nf2jh" name="No" sourceRef="gateway_canSendAgain" targetRef="Event_0zfsqqc">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${canBeResolved == false}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:serviceTask id="serviceTask_sendMailAgain" name="Send mail again" camunda:type="external" camunda:topic="newsletter.sendMailToSubscriber">
+        <bpmn:incoming>Flow_1izucof</bpmn:incoming>
+        <bpmn:outgoing>Flow_0vym6nu</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0enjkoe" sourceRef="eventGateway_afterSendingAgain" targetRef="timer_noRejectionForOneDay" />
+      <bpmn:intermediateCatchEvent id="timer_noRejectionForOneDay" name="No rejection for 1 day">
+        <bpmn:incoming>Flow_0enjkoe</bpmn:incoming>
+        <bpmn:outgoing>Flow_0338xzf</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1w1lmdp">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1D</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:endEvent id="Event_0zfsqqc" name="Notify support">
+        <bpmn:incoming>Flow_18nf2jh</bpmn:incoming>
+        <bpmn:escalationEventDefinition id="EscalationEventDefinition_0v78ov7" escalationRef="Escalation_2gr27c9" />
+      </bpmn:endEvent>
+      <bpmn:intermediateCatchEvent id="event_mailRejectedAgain" name="Mail rejected again">
+        <bpmn:incoming>Flow_081cykl</bpmn:incoming>
+        <bpmn:outgoing>Flow_0x9thpq</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1wq8qup" messageRef="Message_0qejt6h" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="Flow_081cykl" sourceRef="eventGateway_afterSendingAgain" targetRef="event_mailRejectedAgain" />
+      <bpmn:sequenceFlow id="Flow_0x9thpq" sourceRef="event_mailRejectedAgain" targetRef="Event_06asqkm" />
+      <bpmn:endEvent id="Event_06asqkm" name="Notify support">
+        <bpmn:incoming>Flow_0x9thpq</bpmn:incoming>
+        <bpmn:escalationEventDefinition id="EscalationEventDefinition_0y07we7" escalationRef="Escalation_2gr27c9" />
+      </bpmn:endEvent>
+      <bpmn:endEvent id="Event_13xucnu" name="Temporary issue resolved">
+        <bpmn:incoming>Flow_0338xzf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0338xzf" sourceRef="timer_noRejectionForOneDay" targetRef="Event_13xucnu" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:escalation id="Escalation_2gr27c9" name="escalation_notifySupport" escalationCode="200" />
+  <bpmn:message id="Message_0qejt6h" name="Message_MailRejectedAgain" />
+  <bpmn:message id="Message_3bq0n3s" name="Message_MailRejected" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sendNewsletter">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="startEvent_editionCreated">
+        <dc:Bounds x="242" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="217" y="145" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0egtgj0_di" bpmnElement="serviceTask_loadSubscribers">
+        <dc:Bounds x="330" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mmvsvx_di" bpmnElement="serviceTask_sendToSubscriber">
+        <dc:Bounds x="570" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nlgapd_di" bpmnElement="endEvent_editionSent">
+        <dc:Bounds x="872" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="847" y="145" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bpcq27_di" bpmnElement="serviceTask_notifyAuthor">
+        <dc:Bounds x="710" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0p3ihxb_di" bpmnElement="gateway_hasSubscribers" isMarkerVisible="true">
+        <dc:Bounds x="475" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="458" y="65" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gzt4rz_di" bpmnElement="endEvent_noSubscribers">
+        <dc:Bounds x="602" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="583" y="275" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f48jdy_di" bpmnElement="eventSubProcess_errorHandling" isExpanded="true">
+        <dc:Bounds x="165" y="350" width="910" height="290" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cw1w9z_di" bpmnElement="event_mailRejected">
+        <dc:Bounds x="217" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="204" y="475" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yc7t9k_di" bpmnElement="serviceTask_analyzeError">
+        <dc:Bounds x="305" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0agw175_di" bpmnElement="gateway_canSendAgain" isMarkerVisible="true">
+        <dc:Bounds x="460" y="425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="451" y="401" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_17kuaus_di" bpmnElement="eventGateway_afterSendingAgain">
+        <dc:Bounds x="720" y="425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kyz5fh_di" bpmnElement="serviceTask_sendMailAgain">
+        <dc:Bounds x="565" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fw9je5_di" bpmnElement="timer_noRejectionForOneDay">
+        <dc:Bounds x="837" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="813" y="475" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0e276d8_di" bpmnElement="Event_0zfsqqc">
+        <dc:Bounds x="597" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="581" y="585" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0y6317r_di" bpmnElement="event_mailRejectedAgain">
+        <dc:Bounds x="837" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="824" y="585" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13xucnu_di" bpmnElement="Event_13xucnu">
+        <dc:Bounds x="962" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="940" y="475" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_152e8n1_di" bpmnElement="Event_06asqkm">
+        <dc:Bounds x="962" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="946" y="585" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0vtppnk_di" bpmnElement="Flow_0vtppnk">
+        <di:waypoint x="253" y="450" />
+        <di:waypoint x="305" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13nmnag_di" bpmnElement="Flow_13nmnag">
+        <di:waypoint x="405" y="450" />
+        <di:waypoint x="460" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1izucof_di" bpmnElement="Flow_1izucof">
+        <di:waypoint x="510" y="450" />
+        <di:waypoint x="565" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="529" y="432" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18nf2jh_di" bpmnElement="Flow_18nf2jh">
+        <di:waypoint x="485" y="475" />
+        <di:waypoint x="485" y="560" />
+        <di:waypoint x="597" y="560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="493" y="515" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vym6nu_di" bpmnElement="Flow_0vym6nu">
+        <di:waypoint x="665" y="450" />
+        <di:waypoint x="720" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0enjkoe_di" bpmnElement="Flow_0enjkoe">
+        <di:waypoint x="770" y="450" />
+        <di:waypoint x="837" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_081cykl_di" bpmnElement="Flow_081cykl">
+        <di:waypoint x="745" y="475" />
+        <di:waypoint x="745" y="560" />
+        <di:waypoint x="837" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0338xzf_di" bpmnElement="Flow_0338xzf">
+        <di:waypoint x="873" y="450" />
+        <di:waypoint x="962" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x9thpq_di" bpmnElement="Flow_0x9thpq">
+        <di:waypoint x="873" y="560" />
+        <di:waypoint x="962" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bianz5_di" bpmnElement="Flow_0bianz5">
+        <di:waypoint x="278" y="120" />
+        <di:waypoint x="330" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04andb8_di" bpmnElement="Flow_04andb8">
+        <di:waypoint x="430" y="120" />
+        <di:waypoint x="475" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jogut0_di" bpmnElement="Flow_1jogut0">
+        <di:waypoint x="525" y="120" />
+        <di:waypoint x="570" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="531" y="102" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ruayvl_di" bpmnElement="Flow_1ruayvl">
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="710" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v2v55n_di" bpmnElement="Flow_0v2v55n">
+        <di:waypoint x="810" y="120" />
+        <di:waypoint x="872" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gsz7wd_di" bpmnElement="Flow_1gsz7wd">
+        <di:waypoint x="500" y="145" />
+        <di:waypoint x="500" y="250" />
+        <di:waypoint x="602" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="508" y="195" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
