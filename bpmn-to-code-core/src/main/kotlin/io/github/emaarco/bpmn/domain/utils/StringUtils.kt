@@ -40,7 +40,9 @@ object StringUtils {
      * @sample toCamelCase will convert Activity_SendMail to ActivitySendMail
      * @sample toCamelCase will convert StartEvent_RequestReceived to StartEventRequestReceived
      */
-    fun String.toCamelCase(): String =
-        split(Regex("[_\\-]")).filter { it.isNotEmpty() }
+    fun String.toCamelCase(): String {
+        return split(Regex("[_\\-]"))
+            .filter { it.isNotEmpty() }
             .joinToString("") { it.replaceFirstChar { c -> c.uppercaseChar() } }
+    }
 }
