@@ -13,7 +13,6 @@ import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
-import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -87,16 +86,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
             modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addProperty(createAttribute(flowNode)) }
-            elementGroups.forEach { (groupName, types) ->
-                val groupNodes = modelApi.model.flowNodes
-                    .filter { it.elementType in types }
-                    .sortedBy { it.getName() }
-                if (groupNodes.isNotEmpty()) {
-                    val groupBuilder = TypeSpec.objectBuilder(groupName)
-                    groupNodes.forEach { groupBuilder.addProperty(createAttribute(it)) }
-                    elementsBuilder.addType(groupBuilder.build())
-                }
-            }
             builder.addType(elementsBuilder.build())
         }
     }
@@ -230,41 +219,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         }
 
         private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
-    }
-
-    companion object {
-        private val elementGroups = linkedMapOf(
-            "Tasks" to setOf(
-                BpmnElementType.SERVICE_TASK,
-                BpmnElementType.USER_TASK,
-                BpmnElementType.RECEIVE_TASK,
-                BpmnElementType.SEND_TASK,
-                BpmnElementType.SCRIPT_TASK,
-                BpmnElementType.MANUAL_TASK,
-                BpmnElementType.BUSINESS_RULE_TASK,
-            ),
-            "Events" to setOf(
-                BpmnElementType.START_EVENT,
-                BpmnElementType.END_EVENT,
-                BpmnElementType.INTERMEDIATE_CATCH_EVENT,
-                BpmnElementType.INTERMEDIATE_THROW_EVENT,
-                BpmnElementType.BOUNDARY_EVENT,
-            ),
-            "Gateways" to setOf(
-                BpmnElementType.EXCLUSIVE_GATEWAY,
-                BpmnElementType.PARALLEL_GATEWAY,
-                BpmnElementType.INCLUSIVE_GATEWAY,
-                BpmnElementType.EVENT_BASED_GATEWAY,
-                BpmnElementType.COMPLEX_GATEWAY,
-            ),
-            "Containers" to setOf(
-                BpmnElementType.SUB_PROCESS,
-                BpmnElementType.TRANSACTION,
-            ),
-            "CallActivities" to setOf(
-                BpmnElementType.CALL_ACTIVITY,
-            ),
-        )
     }
 
     private fun createAttribute(variable: VariableMapping<String>): PropertySpec {
