@@ -9,6 +9,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstance
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.findFirstByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findEscalationEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSequenceFlows
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
@@ -43,6 +44,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val allSequenceFlows = modelInstance.findSequenceFlows()
         val allMessages = extractZeebeMessages(modelInstance)
         val allErrorEvents = modelInstance.findErrorEventDefinition()
+        val allEscalationEvents = modelInstance.findEscalationEventDefinitions()
         val allTimerEvents = modelInstance.findTimerEventDefinition()
         val allSignalEvents = modelInstance.findSignalEventDefinitions()
         val allServiceTasks = findServiceTasks(modelInstance)
@@ -58,6 +60,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             messages = allMessages,
             signals = allSignalEvents,
             errors = allErrorEvents,
+            escalations = allEscalationEvents,
         )
     }
 

@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
@@ -119,6 +120,21 @@ class OperatonModelExtractorTest {
             VariableDefinition("author"),
             VariableDefinition("subscribers"),
             VariableDefinition("subscriber"),
+        )
+    }
+
+    @Test
+    fun `extract detects event subprocess type and extracts escalations`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-send-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+
+        val eventSubProcess = bpmnModel.flowNodes.first { it.id == "eventSubProcess_errorHandling" }
+        assertThat(eventSubProcess.elementType).isEqualTo(BpmnElementType.EVENT_SUB_PROCESS)
+
+        assertThat(bpmnModel.escalations).containsExactlyInAnyOrder(
+            EscalationDefinition("Event_0zfsqqc", "escalation_notifySupport", "200"),
+            EscalationDefinition("Event_06asqkm", "escalation_notifySupport", "200"),
         )
     }
 

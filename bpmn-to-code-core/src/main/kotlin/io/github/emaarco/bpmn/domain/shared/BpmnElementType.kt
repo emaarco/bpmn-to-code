@@ -34,6 +34,7 @@ enum class BpmnElementType(val bpmnTypeName: String) {
 
     // Containers
     SUB_PROCESS("subProcess"),
+    EVENT_SUB_PROCESS("eventSubProcess"),
     CALL_ACTIVITY("callActivity"),
     TRANSACTION("transaction"),
 

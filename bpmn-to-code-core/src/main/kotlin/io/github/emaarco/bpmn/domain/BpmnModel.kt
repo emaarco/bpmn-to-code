@@ -9,6 +9,7 @@ data class BpmnModel(
     val messages: List<MessageDefinition>,
     val signals: List<SignalDefinition>,
     val errors: List<ErrorDefinition>,
+    val escalations: List<EscalationDefinition> = emptyList(),
 ) {
     val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }

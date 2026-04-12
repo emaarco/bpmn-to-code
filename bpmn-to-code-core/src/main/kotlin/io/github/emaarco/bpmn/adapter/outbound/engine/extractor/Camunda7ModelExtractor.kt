@@ -8,6 +8,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstance
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findEscalationEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSequenceFlows
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
@@ -49,6 +50,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val messageSendEvents = findMessageSendEvents(modelInstance)
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
+        val escalations = modelInstance.findEscalationEventDefinitions()
         val timers = modelInstance.findTimerEventDefinition()
         val variablesPerNode = extractVariablesPerNode(modelInstance)
 
@@ -62,6 +64,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             messages = allMessages,
             signals = signals,
             errors = errors,
+            escalations = escalations,
         )
     }
 
