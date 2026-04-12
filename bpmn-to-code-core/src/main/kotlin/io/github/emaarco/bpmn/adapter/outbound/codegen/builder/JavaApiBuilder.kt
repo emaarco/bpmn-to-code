@@ -146,8 +146,8 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
                 .forEach { node ->
                     val className = node.getRawName().toCamelCase()
                     val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
-                    val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addField(createAttribute(it)) }
+                    node.variables.sortedBy { it.getRawName() }
+                        .forEach { nodeVarsBuilder.addField(createAttribute(it)) }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
