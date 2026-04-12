@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -105,19 +106,20 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
             val flowsBuilder = TypeSpec.objectBuilder("Flows")
             flowsBuilder.addType(buildFlowDataClass())
             modelApi.model.sequenceFlows.forEach { flow ->
-                val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression)
+                val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
                 flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), ClassName("", "BpmnFlow")).initializer(initStr).build())
             }
             builder.addType(flowsBuilder.build())
         }
 
-        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?): String {
+        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): String {
             return buildString {
                 append("BpmnFlow(\n")
                 append("    id = \"$id\",\n")
                 append("    sourceRef = \"$sourceRef\",\n")
                 append("    targetRef = \"$targetRef\",\n")
                 if (condition != null) append("    condition = \"${condition.escapeDollarInterpolation()}\",\n")
+                if (isDefault) append("    isDefault = true,\n")
                 append(")")
             }
         }
@@ -129,6 +131,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
                 .addParameter("sourceRef", STRING)
                 .addParameter("targetRef", STRING)
                 .addParameter(ParameterSpec.builder("condition", nullableString).defaultValue("null").build())
+                .addParameter(ParameterSpec.builder("isDefault", BOOLEAN).defaultValue("false").build())
                 .build()
             return TypeSpec.classBuilder("BpmnFlow")
                 .addModifiers(KModifier.DATA)
@@ -137,6 +140,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
                 .addProperty(PropertySpec.builder("sourceRef", STRING).initializer("sourceRef").build())
                 .addProperty(PropertySpec.builder("targetRef", STRING).initializer("targetRef").build())
                 .addProperty(PropertySpec.builder("condition", nullableString).initializer("condition").build())
+                .addProperty(PropertySpec.builder("isDefault", BOOLEAN).initializer("isDefault").build())
                 .build()
         }
     }

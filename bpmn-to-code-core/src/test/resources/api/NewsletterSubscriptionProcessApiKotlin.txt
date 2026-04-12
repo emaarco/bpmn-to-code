@@ -3,6 +3,7 @@
 
 package de.emaarco.example
 
+import kotlin.Boolean
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
@@ -110,6 +111,7 @@ object NewsletterSubscriptionProcessApi {
       val sourceRef: String,
       val targetRef: String,
       val condition: String? = null,
+      val isDefault: Boolean = false,
     )
   }
 

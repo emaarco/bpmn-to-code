@@ -98,19 +98,19 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
             val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
             flowsBuilder.addType(buildFlowClass())
             modelApi.model.sequenceFlows.forEach { flow ->
-                val initCode = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression)
+                val initCode = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
                 val fieldBuilder = FieldSpec.builder(ClassName.get("", "BpmnFlow"), flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
                 flowsBuilder.addField(fieldBuilder.initializer(initCode).build())
             }
             builder.addType(flowsBuilder.build())
         }
 
-        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?): CodeBlock {
+        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
             val conditionBlock = if (condition != null) CodeBlock.of("\$S", condition) else CodeBlock.of("null")
             return CodeBlock.builder()
                 .add("new BpmnFlow(\$S, \$S, \$S, ", id, sourceRef, targetRef)
                 .add(conditionBlock)
-                .add(")")
+                .add(", \$L)", isDefault)
                 .build()
         }
 
@@ -120,16 +120,19 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
             builder.addField(FieldSpec.builder(String::class.java, "sourceRef").addModifiers(PUBLIC, FINAL).build())
             builder.addField(FieldSpec.builder(String::class.java, "targetRef").addModifiers(PUBLIC, FINAL).build())
             builder.addField(FieldSpec.builder(String::class.java, "condition").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(Boolean::class.javaPrimitiveType!!, "isDefault").addModifiers(PUBLIC, FINAL).build())
             builder.addMethod(
                 MethodSpec.constructorBuilder()
                     .addParameter(String::class.java, "id")
                     .addParameter(String::class.java, "sourceRef")
                     .addParameter(String::class.java, "targetRef")
                     .addParameter(String::class.java, "condition")
+                    .addParameter(Boolean::class.javaPrimitiveType!!, "isDefault")
                     .addStatement("this.id = id")
                     .addStatement("this.sourceRef = sourceRef")
                     .addStatement("this.targetRef = targetRef")
                     .addStatement("this.condition = condition")
+                    .addStatement("this.isDefault = isDefault")
                     .build()
             )
             return builder.build()

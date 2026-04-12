@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
@@ -119,6 +120,21 @@ class Camunda7ModelExtractorTest {
             VariableDefinition("author"),
             VariableDefinition("subscribers"),
             VariableDefinition("subscriber"),
+        )
+    }
+
+    @Test
+    fun `extract marks default sequence flow correctly`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-default-flow.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+
+        val flowsById = bpmnModel.sequenceFlows.associateBy { it.id }
+        assertThat(flowsById["Flow_Default"]).isEqualTo(
+            SequenceFlowDefinition("Flow_Default", "Gateway_Decision", "Task_Default", isDefault = true)
+        )
+        assertThat(flowsById["Flow_Condition"]).isEqualTo(
+            SequenceFlowDefinition("Flow_Condition", "Gateway_Decision", "Task_Condition", conditionExpression = "\${someVar == true}")
         )
     }
 }

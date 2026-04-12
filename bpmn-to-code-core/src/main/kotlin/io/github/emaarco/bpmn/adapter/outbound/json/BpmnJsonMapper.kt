@@ -59,6 +59,7 @@ class BpmnJsonMapper {
             targetRef = targetRef,
             name = flowName,
             conditionExpression = conditionExpression,
+            isDefault = isDefault,
         )
     }
 
