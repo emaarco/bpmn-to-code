@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.domain.utils
 
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
+import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 
 object StringUtils {
@@ -33,4 +34,13 @@ object StringUtils {
     fun String.removeExpressionSyntax(): String {
         return this.replace(Regex("[#\${}]"), "")
     }
+
+    /**
+     * Converts a string with underscores to CamelCase, capitalising the first letter of each segment.
+     * @sample toCamelCase will convert Activity_SendMail to ActivitySendMail
+     * @sample toCamelCase will convert StartEvent_RequestReceived to StartEventRequestReceived
+     */
+    fun String.toCamelCase(): String =
+        split(Regex("[_\\-]")).filter { it.isNotEmpty() }
+            .joinToString("") { it.replaceFirstChar { c -> c.uppercaseChar() } }
 }
