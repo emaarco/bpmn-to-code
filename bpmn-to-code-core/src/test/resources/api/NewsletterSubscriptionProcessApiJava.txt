@@ -36,6 +36,42 @@ public final class NewsletterSubscriptionProcessApi {
     public static final String TIMER_AFTER_3_DAYS = "Timer_After3Days";
 
     public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
+
+    public static final class Tasks {
+      public static final String ACTIVITY_CONFIRM_REGISTRATION = "Activity_ConfirmRegistration";
+
+      public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "Activity_SendConfirmationMail";
+
+      public static final String ACTIVITY_SEND_WELCOME_MAIL = "Activity_SendWelcomeMail";
+    }
+
+    public static final class Events {
+      public static final String END_EVENT_REGISTRATION_ABORTED = "EndEvent_RegistrationAborted";
+
+      public static final String END_EVENT_REGISTRATION_COMPLETED = "EndEvent_RegistrationCompleted";
+
+      public static final String END_EVENT_REGISTRATION_NOT_POSSIBLE = "EndEvent_RegistrationNotPossible";
+
+      public static final String END_EVENT_SUBSCRIPTION_CONFIRMED = "EndEvent_SubscriptionConfirmed";
+
+      public static final String ERROR_EVENT_INVALID_MAIL = "ErrorEvent_InvalidMail";
+
+      public static final String START_EVENT_REQUEST_RECEIVED = "StartEvent_RequestReceived";
+
+      public static final String START_EVENT_SUBMIT_REGISTRATION_FORM = "StartEvent_SubmitRegistrationForm";
+
+      public static final String TIMER_AFTER_3_DAYS = "Timer_After3Days";
+
+      public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
+    }
+
+    public static final class Containers {
+      public static final String SUB_PROCESS_CONFIRMATION = "SubProcess_Confirmation";
+    }
+
+    public static final class CallActivities {
+      public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "CallActivity_AbortRegistration";
+    }
   }
 
   public static final class CallActivities {
@@ -96,5 +132,31 @@ public final class NewsletterSubscriptionProcessApi {
     public static final String SUBSCRIPTION_ID = "subscriptionId";
 
     public static final String TEST_VARIABLE = "testVariable";
+
+    public static final class ActivitySendConfirmationMail {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+
+      public static final String TEST_VARIABLE = "testVariable";
+    }
+
+    public static final class ActivitySendWelcomeMail {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
+
+    public static final class CallActivityAbortRegistration {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
+
+    public static final class EndEventRegistrationCompleted {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
+
+    public static final class StartEventRequestReceived {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
+
+    public static final class StartEventSubmitRegistrationForm {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
   }
 }
