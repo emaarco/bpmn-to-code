@@ -70,7 +70,18 @@ When using bpmn-to-code, your element IDs and names directly shape the generated
 
 ### Why Explicit Definitions Matter
 
-bpmn-to-code **only extracts variables from I/O mappings**, not from expressions in sequence flows, gateways, or script tasks.
+bpmn-to-code extracts variables from **all explicit variable definition mechanisms** in the BPMN model — not from expressions in sequence flows, gateways, or script tasks.
+
+Supported sources by engine:
+
+| Source | Camunda 7 / Operaton | Zeebe |
+|--------|----------------------|-------|
+| I/O mappings (`inputOutput`) | ✅ | ✅ |
+| Multi-instance attributes | ✅ | ✅ |
+| Call activity in/out mappings | ✅ | — |
+| `additionalVariables` extension properties | ✅ | — |
+
+See the engine pages for details: [Camunda 7](/engines/camunda7) · [Operaton](/engines/operaton) · [Zeebe](/engines/zeebe)
 
 **Rationale:**
 - **BPMN as single source of truth**: All process variables should be visible in the model itself
@@ -78,7 +89,29 @@ bpmn-to-code **only extracts variables from I/O mappings**, not from expressions
 - **Reduced coupling**: Process API doesn't leak implementation details from worker code
 - **Better maintainability**: All variable contracts are visible in the BPMN model
 
-**Impact:** If a variable isn't explicitly defined in I/O mappings, it won't appear in your generated Process API's `Variables` object.
+**Impact:** If a variable isn't explicitly defined through one of the above mechanisms, it won't appear in your generated Process API's `Variables` object.
+
+### When I/O Mappings Aren't Available
+
+Some elements don't support I/O mappings — for example, **message start events** in Camunda 7 and Operaton. For these cases, use `additionalVariables` extension properties to declare variables explicitly:
+
+```xml
+<!-- Camunda 7 -->
+<bpmn:extensionElements>
+  <camunda:properties>
+    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </camunda:properties>
+</bpmn:extensionElements>
+
+<!-- Operaton -->
+<bpmn:extensionElements>
+  <operaton:properties>
+    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </operaton:properties>
+</bpmn:extensionElements>
+```
+
+This works on any BPMN element. See [Camunda 7](/engines/camunda7#additional-variables-extension-properties) and [Operaton](/engines/operaton#additional-variables-extension-properties) engine pages for full details.
 
 ## Multi-Environment Modeling
 
@@ -123,7 +156,7 @@ If process variants are significantly different, consider:
 
 **Key Takeaways:**
 1. Name elements descriptively and consistently using prefix patterns
-2. Define all process variables explicitly in I/O mappings
+2. Define all process variables explicitly using I/O mappings, call activity mappings, or `additionalVariables` where needed
 3. Keep process variants aligned when using the same process ID
 5. Let your BPMN model be the single source of truth
 

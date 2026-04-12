@@ -126,7 +126,7 @@ Variables are extracted from different sources depending on the engine. See the 
 - [Operaton](/engines/operaton) — same patterns as Camunda 7, using the `operaton:` namespace
 
 ::: info
-bpmn-to-code **only extracts variables from explicit I/O mappings**, not from expressions in sequence flows, gateways, or script tasks. This is by design — the BPMN model should be the single source of truth for its variable contract.
+bpmn-to-code **only extracts variables from explicit BPMN definitions** — I/O mappings, call activity in/out mappings, multi-instance attributes, and `additionalVariables` extension properties. Variables only referenced in expressions (sequence flows, gateway conditions, script tasks) are intentionally ignored. This is by design — the BPMN model should be the single source of truth for its variable contract.
 :::
 
 ## Model Merging

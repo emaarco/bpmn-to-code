@@ -45,20 +45,6 @@ The `name` attribute of each parameter becomes a variable.
 `operaton:inputOutput` is **not supported** on message start events. Use extension properties with `additionalVariables` instead (see below).
 :::
 
-### Additional Variables (Extension Properties)
-
-For elements where I/O mappings aren't supported (like message start events), you can declare variables via `operaton:properties`:
-
-```xml
-<bpmn:extensionElements>
-  <operaton:properties>
-    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
-  </operaton:properties>
-</bpmn:extensionElements>
-```
-
-The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.
-
 ### Call Activity Mappings
 
 Call activity variables come from `operaton:in` and `operaton:out` mappings, **not** from `operaton:inputOutput`:
@@ -85,3 +71,17 @@ Multi-instance variables come from attributes on the `multiInstanceLoopCharacter
 ```
 
 **Extracted variables:** `subscribers` (from collection expression), `subscriber` (element variable)
+
+### Additional Variables (Extension Properties)
+
+For elements where I/O mappings aren't supported (like message start events), you can declare variables via `operaton:properties`:
+
+```xml
+<bpmn:extensionElements>
+  <operaton:properties>
+    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+  </operaton:properties>
+</bpmn:extensionElements>
+```
+
+The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.
