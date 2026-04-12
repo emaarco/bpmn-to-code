@@ -152,8 +152,8 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
                 .forEach { node ->
                     val objectName = (node.getRawName()).toCamelCase()
                     val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                    node.variables.sortedBy { it.getRawName() }
-                        .forEach { nodeVarsBuilder.addProperty(createAttribute(it)) }
+                    val sortedVariables = node.variables.sortedBy { it.getRawName() }
+                    sortedVariables.forEach { nodeVarsBuilder.addProperty(createAttribute(it)) }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
