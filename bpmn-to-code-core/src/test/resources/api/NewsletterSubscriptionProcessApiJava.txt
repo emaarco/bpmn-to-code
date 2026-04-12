@@ -66,9 +66,11 @@ public final class NewsletterSubscriptionProcessApi {
     }
 
     public static final class Containers {
-      public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "CallActivity_AbortRegistration";
-
       public static final String SUB_PROCESS_CONFIRMATION = "SubProcess_Confirmation";
+    }
+
+    public static final class CallActivities {
+      public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "CallActivity_AbortRegistration";
     }
   }
 
