@@ -26,6 +26,7 @@ class ModelMergerService {
         val mergedMessages = mergeDistinctBy(models) { it.messages }
         val mergedSignals = mergeDistinctBy(models) { it.signals }
         val mergedErrors = mergeDistinctBy(models) { it.errors }
+        val mergedEscalations = mergeDistinctBy(models) { it.escalations }
         return BpmnModel(
             processId = processId,
             flowNodes = mergedFlowNodes,
@@ -33,6 +34,7 @@ class ModelMergerService {
             messages = mergedMessages,
             signals = mergedSignals,
             errors = mergedErrors,
+            escalations = mergedEscalations,
         )
     }
 
@@ -60,5 +62,6 @@ class ModelMergerService {
         messages = messages.sortedBy { it.getRawName() },
         signals = signals.sortedBy { it.getRawName() },
         errors = errors.sortedBy { it.getRawName() },
+        escalations = escalations.sortedBy { it.getRawName() },
     )
 }
