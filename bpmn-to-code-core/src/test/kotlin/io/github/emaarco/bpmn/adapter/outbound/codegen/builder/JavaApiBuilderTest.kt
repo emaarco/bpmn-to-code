@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
@@ -24,7 +25,8 @@ class JavaApiBuilderTest {
                     welcomeMailImpl = "\${newsletterSendWelcomeMail}",
                     registrationCompletedImpl = "newsletter.registrationCompleted",
                     extraVariables = listOf(VariableDefinition("testVariable")),
-                )
+                ),
+                escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
             )
         )
 

@@ -132,8 +132,8 @@ class ZeebeModelExtractorTest {
         assertThat(eventSubProcess.elementType).isEqualTo(BpmnElementType.EVENT_SUB_PROCESS)
 
         assertThat(bpmnModel.escalations).containsExactlyInAnyOrder(
-            EscalationDefinition("Event_0zfsqqc", "escalation_notifySupport", "200"),
-            EscalationDefinition("Event_06asqkm", "escalation_notifySupport", "200"),
+            EscalationDefinition("escalationEndEvent_nofitySupport", "escalation_notifySupport", "200"),
+            EscalationDefinition("escalationEndEvent_nofitySupportAfterRepeatedError", "escalation_notifySupport", "200"),
         )
     }
 

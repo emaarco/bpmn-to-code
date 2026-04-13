@@ -259,5 +259,12 @@
             "name": "Error_InvalidMail",
             "code": "500"
         }
+    ],
+    "escalations": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Escalation_RegistrationFailed",
+            "code": "100"
+        }
     ]
 }

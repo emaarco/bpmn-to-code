@@ -182,6 +182,21 @@ public final class NewsletterSubscriptionProcessApi {
     }
   }
 
+  public static final class Escalations {
+    public static final BpmnEscalation ESCALATION_REGISTRATION_FAILED = new BpmnEscalation("Escalation_RegistrationFailed", "100");
+
+    public static class BpmnEscalation {
+      public final String name;
+
+      public final String code;
+
+      BpmnEscalation(String name, String code) {
+        this.name = name;
+        this.code = code;
+      }
+    }
+  }
+
   public static final class Signals {
     public static final String SIGNAL_REGISTRATION_NOT_POSSIBLE = "Signal_RegistrationNotPossible";
   }

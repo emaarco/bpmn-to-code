@@ -73,7 +73,7 @@
         <bpmn:outgoing>Flow_0enjkoe</bpmn:outgoing>
         <bpmn:outgoing>Flow_081cykl</bpmn:outgoing>
       </bpmn:eventBasedGateway>
-      <bpmn:sequenceFlow id="Flow_18nf2jh" name="No" sourceRef="gateway_canSendAgain" targetRef="Event_0zfsqqc">
+      <bpmn:sequenceFlow id="Flow_18nf2jh" name="No" sourceRef="gateway_canSendAgain" targetRef="escalationEndEvent_nofitySupport">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${canBeResolved == false}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:serviceTask id="serviceTask_sendMailAgain" name="Send mail again" camunda:type="external" camunda:topic="newsletter.sendMailToSubscriber">
@@ -88,7 +88,7 @@
           <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1D</bpmn:timeDuration>
         </bpmn:timerEventDefinition>
       </bpmn:intermediateCatchEvent>
-      <bpmn:endEvent id="Event_0zfsqqc" name="Notify support">
+      <bpmn:endEvent id="escalationEndEvent_nofitySupport" name="Notify support">
         <bpmn:incoming>Flow_18nf2jh</bpmn:incoming>
         <bpmn:escalationEventDefinition id="EscalationEventDefinition_0v78ov7" escalationRef="Escalation_2gr27c9" />
       </bpmn:endEvent>
@@ -98,15 +98,15 @@
         <bpmn:messageEventDefinition id="MessageEventDefinition_1wq8qup" messageRef="Message_0qejt6h" />
       </bpmn:intermediateCatchEvent>
       <bpmn:sequenceFlow id="Flow_081cykl" sourceRef="eventGateway_afterSendingAgain" targetRef="event_mailRejectedAgain" />
-      <bpmn:sequenceFlow id="Flow_0x9thpq" sourceRef="event_mailRejectedAgain" targetRef="Event_06asqkm" />
-      <bpmn:endEvent id="Event_06asqkm" name="Notify support">
+      <bpmn:sequenceFlow id="Flow_0x9thpq" sourceRef="event_mailRejectedAgain" targetRef="escalationEndEvent_nofitySupportAfterRepeatedError" />
+      <bpmn:endEvent id="escalationEndEvent_nofitySupportAfterRepeatedError" name="Notify support">
         <bpmn:incoming>Flow_0x9thpq</bpmn:incoming>
         <bpmn:escalationEventDefinition id="EscalationEventDefinition_0y07we7" escalationRef="Escalation_2gr27c9" />
       </bpmn:endEvent>
-      <bpmn:endEvent id="Event_13xucnu" name="Temporary issue resolved">
+      <bpmn:endEvent id="endEvent_issueResolved" name="Temporary issue resolved">
         <bpmn:incoming>Flow_0338xzf</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_0338xzf" sourceRef="timer_noRejectionForOneDay" targetRef="Event_13xucnu" />
+      <bpmn:sequenceFlow id="Flow_0338xzf" sourceRef="timer_noRejectionForOneDay" targetRef="endEvent_issueResolved" />
     </bpmn:subProcess>
   </bpmn:process>
   <bpmn:escalation id="Escalation_2gr27c9" name="escalation_notifySupport" escalationCode="200" />
@@ -178,7 +178,7 @@
           <dc:Bounds x="813" y="475" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0e276d8_di" bpmnElement="Event_0zfsqqc">
+      <bpmndi:BPMNShape id="Event_0e276d8_di" bpmnElement="escalationEndEvent_nofitySupport">
         <dc:Bounds x="597" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="581" y="585" width="68" height="14" />
@@ -190,16 +190,16 @@
           <dc:Bounds x="824" y="585" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_13xucnu_di" bpmnElement="Event_13xucnu">
-        <dc:Bounds x="962" y="432" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="940" y="475" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_152e8n1_di" bpmnElement="Event_06asqkm">
+      <bpmndi:BPMNShape id="Event_152e8n1_di" bpmnElement="escalationEndEvent_nofitySupportAfterRepeatedError">
         <dc:Bounds x="962" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="946" y="585" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13xucnu_di" bpmnElement="endEvent_issueResolved">
+        <dc:Bounds x="962" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="940" y="475" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0vtppnk_di" bpmnElement="Flow_0vtppnk">
@@ -217,6 +217,10 @@
           <dc:Bounds x="529" y="432" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vym6nu_di" bpmnElement="Flow_0vym6nu">
+        <di:waypoint x="665" y="450" />
+        <di:waypoint x="720" y="450" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18nf2jh_di" bpmnElement="Flow_18nf2jh">
         <di:waypoint x="485" y="475" />
         <di:waypoint x="485" y="560" />
@@ -224,10 +228,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="493" y="515" width="15" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0vym6nu_di" bpmnElement="Flow_0vym6nu">
-        <di:waypoint x="665" y="450" />
-        <di:waypoint x="720" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0enjkoe_di" bpmnElement="Flow_0enjkoe">
         <di:waypoint x="770" y="450" />
@@ -238,13 +238,13 @@
         <di:waypoint x="745" y="560" />
         <di:waypoint x="837" y="560" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0338xzf_di" bpmnElement="Flow_0338xzf">
-        <di:waypoint x="873" y="450" />
-        <di:waypoint x="962" y="450" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0x9thpq_di" bpmnElement="Flow_0x9thpq">
         <di:waypoint x="873" y="560" />
         <di:waypoint x="962" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0338xzf_di" bpmnElement="Flow_0338xzf">
+        <di:waypoint x="873" y="450" />
+        <di:waypoint x="962" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bianz5_di" bpmnElement="Flow_0bianz5">
         <di:waypoint x="278" y="120" />
@@ -254,13 +254,6 @@
         <di:waypoint x="430" y="120" />
         <di:waypoint x="475" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1jogut0_di" bpmnElement="Flow_1jogut0">
-        <di:waypoint x="525" y="120" />
-        <di:waypoint x="570" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="531" y="102" width="18" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ruayvl_di" bpmnElement="Flow_1ruayvl">
         <di:waypoint x="670" y="120" />
         <di:waypoint x="710" y="120" />
@@ -268,6 +261,13 @@
       <bpmndi:BPMNEdge id="Flow_0v2v55n_di" bpmnElement="Flow_0v2v55n">
         <di:waypoint x="810" y="120" />
         <di:waypoint x="872" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jogut0_di" bpmnElement="Flow_1jogut0">
+        <di:waypoint x="525" y="120" />
+        <di:waypoint x="570" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="531" y="102" width="18" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gsz7wd_di" bpmnElement="Flow_1gsz7wd">
         <di:waypoint x="500" y="145" />

@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
@@ -30,7 +31,8 @@ class KotlinApiBuilderTest {
                     welcomeMailImpl = "\${newsletterSendWelcomeMail}",
                     registrationCompletedImpl = "newsletter.registrationCompleted",
                     extraVariables = listOf(VariableDefinition("testVariable")),
-                )
+                ),
+                escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
             )
         )
 

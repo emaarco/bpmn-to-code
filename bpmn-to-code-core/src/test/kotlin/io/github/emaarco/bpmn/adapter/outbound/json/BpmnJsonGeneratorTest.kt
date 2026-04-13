@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.json
 
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,7 +14,9 @@ class BpmnJsonGeneratorTest {
     fun `generates correct JSON for newsletter model`() {
 
         // given: the newsletter BPMN model
-        val model = testNewsletterBpmnModel()
+        val model = testNewsletterBpmnModel(
+            escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
+        )
 
         // when: generating JSON
         val result = underTest.generate(model)

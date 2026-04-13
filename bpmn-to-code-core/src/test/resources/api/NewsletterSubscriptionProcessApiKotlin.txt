@@ -275,6 +275,15 @@ object NewsletterSubscriptionProcessApi {
     )
   }
 
+  object Escalations {
+    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation = BpmnEscalation("Escalation_RegistrationFailed", "100")
+
+    data class BpmnEscalation(
+      val name: String,
+      val code: String,
+    )
+  }
+
   object Signals {
     const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
   }
