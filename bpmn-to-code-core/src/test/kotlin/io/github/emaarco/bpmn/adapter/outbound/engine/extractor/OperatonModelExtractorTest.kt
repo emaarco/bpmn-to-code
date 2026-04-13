@@ -4,6 +4,10 @@ import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_BEFORE_KEY
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.EXCLUSIVE_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_KIND_KEY
@@ -40,13 +44,15 @@ class OperatonModelExtractorTest {
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("reasonCode"), VariableDefinition("abortResult")),
                         incoming = listOf("Timer_After3Days"),
-                        outgoing = listOf("EndEvent_RegistrationAborted")),
-                    FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK,
+                        outgoing = listOf("EndEvent_RegistrationAborted"),
+                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
+                    FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
                         variables = listOf(VariableDefinition("subscriptionId")),
                         attachedElements = listOf("Timer_EveryDay"),
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("Activity_SendConfirmationMail"),
-                        outgoing = listOf("EndEvent_SubscriptionConfirmed")),
+                        outgoing = listOf("EndEvent_SubscriptionConfirmed"),
+                        customProperties = mapOf(ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["Activity_SendConfirmationMail"]!!),
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("otherVariable")),
@@ -57,7 +63,8 @@ class OperatonModelExtractorTest {
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["Activity_SendWelcomeMail"]!!),
                         variables = listOf(VariableDefinition("subscriptionId")),
                         incoming = listOf("SubProcess_Confirmation"),
-                        outgoing = listOf("EndEvent_RegistrationCompleted")),
+                        outgoing = listOf("EndEvent_RegistrationCompleted"),
+                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
                         incoming = listOf("CallActivity_AbortRegistration")),
                     FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
@@ -65,7 +72,8 @@ class OperatonModelExtractorTest {
                         variables = listOf(VariableDefinition("subscriptionId")),
                         incoming = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT,
-                        incoming = listOf("ErrorEvent_InvalidMail")),
+                        incoming = listOf("ErrorEvent_InvalidMail"),
+                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT,
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("Activity_ConfirmRegistration")),
@@ -75,7 +83,8 @@ class OperatonModelExtractorTest {
                     FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
                         variables = listOf(VariableDefinition("subscriptionId")),
                         parentId = "SubProcess_Confirmation",
-                        outgoing = listOf("Activity_SendConfirmationMail")),
+                        outgoing = listOf("Activity_SendConfirmationMail"),
+                        customProperties = mapOf(ASYNC_BEFORE_KEY to true)),
                     FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
                         variables = listOf(VariableDefinition("subscriptionId")),
                         outgoing = listOf("SubProcess_Confirmation")),
@@ -92,6 +101,9 @@ class OperatonModelExtractorTest {
                         attachedToRef = "Activity_ConfirmRegistration",
                         parentId = "SubProcess_Confirmation",
                         outgoing = listOf("Activity_SendConfirmationMail")),
+                ),
+                messages = listOf(
+                    MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
                 ),
             )
         )

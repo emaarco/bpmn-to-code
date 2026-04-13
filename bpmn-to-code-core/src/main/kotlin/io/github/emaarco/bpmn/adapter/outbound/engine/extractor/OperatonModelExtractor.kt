@@ -17,6 +17,9 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.g
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_BEFORE_KEY
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.EXCLUSIVE_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
@@ -58,8 +61,9 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val timers = modelInstance.findTimerEventDefinition()
         val variablesPerNode = extractVariablesPerNode(modelInstance)
 
+        val asyncPerNode = extractAsyncPerNode(modelInstance)
         val allServiceTasks = serviceTasks + messageSendEvents
-        val enrichedFlowNodes = enrichFlowNodes(flowNodes, allServiceTasks, callActivities, timers, variablesPerNode)
+        val enrichedFlowNodes = enrichFlowNodes(flowNodes, allServiceTasks, callActivities, timers, variablesPerNode, asyncPerNode)
 
         return BpmnModel(
             processId = processId,
@@ -78,6 +82,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         callActivities: List<CallActivityDefinition>,
         timers: List<TimerDefinition>,
         variablesPerNode: Map<String?, List<VariableDefinition>>,
+        asyncPerNode: Map<String?, Map<String, Any?>>,
     ): List<FlowNodeDefinition> {
         val serviceTaskById = serviceTasks.associateBy { it.id }
         val callActivityById = callActivities.associateBy { it.id }
@@ -90,7 +95,24 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
             val variables = variablesPerNode[node.id] ?: emptyList()
             val attachedElements = attachedElementsById[node.id] ?: emptyList()
-            node.copy(properties = properties, variables = variables, attachedElements = attachedElements)
+            val customProperties = asyncPerNode[node.id] ?: emptyMap()
+            node.copy(properties = properties, variables = variables, attachedElements = attachedElements, customProperties = customProperties)
+        }
+    }
+
+    private fun extractAsyncPerNode(modelInstance: ModelInstance): Map<String?, Map<String, Any?>> {
+        val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
+        return flowNodes.associate { node ->
+            val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val asyncBefore = node.getAttributeValueNs(NAMESPACE, "asyncBefore")?.toBoolean() ?: false
+            val asyncAfter = node.getAttributeValueNs(NAMESPACE, "asyncAfter")?.toBoolean() ?: false
+            val exclusive = node.getAttributeValueNs(NAMESPACE, "exclusive")?.toBoolean()
+            val props = buildMap<String, Any?> {
+                if (asyncBefore) put(ASYNC_BEFORE_KEY, true)
+                if (asyncAfter) put(ASYNC_AFTER_KEY, true)
+                if (exclusive == false) put(EXCLUSIVE_KEY, false)
+            }
+            nodeId to props
         }
     }
 
