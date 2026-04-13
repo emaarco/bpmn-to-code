@@ -57,7 +57,7 @@
         },
         {
             "id": "Activity_ConfirmRegistration",
-            "elementType": "RECEIVE_TASK",
+            "elementType": "USER_TASK",
             "parentId": "SubProcess_Confirmation",
             "attachedElements": [
                 "Timer_EveryDay"
@@ -158,6 +158,11 @@
             "properties": {
                 "type": "ServiceTask",
                 "implementationValue": "newsletter.sendWelcomeMail"
+            },
+            "customProperties": {
+                "asyncBefore": true,
+                "asyncAfter": true,
+                "exclusive": false
             }
         },
         {
@@ -179,10 +184,6 @@
         {
             "id": "StartEvent_SubmitRegistrationForm",
             "name": "Message_FormSubmitted"
-        },
-        {
-            "id": "Activity_ConfirmRegistration",
-            "name": "Message_SubscriptionConfirmed"
         }
     ],
     "signals": [

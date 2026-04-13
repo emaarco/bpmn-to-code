@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.json.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class BpmnModelJson(
@@ -24,6 +25,7 @@ data class FlowNodeJson(
     val outgoing: List<String> = emptyList(),
     val variables: List<String> = emptyList(),
     val properties: FlowNodePropertiesJson? = null,
+    val customProperties: Map<String, JsonElement> = emptyMap(),
 )
 
 @Serializable

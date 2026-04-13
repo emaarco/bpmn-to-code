@@ -3,6 +3,9 @@ package io.github.emaarco.bpmn.adapter.outbound.json
 import io.github.emaarco.bpmn.adapter.outbound.json.model.*
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.*
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
 
 class BpmnJsonMapper {
 
@@ -29,7 +32,16 @@ class BpmnJsonMapper {
             outgoing = outgoing,
             variables = variables.map { it.getRawName() },
             properties = properties.toJson(),
+            customProperties = customProperties.mapValues { (_, v) -> v.toJsonElement() },
         )
+    }
+
+    private fun Any?.toJsonElement(): JsonElement = when (this) {
+        null -> JsonNull
+        is Boolean -> JsonPrimitive(this)
+        is Number -> JsonPrimitive(this)
+        is String -> JsonPrimitive(this)
+        else -> JsonPrimitive(this.toString())
     }
 
     private fun FlowNodeProperties.toJson(): FlowNodePropertiesJson? = when (this) {
