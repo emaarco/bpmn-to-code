@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
+import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
@@ -9,6 +10,7 @@ import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
+import org.camunda.bpm.model.bpmn.instance.CompensateEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.EscalationEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway
@@ -95,6 +97,14 @@ object ModelInstanceUtils {
         return escalationEvents.map {
             val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             EscalationDefinition(id = elementId, name = it.escalation?.name, code = it.escalation?.escalationCode)
+        }
+    }
+
+    fun ModelInstance.findCompensateEventDefinitions(): List<CompensationDefinition> {
+        val compensateEvents = this.getModelElementsByType(CompensateEventDefinition::class.java)
+        return compensateEvents.map {
+            val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            CompensationDefinition(id = elementId, activityRef = it.activity?.id)
         }
     }
 

@@ -11,6 +11,7 @@ data class BpmnModelJson(
     val signals: List<SignalJson>,
     val errors: List<ErrorJson>,
     val escalations: List<EscalationJson> = emptyList(),
+    val compensations: List<CompensationJson> = emptyList(),
     val sequenceFlows: List<SequenceFlowJson>,
 )
 
@@ -72,4 +73,10 @@ data class EscalationJson(
     val id: String,
     val name: String,
     val code: String,
+)
+
+@Serializable
+data class CompensationJson(
+    val id: String,
+    val activityRef: String,
 )

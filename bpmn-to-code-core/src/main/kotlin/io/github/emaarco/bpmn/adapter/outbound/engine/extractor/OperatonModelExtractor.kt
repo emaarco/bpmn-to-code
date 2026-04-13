@@ -7,6 +7,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.DomElementUtils.with
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.extractAttribute
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelElementInstanceUtils.filterByType
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.MessageUtils.findAllMessagesWithSource
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findCompensateEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findErrorEventDefinition
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findEscalationEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findFlowNodes
@@ -58,6 +59,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val signals = modelInstance.findSignalEventDefinitions()
         val errors = modelInstance.findErrorEventDefinition()
         val escalations = modelInstance.findEscalationEventDefinitions()
+        val compensations = modelInstance.findCompensateEventDefinitions()
         val timers = modelInstance.findTimerEventDefinition()
         val variablesPerNode = extractVariablesPerNode(modelInstance)
 
@@ -73,6 +75,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             signals = signals,
             errors = errors,
             escalations = escalations,
+            compensations = compensations,
         )
     }
 

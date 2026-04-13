@@ -29,6 +29,7 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.TIMERS to TimersWriter(),
         ApiObjectType.ERRORS to ErrorsWriter(),
         ApiObjectType.ESCALATIONS to EscalationsWriter(),
+        ApiObjectType.COMPENSATIONS to CompensationsWriter(),
         ApiObjectType.SIGNALS to SignalsWriter(),
         ApiObjectType.VARIABLES to VariablesWriter(),
         ApiObjectType.FLOWS to FlowsWriter(),
@@ -349,6 +350,20 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
                     .build()
             )
             return builder.build()
+        }
+    }
+
+    private inner class CompensationsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.COMPENSATIONS
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val compensationsBuilder = TypeSpec.classBuilder("Compensations").addModifiers(PUBLIC, STATIC, FINAL)
+            modelApi.model.compensations.forEach { compensation ->
+                compensationsBuilder.addField(createAttribute(compensation))
+            }
+            builder.addType(compensationsBuilder.build())
         }
     }
 
