@@ -4,10 +4,8 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LIST
-import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.STRING
@@ -18,11 +16,14 @@ import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
-import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
-class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
+/**
+ * Generates the type-safe API contract for a single BPMN process as a Kotlin object file.
+ * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the sibling `types/` package via import.
+ */
+class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
@@ -41,13 +42,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         ApiObjectType.RELATIONS to RelationsWriter(),
     )
 
-    override fun buildApiFile(modelApi: BpmnModelApi): List<GeneratedApiFile> {
-        val processApiFile = buildProcessApiFile(modelApi)
-        val typeFiles = buildSharedTypeFiles(modelApi.packagePath, modelApi.outputLanguage)
-        return listOf(processApiFile) + typeFiles
-    }
-
-    private fun buildProcessApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
+    override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
         val objectName = modelApi.fileName()
         val unusedAnnotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
         val rootObjectBuilder = TypeSpec.objectBuilder(objectName)
@@ -66,121 +61,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
             packagePath = modelApi.packagePath,
             content = content,
             language = modelApi.outputLanguage
-        )
-    }
-
-    private fun buildSharedTypeFiles(packagePath: String, language: OutputLanguage): List<GeneratedApiFile> {
-        val typesPackage = "$packagePath.types"
-        return listOf(
-            buildBpmnTimerFile(typesPackage, language),
-            buildBpmnErrorFile(typesPackage, language),
-            buildBpmnEscalationFile(typesPackage, language),
-            buildBpmnFlowFile(typesPackage, language),
-            buildBpmnRelationsFile(typesPackage, language),
-        )
-    }
-
-    private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
-        val typeSpec = TypeSpec.classBuilder("BpmnTimer")
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter("type", STRING)
-                    .addParameter("timerValue", STRING)
-                    .build()
-            )
-            .addProperty(PropertySpec.builder("type", STRING).initializer("type").build())
-            .addProperty(PropertySpec.builder("timerValue", STRING).initializer("timerValue").build())
-            .build()
-        return buildTypeFile(typesPackage, "BpmnTimer", typeSpec, language)
-    }
-
-    private fun buildBpmnErrorFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
-        val typeSpec = TypeSpec.classBuilder("BpmnError")
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter("name", STRING)
-                    .addParameter("code", STRING)
-                    .build()
-            )
-            .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
-            .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
-            .build()
-        return buildTypeFile(typesPackage, "BpmnError", typeSpec, language)
-    }
-
-    private fun buildBpmnEscalationFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
-        val typeSpec = TypeSpec.classBuilder("BpmnEscalation")
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter("name", STRING)
-                    .addParameter("code", STRING)
-                    .build()
-            )
-            .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
-            .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
-            .build()
-        return buildTypeFile(typesPackage, "BpmnEscalation", typeSpec, language)
-    }
-
-    private fun buildBpmnFlowFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
-        val nullableString = STRING.copy(nullable = true)
-        val typeSpec = TypeSpec.classBuilder("BpmnFlow")
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter("id", STRING)
-                    .addParameter("sourceRef", STRING)
-                    .addParameter("targetRef", STRING)
-                    .addParameter(ParameterSpec.builder("condition", nullableString).defaultValue("null").build())
-                    .addParameter(ParameterSpec.builder("isDefault", BOOLEAN).defaultValue("false").build())
-                    .build()
-            )
-            .addProperty(PropertySpec.builder("id", STRING).initializer("id").build())
-            .addProperty(PropertySpec.builder("sourceRef", STRING).initializer("sourceRef").build())
-            .addProperty(PropertySpec.builder("targetRef", STRING).initializer("targetRef").build())
-            .addProperty(PropertySpec.builder("condition", nullableString).initializer("condition").build())
-            .addProperty(PropertySpec.builder("isDefault", BOOLEAN).initializer("isDefault").build())
-            .build()
-        return buildTypeFile(typesPackage, "BpmnFlow", typeSpec, language)
-    }
-
-    private fun buildBpmnRelationsFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
-        val listType = LIST.parameterizedBy(STRING)
-        val nullableString = STRING.copy(nullable = true)
-        val typeSpec = TypeSpec.classBuilder("BpmnRelations")
-            .addModifiers(KModifier.DATA)
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter("incoming", listType)
-                    .addParameter("outgoing", listType)
-                    .addParameter("parentId", nullableString)
-                    .addParameter("attachedToRef", nullableString)
-                    .addParameter("attachedElements", listType)
-                    .build()
-            )
-            .addProperty(PropertySpec.builder("incoming", listType).initializer("incoming").build())
-            .addProperty(PropertySpec.builder("outgoing", listType).initializer("outgoing").build())
-            .addProperty(PropertySpec.builder("parentId", nullableString).initializer("parentId").build())
-            .addProperty(PropertySpec.builder("attachedToRef", nullableString).initializer("attachedToRef").build())
-            .addProperty(PropertySpec.builder("attachedElements", listType).initializer("attachedElements").build())
-            .build()
-        return buildTypeFile(typesPackage, "BpmnRelations", typeSpec, language)
-    }
-
-    private fun buildTypeFile(typesPackage: String, className: String, typeSpec: TypeSpec, language: OutputLanguage): GeneratedApiFile {
-        val fileSpec = FileSpec.builder(typesPackage, className)
-            .addFileComment(autoGenComment)
-            .addType(typeSpec)
-            .build()
-        val content = buildString { fileSpec.writeTo(this) }.replace("public ", "")
-        return GeneratedApiFile(
-            fileName = "$className.kt",
-            packagePath = typesPackage,
-            content = content,
-            language = language,
         )
     }
 

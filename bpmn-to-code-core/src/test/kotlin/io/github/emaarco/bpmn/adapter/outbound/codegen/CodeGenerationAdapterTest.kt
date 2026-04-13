@@ -9,25 +9,28 @@ import org.junit.jupiter.api.Test
 
 class CodeGenerationAdapterTest {
 
-    private val kotlinBuilder = mockk<CodeGenerationAdapter.AbstractApiBuilder<*>>(relaxed = true)
+    private val kotlinProcessBuilder = mockk<CodeGenerationAdapter.AbstractProcessApiBuilder<*>>(relaxed = true)
+    private val kotlinTypesBuilder = mockk<CodeGenerationAdapter.AbstractSharedTypesBuilder>(relaxed = true)
     private val underTest = CodeGenerationAdapter(
-        builder = mapOf(OutputLanguage.KOTLIN to kotlinBuilder)
+        processApiBuilders = mapOf(OutputLanguage.KOTLIN to kotlinProcessBuilder),
+        sharedTypesBuilders = mapOf(OutputLanguage.KOTLIN to kotlinTypesBuilder),
     )
 
     @Test
-    fun `creates api-file using builder`() {
+    fun `creates api-file using builders`() {
         val modelApi = testBpmnModelApi()
-        val expectedFile = GeneratedApiFile(
-            fileName = "test.kt",
-            packagePath = "test",
-            content = "content",
-            language = OutputLanguage.KOTLIN
-        )
-        every { kotlinBuilder.buildApiFile(modelApi) } returns listOf(expectedFile)
+        val processFile = GeneratedApiFile(fileName = "TestApi.kt", packagePath = "packagePath", content = "content", language = OutputLanguage.KOTLIN)
+        val typeFile = GeneratedApiFile(fileName = "BpmnTimer.kt", packagePath = "packagePath.types", content = "content", language = OutputLanguage.KOTLIN)
+
+        every { kotlinProcessBuilder.buildApiFile(modelApi) } returns processFile
+        every { kotlinTypesBuilder.buildTypeFiles("packagePath", OutputLanguage.KOTLIN) } returns listOf(typeFile)
+
         val result = underTest.generateCode(modelApi)
-        verify { kotlinBuilder.buildApiFile(modelApi) }
-        assert(result == listOf(expectedFile))
-        confirmVerified(kotlinBuilder)
+
+        verify { kotlinProcessBuilder.buildApiFile(modelApi) }
+        verify { kotlinTypesBuilder.buildTypeFiles("packagePath", OutputLanguage.KOTLIN) }
+        assert(result == listOf(processFile, typeFile))
+        confirmVerified(kotlinProcessBuilder, kotlinTypesBuilder)
     }
 
     @Test

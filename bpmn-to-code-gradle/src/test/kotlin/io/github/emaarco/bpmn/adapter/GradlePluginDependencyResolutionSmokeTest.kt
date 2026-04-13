@@ -25,7 +25,7 @@ class GradlePluginDependencyResolutionSmokeTest {
     fun `plugin resolves all dependencies from published artifact`(@TempDir projectDir: File) {
         // Copy BPMN file into the temp project
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
-        val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/c8-subscribe-newsletter.bpmn")!!
+        val bpmnStream = requireNotNull(javaClass.classLoader.getResourceAsStream("bpmn/c8-subscribe-newsletter.bpmn"))
         File(resourcesDir, "c8-subscribe-newsletter.bpmn").writeBytes(bpmnStream.readBytes())
 
         // Write settings.gradle with pluginManagement resolving from mavenLocal
@@ -69,15 +69,11 @@ class GradlePluginDependencyResolutionSmokeTest {
 
         val packageDir = File(projectDir, "build/generated/io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
-        val generatedFiles = packageDir.listFiles()!!
+        val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
         val modelFiles = generatedFiles.filter { it.isFile }
-        assertThat(modelFiles).allSatisfy { file ->
-            assertThat(file.name).endsWith(".kt")
-        }
+        assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(".kt") }
         val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
-        assertThat(typesDir.listFiles()!!).allSatisfy { file ->
-            assertThat(file.name).endsWith(".kt")
-        }
+        assertThat(requireNotNull(typesDir.listFiles())).allSatisfy { file -> assertThat(file.name).endsWith(".kt") }
     }
 }
