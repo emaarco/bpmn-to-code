@@ -45,8 +45,6 @@ public final class NewsletterSubscriptionProcessApi {
 
   public static final class Messages {
     public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
-
-    public static final String MESSAGE_SUBSCRIPTION_CONFIRMED = "Message_SubscriptionConfirmed";
   }
 
   public static final class TaskTypes {

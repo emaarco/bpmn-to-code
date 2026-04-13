@@ -5,6 +5,9 @@ import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_BEFORE_KEY
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.EXCLUSIVE_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
@@ -54,7 +57,7 @@ fun testNewsletterBpmnModel(
             properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
             variables = listOf(VariableDefinition("subscriptionId")),
             incoming = listOf("Timer_After3Days"), outgoing = listOf("EndEvent_RegistrationAborted")),
-        FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK,
+        FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
             attachedElements = listOf("Timer_EveryDay"),
             parentId = "SubProcess_Confirmation",
             incoming = listOf("Activity_SendConfirmationMail"), outgoing = listOf("EndEvent_SubscriptionConfirmed")),
@@ -66,7 +69,8 @@ fun testNewsletterBpmnModel(
         FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
             properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail"))),
             variables = listOf(VariableDefinition("subscriptionId")),
-            incoming = listOf("SubProcess_Confirmation"), outgoing = listOf("EndEvent_RegistrationCompleted")),
+            incoming = listOf("SubProcess_Confirmation"), outgoing = listOf("EndEvent_RegistrationCompleted"),
+            customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
         FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
             incoming = listOf("CallActivity_AbortRegistration")),
         FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
@@ -115,7 +119,6 @@ fun testNewsletterBpmnModel(
     ),
     messages: List<MessageDefinition> = listOf(
         MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
-        MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed")
     ),
     signals: List<SignalDefinition> = listOf(
         SignalDefinition("EndEvent_RegistrationNotPossible", "Signal_RegistrationNotPossible")

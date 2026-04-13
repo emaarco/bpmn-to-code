@@ -5,7 +5,6 @@ import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
-import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_BEFORE_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.EXCLUSIVE_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
@@ -101,9 +100,6 @@ class Camunda7ModelExtractorTest {
                         attachedToRef = "Activity_ConfirmRegistration",
                         parentId = "SubProcess_Confirmation",
                         outgoing = listOf("Activity_SendConfirmationMail")),
-                ),
-                messages = listOf(
-                    MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
                 ),
             )
         )

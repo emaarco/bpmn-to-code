@@ -51,8 +51,6 @@ object NewsletterSubscriptionProcessApi {
 
   object Messages {
     const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
-
-    const val MESSAGE_SUBSCRIPTION_CONFIRMED: String = "Message_SubscriptionConfirmed"
   }
 
   object TaskTypes {
