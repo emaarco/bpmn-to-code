@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 data class BpmnModelJson(
     val processId: String,
     val flowNodes: List<FlowNodeJson>,
-    val sequenceFlows: List<SequenceFlowJson>,
     val messages: List<MessageJson>,
     val signals: List<SignalJson>,
     val errors: List<ErrorJson>,
     val escalations: List<EscalationJson> = emptyList(),
+    val sequenceFlows: List<SequenceFlowJson>,
 )
 
 @Serializable

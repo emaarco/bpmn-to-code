@@ -175,6 +175,36 @@
             }
         }
     ],
+    "messages": [
+        {
+            "id": "StartEvent_SubmitRegistrationForm",
+            "name": "Message_FormSubmitted"
+        },
+        {
+            "id": "Activity_ConfirmRegistration",
+            "name": "Message_SubscriptionConfirmed"
+        }
+    ],
+    "signals": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Signal_RegistrationNotPossible"
+        }
+    ],
+    "errors": [
+        {
+            "id": "ErrorEvent_InvalidMail",
+            "name": "Error_InvalidMail",
+            "code": "500"
+        }
+    ],
+    "escalations": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Escalation_RegistrationFailed",
+            "code": "100"
+        }
+    ],
     "sequenceFlows": [
         {
             "id": "Flow_05i3x1y",
@@ -235,36 +265,6 @@
             "sourceRef": "Timer_After3Days",
             "targetRef": "CallActivity_AbortRegistration",
             "isDefault": false
-        }
-    ],
-    "messages": [
-        {
-            "id": "StartEvent_SubmitRegistrationForm",
-            "name": "Message_FormSubmitted"
-        },
-        {
-            "id": "Activity_ConfirmRegistration",
-            "name": "Message_SubscriptionConfirmed"
-        }
-    ],
-    "signals": [
-        {
-            "id": "EndEvent_RegistrationNotPossible",
-            "name": "Signal_RegistrationNotPossible"
-        }
-    ],
-    "errors": [
-        {
-            "id": "ErrorEvent_InvalidMail",
-            "name": "Error_InvalidMail",
-            "code": "500"
-        }
-    ],
-    "escalations": [
-        {
-            "id": "EndEvent_RegistrationNotPossible",
-            "name": "Escalation_RegistrationFailed",
-            "code": "100"
         }
     ]
 }

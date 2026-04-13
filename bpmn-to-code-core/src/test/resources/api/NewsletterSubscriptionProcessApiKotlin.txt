@@ -45,6 +45,89 @@ object NewsletterSubscriptionProcessApi {
     const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
   }
 
+  object CallActivities {
+    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
+  }
+
+  object Messages {
+    const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
+
+    const val MESSAGE_SUBSCRIPTION_CONFIRMED: String = "Message_SubscriptionConfirmed"
+  }
+
+  object TaskTypes {
+    const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
+
+    const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
+
+    const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
+  }
+
+  object Timers {
+    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
+
+    val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
+
+    data class BpmnTimer(
+      val type: String,
+      val timerValue: String,
+    )
+  }
+
+  object Errors {
+    val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
+
+    data class BpmnError(
+      val name: String,
+      val code: String,
+    )
+  }
+
+  object Escalations {
+    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation = BpmnEscalation("Escalation_RegistrationFailed", "100")
+
+    data class BpmnEscalation(
+      val name: String,
+      val code: String,
+    )
+  }
+
+  object Signals {
+    const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
+  }
+
+  object Variables {
+    const val SUBSCRIPTION_ID: String = "subscriptionId"
+
+    const val TEST_VARIABLE: String = "testVariable"
+
+    object ActivitySendConfirmationMail {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+
+      const val TEST_VARIABLE: String = "testVariable"
+    }
+
+    object ActivitySendWelcomeMail {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+
+    object CallActivityAbortRegistration {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+
+    object EndEventRegistrationCompleted {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+
+    object StartEventRequestReceived {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+
+    object StartEventSubmitRegistrationForm {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    }
+  }
+
   object Flows {
     val FLOW_05_I_3_X_1_Y: BpmnFlow = BpmnFlow(
             id = "Flow_05i3x1y",
@@ -235,88 +318,5 @@ object NewsletterSubscriptionProcessApi {
       val attachedToRef: String?,
       val attachedElements: List<String>,
     )
-  }
-
-  object CallActivities {
-    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
-  }
-
-  object Messages {
-    const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
-
-    const val MESSAGE_SUBSCRIPTION_CONFIRMED: String = "Message_SubscriptionConfirmed"
-  }
-
-  object TaskTypes {
-    const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
-
-    const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
-
-    const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
-  }
-
-  object Timers {
-    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
-
-    val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
-
-    data class BpmnTimer(
-      val type: String,
-      val timerValue: String,
-    )
-  }
-
-  object Errors {
-    val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
-
-    data class BpmnError(
-      val name: String,
-      val code: String,
-    )
-  }
-
-  object Escalations {
-    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation = BpmnEscalation("Escalation_RegistrationFailed", "100")
-
-    data class BpmnEscalation(
-      val name: String,
-      val code: String,
-    )
-  }
-
-  object Signals {
-    const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
-  }
-
-  object Variables {
-    const val SUBSCRIPTION_ID: String = "subscriptionId"
-
-    const val TEST_VARIABLE: String = "testVariable"
-
-    object ActivitySendConfirmationMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-
-      const val TEST_VARIABLE: String = "testVariable"
-    }
-
-    object ActivitySendWelcomeMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object CallActivityAbortRegistration {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object EndEventRegistrationCompleted {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object StartEventRequestReceived {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object StartEventSubmitRegistrationForm {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
   }
 }
