@@ -17,6 +17,7 @@ enum class BpmnElementType(val bpmnTypeName: String) {
     SCRIPT_TASK("scriptTask"),
     MANUAL_TASK("manualTask"),
     BUSINESS_RULE_TASK("businessRuleTask"),
+    TASK("task"),
 
     // Events
     START_EVENT("startEvent"),

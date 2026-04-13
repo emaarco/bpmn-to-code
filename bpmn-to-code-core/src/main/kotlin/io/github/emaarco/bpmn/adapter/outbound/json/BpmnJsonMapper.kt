@@ -18,6 +18,7 @@ class BpmnJsonMapper {
             signals = model.signals.mapNotNull { it.toJson() },
             errors = model.errors.mapNotNull { it.toJson() },
             escalations = model.escalations.mapNotNull { it.toJson() },
+            compensations = model.compensations.mapNotNull { it.toJson() },
         )
     }
 
@@ -96,5 +97,10 @@ class BpmnJsonMapper {
         val (name, code) = getValue()
         if (name.isEmpty()) return null
         return EscalationJson(id = id ?: "", name = name, code = code)
+    }
+
+    private fun CompensationDefinition.toJson(): CompensationJson? {
+        val activityRef = getValue().takeIf { it.isNotEmpty() } ?: return null
+        return CompensationJson(id = id ?: "", activityRef = activityRef)
     }
 }

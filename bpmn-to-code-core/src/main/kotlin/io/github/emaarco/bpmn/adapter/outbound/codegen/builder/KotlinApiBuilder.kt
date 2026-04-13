@@ -33,6 +33,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         ApiObjectType.TIMERS to TimersWriter(),
         ApiObjectType.ERRORS to ErrorsWriter(),
         ApiObjectType.ESCALATIONS to EscalationsWriter(),
+        ApiObjectType.COMPENSATIONS to CompensationsWriter(),
         ApiObjectType.SIGNALS to SignalsWriter(),
         ApiObjectType.VARIABLES to VariablesWriter(),
         ApiObjectType.FLOWS to FlowsWriter(),
@@ -334,6 +335,20 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         }
 
         private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
+    }
+
+    private inner class CompensationsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.COMPENSATIONS
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val compensationsBuilder = TypeSpec.objectBuilder("Compensations")
+            modelApi.model.compensations.forEach { compensation ->
+                compensationsBuilder.addProperty(createAttribute(compensation))
+            }
+            builder.addType(compensationsBuilder.build())
+        }
     }
 
     private inner class TimersWriter : ObjectWriter<TypeSpec.Builder> {

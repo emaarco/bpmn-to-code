@@ -12,6 +12,7 @@ enum class ApiObjectType {
     TIMERS,
     ERRORS,
     ESCALATIONS,
+    COMPENSATIONS,
     SIGNALS,
     VARIABLES
 }
