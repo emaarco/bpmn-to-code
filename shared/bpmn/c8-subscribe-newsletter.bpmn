@@ -124,17 +124,17 @@
       <bpmn:incoming>Flow_1bsb8no</bpmn:incoming>
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_0ych49i" activityRef="serviceTask_incrementSubscriptionCounter" />
     </bpmn:endEvent>
-    <bpmn:boundaryEvent id="compensationEvent_onSubscriptionCounter" name="Registration aborted" attachedToRef="serviceTask_incrementSubscriptionCounter">
+    <bpmn:boundaryEvent id="CompensationEvent_OnSubscriptionCounter" name="Registration aborted" attachedToRef="serviceTask_incrementSubscriptionCounter">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_1ffa569" />
     </bpmn:boundaryEvent>
-    <bpmn:task id="compensationTask_decrementSubscriptionCounter" name="Decrement subscription counter" isForCompensation="true">
+    <bpmn:task id="CompensationTask_DecrementSubscriptionCounter" name="Decrement subscription counter" isForCompensation="true">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:input source="=subscriptionId" target="subscriptionId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
     </bpmn:task>
-    <bpmn:association id="Association_0vlmtgi" associationDirection="One" sourceRef="compensationEvent_onSubscriptionCounter" targetRef="compensationTask_decrementSubscriptionCounter" />
+    <bpmn:association id="Association_0vlmtgi" associationDirection="One" sourceRef="CompensationEvent_OnSubscriptionCounter" targetRef="CompensationTask_DecrementSubscriptionCounter" />
   </bpmn:process>
   <bpmn:signal id="Signal_14g8ki5" name="Signal_RegistrationNotPossible" />
   <bpmn:error id="Error_0uxgmyc" name="Error_InvalidMail" errorCode="500" />
@@ -150,7 +150,7 @@
           <dc:Bounds x="971" y="145" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1d3wq3r_di" bpmnElement="compensationTask_decrementSubscriptionCounter">
+      <bpmndi:BPMNShape id="Activity_1d3wq3r_di" bpmnElement="CompensationTask_DecrementSubscriptionCounter">
         <dc:Bounds x="290" y="470" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -247,7 +247,7 @@
         <di:waypoint x="920" y="320" />
         <di:waypoint x="982" y="320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_182nhy4_di" bpmnElement="compensationEvent_onSubscriptionCounter">
+      <bpmndi:BPMNShape id="Event_182nhy4_di" bpmnElement="CompensationEvent_OnSubscriptionCounter">
         <dc:Bounds x="172" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="200" y="385" width="59" height="27" />

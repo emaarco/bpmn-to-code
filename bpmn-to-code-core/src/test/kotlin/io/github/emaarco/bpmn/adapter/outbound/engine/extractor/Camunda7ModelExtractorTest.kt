@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
@@ -68,9 +69,10 @@ class Camunda7ModelExtractorTest {
                         customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("CompensationEndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
                         incoming = listOf("CallActivity_AbortRegistration")),
-                    FlowNodeDefinition("compensationEvent_onSubscriptionCounter", BpmnElementType.BOUNDARY_EVENT,
-                        attachedToRef = "serviceTask_incrementSubscriptionCounter"),
-                    FlowNodeDefinition("compensationTask_decrementSubscriptionCounter", BpmnElementType.TASK,
+                    FlowNodeDefinition("CompensationEvent_OnSubscriptionCounter", BpmnElementType.BOUNDARY_EVENT,
+                        attachedToRef = "serviceTask_incrementSubscriptionCounter",
+                        customProperties = mapOf(ASYNC_AFTER_KEY to true)),
+                    FlowNodeDefinition("CompensationTask_DecrementSubscriptionCounter", BpmnElementType.TASK,
                         variables = listOf(VariableDefinition("subscriptionId"))),
                     FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["EndEvent_RegistrationCompleted"]!!),
@@ -87,7 +89,7 @@ class Camunda7ModelExtractorTest {
                         outgoing = listOf("EndEvent_RegistrationNotPossible")),
                     FlowNodeDefinition("serviceTask_incrementSubscriptionCounter", BpmnElementType.SERVICE_TASK,
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["serviceTask_incrementSubscriptionCounter"]!!),
-                        attachedElements = listOf("compensationEvent_onSubscriptionCounter"),
+                        attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
                         incoming = listOf("StartEvent_SubmitRegistrationForm"),
                         outgoing = listOf("SubProcess_Confirmation")),
                     FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
@@ -126,8 +128,8 @@ class Camunda7ModelExtractorTest {
                     SequenceFlowDefinition("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration"),
                 ),
                 compensations = listOf(
-                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", "serviceTask_incrementSubscriptionCounter", customProperties = mapOf("waitForCompletion" to false)),
-                    CompensationDefinition("compensationEvent_onSubscriptionCounter", null, customProperties = mapOf("waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING, customProperties = mapOf("activityRef" to "serviceTask_incrementSubscriptionCounter", "waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING, customProperties = mapOf("waitForCompletion" to false)),
                 ),
             )
         )

@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
@@ -104,10 +105,12 @@ object ModelInstanceUtils {
         val compensateEvents = this.getModelElementsByType(CompensateEventDefinition::class.java)
         return compensateEvents.map {
             val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val type = if (it.parentElement is BoundaryEvent) CompensationType.CATCHING else CompensationType.THROWING
             CompensationDefinition(
                 id = elementId,
-                activityRef = it.activity?.id,
+                type = type,
                 customProperties = buildMap {
+                    it.activity?.id?.let { ref -> put(CompensationDefinition.ACTIVITY_REF_KEY, ref) }
                     put(CompensationDefinition.WAIT_FOR_COMPLETION_KEY, it.isWaitForCompletion)
                 },
             )
