@@ -34,6 +34,7 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
         ApiObjectType.TIMERS to TimersWriter(),
         ApiObjectType.ERRORS to ErrorsWriter(),
+        ApiObjectType.ESCALATIONS to EscalationsWriter(),
         ApiObjectType.SIGNALS to SignalsWriter(),
         ApiObjectType.VARIABLES to VariablesWriter()
     )
@@ -295,6 +296,36 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         private fun buildErrorDataClass(): TypeSpec {
             val constructor = FunSpec.constructorBuilder().addStringParameter("name").addStringParameter("code").build()
             return TypeSpec.classBuilder("BpmnError")
+                .addModifiers(KModifier.DATA)
+                .primaryConstructor(constructor)
+                .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
+                .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
+                .build()
+        }
+
+        private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
+    }
+
+    private class EscalationsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.ESCALATIONS
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val escalationsBuilder = TypeSpec.objectBuilder("Escalations")
+            escalationsBuilder.addType(buildEscalationDataClass())
+            modelApi.model.escalations.forEach {
+                val (escalationName, escalationCode) = it.getValue()
+                val instanceBuilder = PropertySpec.builder(it.getName(), ClassName("", "BpmnEscalation"))
+                val variable = instanceBuilder.initializer("BpmnEscalation(\"$escalationName\", \"$escalationCode\")")
+                escalationsBuilder.addProperty(variable.build())
+            }
+            builder.addType(escalationsBuilder.build())
+        }
+
+        private fun buildEscalationDataClass(): TypeSpec {
+            val constructor = FunSpec.constructorBuilder().addStringParameter("name").addStringParameter("code").build()
+            return TypeSpec.classBuilder("BpmnEscalation")
                 .addModifiers(KModifier.DATA)
                 .primaryConstructor(constructor)
                 .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())

@@ -10,6 +10,7 @@ data class BpmnModelJson(
     val messages: List<MessageJson>,
     val signals: List<SignalJson>,
     val errors: List<ErrorJson>,
+    val escalations: List<EscalationJson> = emptyList(),
 )
 
 @Serializable
@@ -59,6 +60,13 @@ data class SignalJson(
 
 @Serializable
 data class ErrorJson(
+    val id: String,
+    val name: String,
+    val code: String,
+)
+
+@Serializable
+data class EscalationJson(
     val id: String,
     val name: String,
     val code: String,

@@ -30,6 +30,7 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
         ApiObjectType.TIMERS to TimersWriter(),
         ApiObjectType.ERRORS to ErrorsWriter(),
+        ApiObjectType.ESCALATIONS to EscalationsWriter(),
         ApiObjectType.SIGNALS to SignalsWriter(),
         ApiObjectType.VARIABLES to VariablesWriter()
     )
@@ -304,6 +305,39 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
 
         private fun buildErrorClass(): TypeSpec {
             val builder = TypeSpec.classBuilder("BpmnError").addModifiers(PUBLIC, STATIC)
+            builder.addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
+            builder.addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
+            builder.addMethod(
+                MethodSpec.constructorBuilder()
+                    .addParameter(String::class.java, "name")
+                    .addParameter(String::class.java, "code")
+                    .addStatement("this.name = name")
+                    .addStatement("this.code = code")
+                    .build()
+            )
+            return builder.build()
+        }
+    }
+
+    private class EscalationsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.ESCALATIONS
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val escalationsBuilder = TypeSpec.classBuilder("Escalations").addModifiers(PUBLIC, STATIC, FINAL)
+            escalationsBuilder.addType(buildEscalationClass())
+            modelApi.model.escalations.forEach {
+                val (escalationName, escalationCode) = it.getValue()
+                val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnEscalation"), it.getName())
+                val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)
+                escalationsBuilder.addField(variable.initializer("new BpmnEscalation(\$S, \$S)", escalationName, escalationCode).build())
+            }
+            builder.addType(escalationsBuilder.build())
+        }
+
+        private fun buildEscalationClass(): TypeSpec {
+            val builder = TypeSpec.classBuilder("BpmnEscalation").addModifiers(PUBLIC, STATIC)
             builder.addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
             builder.addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
             builder.addMethod(

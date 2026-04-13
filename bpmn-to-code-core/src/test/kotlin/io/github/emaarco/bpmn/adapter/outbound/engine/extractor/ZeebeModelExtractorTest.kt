@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
@@ -118,6 +119,21 @@ class ZeebeModelExtractorTest {
             VariableDefinition("subscriber"),
             VariableDefinition("results"),
             VariableDefinition("result")
+        )
+    }
+
+    @Test
+    fun `extract detects event subprocess type and extracts escalations`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+
+        val eventSubProcess = bpmnModel.flowNodes.first { it.id == "eventSubProcess_errorHandling" }
+        assertThat(eventSubProcess.elementType).isEqualTo(BpmnElementType.EVENT_SUB_PROCESS)
+
+        assertThat(bpmnModel.escalations).containsExactlyInAnyOrder(
+            EscalationDefinition("escalationEndEvent_nofitySupport", "escalation_notifySupport", "200"),
+            EscalationDefinition("escalationEndEvent_nofitySupportAfterRepeatedError", "escalation_notifySupport", "200"),
         )
     }
 

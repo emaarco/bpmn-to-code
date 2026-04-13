@@ -66,7 +66,7 @@
         <bpmn:outgoing>Flow_0enjkoe</bpmn:outgoing>
         <bpmn:outgoing>Flow_081cykl</bpmn:outgoing>
       </bpmn:eventBasedGateway>
-      <bpmn:sequenceFlow id="Flow_18nf2jh" name="No" sourceRef="gateway_canSendAgain" targetRef="Event_0zfsqqc">
+      <bpmn:sequenceFlow id="Flow_18nf2jh" name="No" sourceRef="gateway_canSendAgain" targetRef="escalationEndEvent_nofitySupport">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${canBeResolved == false}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:serviceTask id="serviceTask_sendMailAgain" name="Send mail again" operaton:type="external" operaton:topic="newsletter.sendMailToSubscriber">
@@ -81,7 +81,7 @@
           <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1D</bpmn:timeDuration>
         </bpmn:timerEventDefinition>
       </bpmn:intermediateCatchEvent>
-      <bpmn:endEvent id="Event_0zfsqqc" name="Notify support">
+      <bpmn:endEvent id="escalationEndEvent_nofitySupport" name="Notify support">
         <bpmn:incoming>Flow_18nf2jh</bpmn:incoming>
         <bpmn:escalationEventDefinition id="EscalationEventDefinition_0v78ov7" escalationRef="Escalation_2gr27c9" />
       </bpmn:endEvent>
@@ -91,15 +91,15 @@
         <bpmn:messageEventDefinition id="MessageEventDefinition_1wq8qup" messageRef="Message_0qejt6h" />
       </bpmn:intermediateCatchEvent>
       <bpmn:sequenceFlow id="Flow_081cykl" sourceRef="eventGateway_afterSendingAgain" targetRef="event_mailRejectedAgain" />
-      <bpmn:sequenceFlow id="Flow_0x9thpq" sourceRef="event_mailRejectedAgain" targetRef="Event_06asqkm" />
-      <bpmn:endEvent id="Event_06asqkm" name="Notify support">
+      <bpmn:sequenceFlow id="Flow_0x9thpq" sourceRef="event_mailRejectedAgain" targetRef="escalationEndEvent_nofitySupportAfterRepeatedError" />
+      <bpmn:endEvent id="escalationEndEvent_nofitySupportAfterRepeatedError" name="Notify support">
         <bpmn:incoming>Flow_0x9thpq</bpmn:incoming>
         <bpmn:escalationEventDefinition id="EscalationEventDefinition_0y07we7" escalationRef="Escalation_2gr27c9" />
       </bpmn:endEvent>
-      <bpmn:endEvent id="Event_13xucnu" name="Temporary issue resolved">
+      <bpmn:endEvent id="endEvent_issueResolved" name="Temporary issue resolved">
         <bpmn:incoming>Flow_0338xzf</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_0338xzf" sourceRef="timer_noRejectionForOneDay" targetRef="Event_13xucnu" />
+      <bpmn:sequenceFlow id="Flow_0338xzf" sourceRef="timer_noRejectionForOneDay" targetRef="endEvent_issueResolved" />
     </bpmn:subProcess>
   </bpmn:process>
   <bpmn:escalation id="Escalation_2gr27c9" name="escalation_notifySupport" escalationCode="200" />
@@ -202,7 +202,7 @@
           <dc:Bounds x="813" y="475" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0e276d8_di" bpmnElement="Event_0zfsqqc">
+      <bpmndi:BPMNShape id="Event_0e276d8_di" bpmnElement="escalationEndEvent_nofitySupport">
         <dc:Bounds x="597" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="581" y="585" width="68" height="14" />
@@ -214,13 +214,13 @@
           <dc:Bounds x="824" y="585" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_13xucnu_di" bpmnElement="Event_13xucnu">
+      <bpmndi:BPMNShape id="Event_13xucnu_di" bpmnElement="endEvent_issueResolved">
         <dc:Bounds x="962" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="940" y="475" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_152e8n1_di" bpmnElement="Event_06asqkm">
+      <bpmndi:BPMNShape id="Event_152e8n1_di" bpmnElement="escalationEndEvent_nofitySupportAfterRepeatedError">
         <dc:Bounds x="962" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="946" y="585" width="68" height="14" />

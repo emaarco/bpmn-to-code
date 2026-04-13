@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.domain
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
@@ -22,6 +23,7 @@ fun testBpmnModel(
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
     signals: List<SignalDefinition> = listOf(SignalDefinition(id = "signalId", name = "signalName")),
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
+    escalations: List<EscalationDefinition> = emptyList(),
 ) = BpmnModel(
     processId = processId,
     flowNodes = flowNodes,
@@ -29,6 +31,7 @@ fun testBpmnModel(
     messages = messages,
     signals = signals,
     errors = errors,
+    escalations = escalations,
 )
 
 fun testBpmnModelApi(
@@ -120,6 +123,7 @@ fun testNewsletterBpmnModel(
     errors: List<ErrorDefinition> = listOf(
         ErrorDefinition("ErrorEvent_InvalidMail", "Error_InvalidMail", "500")
     ),
+    escalations: List<EscalationDefinition> = emptyList(),
 ) = testBpmnModel(
     processId = processId,
     flowNodes = flowNodes,
@@ -127,4 +131,5 @@ fun testNewsletterBpmnModel(
     messages = messages,
     signals = signals,
     errors = errors,
+    escalations = escalations,
 )

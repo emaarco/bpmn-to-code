@@ -14,6 +14,7 @@ class BpmnJsonMapper {
             messages = model.messages.mapNotNull { it.toJson() },
             signals = model.signals.mapNotNull { it.toJson() },
             errors = model.errors.mapNotNull { it.toJson() },
+            escalations = model.escalations.mapNotNull { it.toJson() },
         )
     }
 
@@ -77,5 +78,11 @@ class BpmnJsonMapper {
         val (name, code) = getValue()
         if (name.isEmpty()) return null
         return ErrorJson(id = id ?: "", name = name, code = code)
+    }
+
+    private fun EscalationDefinition.toJson(): EscalationJson? {
+        val (name, code) = getValue()
+        if (name.isEmpty()) return null
+        return EscalationJson(id = id ?: "", name = name, code = code)
     }
 }

@@ -2,20 +2,22 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
-import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
 import org.camunda.bpm.model.bpmn.instance.BoundaryEvent
+import org.camunda.bpm.model.bpmn.instance.ErrorEventDefinition
+import org.camunda.bpm.model.bpmn.instance.EscalationEventDefinition
 import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.InclusiveGateway
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow
-import org.camunda.bpm.model.bpmn.instance.SubProcess
 import org.camunda.bpm.model.bpmn.instance.SignalEventDefinition
+import org.camunda.bpm.model.bpmn.instance.SubProcess
 import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
 import org.camunda.bpm.model.xml.ModelInstance
 
@@ -38,7 +40,7 @@ object ModelInstanceUtils {
         val flowNodes = this.getModelElementsByType(FlowNode::class.java)
         return flowNodes.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val elementType = BpmnElementType.fromTypeName(it.elementType.typeName)
+            val elementType = it.resolveElementType()
             val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
             val parentId = (it.parentElement as? SubProcess)?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val incoming = it.incoming.mapNotNull { flow -> flow.source?.id }
@@ -88,6 +90,14 @@ object ModelInstanceUtils {
         }
     }
 
+    fun ModelInstance.findEscalationEventDefinitions(): List<EscalationDefinition> {
+        val escalationEvents = this.getModelElementsByType(EscalationEventDefinition::class.java)
+        return escalationEvents.map {
+            val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            EscalationDefinition(id = elementId, name = it.escalation?.name, code = it.escalation?.escalationCode)
+        }
+    }
+
     fun ModelInstance.findSignalEventDefinitions(): List<SignalDefinition> {
         val signalEvents = this.getModelElementsByType(SignalEventDefinition::class.java)
         return signalEvents.map {
@@ -115,6 +125,14 @@ object ModelInstanceUtils {
             Pair("Cycle", this.timeCycle.textContent)
         } else {
             null
+        }
+    }
+
+    private fun FlowNode.resolveElementType(): BpmnElementType {
+        return if (this is SubProcess && this.triggeredByEvent()) {
+            BpmnElementType.EVENT_SUB_PROCESS
+        } else {
+            BpmnElementType.fromTypeName(this.elementType.typeName)
         }
     }
 
