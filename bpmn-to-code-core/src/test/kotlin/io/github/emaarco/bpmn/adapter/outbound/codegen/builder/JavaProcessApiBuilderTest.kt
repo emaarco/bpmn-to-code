@@ -1,7 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
-import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
@@ -9,12 +8,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class JavaApiBuilderTest {
+class JavaProcessApiBuilderTest {
 
-    private val underTest = JavaApiBuilder()
+    private val underTest = JavaProcessApiBuilder()
 
     @Test
-    fun `buildApiFile generates correct API file content`() {
+    fun `buildApiFile generates correct process API file`() {
 
         // given: a BPMN model with custom service task implementations
         val modelApi = testBpmnModelApi(
@@ -30,15 +29,15 @@ class JavaApiBuilderTest {
             )
         )
 
-        // when: we build the API file
+        // when: we build the process API file
         val result = underTest.buildApiFile(modelApi)
 
-        // then: expect the generated content to match the expected content
-        val expectedFile = File(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt").toURI())
-        val expectedContent = expectedFile.readText()
-        assertThat(result.content).isEqualToIgnoringWhitespace(expectedContent)
+        // then: a single model file is returned at the root package
         assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
         assertThat(result.packagePath).isEqualTo("de.emaarco.example")
+
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt")).toURI())
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 
     @Test
@@ -52,12 +51,11 @@ class JavaApiBuilderTest {
             packagePath = "de.emaarco.example"
         )
 
-        // when: we build the API file
+        // when: we build the process API file
         val result = underTest.buildApiFile(modelApi)
 
         // then: expect the generated code contains valid Java
         assertThat(result.content).isNotEmpty()
-        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
     }
 
 }

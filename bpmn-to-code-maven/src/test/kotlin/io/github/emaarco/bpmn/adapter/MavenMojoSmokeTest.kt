@@ -23,7 +23,7 @@ class MavenMojoSmokeTest {
     ) {
         // Copy BPMN file into the temp project
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
-        val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile")!!
+        val bpmnStream = requireNotNull(javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile"))
         File(resourcesDir, bpmnFile).writeBytes(bpmnStream.readBytes())
 
         val outputDir = File(projectDir, "build/generated")
@@ -43,13 +43,14 @@ class MavenMojoSmokeTest {
         // Verify output files were generated
         val packageDir = File(outputDir, "io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
-        val generatedFiles = packageDir.listFiles()!!
+        val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
 
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
-        assertThat(generatedFiles).allSatisfy { file ->
-            assertThat(file.name).endsWith(expectedExt)
-        }
+        val modelFiles = generatedFiles.filter { it.isFile }
+        assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
+        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
+        assertThat(requireNotNull(typesDir.listFiles())).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
     }
 
     private fun setField(obj: Any, name: String, value: Any) {

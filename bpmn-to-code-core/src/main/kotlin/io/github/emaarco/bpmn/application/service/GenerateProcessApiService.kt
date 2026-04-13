@@ -32,7 +32,9 @@ class GenerateProcessApiService(
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
         validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
-        val generatedFiles = mergedModels.map { codeGenerator.generateCode(toBpmnModelApi(it, command)) }
+        val generatedFiles = mergedModels
+            .flatMap { codeGenerator.generateCode(toBpmnModelApi(it, command)) }
+            .distinctBy { it.packagePath to it.fileName }
         fileSystemOutput.writeFiles(generatedFiles, command.outputFolderPath)
     }
 

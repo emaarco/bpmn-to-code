@@ -4,5 +4,5 @@ import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 
 interface GenerateApiCodePort {
-    fun generateCode(modelApi: BpmnModelApi): GeneratedApiFile
+    fun generateCode(modelApi: BpmnModelApi): List<GeneratedApiFile>
 }

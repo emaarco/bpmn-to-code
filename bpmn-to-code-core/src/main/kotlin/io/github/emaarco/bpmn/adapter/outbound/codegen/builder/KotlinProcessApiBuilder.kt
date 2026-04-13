@@ -4,10 +4,8 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LIST
-import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.STRING
@@ -21,7 +19,11 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
-class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder>() {
+/**
+ * Generates the type-safe API contract for a single BPMN process as a Kotlin object file.
+ * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the sibling `types/` package via import.
+ */
+class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
@@ -41,7 +43,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
     )
 
     override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
-
         val objectName = modelApi.fileName()
         val unusedAnnotation = AnnotationSpec.builder(Suppress::class).addMember("%S", "unused").build()
         val rootObjectBuilder = TypeSpec.objectBuilder(objectName)
@@ -105,11 +106,11 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnFlowClass = ClassName("${modelApi.packagePath}.types", "BpmnFlow")
             val flowsBuilder = TypeSpec.objectBuilder("Flows")
-            flowsBuilder.addType(buildFlowDataClass())
             modelApi.model.sequenceFlows.forEach { flow ->
                 val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
-                flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), ClassName("", "BpmnFlow")).initializer(initStr).build())
+                flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), bpmnFlowClass).initializer(initStr).build())
             }
             builder.addType(flowsBuilder.build())
         }
@@ -125,26 +126,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
                 append(")")
             }
         }
-
-        private fun buildFlowDataClass(): TypeSpec {
-            val nullableString = STRING.copy(nullable = true)
-            val constructor = FunSpec.constructorBuilder()
-                .addParameter("id", STRING)
-                .addParameter("sourceRef", STRING)
-                .addParameter("targetRef", STRING)
-                .addParameter(ParameterSpec.builder("condition", nullableString).defaultValue("null").build())
-                .addParameter(ParameterSpec.builder("isDefault", BOOLEAN).defaultValue("false").build())
-                .build()
-            return TypeSpec.classBuilder("BpmnFlow")
-                .addModifiers(KModifier.DATA)
-                .primaryConstructor(constructor)
-                .addProperty(PropertySpec.builder("id", STRING).initializer("id").build())
-                .addProperty(PropertySpec.builder("sourceRef", STRING).initializer("sourceRef").build())
-                .addProperty(PropertySpec.builder("targetRef", STRING).initializer("targetRef").build())
-                .addProperty(PropertySpec.builder("condition", nullableString).initializer("condition").build())
-                .addProperty(PropertySpec.builder("isDefault", BOOLEAN).initializer("isDefault").build())
-                .build()
-        }
     }
 
     private inner class RelationsWriter : ObjectWriter<TypeSpec.Builder> {
@@ -153,14 +134,14 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnRelationsClass = ClassName("${modelApi.packagePath}.types", "BpmnRelations")
             val relationsBuilder = TypeSpec.objectBuilder("Relations")
-            relationsBuilder.addType(buildRelationsDataClass())
             modelApi.model.flowNodes
                 .filter { it.id != null }
                 .sortedBy { it.getRawName() }
                 .forEach { node ->
                     val initStr = buildRelationsInitializer(node)
-                    relationsBuilder.addProperty(PropertySpec.builder(node.getName(), ClassName("", "BpmnRelations")).initializer(initStr).build())
+                    relationsBuilder.addProperty(PropertySpec.builder(node.getName(), bpmnRelationsClass).initializer(initStr).build())
                 }
             builder.addType(relationsBuilder.build())
         }
@@ -183,27 +164,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
 
         private fun nullableStringLiteral(value: String?): String {
             return if (value != null) "\"$value\"" else "null"
-        }
-
-        private fun buildRelationsDataClass(): TypeSpec {
-            val listType = LIST.parameterizedBy(STRING)
-            val nullableString = STRING.copy(nullable = true)
-            val constructor = FunSpec.constructorBuilder()
-                .addParameter("incoming", listType)
-                .addParameter("outgoing", listType)
-                .addParameter("parentId", nullableString)
-                .addParameter("attachedToRef", nullableString)
-                .addParameter("attachedElements", listType)
-                .build()
-            return TypeSpec.classBuilder("BpmnRelations")
-                .addModifiers(KModifier.DATA)
-                .primaryConstructor(constructor)
-                .addProperty(PropertySpec.builder("incoming", listType).initializer("incoming").build())
-                .addProperty(PropertySpec.builder("outgoing", listType).initializer("outgoing").build())
-                .addProperty(PropertySpec.builder("parentId", nullableString).initializer("parentId").build())
-                .addProperty(PropertySpec.builder("attachedToRef", nullableString).initializer("attachedToRef").build())
-                .addProperty(PropertySpec.builder("attachedElements", listType).initializer("attachedElements").build())
-                .build()
         }
     }
 
@@ -283,28 +243,16 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnErrorClass = ClassName("${modelApi.packagePath}.types", "BpmnError")
             val errorsBuilder = TypeSpec.objectBuilder("Errors")
-            errorsBuilder.addType(buildErrorDataClass())
             modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
-                val instanceBuilder = PropertySpec.builder(it.getName(), ClassName("", "BpmnError"))
+                val instanceBuilder = PropertySpec.builder(it.getName(), bpmnErrorClass)
                 val variable = instanceBuilder.initializer("BpmnError(\"$errorName\", \"$errorCode\")")
                 errorsBuilder.addProperty(variable.build())
             }
             builder.addType(errorsBuilder.build())
         }
-
-        private fun buildErrorDataClass(): TypeSpec {
-            val constructor = FunSpec.constructorBuilder().addStringParameter("name").addStringParameter("code").build()
-            return TypeSpec.classBuilder("BpmnError")
-                .addModifiers(KModifier.DATA)
-                .primaryConstructor(constructor)
-                .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
-                .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
-                .build()
-        }
-
-        private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
     }
 
     private class EscalationsWriter : ObjectWriter<TypeSpec.Builder> {
@@ -313,28 +261,16 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnEscalationClass = ClassName("${modelApi.packagePath}.types", "BpmnEscalation")
             val escalationsBuilder = TypeSpec.objectBuilder("Escalations")
-            escalationsBuilder.addType(buildEscalationDataClass())
             modelApi.model.escalations.forEach {
                 val (escalationName, escalationCode) = it.getValue()
-                val instanceBuilder = PropertySpec.builder(it.getName(), ClassName("", "BpmnEscalation"))
+                val instanceBuilder = PropertySpec.builder(it.getName(), bpmnEscalationClass)
                 val variable = instanceBuilder.initializer("BpmnEscalation(\"$escalationName\", \"$escalationCode\")")
                 escalationsBuilder.addProperty(variable.build())
             }
             builder.addType(escalationsBuilder.build())
         }
-
-        private fun buildEscalationDataClass(): TypeSpec {
-            val constructor = FunSpec.constructorBuilder().addStringParameter("name").addStringParameter("code").build()
-            return TypeSpec.classBuilder("BpmnEscalation")
-                .addModifiers(KModifier.DATA)
-                .primaryConstructor(constructor)
-                .addProperty(PropertySpec.builder("name", STRING).initializer("name").build())
-                .addProperty(PropertySpec.builder("code", STRING).initializer("code").build())
-                .build()
-        }
-
-        private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
     }
 
     private inner class CompensationsWriter : ObjectWriter<TypeSpec.Builder> {
@@ -357,29 +293,17 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnTimerClass = ClassName("${modelApi.packagePath}.types", "BpmnTimer")
             val timersBuilder = TypeSpec.objectBuilder("Timers")
-            timersBuilder.addType(buildTimerDataClass())
             modelApi.model.timers.forEach { timer ->
                 val (timerType, timerValue) = timer.getValue()
                 val cleanTimerValue = timerValue.escapeDollarInterpolation()
-                val instanceBuilder = PropertySpec.builder(timer.getName(), ClassName("", "BpmnTimer"))
+                val instanceBuilder = PropertySpec.builder(timer.getName(), bpmnTimerClass)
                 val variable = instanceBuilder.initializer("BpmnTimer(\"$timerType\", \"$cleanTimerValue\")")
                 timersBuilder.addProperty(variable.build())
             }
             builder.addType(timersBuilder.build())
         }
-
-        private fun buildTimerDataClass(): TypeSpec {
-            val constructor = FunSpec.constructorBuilder().addStringParameter("type").addStringParameter("timerValue")
-            return TypeSpec.classBuilder("BpmnTimer")
-                .addModifiers(KModifier.DATA)
-                .primaryConstructor(constructor.build())
-                .addProperty(PropertySpec.builder("type", String::class).initializer("type").build())
-                .addProperty(PropertySpec.builder("timerValue", String::class).initializer("timerValue").build())
-                .build()
-        }
-
-        private fun FunSpec.Builder.addStringParameter(name: String) = addParameter(name, String::class)
     }
 
     private fun createAttribute(variable: VariableMapping<String>): PropertySpec {

@@ -47,7 +47,7 @@ class GenerateProcessApiServiceTest {
         )
         every { bpmnFileLoader.loadFrom("baseDir", "*.bpmn") } returns listOf(dummyResource)
         every { bpmnService.extract(any(), any()) } returns dummyModel
-        every { codeGenerator.generateCode(any()) } returns expectedGeneratedFile
+        every { codeGenerator.generateCode(any()) } returns listOf(expectedGeneratedFile)
         val command = GenerateProcessApiFromFilesystemUseCase.Command(
             baseDir = "baseDir",
             filePattern = "*.bpmn",
