@@ -22,6 +22,7 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 
 fun testBpmnModel(
     processId: String = "order",
+    variantName: String? = null,
     flowNodes: List<FlowNodeDefinition> = listOf(FlowNodeDefinition(id = "create-order")),
     sequenceFlows: List<SequenceFlowDefinition> = emptyList(),
     messages: List<MessageDefinition> = listOf(MessageDefinition(id = "messageId", name = "messageName")),
@@ -31,6 +32,7 @@ fun testBpmnModel(
     compensations: List<CompensationDefinition> = emptyList(),
 ) = BpmnModel(
     processId = processId,
+    variantName = variantName,
     flowNodes = flowNodes,
     sequenceFlows = sequenceFlows,
     messages = messages,
@@ -54,6 +56,7 @@ fun testBpmnModelApi(
 
 fun testNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
+    variantName: String? = null,
     testVariableForTimer: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
@@ -133,6 +136,7 @@ fun testNewsletterBpmnModel(
     compensations: List<CompensationDefinition> = emptyList(),
 ) = testBpmnModel(
     processId = processId,
+    variantName = variantName,
     flowNodes = flowNodes,
     sequenceFlows = sequenceFlows,
     messages = messages,

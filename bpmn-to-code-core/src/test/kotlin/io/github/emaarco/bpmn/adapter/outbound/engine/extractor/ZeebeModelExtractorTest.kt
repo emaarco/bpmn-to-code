@@ -43,6 +43,7 @@ class ZeebeModelExtractorTest {
         )
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
+                variantName = "withApproval",
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
@@ -133,6 +134,22 @@ class ZeebeModelExtractorTest {
                 ),
             )
         )
+    }
+
+    @Test
+    fun `extract returns variantName from process-level extension properties`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-subscribe-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        assertThat(bpmnModel.variantName).isEqualTo("withApproval")
+    }
+
+    @Test
+    fun `extract returns null variantName when not specified`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        assertThat(bpmnModel.variantName).isNull()
     }
 
     @Test

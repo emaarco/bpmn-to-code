@@ -9,6 +9,7 @@ import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 object CamundaModelConstants {
 
     const val ADDITIONAL_VARIABLES_PROPERTY_NAME = "additionalVariables"
+    const val VARIANT_NAME_PROPERTY_NAME = "variantName"
 
     val inputOutputParameters = listOf(
         BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER,
