@@ -27,8 +27,6 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),
         ApiObjectType.PROCESS_ENGINE to ProcessEngineWriter(),
         ApiObjectType.ELEMENTS to ElementsWriter(),
-        ApiObjectType.FLOWS to FlowsWriter(),
-        ApiObjectType.RELATIONS to RelationsWriter(),
         ApiObjectType.CALL_ACTIVITIES to CallActivitiesWriter(),
         ApiObjectType.MESSAGES to MessagesWriter(),
         ApiObjectType.SERVICE_TASKS to ServiceTasksWriter(),
@@ -36,7 +34,9 @@ class KotlinApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Build
         ApiObjectType.ERRORS to ErrorsWriter(),
         ApiObjectType.ESCALATIONS to EscalationsWriter(),
         ApiObjectType.SIGNALS to SignalsWriter(),
-        ApiObjectType.VARIABLES to VariablesWriter()
+        ApiObjectType.VARIABLES to VariablesWriter(),
+        ApiObjectType.FLOWS to FlowsWriter(),
+        ApiObjectType.RELATIONS to RelationsWriter(),
     )
 
     override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
