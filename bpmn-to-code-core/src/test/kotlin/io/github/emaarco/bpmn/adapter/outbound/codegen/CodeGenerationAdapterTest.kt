@@ -23,10 +23,10 @@ class CodeGenerationAdapterTest {
             content = "content",
             language = OutputLanguage.KOTLIN
         )
-        every { kotlinBuilder.buildApiFile(modelApi) } returns expectedFile
+        every { kotlinBuilder.buildApiFile(modelApi) } returns listOf(expectedFile)
         val result = underTest.generateCode(modelApi)
         verify { kotlinBuilder.buildApiFile(modelApi) }
-        assert(result == expectedFile)
+        assert(result == listOf(expectedFile))
         confirmVerified(kotlinBuilder)
     }
 

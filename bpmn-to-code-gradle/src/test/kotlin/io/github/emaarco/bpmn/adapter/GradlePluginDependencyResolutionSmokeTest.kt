@@ -71,7 +71,12 @@ class GradlePluginDependencyResolutionSmokeTest {
         assertThat(packageDir).isDirectory()
         val generatedFiles = packageDir.listFiles()!!
         assertThat(generatedFiles).isNotEmpty()
-        assertThat(generatedFiles).allSatisfy { file ->
+        val modelFiles = generatedFiles.filter { it.isFile }
+        assertThat(modelFiles).allSatisfy { file ->
+            assertThat(file.name).endsWith(".kt")
+        }
+        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
+        assertThat(typesDir.listFiles()!!).allSatisfy { file ->
             assertThat(file.name).endsWith(".kt")
         }
     }

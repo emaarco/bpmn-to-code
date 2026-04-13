@@ -66,7 +66,12 @@ class GradlePluginSmokeTest {
         assertThat(generatedFiles).isNotEmpty()
 
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
-        assertThat(generatedFiles).allSatisfy { file ->
+        val modelFiles = generatedFiles.filter { it.isFile }
+        assertThat(modelFiles).allSatisfy { file ->
+            assertThat(file.name).endsWith(expectedExt)
+        }
+        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
+        assertThat(typesDir.listFiles()!!).allSatisfy { file ->
             assertThat(file.name).endsWith(expectedExt)
         }
     }

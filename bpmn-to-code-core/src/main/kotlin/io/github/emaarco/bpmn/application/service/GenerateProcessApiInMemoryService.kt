@@ -29,10 +29,9 @@ class GenerateProcessApiInMemoryService(
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
         validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
-        return mergedModels.map {
-            val api = this.toModelApi(command, it)
-            this.codeGenerator.generateCode(api)
-        }
+        return mergedModels
+            .flatMap { codeGenerator.generateCode(toModelApi(command, it)) }
+            .distinctBy { it.packagePath to it.fileName }
     }
 
     private fun toModelApi(

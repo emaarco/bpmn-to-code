@@ -13,6 +13,7 @@ import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import javax.lang.model.element.Modifier.*
@@ -36,8 +37,13 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         ApiObjectType.RELATIONS to RelationsWriter(),
     )
 
-    override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
+    override fun buildApiFile(modelApi: BpmnModelApi): List<GeneratedApiFile> {
+        val processApiFile = buildProcessApiFile(modelApi)
+        val typeFiles = buildSharedTypeFiles(modelApi.packagePath, modelApi.outputLanguage)
+        return listOf(processApiFile) + typeFiles
+    }
 
+    private fun buildProcessApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
         val className = modelApi.fileName()
         val rootClassBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, FINAL)
 
@@ -54,6 +60,135 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
             packagePath = modelApi.packagePath,
             content = fileContent,
             language = modelApi.outputLanguage
+        )
+    }
+
+    private fun buildSharedTypeFiles(packagePath: String, language: OutputLanguage): List<GeneratedApiFile> {
+        val typesPackage = "$packagePath.types"
+        return listOf(
+            buildBpmnTimerFile(typesPackage, language),
+            buildBpmnErrorFile(typesPackage, language),
+            buildBpmnEscalationFile(typesPackage, language),
+            buildBpmnFlowFile(typesPackage, language),
+            buildBpmnRelationsFile(typesPackage, language),
+        )
+    }
+
+    private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = TypeSpec.classBuilder("BpmnTimer").addModifiers(PUBLIC)
+            .addField(FieldSpec.builder(String::class.java, "type").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "timerValue").addModifiers(PUBLIC, FINAL).build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(PUBLIC)
+                    .addParameter(String::class.java, "type")
+                    .addParameter(String::class.java, "timerValue")
+                    .addStatement("this.type = type")
+                    .addStatement("this.timerValue = timerValue")
+                    .build()
+            )
+            .build()
+        return buildTypeFile(typesPackage, "BpmnTimer", typeSpec, language)
+    }
+
+    private fun buildBpmnErrorFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = TypeSpec.classBuilder("BpmnError").addModifiers(PUBLIC)
+            .addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(PUBLIC)
+                    .addParameter(String::class.java, "name")
+                    .addParameter(String::class.java, "code")
+                    .addStatement("this.name = name")
+                    .addStatement("this.code = code")
+                    .build()
+            )
+            .build()
+        return buildTypeFile(typesPackage, "BpmnError", typeSpec, language)
+    }
+
+    private fun buildBpmnEscalationFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = TypeSpec.classBuilder("BpmnEscalation").addModifiers(PUBLIC)
+            .addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(PUBLIC)
+                    .addParameter(String::class.java, "name")
+                    .addParameter(String::class.java, "code")
+                    .addStatement("this.name = name")
+                    .addStatement("this.code = code")
+                    .build()
+            )
+            .build()
+        return buildTypeFile(typesPackage, "BpmnEscalation", typeSpec, language)
+    }
+
+    private fun buildBpmnFlowFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = TypeSpec.classBuilder("BpmnFlow").addModifiers(PUBLIC)
+            .addField(FieldSpec.builder(String::class.java, "id").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "sourceRef").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "targetRef").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "condition").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(Boolean::class.javaPrimitiveType!!, "isDefault").addModifiers(PUBLIC, FINAL).build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(PUBLIC)
+                    .addParameter(String::class.java, "id")
+                    .addParameter(String::class.java, "sourceRef")
+                    .addParameter(String::class.java, "targetRef")
+                    .addParameter(String::class.java, "condition")
+                    .addParameter(Boolean::class.javaPrimitiveType!!, "isDefault")
+                    .addStatement("this.id = id")
+                    .addStatement("this.sourceRef = sourceRef")
+                    .addStatement("this.targetRef = targetRef")
+                    .addStatement("this.condition = condition")
+                    .addStatement("this.isDefault = isDefault")
+                    .build()
+            )
+            .build()
+        return buildTypeFile(typesPackage, "BpmnFlow", typeSpec, language)
+    }
+
+    private fun buildBpmnRelationsFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val listClass = ClassName.get("java.util", "List")
+        val listType = ParameterizedTypeName.get(listClass, ClassName.get("java.lang", "String"))
+        val typeSpec = TypeSpec.classBuilder("BpmnRelations").addModifiers(PUBLIC)
+            .addField(FieldSpec.builder(listType, "incoming").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(listType, "outgoing").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "parentId").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(String::class.java, "attachedToRef").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(listType, "attachedElements").addModifiers(PUBLIC, FINAL).build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(PUBLIC)
+                    .addParameter(listType, "incoming")
+                    .addParameter(listType, "outgoing")
+                    .addParameter(String::class.java, "parentId")
+                    .addParameter(String::class.java, "attachedToRef")
+                    .addParameter(listType, "attachedElements")
+                    .addStatement("this.incoming = incoming")
+                    .addStatement("this.outgoing = outgoing")
+                    .addStatement("this.parentId = parentId")
+                    .addStatement("this.attachedToRef = attachedToRef")
+                    .addStatement("this.attachedElements = attachedElements")
+                    .build()
+            )
+            .build()
+        return buildTypeFile(typesPackage, "BpmnRelations", typeSpec, language)
+    }
+
+    private fun buildTypeFile(typesPackage: String, className: String, typeSpec: TypeSpec, language: OutputLanguage): GeneratedApiFile {
+        val javaFile = JavaFile.builder(typesPackage, typeSpec)
+            .addFileComment(autoGenComment)
+            .build()
+        val content = buildString { javaFile.writeTo(this) }
+        return GeneratedApiFile(
+            fileName = "$className.java",
+            packagePath = typesPackage,
+            content = content,
+            language = language,
         )
     }
 
@@ -97,47 +232,23 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnFlowClass = ClassName.get("${modelApi.packagePath}.types", "BpmnFlow")
             val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
-            flowsBuilder.addType(buildFlowClass())
             modelApi.model.sequenceFlows.forEach { flow ->
-                val initCode = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
-                val fieldBuilder = FieldSpec.builder(ClassName.get("", "BpmnFlow"), flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
+                val initCode = buildFlowInitializer(bpmnFlowClass, flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
+                val fieldBuilder = FieldSpec.builder(bpmnFlowClass, flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
                 flowsBuilder.addField(fieldBuilder.initializer(initCode).build())
             }
             builder.addType(flowsBuilder.build())
         }
 
-        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
+        private fun buildFlowInitializer(bpmnFlowClass: ClassName, id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
             val conditionBlock = if (condition != null) CodeBlock.of("\$S", condition) else CodeBlock.of("null")
             return CodeBlock.builder()
-                .add("new BpmnFlow(\$S, \$S, \$S, ", id, sourceRef, targetRef)
+                .add("new \$T(\$S, \$S, \$S, ", bpmnFlowClass, id, sourceRef, targetRef)
                 .add(conditionBlock)
                 .add(", \$L)", isDefault)
                 .build()
-        }
-
-        private fun buildFlowClass(): TypeSpec {
-            val builder = TypeSpec.classBuilder("BpmnFlow").addModifiers(PUBLIC, STATIC)
-            builder.addField(FieldSpec.builder(String::class.java, "id").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "sourceRef").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "targetRef").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "condition").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(Boolean::class.javaPrimitiveType!!, "isDefault").addModifiers(PUBLIC, FINAL).build())
-            builder.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(String::class.java, "id")
-                    .addParameter(String::class.java, "sourceRef")
-                    .addParameter(String::class.java, "targetRef")
-                    .addParameter(String::class.java, "condition")
-                    .addParameter(Boolean::class.javaPrimitiveType!!, "isDefault")
-                    .addStatement("this.id = id")
-                    .addStatement("this.sourceRef = sourceRef")
-                    .addStatement("this.targetRef = targetRef")
-                    .addStatement("this.condition = condition")
-                    .addStatement("this.isDefault = isDefault")
-                    .build()
-            )
-            return builder.build()
         }
     }
 
@@ -150,24 +261,24 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnRelationsClass = ClassName.get("${modelApi.packagePath}.types", "BpmnRelations")
             val relationsBuilder = TypeSpec.classBuilder("Relations").addModifiers(PUBLIC, STATIC, FINAL)
-            relationsBuilder.addType(buildRelationsClass())
             modelApi.model.flowNodes
                 .filter { it.id != null }
                 .sortedBy { it.getRawName() }
                 .forEach { node ->
-                    val initCode = buildRelationsInitializer(node)
-                    val fieldBuilder = FieldSpec.builder(ClassName.get("", "BpmnRelations"), node.getName()).addModifiers(PUBLIC, STATIC, FINAL)
+                    val initCode = buildRelationsInitializer(bpmnRelationsClass, node)
+                    val fieldBuilder = FieldSpec.builder(bpmnRelationsClass, node.getName()).addModifiers(PUBLIC, STATIC, FINAL)
                     relationsBuilder.addField(fieldBuilder.initializer(initCode).build())
                 }
             builder.addType(relationsBuilder.build())
         }
 
-        private fun buildRelationsInitializer(node: FlowNodeDefinition): CodeBlock {
+        private fun buildRelationsInitializer(bpmnRelationsClass: ClassName, node: FlowNodeDefinition): CodeBlock {
             val parentIdBlock = if (node.parentId != null) CodeBlock.of("\$S", node.parentId) else CodeBlock.of("null")
             val attachedToRefBlock = if (node.attachedToRef != null) CodeBlock.of("\$S", node.attachedToRef) else CodeBlock.of("null")
             return CodeBlock.builder()
-                .add("new BpmnRelations(")
+                .add("new \$T(", bpmnRelationsClass)
                 .add(javaListLiteral(node.incoming))
                 .add(", ")
                 .add(javaListLiteral(node.outgoing))
@@ -189,30 +300,6 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
                 builder.add("\$S", item)
             }
             builder.add(")")
-            return builder.build()
-        }
-
-        private fun buildRelationsClass(): TypeSpec {
-            val builder = TypeSpec.classBuilder("BpmnRelations").addModifiers(PUBLIC, STATIC)
-            builder.addField(FieldSpec.builder(listType, "incoming").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(listType, "outgoing").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "parentId").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "attachedToRef").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(listType, "attachedElements").addModifiers(PUBLIC, FINAL).build())
-            builder.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(listType, "incoming")
-                    .addParameter(listType, "outgoing")
-                    .addParameter(String::class.java, "parentId")
-                    .addParameter(String::class.java, "attachedToRef")
-                    .addParameter(listType, "attachedElements")
-                    .addStatement("this.incoming = incoming")
-                    .addStatement("this.outgoing = outgoing")
-                    .addStatement("this.parentId = parentId")
-                    .addStatement("this.attachedToRef = attachedToRef")
-                    .addStatement("this.attachedElements = attachedElements")
-                    .build()
-            )
             return builder.build()
         }
     }
@@ -293,30 +380,15 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnErrorClass = ClassName.get("${modelApi.packagePath}.types", "BpmnError")
             val errorsBuilder = TypeSpec.classBuilder("Errors").addModifiers(PUBLIC, STATIC, FINAL)
-            errorsBuilder.addType(buildErrorClass())
             modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
-                val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnError"), it.getName())
+                val instanceBuilder = FieldSpec.builder(bpmnErrorClass, it.getName())
                 val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)
-                errorsBuilder.addField(variable.initializer("new BpmnError(\$S, \$S)", errorName, errorCode).build())
+                errorsBuilder.addField(variable.initializer("new \$T(\$S, \$S)", bpmnErrorClass, errorName, errorCode).build())
             }
             builder.addType(errorsBuilder.build())
-        }
-
-        private fun buildErrorClass(): TypeSpec {
-            val builder = TypeSpec.classBuilder("BpmnError").addModifiers(PUBLIC, STATIC)
-            builder.addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
-            builder.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(String::class.java, "name")
-                    .addParameter(String::class.java, "code")
-                    .addStatement("this.name = name")
-                    .addStatement("this.code = code")
-                    .build()
-            )
-            return builder.build()
         }
     }
 
@@ -326,30 +398,15 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnEscalationClass = ClassName.get("${modelApi.packagePath}.types", "BpmnEscalation")
             val escalationsBuilder = TypeSpec.classBuilder("Escalations").addModifiers(PUBLIC, STATIC, FINAL)
-            escalationsBuilder.addType(buildEscalationClass())
             modelApi.model.escalations.forEach {
                 val (escalationName, escalationCode) = it.getValue()
-                val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnEscalation"), it.getName())
+                val instanceBuilder = FieldSpec.builder(bpmnEscalationClass, it.getName())
                 val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)
-                escalationsBuilder.addField(variable.initializer("new BpmnEscalation(\$S, \$S)", escalationName, escalationCode).build())
+                escalationsBuilder.addField(variable.initializer("new \$T(\$S, \$S)", bpmnEscalationClass, escalationName, escalationCode).build())
             }
             builder.addType(escalationsBuilder.build())
-        }
-
-        private fun buildEscalationClass(): TypeSpec {
-            val builder = TypeSpec.classBuilder("BpmnEscalation").addModifiers(PUBLIC, STATIC)
-            builder.addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "code").addModifiers(PUBLIC, FINAL).build())
-            builder.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(String::class.java, "name")
-                    .addParameter(String::class.java, "code")
-                    .addStatement("this.name = name")
-                    .addStatement("this.code = code")
-                    .build()
-            )
-            return builder.build()
         }
     }
 
@@ -373,30 +430,15 @@ class JavaApiBuilder : CodeGenerationAdapter.AbstractApiBuilder<TypeSpec.Builder
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val bpmnTimerClass = ClassName.get("${modelApi.packagePath}.types", "BpmnTimer")
             val timersBuilder = TypeSpec.classBuilder("Timers").addModifiers(PUBLIC, STATIC, FINAL)
-            timersBuilder.addType(buildTimerClass())
             modelApi.model.timers.forEach {
                 val (timerType, timerValue) = it.getValue()
-                val instanceBuilder = FieldSpec.builder(ClassName.get("", "BpmnTimer"), it.getName())
+                val instanceBuilder = FieldSpec.builder(bpmnTimerClass, it.getName())
                 val variable = instanceBuilder.addModifiers(PUBLIC, STATIC, FINAL)
-                timersBuilder.addField(variable.initializer("new BpmnTimer(\$S, \$S)", timerType, timerValue).build())
+                timersBuilder.addField(variable.initializer("new \$T(\$S, \$S)", bpmnTimerClass, timerType, timerValue).build())
             }
             builder.addType(timersBuilder.build())
-        }
-
-        private fun buildTimerClass(): TypeSpec {
-            val builder = TypeSpec.classBuilder("BpmnTimer").addModifiers(PUBLIC, STATIC)
-            builder.addField(FieldSpec.builder(String::class.java, "type").addModifiers(PUBLIC, FINAL).build())
-            builder.addField(FieldSpec.builder(String::class.java, "timerValue").addModifiers(PUBLIC, FINAL).build())
-            builder.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(String::class.java, "type")
-                    .addParameter(String::class.java, "timerValue")
-                    .addStatement("this.type = type")
-                    .addStatement("this.timerValue = timerValue")
-                    .build()
-            )
-            return builder.build()
         }
     }
 

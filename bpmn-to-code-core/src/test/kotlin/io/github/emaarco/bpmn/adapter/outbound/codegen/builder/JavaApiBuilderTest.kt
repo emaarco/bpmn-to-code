@@ -31,14 +31,27 @@ class JavaApiBuilderTest {
         )
 
         // when: we build the API file
-        val result = underTest.buildApiFile(modelApi)
+        val results = underTest.buildApiFile(modelApi)
 
-        // then: expect the generated content to match the expected content
+        // then: 6 files returned — 1 model + 5 shared types
+        assertThat(results).hasSize(6)
+        val typeFiles = results.filter { it.packagePath == "de.emaarco.example.types" }
+        assertThat(typeFiles.map { it.fileName }).containsExactlyInAnyOrder(
+            "BpmnTimer.java", "BpmnError.java", "BpmnEscalation.java", "BpmnFlow.java", "BpmnRelations.java"
+        )
+
+        val modelFile = results.first { it.fileName == "${modelApi.fileName()}.java" }
         val expectedFile = File(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt").toURI())
-        val expectedContent = expectedFile.readText()
-        assertThat(result.content).isEqualToIgnoringWhitespace(expectedContent)
-        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
-        assertThat(result.packagePath).isEqualTo("de.emaarco.example")
+        assertThat(modelFile.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertThat(modelFile.packagePath).isEqualTo("de.emaarco.example")
+
+        // and: each type file matches its expected fixture
+        typeFiles.forEach { typeFile ->
+            val fixtureName = typeFile.fileName.replace(".java", "Java.txt")
+            val fixtureResource = javaClass.getResource("/api/types/$fixtureName")
+                ?: error("Missing fixture: /api/types/$fixtureName")
+            assertThat(typeFile.content).isEqualToIgnoringWhitespace(File(fixtureResource.toURI()).readText())
+        }
     }
 
     @Test
@@ -53,11 +66,11 @@ class JavaApiBuilderTest {
         )
 
         // when: we build the API file
-        val result = underTest.buildApiFile(modelApi)
+        val results = underTest.buildApiFile(modelApi)
 
         // then: expect the generated code contains valid Java
-        assertThat(result.content).isNotEmpty()
-        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
+        val modelFile = results.first { it.fileName == "${modelApi.fileName()}.java" }
+        assertThat(modelFile.content).isNotEmpty()
     }
 
 }

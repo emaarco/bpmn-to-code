@@ -39,7 +39,7 @@ class GenerateProcessApiInMemoryServiceTest {
             language = OutputLanguage.KOTLIN
         )
         every { bpmnService.extract(any(), any()) } returns dummyModel
-        every { codeGenerator.generateCode(any()) } returns expectedGeneratedFile
+        every { codeGenerator.generateCode(any()) } returns listOf(expectedGeneratedFile)
         val command = GenerateProcessApiInMemoryUseCase.Command(
             bpmnContents = listOf(bpmnInput),
             packagePath = "com.example",

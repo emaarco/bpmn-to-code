@@ -3,10 +3,13 @@
 
 package de.emaarco.example
 
-import kotlin.Boolean
+import de.emaarco.example.types.BpmnError
+import de.emaarco.example.types.BpmnEscalation
+import de.emaarco.example.types.BpmnFlow
+import de.emaarco.example.types.BpmnRelations
+import de.emaarco.example.types.BpmnTimer
 import kotlin.String
 import kotlin.Suppress
-import kotlin.collections.List
 
 object NewsletterSubscriptionProcessApi {
   const val PROCESS_ID: String = "newsletterSubscription"
@@ -65,29 +68,15 @@ object NewsletterSubscriptionProcessApi {
     val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
 
     val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
-
-    data class BpmnTimer(
-      val type: String,
-      val timerValue: String,
-    )
   }
 
   object Errors {
     val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
-
-    data class BpmnError(
-      val name: String,
-      val code: String,
-    )
   }
 
   object Escalations {
-    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation = BpmnEscalation("Escalation_RegistrationFailed", "100")
-
-    data class BpmnEscalation(
-      val name: String,
-      val code: String,
-    )
+    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation =
+        BpmnEscalation("Escalation_RegistrationFailed", "100")
   }
 
   object Signals {
@@ -186,14 +175,6 @@ object NewsletterSubscriptionProcessApi {
             sourceRef = "Timer_After3Days",
             targetRef = "CallActivity_AbortRegistration",
         )
-
-    data class BpmnFlow(
-      val id: String,
-      val sourceRef: String,
-      val targetRef: String,
-      val condition: String? = null,
-      val isDefault: Boolean = false,
-    )
   }
 
   object Relations {
@@ -308,13 +289,5 @@ object NewsletterSubscriptionProcessApi {
             attachedToRef = "Activity_ConfirmRegistration",
             attachedElements = emptyList(),
         )
-
-    data class BpmnRelations(
-      val incoming: List<String>,
-      val outgoing: List<String>,
-      val parentId: String?,
-      val attachedToRef: String?,
-      val attachedElements: List<String>,
-    )
   }
 }
