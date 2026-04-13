@@ -126,8 +126,8 @@ class Camunda7ModelExtractorTest {
                     SequenceFlowDefinition("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration"),
                 ),
                 compensations = listOf(
-                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", "serviceTask_incrementSubscriptionCounter"),
-                    CompensationDefinition("compensationEvent_onSubscriptionCounter", null),
+                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", "serviceTask_incrementSubscriptionCounter", customProperties = mapOf("waitForCompletion" to false)),
+                    CompensationDefinition("compensationEvent_onSubscriptionCounter", null, customProperties = mapOf("waitForCompletion" to false)),
                 ),
             )
         )

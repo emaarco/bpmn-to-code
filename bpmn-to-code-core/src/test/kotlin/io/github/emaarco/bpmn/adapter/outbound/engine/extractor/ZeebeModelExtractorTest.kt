@@ -127,8 +127,8 @@ class ZeebeModelExtractorTest {
                     MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed", customProperties = mapOf("correlationKey" to "=subscriptionId")),
                 ),
                 compensations = listOf(
-                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", "serviceTask_incrementSubscriptionCounter"),
-                    CompensationDefinition("compensationEvent_onSubscriptionCounter", null),
+                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", "serviceTask_incrementSubscriptionCounter", customProperties = mapOf("waitForCompletion" to false)),
+                    CompensationDefinition("compensationEvent_onSubscriptionCounter", null, customProperties = mapOf("waitForCompletion" to false)),
                 ),
             )
         )

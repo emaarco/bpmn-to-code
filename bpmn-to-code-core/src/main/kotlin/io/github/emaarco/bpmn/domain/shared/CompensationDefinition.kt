@@ -11,4 +11,8 @@ data class CompensationDefinition(
     override fun getValue() = activityRef ?: ""
     override fun getRawName() = activityRef ?: ""
     fun hasActivityRef() = activityRef != null
+
+    companion object {
+        const val WAIT_FOR_COMPLETION_KEY = "waitForCompletion"
+    }
 }

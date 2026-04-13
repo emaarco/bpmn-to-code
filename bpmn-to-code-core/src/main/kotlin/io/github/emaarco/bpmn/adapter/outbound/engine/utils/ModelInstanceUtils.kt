@@ -104,7 +104,13 @@ object ModelInstanceUtils {
         val compensateEvents = this.getModelElementsByType(CompensateEventDefinition::class.java)
         return compensateEvents.map {
             val elementId = it.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            CompensationDefinition(id = elementId, activityRef = it.activity?.id)
+            CompensationDefinition(
+                id = elementId,
+                activityRef = it.activity?.id,
+                customProperties = buildMap {
+                    put(CompensationDefinition.WAIT_FOR_COMPLETION_KEY, it.isWaitForCompletion)
+                },
+            )
         }
     }
 
