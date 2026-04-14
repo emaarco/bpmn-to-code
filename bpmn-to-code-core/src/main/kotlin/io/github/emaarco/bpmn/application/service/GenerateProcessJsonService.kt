@@ -29,8 +29,7 @@ class GenerateProcessJsonService(
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
         validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
-        // JSON is generated per-model (not per-merged-model)
-        val generatedFiles = models.map { jsonGenerator.generateJson(it) }
+        val generatedFiles = mergedModels.map { jsonGenerator.generateJson(it) }
         fileSaver.writeFiles(generatedFiles, command.outputFolderPath)
     }
 }

@@ -2,6 +2,8 @@ package io.github.emaarco.bpmn.adapter.outbound.json
 
 import io.github.emaarco.bpmn.adapter.outbound.json.model.*
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
+import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.shared.*
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -9,10 +11,16 @@ import kotlinx.serialization.json.JsonPrimitive
 
 class BpmnJsonMapper {
 
-    fun toJson(model: BpmnModel): BpmnModelJson {
+    fun toJson(model: ProcessModel): BpmnModelJson {
+        return when (model) {
+            is BpmnModel -> toFlatJson(model)
+            is MergedBpmnModel -> toVariantJson(model)
+        }
+    }
+
+    private fun toFlatJson(model: BpmnModel): BpmnModelJson {
         return BpmnModelJson(
             processId = model.processId,
-            variantName = model.variantName,
             flowNodes = FlowNodeSorter.sort(model.flowNodes).map { it.toJson() },
             sequenceFlows = model.sequenceFlows.map { it.toJson() },
             messages = model.messages.mapNotNull { it.toJson() },
@@ -20,6 +28,25 @@ class BpmnJsonMapper {
             errors = model.errors.mapNotNull { it.toJson() },
             escalations = model.escalations.mapNotNull { it.toJson() },
             compensations = model.compensations.mapNotNull { it.toJson() },
+        )
+    }
+
+    private fun toVariantJson(model: MergedBpmnModel): BpmnModelJson {
+        return BpmnModelJson(
+            processId = model.processId,
+            flowNodes = FlowNodeSorter.sort(model.flowNodes).map { it.toJson() },
+            messages = model.messages.mapNotNull { it.toJson() },
+            signals = model.signals.mapNotNull { it.toJson() },
+            errors = model.errors.mapNotNull { it.toJson() },
+            escalations = model.escalations.mapNotNull { it.toJson() },
+            compensations = model.compensations.mapNotNull { it.toJson() },
+            variants = model.variants.map { variant ->
+                VariantJson(
+                    variantName = variant.variantName,
+                    flowNodes = FlowNodeSorter.sort(variant.flowNodes).map { it.toJson() },
+                    sequenceFlows = variant.sequenceFlows.map { it.toJson() },
+                )
+            },
         )
     }
 

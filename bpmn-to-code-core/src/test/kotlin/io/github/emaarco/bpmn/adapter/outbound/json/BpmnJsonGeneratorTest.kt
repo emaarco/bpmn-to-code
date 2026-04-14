@@ -1,7 +1,9 @@
 package io.github.emaarco.bpmn.adapter.outbound.json
 
-import io.github.emaarco.bpmn.domain.testBpmnModel
-import io.github.emaarco.bpmn.domain.shared.*
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
+import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
+import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,9 +14,9 @@ class BpmnJsonGeneratorTest {
     private val underTest = BpmnJsonGenerator()
 
     @Test
-    fun `generates correct JSON for newsletter model`() {
+    fun `generates correct JSON for single model`() {
 
-        // given: the newsletter BPMN model
+        // given: the subscribe newsletter BPMN model
         val model = testSubscribeNewsletterBpmnModel(
             escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
         )
@@ -24,58 +26,47 @@ class BpmnJsonGeneratorTest {
 
         // then: expect the generated JSON to match the expected snapshot
         val expectedFile = File(javaClass.getResource("/json/NewsletterSubscriptionProcess.json")!!.toURI())
-        val expectedContent = expectedFile.readText()
-        assertThat(result).isEqualToIgnoringWhitespace(expectedContent)
-    }
-
-    @Test
-    fun `generates JSON with variantName when set`() {
-
-        // given: a minimal model with variantName
-        val model = testBpmnModel(
-            processId = "order-process",
-            variantName = "prodDe",
-            flowNodes = listOf(FlowNodeDefinition(id = "StartEvent_1", elementType = BpmnElementType.START_EVENT)),
-            sequenceFlows = listOf(SequenceFlowDefinition("Flow_1", "StartEvent_1", "EndEvent_1")),
-            messages = listOf(MessageDefinition("StartEvent_1", "Message_Order")),
-            signals = listOf(SignalDefinition("EndEvent_1", "Signal_Done")),
-            errors = listOf(ErrorDefinition("Error_1", "Error_Timeout", "408")),
-            escalations = listOf(EscalationDefinition("Esc_1", "Escalation_Retry", "100")),
-        )
-
-        // when: generating JSON
-        val result = underTest.generate(model)
-
-        // then: expect the generated JSON to match the expected snapshot
-        val expectedFile = File(javaClass.getResource("/json/MinimalProcessWithVariant.json")!!.toURI())
         assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 
     @Test
-    fun `adapter uses variant-aware filename when variantName is set`() {
+    fun `generates JSON with variants for merged model`() {
 
-        // given: a model with variantName
-        val model = testSubscribeNewsletterBpmnModel(variantName = "withApproval")
-        val adapter = BpmnJsonGenerationAdapter()
+        // given: a merged model combining subscribe and send newsletter
+        val subscribe = testSubscribeNewsletterBpmnModel(variantName = "subscribe")
+        val send = testSendNewsletterBpmnModel(variantName = "send")
+        val merged = MergedBpmnModel(
+            processId = "newsletterSubscription",
+            flowNodes = (subscribe.flowNodes + send.flowNodes).distinctBy { it.getRawName() },
+            messages = (subscribe.messages + send.messages).distinctBy { it.getRawName() },
+            signals = subscribe.signals + send.signals,
+            errors = subscribe.errors + send.errors,
+            escalations = (subscribe.escalations + send.escalations).distinctBy { it.getRawName() },
+            variants = listOf(
+                VariantData("subscribe", subscribe.sequenceFlows, subscribe.flowNodes),
+                VariantData("send", send.sequenceFlows, send.flowNodes),
+            ),
+        )
 
-        // when: generating JSON via adapter
-        val result = adapter.generateJson(model)
+        // when: generating JSON
+        val result = underTest.generate(merged)
 
-        // then: filename includes variantName
-        assertThat(result.fileName).isEqualTo("newsletterSubscription-withApproval.json")
+        // then: expect the generated JSON to match the expected snapshot
+        val expectedFile = File(javaClass.getResource("/json/MultiVariantNewsletterProcess.json")!!.toURI())
+        assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 
     @Test
-    fun `adapter uses plain filename when variantName is not set`() {
+    fun `adapter always uses processId as filename`() {
 
-        // given: a model without variantName
+        // given: a model
         val model = testSubscribeNewsletterBpmnModel()
         val adapter = BpmnJsonGenerationAdapter()
 
         // when: generating JSON via adapter
         val result = adapter.generateJson(model)
 
-        // then: filename is just processId
+        // then: filename is processId.json
         assertThat(result.fileName).isEqualTo("newsletterSubscription.json")
     }
 }

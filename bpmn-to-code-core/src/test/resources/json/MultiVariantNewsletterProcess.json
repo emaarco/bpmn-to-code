@@ -1,0 +1,957 @@
+{
+    "processId": "newsletterSubscription",
+    "flowNodes": [
+        {
+            "id": "StartEvent_SubmitRegistrationForm",
+            "elementType": "START_EVENT",
+            "outgoing": [
+                "SubProcess_Confirmation"
+            ],
+            "variables": [
+                "subscriptionId"
+            ]
+        },
+        {
+            "id": "SubProcess_Confirmation",
+            "elementType": "SUB_PROCESS",
+            "attachedElements": [
+                "ErrorEvent_InvalidMail",
+                "Timer_After3Days"
+            ],
+            "incoming": [
+                "StartEvent_SubmitRegistrationForm"
+            ],
+            "outgoing": [
+                "Activity_SendWelcomeMail"
+            ]
+        },
+        {
+            "id": "StartEvent_RequestReceived",
+            "elementType": "START_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
+            ],
+            "variables": [
+                "subscriptionId"
+            ]
+        },
+        {
+            "id": "Activity_SendConfirmationMail",
+            "elementType": "SERVICE_TASK",
+            "parentId": "SubProcess_Confirmation",
+            "incoming": [
+                "StartEvent_RequestReceived",
+                "Timer_EveryDay"
+            ],
+            "outgoing": [
+                "Activity_ConfirmRegistration"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendConfirmationMail"
+            }
+        },
+        {
+            "id": "Activity_ConfirmRegistration",
+            "elementType": "USER_TASK",
+            "parentId": "SubProcess_Confirmation",
+            "attachedElements": [
+                "Timer_EveryDay"
+            ],
+            "incoming": [
+                "Activity_SendConfirmationMail"
+            ],
+            "outgoing": [
+                "EndEvent_SubscriptionConfirmed"
+            ]
+        },
+        {
+            "id": "Timer_EveryDay",
+            "elementType": "BOUNDARY_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "attachedToRef": "Activity_ConfirmRegistration",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
+            ],
+            "properties": {
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "PT1M"
+            }
+        },
+        {
+            "id": "EndEvent_SubscriptionConfirmed",
+            "elementType": "END_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "incoming": [
+                "Activity_ConfirmRegistration"
+            ]
+        },
+        {
+            "id": "ErrorEvent_InvalidMail",
+            "elementType": "BOUNDARY_EVENT",
+            "attachedToRef": "SubProcess_Confirmation",
+            "outgoing": [
+                "EndEvent_RegistrationNotPossible"
+            ]
+        },
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "ErrorEvent_InvalidMail"
+            ]
+        },
+        {
+            "id": "Timer_After3Days",
+            "elementType": "BOUNDARY_EVENT",
+            "attachedToRef": "SubProcess_Confirmation",
+            "outgoing": [
+                "CallActivity_AbortRegistration"
+            ],
+            "properties": {
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "${testVariable}"
+            }
+        },
+        {
+            "id": "CallActivity_AbortRegistration",
+            "elementType": "CALL_ACTIVITY",
+            "incoming": [
+                "Timer_After3Days"
+            ],
+            "outgoing": [
+                "EndEvent_RegistrationAborted"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "CallActivity",
+                "calledElement": "abort-registration"
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationAborted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "CallActivity_AbortRegistration"
+            ]
+        },
+        {
+            "id": "Activity_SendWelcomeMail",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "SubProcess_Confirmation"
+            ],
+            "outgoing": [
+                "EndEvent_RegistrationCompleted"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendWelcomeMail"
+            },
+            "engineSpecificProperties": {
+                "asyncBefore": true,
+                "asyncAfter": true,
+                "exclusive": false
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationCompleted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "Activity_SendWelcomeMail"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.registrationCompleted"
+            }
+        },
+        {
+            "id": "startEvent_editionCreated",
+            "elementType": "START_EVENT",
+            "outgoing": [
+                "serviceTask_loadSubscribers"
+            ]
+        },
+        {
+            "id": "serviceTask_loadSubscribers",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "startEvent_editionCreated"
+            ],
+            "outgoing": [
+                "gateway_hasSubscribers"
+            ],
+            "variables": [
+                "subscribers",
+                "author"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.loadSubscribers"
+            }
+        },
+        {
+            "id": "gateway_hasSubscribers",
+            "elementType": "EXCLUSIVE_GATEWAY",
+            "incoming": [
+                "serviceTask_loadSubscribers"
+            ],
+            "outgoing": [
+                "serviceTask_sendToSubscriber",
+                "endEvent_noSubscribers"
+            ]
+        },
+        {
+            "id": "endEvent_noSubscribers",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "gateway_hasSubscribers"
+            ]
+        },
+        {
+            "id": "serviceTask_sendToSubscriber",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "gateway_hasSubscribers"
+            ],
+            "outgoing": [
+                "serviceTask_notifyAuthor"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendMailToSubscriber"
+            }
+        },
+        {
+            "id": "serviceTask_notifyAuthor",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "serviceTask_sendToSubscriber"
+            ],
+            "outgoing": [
+                "endEvent_editionSent"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.notifyAuthor"
+            }
+        },
+        {
+            "id": "endEvent_editionSent",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "serviceTask_notifyAuthor"
+            ]
+        },
+        {
+            "id": "eventSubProcess_errorHandling",
+            "elementType": "SUB_PROCESS"
+        },
+        {
+            "id": "event_mailRejected",
+            "elementType": "START_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "outgoing": [
+                "serviceTask_analyzeError"
+            ]
+        },
+        {
+            "id": "serviceTask_analyzeError",
+            "elementType": "SERVICE_TASK",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "event_mailRejected"
+            ],
+            "outgoing": [
+                "gateway_canSendAgain"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.analyzeSendError"
+            }
+        },
+        {
+            "id": "gateway_canSendAgain",
+            "elementType": "EXCLUSIVE_GATEWAY",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "serviceTask_analyzeError"
+            ],
+            "outgoing": [
+                "serviceTask_sendMailAgain",
+                "escalationEndEvent_nofitySupport"
+            ]
+        },
+        {
+            "id": "escalationEndEvent_nofitySupport",
+            "elementType": "END_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "gateway_canSendAgain"
+            ]
+        },
+        {
+            "id": "serviceTask_sendMailAgain",
+            "elementType": "SERVICE_TASK",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "gateway_canSendAgain"
+            ],
+            "outgoing": [
+                "eventGateway_afterSendingAgain"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendMailToSubscriber"
+            }
+        },
+        {
+            "id": "eventGateway_afterSendingAgain",
+            "elementType": "EVENT_BASED_GATEWAY",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "serviceTask_sendMailAgain"
+            ],
+            "outgoing": [
+                "timer_noRejectionForOneDay",
+                "event_mailRejectedAgain"
+            ]
+        },
+        {
+            "id": "event_mailRejectedAgain",
+            "elementType": "INTERMEDIATE_CATCH_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "eventGateway_afterSendingAgain"
+            ],
+            "outgoing": [
+                "escalationEndEvent_nofitySupportAfterRepeatedError"
+            ]
+        },
+        {
+            "id": "escalationEndEvent_nofitySupportAfterRepeatedError",
+            "elementType": "END_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "event_mailRejectedAgain"
+            ]
+        },
+        {
+            "id": "timer_noRejectionForOneDay",
+            "elementType": "INTERMEDIATE_CATCH_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "eventGateway_afterSendingAgain"
+            ],
+            "outgoing": [
+                "endEvent_issueResolved"
+            ],
+            "properties": {
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "PT1D"
+            }
+        },
+        {
+            "id": "endEvent_issueResolved",
+            "elementType": "END_EVENT",
+            "parentId": "eventSubProcess_errorHandling",
+            "incoming": [
+                "timer_noRejectionForOneDay"
+            ]
+        }
+    ],
+    "messages": [
+        {
+            "id": "StartEvent_SubmitRegistrationForm",
+            "name": "Message_FormSubmitted"
+        },
+        {
+            "id": "event_mailRejected",
+            "name": "Message_MailRejected"
+        },
+        {
+            "id": "event_mailRejectedAgain",
+            "name": "Message_MailRejectedAgain"
+        }
+    ],
+    "signals": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Signal_RegistrationNotPossible"
+        }
+    ],
+    "errors": [
+        {
+            "id": "ErrorEvent_InvalidMail",
+            "name": "Error_InvalidMail",
+            "code": "500"
+        }
+    ],
+    "escalations": [
+        {
+            "id": "escalationEndEvent_nofitySupport",
+            "name": "escalation_notifySupport",
+            "code": "200"
+        }
+    ],
+    "variants": [
+        {
+            "variantName": "subscribe",
+            "flowNodes": [
+                {
+                    "id": "StartEvent_SubmitRegistrationForm",
+                    "elementType": "START_EVENT",
+                    "outgoing": [
+                        "SubProcess_Confirmation"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ]
+                },
+                {
+                    "id": "SubProcess_Confirmation",
+                    "elementType": "SUB_PROCESS",
+                    "attachedElements": [
+                        "ErrorEvent_InvalidMail",
+                        "Timer_After3Days"
+                    ],
+                    "incoming": [
+                        "StartEvent_SubmitRegistrationForm"
+                    ],
+                    "outgoing": [
+                        "Activity_SendWelcomeMail"
+                    ]
+                },
+                {
+                    "id": "StartEvent_RequestReceived",
+                    "elementType": "START_EVENT",
+                    "parentId": "SubProcess_Confirmation",
+                    "outgoing": [
+                        "Activity_SendConfirmationMail"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ]
+                },
+                {
+                    "id": "Activity_SendConfirmationMail",
+                    "elementType": "SERVICE_TASK",
+                    "parentId": "SubProcess_Confirmation",
+                    "incoming": [
+                        "StartEvent_RequestReceived",
+                        "Timer_EveryDay"
+                    ],
+                    "outgoing": [
+                        "Activity_ConfirmRegistration"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.sendConfirmationMail"
+                    }
+                },
+                {
+                    "id": "Activity_ConfirmRegistration",
+                    "elementType": "USER_TASK",
+                    "parentId": "SubProcess_Confirmation",
+                    "attachedElements": [
+                        "Timer_EveryDay"
+                    ],
+                    "incoming": [
+                        "Activity_SendConfirmationMail"
+                    ],
+                    "outgoing": [
+                        "EndEvent_SubscriptionConfirmed"
+                    ]
+                },
+                {
+                    "id": "Timer_EveryDay",
+                    "elementType": "BOUNDARY_EVENT",
+                    "parentId": "SubProcess_Confirmation",
+                    "attachedToRef": "Activity_ConfirmRegistration",
+                    "outgoing": [
+                        "Activity_SendConfirmationMail"
+                    ],
+                    "properties": {
+                        "type": "Timer",
+                        "timerType": "Duration",
+                        "timerValue": "PT1M"
+                    }
+                },
+                {
+                    "id": "EndEvent_SubscriptionConfirmed",
+                    "elementType": "END_EVENT",
+                    "parentId": "SubProcess_Confirmation",
+                    "incoming": [
+                        "Activity_ConfirmRegistration"
+                    ]
+                },
+                {
+                    "id": "ErrorEvent_InvalidMail",
+                    "elementType": "BOUNDARY_EVENT",
+                    "attachedToRef": "SubProcess_Confirmation",
+                    "outgoing": [
+                        "EndEvent_RegistrationNotPossible"
+                    ]
+                },
+                {
+                    "id": "EndEvent_RegistrationNotPossible",
+                    "elementType": "END_EVENT",
+                    "incoming": [
+                        "ErrorEvent_InvalidMail"
+                    ]
+                },
+                {
+                    "id": "Timer_After3Days",
+                    "elementType": "BOUNDARY_EVENT",
+                    "attachedToRef": "SubProcess_Confirmation",
+                    "outgoing": [
+                        "CallActivity_AbortRegistration"
+                    ],
+                    "properties": {
+                        "type": "Timer",
+                        "timerType": "Duration",
+                        "timerValue": "${testVariable}"
+                    }
+                },
+                {
+                    "id": "CallActivity_AbortRegistration",
+                    "elementType": "CALL_ACTIVITY",
+                    "incoming": [
+                        "Timer_After3Days"
+                    ],
+                    "outgoing": [
+                        "EndEvent_RegistrationAborted"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ],
+                    "properties": {
+                        "type": "CallActivity",
+                        "calledElement": "abort-registration"
+                    }
+                },
+                {
+                    "id": "EndEvent_RegistrationAborted",
+                    "elementType": "END_EVENT",
+                    "incoming": [
+                        "CallActivity_AbortRegistration"
+                    ]
+                },
+                {
+                    "id": "Activity_SendWelcomeMail",
+                    "elementType": "SERVICE_TASK",
+                    "incoming": [
+                        "SubProcess_Confirmation"
+                    ],
+                    "outgoing": [
+                        "EndEvent_RegistrationCompleted"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.sendWelcomeMail"
+                    },
+                    "engineSpecificProperties": {
+                        "asyncBefore": true,
+                        "asyncAfter": true,
+                        "exclusive": false
+                    }
+                },
+                {
+                    "id": "EndEvent_RegistrationCompleted",
+                    "elementType": "END_EVENT",
+                    "incoming": [
+                        "Activity_SendWelcomeMail"
+                    ],
+                    "variables": [
+                        "subscriptionId"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.registrationCompleted"
+                    }
+                }
+            ],
+            "sequenceFlows": [
+                {
+                    "id": "Flow_05i3x1y",
+                    "sourceRef": "StartEvent_RequestReceived",
+                    "targetRef": "Activity_SendConfirmationMail",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_09cuvzp",
+                    "sourceRef": "SubProcess_Confirmation",
+                    "targetRef": "Activity_SendWelcomeMail",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0i2ctuv",
+                    "sourceRef": "ErrorEvent_InvalidMail",
+                    "targetRef": "EndEvent_RegistrationNotPossible",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0x4ewvb",
+                    "sourceRef": "Timer_EveryDay",
+                    "targetRef": "Activity_SendConfirmationMail",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1bckm43",
+                    "sourceRef": "Activity_SendConfirmationMail",
+                    "targetRef": "Activity_ConfirmRegistration",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1bsb8no",
+                    "sourceRef": "CallActivity_AbortRegistration",
+                    "targetRef": "EndEvent_RegistrationAborted",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1cpwe57",
+                    "sourceRef": "Activity_ConfirmRegistration",
+                    "targetRef": "EndEvent_SubscriptionConfirmed",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1csfyyz",
+                    "sourceRef": "StartEvent_SubmitRegistrationForm",
+                    "targetRef": "SubProcess_Confirmation",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1i7hjid",
+                    "sourceRef": "Activity_SendWelcomeMail",
+                    "targetRef": "EndEvent_RegistrationCompleted",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1l1lj4m",
+                    "sourceRef": "Timer_After3Days",
+                    "targetRef": "CallActivity_AbortRegistration",
+                    "isDefault": false
+                }
+            ]
+        },
+        {
+            "variantName": "send",
+            "flowNodes": [
+                {
+                    "id": "startEvent_editionCreated",
+                    "elementType": "START_EVENT",
+                    "outgoing": [
+                        "serviceTask_loadSubscribers"
+                    ]
+                },
+                {
+                    "id": "serviceTask_loadSubscribers",
+                    "elementType": "SERVICE_TASK",
+                    "incoming": [
+                        "startEvent_editionCreated"
+                    ],
+                    "outgoing": [
+                        "gateway_hasSubscribers"
+                    ],
+                    "variables": [
+                        "subscribers",
+                        "author"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.loadSubscribers"
+                    }
+                },
+                {
+                    "id": "gateway_hasSubscribers",
+                    "elementType": "EXCLUSIVE_GATEWAY",
+                    "incoming": [
+                        "serviceTask_loadSubscribers"
+                    ],
+                    "outgoing": [
+                        "serviceTask_sendToSubscriber",
+                        "endEvent_noSubscribers"
+                    ]
+                },
+                {
+                    "id": "endEvent_noSubscribers",
+                    "elementType": "END_EVENT",
+                    "incoming": [
+                        "gateway_hasSubscribers"
+                    ]
+                },
+                {
+                    "id": "serviceTask_sendToSubscriber",
+                    "elementType": "SERVICE_TASK",
+                    "incoming": [
+                        "gateway_hasSubscribers"
+                    ],
+                    "outgoing": [
+                        "serviceTask_notifyAuthor"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.sendMailToSubscriber"
+                    }
+                },
+                {
+                    "id": "serviceTask_notifyAuthor",
+                    "elementType": "SERVICE_TASK",
+                    "incoming": [
+                        "serviceTask_sendToSubscriber"
+                    ],
+                    "outgoing": [
+                        "endEvent_editionSent"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.notifyAuthor"
+                    }
+                },
+                {
+                    "id": "endEvent_editionSent",
+                    "elementType": "END_EVENT",
+                    "incoming": [
+                        "serviceTask_notifyAuthor"
+                    ]
+                },
+                {
+                    "id": "eventSubProcess_errorHandling",
+                    "elementType": "SUB_PROCESS"
+                },
+                {
+                    "id": "event_mailRejected",
+                    "elementType": "START_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "outgoing": [
+                        "serviceTask_analyzeError"
+                    ]
+                },
+                {
+                    "id": "serviceTask_analyzeError",
+                    "elementType": "SERVICE_TASK",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "event_mailRejected"
+                    ],
+                    "outgoing": [
+                        "gateway_canSendAgain"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.analyzeSendError"
+                    }
+                },
+                {
+                    "id": "gateway_canSendAgain",
+                    "elementType": "EXCLUSIVE_GATEWAY",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "serviceTask_analyzeError"
+                    ],
+                    "outgoing": [
+                        "serviceTask_sendMailAgain",
+                        "escalationEndEvent_nofitySupport"
+                    ]
+                },
+                {
+                    "id": "escalationEndEvent_nofitySupport",
+                    "elementType": "END_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "gateway_canSendAgain"
+                    ]
+                },
+                {
+                    "id": "serviceTask_sendMailAgain",
+                    "elementType": "SERVICE_TASK",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "gateway_canSendAgain"
+                    ],
+                    "outgoing": [
+                        "eventGateway_afterSendingAgain"
+                    ],
+                    "properties": {
+                        "type": "ServiceTask",
+                        "implementationValue": "newsletter.sendMailToSubscriber"
+                    }
+                },
+                {
+                    "id": "eventGateway_afterSendingAgain",
+                    "elementType": "EVENT_BASED_GATEWAY",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "serviceTask_sendMailAgain"
+                    ],
+                    "outgoing": [
+                        "timer_noRejectionForOneDay",
+                        "event_mailRejectedAgain"
+                    ]
+                },
+                {
+                    "id": "event_mailRejectedAgain",
+                    "elementType": "INTERMEDIATE_CATCH_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "eventGateway_afterSendingAgain"
+                    ],
+                    "outgoing": [
+                        "escalationEndEvent_nofitySupportAfterRepeatedError"
+                    ]
+                },
+                {
+                    "id": "escalationEndEvent_nofitySupportAfterRepeatedError",
+                    "elementType": "END_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "event_mailRejectedAgain"
+                    ]
+                },
+                {
+                    "id": "timer_noRejectionForOneDay",
+                    "elementType": "INTERMEDIATE_CATCH_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "eventGateway_afterSendingAgain"
+                    ],
+                    "outgoing": [
+                        "endEvent_issueResolved"
+                    ],
+                    "properties": {
+                        "type": "Timer",
+                        "timerType": "Duration",
+                        "timerValue": "PT1D"
+                    }
+                },
+                {
+                    "id": "endEvent_issueResolved",
+                    "elementType": "END_EVENT",
+                    "parentId": "eventSubProcess_errorHandling",
+                    "incoming": [
+                        "timer_noRejectionForOneDay"
+                    ]
+                }
+            ],
+            "sequenceFlows": [
+                {
+                    "id": "Flow_0bianz5",
+                    "sourceRef": "startEvent_editionCreated",
+                    "targetRef": "serviceTask_loadSubscribers",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_04andb8",
+                    "sourceRef": "serviceTask_loadSubscribers",
+                    "targetRef": "gateway_hasSubscribers",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1jogut0",
+                    "sourceRef": "gateway_hasSubscribers",
+                    "targetRef": "serviceTask_sendToSubscriber",
+                    "name": "Yes",
+                    "isDefault": true
+                },
+                {
+                    "id": "Flow_1gsz7wd",
+                    "sourceRef": "gateway_hasSubscribers",
+                    "targetRef": "endEvent_noSubscribers",
+                    "name": "No",
+                    "conditionExpression": "${subscribers.size() > 0}",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1ruayvl",
+                    "sourceRef": "serviceTask_sendToSubscriber",
+                    "targetRef": "serviceTask_notifyAuthor",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0v2v55n",
+                    "sourceRef": "serviceTask_notifyAuthor",
+                    "targetRef": "endEvent_editionSent",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0vtppnk",
+                    "sourceRef": "event_mailRejected",
+                    "targetRef": "serviceTask_analyzeError",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_13nmnag",
+                    "sourceRef": "serviceTask_analyzeError",
+                    "targetRef": "gateway_canSendAgain",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_1izucof",
+                    "sourceRef": "gateway_canSendAgain",
+                    "targetRef": "serviceTask_sendMailAgain",
+                    "name": "Yes",
+                    "isDefault": true
+                },
+                {
+                    "id": "Flow_18nf2jh",
+                    "sourceRef": "gateway_canSendAgain",
+                    "targetRef": "escalationEndEvent_nofitySupport",
+                    "name": "No",
+                    "conditionExpression": "${canBeResolved == false}",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0vym6nu",
+                    "sourceRef": "serviceTask_sendMailAgain",
+                    "targetRef": "eventGateway_afterSendingAgain",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0enjkoe",
+                    "sourceRef": "eventGateway_afterSendingAgain",
+                    "targetRef": "timer_noRejectionForOneDay",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_081cykl",
+                    "sourceRef": "eventGateway_afterSendingAgain",
+                    "targetRef": "event_mailRejectedAgain",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0x9thpq",
+                    "sourceRef": "event_mailRejectedAgain",
+                    "targetRef": "escalationEndEvent_nofitySupportAfterRepeatedError",
+                    "isDefault": false
+                },
+                {
+                    "id": "Flow_0338xzf",
+                    "sourceRef": "timer_noRejectionForOneDay",
+                    "targetRef": "endEvent_issueResolved",
+                    "isDefault": false
+                }
+            ]
+        }
+    ]
+}
