@@ -13,18 +13,18 @@ import org.junit.jupiter.api.Test
 
 class ValidateBpmnFilesystemPluginTest {
 
-    private val useCase = mockk<ValidateBpmnFromFilesystemUseCase>()
-    private val underTest = ValidateBpmnFilesystemPlugin(useCase)
+    private val useCase = mockk<ValidateBpmnFromFilesystemUseCase>(relaxed = true)
+    private val underTest = ValidateBpmnFilesystemPlugin(useCase = useCase)
 
     @Test
     fun `execute delegates to use case with correct command`() {
 
-        // given
+        // given: a config and an expected validation result
+        val config = ValidationConfig(failOnWarning = true, disabledRules = setOf("missing-element-id"))
         val expectedResult = ValidationResult(emptyList())
         every { useCase.validateBpmn(any()) } returns expectedResult
 
-        // when
-        val config = ValidationConfig(failOnWarning = true, disabledRules = setOf("missing-element-id"))
+        // when: execute is called with all parameters
         val result = underTest.execute(
             baseDir = "/path/to/bpmn",
             filePattern = "*.bpmn",
@@ -32,7 +32,7 @@ class ValidateBpmnFilesystemPluginTest {
             validationConfig = config,
         )
 
-        // then
+        // then: use case is called with the correct command and result is returned
         verify {
             useCase.validateBpmn(
                 ValidateBpmnFromFilesystemUseCase.Command(

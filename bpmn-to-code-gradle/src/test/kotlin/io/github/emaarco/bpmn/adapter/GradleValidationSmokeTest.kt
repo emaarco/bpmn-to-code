@@ -21,15 +21,11 @@ class GradleValidationSmokeTest {
         bpmnFile: String,
         @TempDir projectDir: File,
     ) {
-        // Copy BPMN file into the temp project
+        // given: a minimal project with a valid BPMN file for the given engine
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
         val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile")!!
         File(resourcesDir, bpmnFile).writeBytes(bpmnStream.readBytes())
-
-        // Write settings.gradle
         File(projectDir, "settings.gradle").writeText("")
-
-        // Write build.gradle
         File(projectDir, "build.gradle").writeText(
             """
             plugins {
@@ -44,14 +40,14 @@ class GradleValidationSmokeTest {
             """.trimIndent()
         )
 
-        // Run the task
+        // when: running the validateBpmnModels task
         val result = GradleRunner.create()
             .withProjectDir(projectDir)
             .withPluginClasspath()
             .withArguments("validateBpmnModels")
             .build()
 
-        // Verify task succeeded
+        // then: the task succeeds with a validation passed message
         assertThat(result.task(":validateBpmnModels")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         assertThat(result.output).contains("BPMN validation passed")
     }

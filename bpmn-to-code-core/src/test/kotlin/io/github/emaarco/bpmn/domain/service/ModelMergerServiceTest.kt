@@ -11,7 +11,7 @@ import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModel
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class ModelMergerServiceTest {
@@ -60,7 +60,7 @@ class ModelMergerServiceTest {
         val result = underTest.mergeModels(listOf(firstModel, secondModel, otherModel))
 
         // then
-        Assertions.assertThat(result).containsExactlyInAnyOrder(
+        assertThat(result).containsExactlyInAnyOrder(
             testBpmnModel(
                 processId = "order-process",
                 flowNodes = listOf(firstFlowNode, thirdFlowNode, secondFlowNode),
@@ -102,9 +102,9 @@ class ModelMergerServiceTest {
         val actualFlowNodes = sortedModel.flowNodes.map { it.getRawName() }
         val actualVariables = sortedModel.variables.map { it.getRawName() }
         val actualEscalations = sortedModel.escalations.map { it.getRawName() }
-        Assertions.assertThat(actualFlowNodes).containsExactly("a-node", "m-node", "z-node")
-        Assertions.assertThat(actualVariables).containsExactly("alphaVar", "zetaVar")
-        Assertions.assertThat(actualEscalations).containsExactly("aEscalation", "mEscalation", "zEscalation")
+        assertThat(actualFlowNodes).containsExactly("a-node", "m-node", "z-node")
+        assertThat(actualVariables).containsExactly("alphaVar", "zetaVar")
+        assertThat(actualEscalations).containsExactly("aEscalation", "mEscalation", "zEscalation")
     }
 
     @Test
@@ -142,7 +142,7 @@ class ModelMergerServiceTest {
         val result = underTest.mergeModels(listOf(model))
 
         // then: duplicates should be removed from all element types (sorted alphabetically)
-        Assertions.assertThat(result).containsExactly(
+        assertThat(result).containsExactly(
             testBpmnModel(
                 processId = "test-process",
                 errors = listOf(ErrorDefinition(id = "TEST_ERROR", name = "TEST_ERROR", code = "400")),
@@ -213,7 +213,7 @@ class ModelMergerServiceTest {
         val result = underTest.mergeModels(listOf(firstModel, secondModel))
 
         // then: should merge into a single model with deduplicated elements
-        Assertions.assertThat(result).containsExactly(
+        assertThat(result).containsExactly(
             testBpmnModel(
                 processId = "test-process",
                 errors = listOf(

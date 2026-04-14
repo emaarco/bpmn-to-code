@@ -10,14 +10,18 @@ import org.junit.jupiter.api.Test
 
 class MissingMessageNameRuleTest {
 
-    private val rule = MissingMessageNameRule()
+    private val underTest = MissingMessageNameRule()
 
     @Test
     fun `reports error for message with null name`() {
+
+        // given: a message element with no name
         val model = testBpmnModel(
             messages = listOf(MessageDefinition(id = "msg1", name = null))
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: an ERROR violation is reported for the message element
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
         assertThat(violations[0].severity).isEqualTo(Severity.ERROR)
         assertThat(violations[0].elementId).isEqualTo("msg1")
@@ -25,10 +29,14 @@ class MissingMessageNameRuleTest {
 
     @Test
     fun `no violations for message with valid name`() {
+
+        // given: a message element with a valid name
         val model = testBpmnModel(
             messages = listOf(MessageDefinition(id = "msg1", name = "MyMessage"))
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: no violations
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()
     }
 }
