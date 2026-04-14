@@ -10,8 +10,13 @@ class BpmnJsonGenerationAdapter(
 
     override fun generateJson(model: BpmnModel): GeneratedJsonFile {
         val json = jsonGenerator.generate(model)
+        val fileName = if (model.variantName != null) {
+            "${model.processId}-${model.variantName}.json"
+        } else {
+            "${model.processId}.json"
+        }
         return GeneratedJsonFile(
-            fileName = "${model.processId}.json",
+            fileName = fileName,
             content = json,
         )
     }

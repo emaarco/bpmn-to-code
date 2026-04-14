@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.testing
 import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnResource
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationRule
@@ -122,8 +123,9 @@ class BpmnValidator private constructor(
         }
 
         val mergedModels = ModelMergerService().mergeModels(models)
-        val postMergeViolations = mergedModels.flatMap { model ->
-            val ctx = ValidationContext(model, engine)
+        val postMergeViolations = mergedModels.flatMap { merged ->
+            val flat = merged.toFlatModel()
+            val ctx = ValidationContext(flat, engine)
             val violations = postMergeRules.flatMap { it.validate(ctx) }
             applyPolicy(violations)
         }

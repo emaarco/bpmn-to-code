@@ -14,8 +14,10 @@ import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -40,6 +42,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         ApiObjectType.VARIABLES to VariablesWriter(),
         ApiObjectType.FLOWS to FlowsWriter(),
         ApiObjectType.RELATIONS to RelationsWriter(),
+        ApiObjectType.VARIANTS to VariantsWriter(),
     )
 
     override fun buildApiFile(modelApi: BpmnModelApi): GeneratedApiFile {
@@ -103,68 +106,107 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     private inner class FlowsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.FLOWS
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
-
-        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnFlowClass = ClassName("${modelApi.packagePath}.types", "BpmnFlow")
-            val flowsBuilder = TypeSpec.objectBuilder("Flows")
-            modelApi.model.sequenceFlows.forEach { flow ->
-                val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
-                flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), bpmnFlowClass).initializer(initStr).build())
-            }
-            builder.addType(flowsBuilder.build())
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean {
+            return modelApi.model.sequenceFlows.isNotEmpty() && !modelApi.model.isMultiVariant
         }
 
-        private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): String {
-            return buildString {
-                append("BpmnFlow(\n")
-                append("    id = \"$id\",\n")
-                append("    sourceRef = \"$sourceRef\",\n")
-                append("    targetRef = \"$targetRef\",\n")
-                if (condition != null) append("    condition = \"${condition.escapeDollarInterpolation()}\",\n")
-                if (isDefault) append("    isDefault = true,\n")
-                append(")")
-            }
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val flowsObject = buildFlowsObject(modelApi.packagePath, modelApi.model.sequenceFlows)
+            builder.addType(flowsObject)
         }
     }
 
     private inner class RelationsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.RELATIONS
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.sequenceFlows.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi): Boolean {
+            return modelApi.model.sequenceFlows.isNotEmpty() && !modelApi.model.isMultiVariant
+        }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnRelationsClass = ClassName("${modelApi.packagePath}.types", "BpmnRelations")
-            val relationsBuilder = TypeSpec.objectBuilder("Relations")
-            modelApi.model.flowNodes
-                .filter { it.id != null }
-                .sortedBy { it.getRawName() }
-                .forEach { node ->
-                    val initStr = buildRelationsInitializer(node)
-                    relationsBuilder.addProperty(PropertySpec.builder(node.getName(), bpmnRelationsClass).initializer(initStr).build())
-                }
-            builder.addType(relationsBuilder.build())
+            val relationsObject = buildRelationsObject(modelApi.packagePath, modelApi.model.flowNodes)
+            builder.addType(relationsObject)
         }
+    }
 
-        private fun buildRelationsInitializer(node: FlowNodeDefinition): String {
-            return buildString {
-                append("BpmnRelations(\n")
-                append("    incoming = ${listLiteral(node.incoming)},\n")
-                append("    outgoing = ${listLiteral(node.outgoing)},\n")
-                append("    parentId = ${nullableStringLiteral(node.parentId)},\n")
-                append("    attachedToRef = ${nullableStringLiteral(node.attachedToRef)},\n")
-                append("    attachedElements = ${listLiteral(node.attachedElements)},\n")
-                append(")")
+    private inner class VariantsWriter : ObjectWriter<TypeSpec.Builder> {
+
+        override val objectType = ApiObjectType.VARIANTS
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.isMultiVariant
+
+        override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val variantsBuilder = TypeSpec.objectBuilder("Variants")
+            modelApi.model.variants.forEach { variant ->
+                val variantObject = buildVariantObject(modelApi.packagePath, variant)
+                variantsBuilder.addType(variantObject)
             }
+            builder.addType(variantsBuilder.build())
         }
 
-        private fun listLiteral(items: List<String>): String {
-            return if (items.isEmpty()) "emptyList()" else "listOf(${items.joinToString { "\"$it\"" }})"
+        private fun buildVariantObject(packagePath: String, variant: VariantData): TypeSpec {
+            val variantName = variant.variantName.toCamelCase()
+            val variantBuilder = TypeSpec.objectBuilder(variantName)
+            if (variant.sequenceFlows.isNotEmpty()) {
+                variantBuilder.addType(buildFlowsObject(packagePath, variant.sequenceFlows))
+                variantBuilder.addType(buildRelationsObject(packagePath, variant.flowNodes))
+            }
+            return variantBuilder.build()
         }
+    }
 
-        private fun nullableStringLiteral(value: String?): String {
-            return if (value != null) "\"$value\"" else "null"
+    private fun buildFlowsObject(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
+        val bpmnFlowClass = ClassName("${packagePath}.types", "BpmnFlow")
+        val flowsBuilder = TypeSpec.objectBuilder("Flows")
+        sequenceFlows.forEach { flow ->
+            val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
+            flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), bpmnFlowClass).initializer(initStr).build())
         }
+        return flowsBuilder.build()
+    }
+
+    private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): String {
+        return buildString {
+            append("BpmnFlow(\n")
+            append("    id = \"$id\",\n")
+            append("    sourceRef = \"$sourceRef\",\n")
+            append("    targetRef = \"$targetRef\",\n")
+            if (condition != null) append("    condition = \"${condition.escapeDollarInterpolation()}\",\n")
+            if (isDefault) append("    isDefault = true,\n")
+            append(")")
+        }
+    }
+
+    private fun buildRelationsObject(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
+        val bpmnRelationsClass = ClassName("${packagePath}.types", "BpmnRelations")
+        val relationsBuilder = TypeSpec.objectBuilder("Relations")
+        flowNodes
+            .filter { it.id != null }
+            .sortedBy { it.getRawName() }
+            .forEach { node ->
+                val initStr = buildRelationsInitializer(node)
+                relationsBuilder.addProperty(PropertySpec.builder(node.getName(), bpmnRelationsClass).initializer(initStr).build())
+            }
+        return relationsBuilder.build()
+    }
+
+    private fun buildRelationsInitializer(node: FlowNodeDefinition): String {
+        return buildString {
+            append("BpmnRelations(\n")
+            append("    incoming = ${listLiteral(node.incoming)},\n")
+            append("    outgoing = ${listLiteral(node.outgoing)},\n")
+            append("    parentId = ${nullableStringLiteral(node.parentId)},\n")
+            append("    attachedToRef = ${nullableStringLiteral(node.attachedToRef)},\n")
+            append("    attachedElements = ${listLiteral(node.attachedElements)},\n")
+            append(")")
+        }
+    }
+
+    private fun listLiteral(items: List<String>): String {
+        return if (items.isEmpty()) "emptyList()" else "listOf(${items.joinToString { "\"$it\"" }})"
+    }
+
+    private fun nullableStringLiteral(value: String?): String {
+        return if (value != null) "\"$value\"" else "null"
     }
 
     private inner class CallActivitiesWriter : ObjectWriter<TypeSpec.Builder> {

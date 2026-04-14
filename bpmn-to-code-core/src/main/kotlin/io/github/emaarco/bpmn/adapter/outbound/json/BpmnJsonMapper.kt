@@ -12,6 +12,7 @@ class BpmnJsonMapper {
     fun toJson(model: BpmnModel): BpmnModelJson {
         return BpmnModelJson(
             processId = model.processId,
+            variantName = model.variantName,
             flowNodes = FlowNodeSorter.sort(model.flowNodes).map { it.toJson() },
             sequenceFlows = model.sequenceFlows.map { it.toJson() },
             messages = model.messages.mapNotNull { it.toJson() },

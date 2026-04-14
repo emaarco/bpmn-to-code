@@ -14,5 +14,6 @@ enum class ApiObjectType {
     ESCALATIONS,
     COMPENSATIONS,
     SIGNALS,
-    VARIABLES
+    VARIABLES,
+    VARIANTS,
 }

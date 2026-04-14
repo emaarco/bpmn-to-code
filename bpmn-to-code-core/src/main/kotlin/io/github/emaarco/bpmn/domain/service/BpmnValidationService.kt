@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.domain.service
 
 import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.domain.validation.Severity
@@ -19,6 +20,7 @@ import io.github.emaarco.bpmn.domain.validation.rules.MissingMessageNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingProcessIdRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingSignalNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingTimerDefinitionRule
+import io.github.emaarco.bpmn.domain.validation.rules.MissingVariantNameRule
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 class BpmnValidationService(
@@ -35,7 +37,7 @@ class BpmnValidationService(
             .filterNot { it.id in config.disabledRules }
 
         return models.flatMap { model ->
-            val ctx = ValidationContext(model, engine)
+            val ctx = ValidationContext(model, engine, allModels = models)
             activeRules.flatMap { it.validate(ctx) }
         }
     }
@@ -44,6 +46,11 @@ class BpmnValidationService(
         val violations = collectViolations(models, engine, phase)
         logViolations(violations)
         throwIfNeeded(violations)
+    }
+
+    fun validateMerged(models: List<MergedBpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
+        val flatModels = models.map { it.toFlatModel() }
+        validate(flatModels, engine, phase)
     }
 
     private fun logViolations(violations: List<ValidationViolation>) {
@@ -79,6 +86,7 @@ class BpmnValidationService(
             InvalidIdentifierRule(),
             EmptyProcessRule(),
             MissingProcessIdRule(),
+            MissingVariantNameRule(),
             CollisionDetectionRule(),
         )
     }

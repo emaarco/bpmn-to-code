@@ -5,10 +5,10 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
-import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import io.github.emaarco.bpmn.domain.validation.ValidationPhase
@@ -28,7 +28,7 @@ class GenerateProcessApiInMemoryService(
         val models = modelsAsFiles.map { bpmnService.extract(it, command.engine) }
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
-        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
+        validationService.validateMerged(mergedModels, command.engine, ValidationPhase.POST_MERGE)
         return mergedModels
             .flatMap { codeGenerator.generateCode(toModelApi(command, it)) }
             .distinctBy { it.packagePath to it.fileName }
@@ -36,7 +36,7 @@ class GenerateProcessApiInMemoryService(
 
     private fun toModelApi(
         command: GenerateProcessApiInMemoryUseCase.Command,
-        model: BpmnModel
+        model: MergedBpmnModel,
     ) = BpmnModelApi(
         model = model,
         outputLanguage = command.outputLanguage,

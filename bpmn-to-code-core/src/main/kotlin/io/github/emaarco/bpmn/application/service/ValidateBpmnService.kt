@@ -27,7 +27,8 @@ class ValidateBpmnService(
             return ValidationResult(preMergeViolations)
         }
         val mergedModels = modelMergerService.mergeModels(models)
-        val postMergeViolations = validationService.collectViolations(mergedModels, command.engine, ValidationPhase.POST_MERGE)
+        val flatModels = mergedModels.map { it.toFlatModel() }
+        val postMergeViolations = validationService.collectViolations(flatModels, command.engine, ValidationPhase.POST_MERGE)
         return ValidationResult(preMergeViolations + postMergeViolations)
     }
 }
