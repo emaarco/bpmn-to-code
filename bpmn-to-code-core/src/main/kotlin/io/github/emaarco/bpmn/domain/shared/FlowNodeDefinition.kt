@@ -12,7 +12,7 @@ data class FlowNodeDefinition(
     val parentId: String? = null,
     val incoming: List<String> = emptyList(),
     val outgoing: List<String> = emptyList(),
-    val customProperties: Map<String, Any?> = emptyMap(),
+    val engineSpecificProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<String> {
     override fun getName() = id?.toUpperSnakeCase() ?: ""
     override fun getValue() = id ?: ""

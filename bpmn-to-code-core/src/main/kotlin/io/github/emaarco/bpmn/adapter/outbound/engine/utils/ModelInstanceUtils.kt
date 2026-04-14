@@ -126,7 +126,7 @@ object ModelInstanceUtils {
             CompensationDefinition(
                 id = elementId,
                 type = type,
-                customProperties = buildMap {
+                engineSpecificProperties = buildMap {
                     it.activity?.id?.let { ref -> put(CompensationDefinition.ACTIVITY_REF_KEY, ref) }
                     put(CompensationDefinition.WAIT_FOR_COMPLETION_KEY, it.isWaitForCompletion)
                 },

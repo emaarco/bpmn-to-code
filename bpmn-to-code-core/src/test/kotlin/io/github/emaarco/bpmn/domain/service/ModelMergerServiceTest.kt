@@ -26,11 +26,11 @@ class ModelMergerServiceTest {
         val secondMessage = MessageDefinition(id = "secondMessageId", name = "secondMessageName")
         val thirdMessage = MessageDefinition(id = "thirdMessageId", name = "thirdMessageName")
         val firstFlowNode = FlowNodeDefinition(id = "create-order",
-            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "create-order", customProperties = mapOf(IMPL_VALUE_KEY to "firstTaskType"))))
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "create-order", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "firstTaskType"))))
         val secondFlowNode = FlowNodeDefinition(id = "update-order",
-            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "update-order", customProperties = mapOf(IMPL_VALUE_KEY to "secondTaskType"))))
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "update-order", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "secondTaskType"))))
         val thirdFlowNode = FlowNodeDefinition(id = "delete-order",
-            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "delete-order", customProperties = mapOf(IMPL_VALUE_KEY to "thirdTaskType"))))
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "delete-order", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "thirdTaskType"))))
         val firstEscalation = EscalationDefinition(id = "ESC_1", name = "firstEscalation", code = "100")
         val secondEscalation = EscalationDefinition(id = "ESC_2", name = "secondEscalation", code = "200")
         val thirdEscalation = EscalationDefinition(id = "ESC_3", name = "thirdEscalation", code = "300")

@@ -36,10 +36,10 @@ class ZeebeModelExtractorTest {
         // then: assert that the model has expected content
         assertThat(bpmnModel).isNotNull()
         val zeebeServiceTasks = listOf(
-            ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "JOB_WORKER")),
-            ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "JOB_WORKER")),
-            ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
-            ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.incrementCounter", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("Activity_SendConfirmationMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("Activity_SendWelcomeMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("EndEvent_RegistrationCompleted", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
+            ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.incrementCounter", IMPL_KIND_KEY to "JOB_WORKER")),
         )
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testNewsletterBpmnModel(
@@ -126,11 +126,11 @@ class ZeebeModelExtractorTest {
                 ),
                 messages = listOf(
                     MessageDefinition("StartEvent_SubmitRegistrationForm", "Message_FormSubmitted"),
-                    MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed", customProperties = mapOf("correlationKey" to "=subscriptionId")),
+                    MessageDefinition("Activity_ConfirmRegistration", "Message_SubscriptionConfirmed", engineSpecificProperties = mapOf("correlationKey" to "=subscriptionId")),
                 ),
                 compensations = listOf(
-                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING, customProperties = mapOf("activityRef" to "serviceTask_incrementSubscriptionCounter", "waitForCompletion" to false)),
-                    CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING, customProperties = mapOf("waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING, engineSpecificProperties = mapOf("activityRef" to "serviceTask_incrementSubscriptionCounter", "waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING, engineSpecificProperties = mapOf("waitForCompletion" to false)),
                 ),
             )
         )

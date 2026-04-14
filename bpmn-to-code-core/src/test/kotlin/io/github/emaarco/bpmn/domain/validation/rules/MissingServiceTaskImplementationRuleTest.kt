@@ -33,7 +33,7 @@ class MissingServiceTaskImplementationRuleTest {
     fun `no violations for service task with valid type`() {
         val model = testBpmnModel(
             flowNodes = listOf(
-                FlowNodeDefinition(id = "task1", properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "task1", customProperties = mapOf(IMPL_VALUE_KEY to "myWorker"))))
+                FlowNodeDefinition(id = "task1", properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition(id = "task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "myWorker"))))
             )
         )
         val violations = rule.validate(ValidationContext(model, ProcessEngine.CAMUNDA_7))
