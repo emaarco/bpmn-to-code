@@ -1,0 +1,44 @@
+{
+    "processId": "order-process",
+    "variantName": "prodDe",
+    "flowNodes": [
+        {
+            "id": "StartEvent_1",
+            "elementType": "START_EVENT"
+        }
+    ],
+    "messages": [
+        {
+            "id": "StartEvent_1",
+            "name": "Message_Order"
+        }
+    ],
+    "signals": [
+        {
+            "id": "EndEvent_1",
+            "name": "Signal_Done"
+        }
+    ],
+    "errors": [
+        {
+            "id": "Error_1",
+            "name": "Error_Timeout",
+            "code": "408"
+        }
+    ],
+    "escalations": [
+        {
+            "id": "Esc_1",
+            "name": "Escalation_Retry",
+            "code": "100"
+        }
+    ],
+    "sequenceFlows": [
+        {
+            "id": "Flow_1",
+            "sourceRef": "StartEvent_1",
+            "targetRef": "EndEvent_1",
+            "isDefault": false
+        }
+    ]
+}

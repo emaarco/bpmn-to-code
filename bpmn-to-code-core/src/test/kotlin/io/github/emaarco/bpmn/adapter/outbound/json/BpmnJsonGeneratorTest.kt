@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.json
 
-import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
+import io.github.emaarco.bpmn.domain.testBpmnModel
+import io.github.emaarco.bpmn.domain.shared.*
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -28,19 +29,25 @@ class BpmnJsonGeneratorTest {
     }
 
     @Test
-    fun `generates correct JSON for newsletter model with variantName`() {
+    fun `generates JSON with variantName when set`() {
 
-        // given: a model with variantName
-        val model = testNewsletterBpmnModel(
-            variantName = "withApproval",
-            escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
+        // given: a minimal model with variantName
+        val model = testBpmnModel(
+            processId = "order-process",
+            variantName = "prodDe",
+            flowNodes = listOf(FlowNodeDefinition(id = "StartEvent_1", elementType = BpmnElementType.START_EVENT)),
+            sequenceFlows = listOf(SequenceFlowDefinition("Flow_1", "StartEvent_1", "EndEvent_1")),
+            messages = listOf(MessageDefinition("StartEvent_1", "Message_Order")),
+            signals = listOf(SignalDefinition("EndEvent_1", "Signal_Done")),
+            errors = listOf(ErrorDefinition("Error_1", "Error_Timeout", "408")),
+            escalations = listOf(EscalationDefinition("Esc_1", "Escalation_Retry", "100")),
         )
 
         // when: generating JSON
         val result = underTest.generate(model)
 
         // then: expect the generated JSON to match the expected snapshot
-        val expectedFile = File(javaClass.getResource("/json/NewsletterSubscriptionProcess-withApproval.json")!!.toURI())
+        val expectedFile = File(javaClass.getResource("/json/MinimalProcessWithVariant.json")!!.toURI())
         assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 
