@@ -5,6 +5,11 @@
   <bpmn:signal id="Signal_14g8ki5" name="Signal_RegistrationNotPossible" />
   <bpmn:error id="Error_0uxgmyc" name="Error_InvalidMail" errorCode="500" />
   <bpmn:process id="newsletterSubscription" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="variantName" value="withApproval" />
+      </camunda:properties>
+    </bpmn:extensionElements>
     <bpmn:startEvent id="StartEvent_SubmitRegistrationForm" name="Submit newsletter form">
       <bpmn:extensionElements>
         <camunda:inputOutput>

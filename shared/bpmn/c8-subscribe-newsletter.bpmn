@@ -7,6 +7,11 @@
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:process id="newsletterSubscription" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:properties>
+        <zeebe:property name="variantName" value="withApproval" />
+      </zeebe:properties>
+    </bpmn:extensionElements>
     <bpmn:sequenceFlow id="Flow_1bsb8no" sourceRef="CallActivity_AbortRegistration" targetRef="CompensationEndEvent_RegistrationAborted" />
     <bpmn:serviceTask id="Activity_SendWelcomeMail" name="Send Welcome-Mail">
       <bpmn:extensionElements>

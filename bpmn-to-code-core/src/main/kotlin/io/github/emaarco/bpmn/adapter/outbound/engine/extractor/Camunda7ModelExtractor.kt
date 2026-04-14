@@ -14,6 +14,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.f
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSequenceFlows
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findSignalEventDefinitions
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.findTimerEventDefinition
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.extractVariantName
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
@@ -46,6 +47,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     override fun extract(inputStream: InputStream): BpmnModel {
         val modelInstance = Bpmn.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
+        val variantName = modelInstance.extractVariantName()
         val allMessages = findMessages(modelInstance)
         val allFlowNodes = modelInstance.findFlowNodes()
         val allSequenceFlows = modelInstance.findSequenceFlows()
@@ -65,6 +67,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
         return BpmnModel(
             processId = processId,
+            variantName = variantName,
             flowNodes = enrichedFlowNodes,
             sequenceFlows = allSequenceFlows,
             messages = allMessages,

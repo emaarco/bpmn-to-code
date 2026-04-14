@@ -1,5 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
+import io.github.emaarco.bpmn.adapter.outbound.engine.constants.BpmnExtensionConstants
+import io.github.emaarco.bpmn.adapter.outbound.engine.utils.BaseElementUtils.findExtensionElements
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationType
@@ -31,12 +33,27 @@ import org.camunda.bpm.model.xml.ModelInstance
 object ModelInstanceUtils {
 
     fun ModelInstance.getProcessId(): String {
-        val processType = this.model.getType(Process::class.java)
-        val process = this.getModelElementsByType(processType).firstOrNull()
-        val processId = process?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-        requireNotNull(process) { "BPMN model does not contain a Process element" }
+        val process = this.findProcess()
+        val processId = process.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
         requireNotNull(processId) { "Process element is missing an 'id' attribute" }
         return processId
+    }
+
+    fun ModelInstance.extractVariantName(): String? {
+        val process = this.findProcess()
+        val extensions = process.findExtensionElements()
+        val propertiesContainers = extensions.filter { it.domElement.localName == "properties" }
+        val allProperties = propertiesContainers.flatMap { it.domElement.childElements }
+        val variantProperty = allProperties
+            .filter { it.localName == "property" }
+            .firstOrNull { it.getAttribute("name") == BpmnExtensionConstants.VARIANT_NAME_PROPERTY_NAME }
+        return variantProperty?.getAttribute("value")?.takeIf { it.isNotBlank() }
+    }
+
+    private fun ModelInstance.findProcess(): Process {
+        val process = this.getModelElementsByType(Process::class.java).firstOrNull()
+        requireNotNull(process) { "BPMN model does not contain a Process element" }
+        return process
     }
 
     fun ModelInstance.findFlowNodes(): List<FlowNodeDefinition> {
