@@ -1,7 +1,7 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import io.github.emaarco.bpmn.domain.MergedBpmnModel
-import io.github.emaarco.bpmn.domain.VariantData
+import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.*
 
 internal fun buildMultiVariantModel(): MergedBpmnModel {

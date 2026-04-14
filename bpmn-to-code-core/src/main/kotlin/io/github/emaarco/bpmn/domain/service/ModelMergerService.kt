@@ -3,7 +3,7 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.ProcessModel
-import io.github.emaarco.bpmn.domain.VariantData
+import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 
 class ModelMergerService {
@@ -42,28 +42,21 @@ class ModelMergerService {
             "Multiple BPMN files share process ID '$processId' but not all define a variantName. " +
                 "Add a variantName extension property to each process."
         }
-        val mergedFlowNodes = mergeDistinctBy(models) { it.flowNodes }
-        val mergedMessages = mergeDistinctBy(models) { it.messages }
-        val mergedSignals = mergeDistinctBy(models) { it.signals }
-        val mergedErrors = mergeDistinctBy(models) { it.errors }
-        val mergedEscalations = mergeDistinctBy(models) { it.escalations }
-        val mergedCompensations = mergeDistinctBy(models) { it.compensations }
-        val variants = models.map { model ->
-            VariantData(
-                variantName = requireNotNull(model.variantName),
-                sequenceFlows = model.sequenceFlows,
-                flowNodes = model.flowNodes,
-            )
-        }
         return MergedBpmnModel(
             processId = processId,
-            flowNodes = mergedFlowNodes,
-            messages = mergedMessages,
-            signals = mergedSignals,
-            errors = mergedErrors,
-            escalations = mergedEscalations,
-            compensations = mergedCompensations,
-            variants = variants,
+            flowNodes = mergeDistinctBy(models) { it.flowNodes },
+            messages = mergeDistinctBy(models) { it.messages },
+            signals = mergeDistinctBy(models) { it.signals },
+            errors = mergeDistinctBy(models) { it.errors },
+            escalations = mergeDistinctBy(models) { it.escalations },
+            compensations = mergeDistinctBy(models) { it.compensations },
+            variants = models.map { model ->
+                VariantData(
+                    variantName = requireNotNull(model.variantName),
+                    sequenceFlows = model.sequenceFlows,
+                    flowNodes = model.flowNodes,
+                )
+            },
         )
     }
 

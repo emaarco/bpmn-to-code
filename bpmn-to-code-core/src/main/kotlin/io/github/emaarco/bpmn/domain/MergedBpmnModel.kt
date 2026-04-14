@@ -2,12 +2,6 @@ package io.github.emaarco.bpmn.domain
 
 import io.github.emaarco.bpmn.domain.shared.*
 
-data class VariantData(
-    val variantName: String,
-    val sequenceFlows: List<SequenceFlowDefinition>,
-    val flowNodes: List<FlowNodeDefinition>,
-)
-
 data class MergedBpmnModel(
     override val processId: String,
     override val flowNodes: List<FlowNodeDefinition>,
@@ -37,4 +31,10 @@ data class MergedBpmnModel(
     override val variables: List<VariableDefinition>
         get() = flowNodes.flatMap { it.variables }.distinct()
             .sortedBy { it.getRawName() }
+
+    data class VariantData(
+        val variantName: String,
+        val sequenceFlows: List<SequenceFlowDefinition>,
+        val flowNodes: List<FlowNodeDefinition>,
+    )
 }
