@@ -28,7 +28,7 @@ class BpmnJsonGeneratorTest {
     }
 
     @Test
-    fun `includes variantName in JSON when set`() {
+    fun `generates correct JSON for newsletter model with variantName`() {
 
         // given: a model with variantName
         val model = testNewsletterBpmnModel(
@@ -39,8 +39,9 @@ class BpmnJsonGeneratorTest {
         // when: generating JSON
         val result = underTest.generate(model)
 
-        // then: variantName appears in the JSON output
-        assertThat(result).contains("\"variantName\": \"withApproval\"")
+        // then: expect the generated JSON to match the expected snapshot
+        val expectedFile = File(javaClass.getResource("/json/NewsletterSubscriptionProcess-withApproval.json")!!.toURI())
+        assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 
     @Test

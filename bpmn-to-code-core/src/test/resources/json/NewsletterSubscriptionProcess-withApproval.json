@@ -1,0 +1,272 @@
+{
+    "processId": "newsletterSubscription",
+    "variantName": "withApproval",
+    "flowNodes": [
+        {
+            "id": "StartEvent_SubmitRegistrationForm",
+            "elementType": "START_EVENT",
+            "outgoing": [
+                "SubProcess_Confirmation"
+            ],
+            "variables": [
+                "subscriptionId"
+            ]
+        },
+        {
+            "id": "SubProcess_Confirmation",
+            "elementType": "SUB_PROCESS",
+            "attachedElements": [
+                "ErrorEvent_InvalidMail",
+                "Timer_After3Days"
+            ],
+            "incoming": [
+                "StartEvent_SubmitRegistrationForm"
+            ],
+            "outgoing": [
+                "Activity_SendWelcomeMail"
+            ]
+        },
+        {
+            "id": "StartEvent_RequestReceived",
+            "elementType": "START_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
+            ],
+            "variables": [
+                "subscriptionId"
+            ]
+        },
+        {
+            "id": "Activity_SendConfirmationMail",
+            "elementType": "SERVICE_TASK",
+            "parentId": "SubProcess_Confirmation",
+            "incoming": [
+                "StartEvent_RequestReceived",
+                "Timer_EveryDay"
+            ],
+            "outgoing": [
+                "Activity_ConfirmRegistration"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendConfirmationMail"
+            }
+        },
+        {
+            "id": "Activity_ConfirmRegistration",
+            "elementType": "USER_TASK",
+            "parentId": "SubProcess_Confirmation",
+            "attachedElements": [
+                "Timer_EveryDay"
+            ],
+            "incoming": [
+                "Activity_SendConfirmationMail"
+            ],
+            "outgoing": [
+                "EndEvent_SubscriptionConfirmed"
+            ]
+        },
+        {
+            "id": "Timer_EveryDay",
+            "elementType": "BOUNDARY_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "attachedToRef": "Activity_ConfirmRegistration",
+            "outgoing": [
+                "Activity_SendConfirmationMail"
+            ],
+            "properties": {
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "PT1M"
+            }
+        },
+        {
+            "id": "EndEvent_SubscriptionConfirmed",
+            "elementType": "END_EVENT",
+            "parentId": "SubProcess_Confirmation",
+            "incoming": [
+                "Activity_ConfirmRegistration"
+            ]
+        },
+        {
+            "id": "ErrorEvent_InvalidMail",
+            "elementType": "BOUNDARY_EVENT",
+            "attachedToRef": "SubProcess_Confirmation",
+            "outgoing": [
+                "EndEvent_RegistrationNotPossible"
+            ]
+        },
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "ErrorEvent_InvalidMail"
+            ]
+        },
+        {
+            "id": "Timer_After3Days",
+            "elementType": "BOUNDARY_EVENT",
+            "attachedToRef": "SubProcess_Confirmation",
+            "outgoing": [
+                "CallActivity_AbortRegistration"
+            ],
+            "properties": {
+                "type": "Timer",
+                "timerType": "Duration",
+                "timerValue": "${testVariable}"
+            }
+        },
+        {
+            "id": "CallActivity_AbortRegistration",
+            "elementType": "CALL_ACTIVITY",
+            "incoming": [
+                "Timer_After3Days"
+            ],
+            "outgoing": [
+                "EndEvent_RegistrationAborted"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "CallActivity",
+                "calledElement": "abort-registration"
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationAborted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "CallActivity_AbortRegistration"
+            ]
+        },
+        {
+            "id": "Activity_SendWelcomeMail",
+            "elementType": "SERVICE_TASK",
+            "incoming": [
+                "SubProcess_Confirmation"
+            ],
+            "outgoing": [
+                "EndEvent_RegistrationCompleted"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.sendWelcomeMail"
+            },
+            "engineSpecificProperties": {
+                "asyncBefore": true,
+                "asyncAfter": true,
+                "exclusive": false
+            }
+        },
+        {
+            "id": "EndEvent_RegistrationCompleted",
+            "elementType": "END_EVENT",
+            "incoming": [
+                "Activity_SendWelcomeMail"
+            ],
+            "variables": [
+                "subscriptionId"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "newsletter.registrationCompleted"
+            }
+        }
+    ],
+    "messages": [
+        {
+            "id": "StartEvent_SubmitRegistrationForm",
+            "name": "Message_FormSubmitted"
+        }
+    ],
+    "signals": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Signal_RegistrationNotPossible"
+        }
+    ],
+    "errors": [
+        {
+            "id": "ErrorEvent_InvalidMail",
+            "name": "Error_InvalidMail",
+            "code": "500"
+        }
+    ],
+    "escalations": [
+        {
+            "id": "EndEvent_RegistrationNotPossible",
+            "name": "Escalation_RegistrationFailed",
+            "code": "100"
+        }
+    ],
+    "sequenceFlows": [
+        {
+            "id": "Flow_05i3x1y",
+            "sourceRef": "StartEvent_RequestReceived",
+            "targetRef": "Activity_SendConfirmationMail",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_09cuvzp",
+            "sourceRef": "SubProcess_Confirmation",
+            "targetRef": "Activity_SendWelcomeMail",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_0i2ctuv",
+            "sourceRef": "ErrorEvent_InvalidMail",
+            "targetRef": "EndEvent_RegistrationNotPossible",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_0x4ewvb",
+            "sourceRef": "Timer_EveryDay",
+            "targetRef": "Activity_SendConfirmationMail",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1bckm43",
+            "sourceRef": "Activity_SendConfirmationMail",
+            "targetRef": "Activity_ConfirmRegistration",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1bsb8no",
+            "sourceRef": "CallActivity_AbortRegistration",
+            "targetRef": "EndEvent_RegistrationAborted",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1cpwe57",
+            "sourceRef": "Activity_ConfirmRegistration",
+            "targetRef": "EndEvent_SubscriptionConfirmed",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1csfyyz",
+            "sourceRef": "StartEvent_SubmitRegistrationForm",
+            "targetRef": "SubProcess_Confirmation",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1i7hjid",
+            "sourceRef": "Activity_SendWelcomeMail",
+            "targetRef": "EndEvent_RegistrationCompleted",
+            "isDefault": false
+        },
+        {
+            "id": "Flow_1l1lj4m",
+            "sourceRef": "Timer_After3Days",
+            "targetRef": "CallActivity_AbortRegistration",
+            "isDefault": false
+        }
+    ]
+}
