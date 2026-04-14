@@ -20,7 +20,6 @@ import io.github.emaarco.bpmn.domain.validation.rules.MissingMessageNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingProcessIdRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingSignalNameRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingTimerDefinitionRule
-import io.github.emaarco.bpmn.domain.validation.rules.MissingVariantNameRule
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 class BpmnValidationService(
@@ -37,7 +36,7 @@ class BpmnValidationService(
             .filterNot { it.id in config.disabledRules }
 
         return models.flatMap { model ->
-            val ctx = ValidationContext(model, engine, allModels = models)
+            val ctx = ValidationContext(model, engine)
             activeRules.flatMap { it.validate(ctx) }
         }
     }
@@ -86,7 +85,6 @@ class BpmnValidationService(
             InvalidIdentifierRule(),
             EmptyProcessRule(),
             MissingProcessIdRule(),
-            MissingVariantNameRule(),
             CollisionDetectionRule(),
         )
     }

@@ -22,6 +22,13 @@ class ModelMergerService {
     }
 
     private fun mergeModelsWithSameProcessId(processId: String, models: List<BpmnModel>): MergedBpmnModel {
+        if (models.size > 1) {
+            val modelsWithoutVariant = models.filter { it.variantName.isNullOrBlank() }
+            require(modelsWithoutVariant.isEmpty()) {
+                "Multiple BPMN files share process ID '$processId' but not all define a variantName. " +
+                    "Add a variantName extension property to each process."
+            }
+        }
         val mergedFlowNodes = mergeDistinctBy(models) { it.flowNodes }
         val mergedMessages = mergeDistinctBy(models) { it.messages }
         val mergedSignals = mergeDistinctBy(models) { it.signals }
