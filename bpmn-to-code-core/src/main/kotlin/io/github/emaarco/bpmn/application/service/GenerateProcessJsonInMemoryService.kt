@@ -28,7 +28,7 @@ class GenerateProcessJsonInMemoryService(
         val models = bpmnResources.map { bpmnExtractor.extract(it, command.engine) }
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
         val mergedModels = modelMergerService.mergeModels(models)
-        validationService.validateMerged(mergedModels, command.engine, ValidationPhase.POST_MERGE)
+        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
         return models.map { jsonGenerator.generateJson(it) }
     }
 }

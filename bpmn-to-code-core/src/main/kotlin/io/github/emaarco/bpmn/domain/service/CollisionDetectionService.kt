@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.domain.service
 
-import io.github.emaarco.bpmn.domain.BpmnModel
+import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.validation.CollisionDetail
 
@@ -16,7 +16,7 @@ import io.github.emaarco.bpmn.domain.validation.CollisionDetail
  */
 class CollisionDetectionService {
 
-    fun findCollisions(model: BpmnModel): List<CollisionDetail> {
+    fun findCollisions(model: ProcessModel): List<CollisionDetail> {
         val modelId = model.processId
         val collisions = mutableListOf<CollisionDetail>()
         collisions.addAll(findCollisionsIn(modelId, model.flowNodes, "FlowNode"))

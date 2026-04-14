@@ -1,7 +1,6 @@
 package io.github.emaarco.bpmn.domain.service
 
-import io.github.emaarco.bpmn.domain.BpmnModel
-import io.github.emaarco.bpmn.domain.MergedBpmnModel
+import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.domain.validation.Severity
@@ -30,7 +29,7 @@ class BpmnValidationService(
 
     private val allRules = builtInRules()
 
-    fun collectViolations(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase): List<ValidationViolation> {
+    fun collectViolations(models: List<ProcessModel>, engine: ProcessEngine, phase: ValidationPhase): List<ValidationViolation> {
         val activeRules = allRules
             .filter { it.phase == phase }
             .filterNot { it.id in config.disabledRules }
@@ -41,15 +40,10 @@ class BpmnValidationService(
         }
     }
 
-    fun validate(models: List<BpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
+    fun validate(models: List<ProcessModel>, engine: ProcessEngine, phase: ValidationPhase) {
         val violations = collectViolations(models, engine, phase)
         logViolations(violations)
         throwIfNeeded(violations)
-    }
-
-    fun validateMerged(models: List<MergedBpmnModel>, engine: ProcessEngine, phase: ValidationPhase) {
-        val flatModels = models.map { it.toFlatModel() }
-        validate(flatModels, engine, phase)
     }
 
     private fun logViolations(violations: List<ValidationViolation>) {

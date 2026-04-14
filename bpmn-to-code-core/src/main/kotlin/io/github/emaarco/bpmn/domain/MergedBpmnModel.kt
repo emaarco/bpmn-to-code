@@ -9,50 +9,35 @@ data class VariantData(
 )
 
 data class MergedBpmnModel(
-    val processId: String,
-    val flowNodes: List<FlowNodeDefinition>,
-    val messages: List<MessageDefinition>,
-    val signals: List<SignalDefinition>,
-    val errors: List<ErrorDefinition>,
-    val escalations: List<EscalationDefinition> = emptyList(),
-    val compensations: List<CompensationDefinition> = emptyList(),
+    override val processId: String,
+    override val flowNodes: List<FlowNodeDefinition>,
+    override val messages: List<MessageDefinition>,
+    override val signals: List<SignalDefinition>,
+    override val errors: List<ErrorDefinition>,
+    override val escalations: List<EscalationDefinition> = emptyList(),
+    override val compensations: List<CompensationDefinition> = emptyList(),
     val variants: List<VariantData> = emptyList(),
-) {
+) : ProcessModel {
     val isMultiVariant: Boolean get() = variants.size > 1
 
-    val sequenceFlows: List<SequenceFlowDefinition>
+    override val sequenceFlows: List<SequenceFlowDefinition>
         get() {
             return if (!isMultiVariant) variants.firstOrNull()?.sequenceFlows.orEmpty() else emptyList()
         }
 
-    val serviceTasks: List<ServiceTaskDefinition>
+    override val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }
             .sortedBy { it.getRawName() }
 
-    val callActivities: List<CallActivityDefinition>
+    override val callActivities: List<CallActivityDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.CallActivity)?.definition }
             .sortedBy { it.getRawName() }
 
-    val timers: List<TimerDefinition>
+    override val timers: List<TimerDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.Timer)?.definition }
             .sortedBy { it.getRawName() }
 
-    val variables: List<VariableDefinition>
+    override val variables: List<VariableDefinition>
         get() = flowNodes.flatMap { it.variables }.distinct()
             .sortedBy { it.getRawName() }
-
-    fun toFlatModel(): BpmnModel {
-        val allSequenceFlows = variants.flatMap { it.sequenceFlows }
-            .distinctBy { it.getRawName() }
-        return BpmnModel(
-            processId = processId,
-            flowNodes = flowNodes,
-            sequenceFlows = allSequenceFlows,
-            messages = messages,
-            signals = signals,
-            errors = errors,
-            escalations = escalations,
-            compensations = compensations,
-        )
-    }
 }
