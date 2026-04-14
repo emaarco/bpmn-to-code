@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.engine.utils
 
-import io.github.emaarco.bpmn.adapter.outbound.engine.constants.CamundaModelConstants
+import io.github.emaarco.bpmn.adapter.outbound.engine.constants.BpmnExtensionConstants
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.BaseElementUtils.findExtensionElements
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
@@ -46,7 +46,7 @@ object ModelInstanceUtils {
         val allProperties = propertiesContainers.flatMap { it.domElement.childElements }
         val variantProperty = allProperties
             .filter { it.localName == "property" }
-            .firstOrNull { it.getAttribute("name") == CamundaModelConstants.VARIANT_NAME_PROPERTY_NAME }
+            .firstOrNull { it.getAttribute("name") == BpmnExtensionConstants.VARIANT_NAME_PROPERTY_NAME }
         return variantProperty?.getAttribute("value")?.takeIf { it.isNotBlank() }
     }
 
