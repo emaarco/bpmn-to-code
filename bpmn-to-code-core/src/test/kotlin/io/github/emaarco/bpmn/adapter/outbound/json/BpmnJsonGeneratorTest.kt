@@ -2,7 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.json
 
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import io.github.emaarco.bpmn.domain.shared.*
-import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
+import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -15,7 +15,7 @@ class BpmnJsonGeneratorTest {
     fun `generates correct JSON for newsletter model`() {
 
         // given: the newsletter BPMN model
-        val model = testNewsletterBpmnModel(
+        val model = testSubscribeNewsletterBpmnModel(
             escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
         )
 
@@ -55,7 +55,7 @@ class BpmnJsonGeneratorTest {
     fun `adapter uses variant-aware filename when variantName is set`() {
 
         // given: a model with variantName
-        val model = testNewsletterBpmnModel(variantName = "withApproval")
+        val model = testSubscribeNewsletterBpmnModel(variantName = "withApproval")
         val adapter = BpmnJsonGenerationAdapter()
 
         // when: generating JSON via adapter
@@ -69,7 +69,7 @@ class BpmnJsonGeneratorTest {
     fun `adapter uses plain filename when variantName is not set`() {
 
         // given: a model without variantName
-        val model = testNewsletterBpmnModel()
+        val model = testSubscribeNewsletterBpmnModel()
         val adapter = BpmnJsonGenerationAdapter()
 
         // when: generating JSON via adapter

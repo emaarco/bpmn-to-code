@@ -1,12 +1,15 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
+import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
-import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
+import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
+import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -21,8 +24,8 @@ class KotlinProcessApiBuilderTest {
         // given: a BPMN model with custom service task implementations
         val modelApi = testBpmnModelApi(
             packagePath = "de.emaarco.example",
-            model = testNewsletterBpmnModel(
-                flowNodes = buildNewsletterFlowNodes(
+            model = testSubscribeNewsletterBpmnModel(
+                flowNodes = buildSubscribeNewsletterFlowNodes(
                     confirmationMailImpl = "#{newsletterSendConfirmationMail}",
                     welcomeMailImpl = "\${newsletterSendWelcomeMail}",
                     registrationCompletedImpl = "newsletter.registrationCompleted",
@@ -46,9 +49,22 @@ class KotlinProcessApiBuilderTest {
     @Test
     fun `buildApiFile generates variant-scoped Flows and Relations for merged model`() {
 
-        // given: a merged model with two variants
-        val model = buildMultiVariantModel()
-        val modelApi = BpmnModelApi(model, OutputLanguage.KOTLIN, "de.emaarco.example", ProcessEngine.ZEEBE)
+        // given: a merged model combining subscribe and send newsletter as two variants
+        val subscribe = testSubscribeNewsletterBpmnModel(variantName = "subscribe")
+        val send = testSendNewsletterBpmnModel(variantName = "send")
+        val merged = MergedBpmnModel(
+            processId = "newsletterSubscription",
+            flowNodes = (subscribe.flowNodes + send.flowNodes).distinctBy { it.getRawName() },
+            messages = (subscribe.messages + send.messages).distinctBy { it.getRawName() },
+            signals = subscribe.signals + send.signals,
+            errors = subscribe.errors + send.errors,
+            escalations = (subscribe.escalations + send.escalations).distinctBy { it.getRawName() },
+            variants = listOf(
+                VariantData("subscribe", subscribe.sequenceFlows, subscribe.flowNodes),
+                VariantData("send", send.sequenceFlows, send.flowNodes),
+            ),
+        )
+        val modelApi = BpmnModelApi(merged, OutputLanguage.KOTLIN, "de.emaarco.example", ProcessEngine.ZEEBE)
 
         // when: we build the process API file
         val result = underTest.buildApiFile(modelApi)

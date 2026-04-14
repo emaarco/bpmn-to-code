@@ -9,7 +9,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 
-internal fun buildNewsletterFlowNodes(
+internal fun buildSubscribeNewsletterFlowNodes(
     confirmationMailImpl: String,
     welcomeMailImpl: String,
     registrationCompletedImpl: String,
