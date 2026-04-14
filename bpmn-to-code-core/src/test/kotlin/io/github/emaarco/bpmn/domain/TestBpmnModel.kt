@@ -42,34 +42,13 @@ fun testBpmnModel(
     compensations = compensations,
 )
 
-fun testMergedBpmnModel(
-    model: BpmnModel = testBpmnModel(),
-): MergedBpmnModel {
-    return MergedBpmnModel(
-        processId = model.processId,
-        flowNodes = model.flowNodes,
-        messages = model.messages,
-        signals = model.signals,
-        errors = model.errors,
-        escalations = model.escalations,
-        compensations = model.compensations,
-        variants = listOf(
-            VariantData(
-                variantName = model.variantName ?: model.processId,
-                sequenceFlows = model.sequenceFlows,
-                flowNodes = model.flowNodes,
-            )
-        ),
-    )
-}
-
 fun testBpmnModelApi(
-    model: BpmnModel = testBpmnModel(),
+    model: ProcessModel = testBpmnModel(),
     packagePath: String = "packagePath",
     language: OutputLanguage = OutputLanguage.KOTLIN,
     engine: ProcessEngine = ProcessEngine.ZEEBE,
 ) = BpmnModelApi(
-    model = testMergedBpmnModel(model),
+    model = model,
     packagePath = packagePath,
     outputLanguage = language,
     engine = engine,

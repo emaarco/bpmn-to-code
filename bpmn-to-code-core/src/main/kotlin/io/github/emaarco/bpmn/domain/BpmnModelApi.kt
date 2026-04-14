@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 
 data class BpmnModelApi(
-    val model: MergedBpmnModel,
+    val model: ProcessModel,
     val outputLanguage: OutputLanguage,
     val packagePath: String,
     val engine: ProcessEngine,

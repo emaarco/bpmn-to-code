@@ -18,12 +18,9 @@ data class MergedBpmnModel(
     override val compensations: List<CompensationDefinition> = emptyList(),
     val variants: List<VariantData> = emptyList(),
 ) : ProcessModel {
-    val isMultiVariant: Boolean get() = variants.size > 1
 
     override val sequenceFlows: List<SequenceFlowDefinition>
-        get() {
-            return if (!isMultiVariant) variants.firstOrNull()?.sequenceFlows.orEmpty() else emptyList()
-        }
+        get() = emptyList()
 
     override val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }

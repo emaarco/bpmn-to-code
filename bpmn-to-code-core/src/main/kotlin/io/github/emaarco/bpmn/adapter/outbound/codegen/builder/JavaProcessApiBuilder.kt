@@ -8,8 +8,10 @@ import com.palantir.javapoet.ParameterizedTypeName
 import com.palantir.javapoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
+import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
@@ -102,7 +104,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
 
         override val objectType = ApiObjectType.FLOWS
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean {
-            return modelApi.model.sequenceFlows.isNotEmpty() && !modelApi.model.isMultiVariant
+            return modelApi.model is BpmnModel && modelApi.model.sequenceFlows.isNotEmpty()
         }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
@@ -115,7 +117,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
 
         override val objectType = ApiObjectType.RELATIONS
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean {
-            return modelApi.model.sequenceFlows.isNotEmpty() && !modelApi.model.isMultiVariant
+            return modelApi.model is BpmnModel && modelApi.model.sequenceFlows.isNotEmpty()
         }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
@@ -127,11 +129,12 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     private inner class VariantsWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.VARIANTS
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.isMultiVariant
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model is MergedBpmnModel
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val model = modelApi.model as MergedBpmnModel
             val variantsBuilder = TypeSpec.classBuilder("Variants").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.variants.forEach { variant ->
+            model.variants.forEach { variant ->
                 val variantClass = buildVariantClass(modelApi.packagePath, variant)
                 variantsBuilder.addType(variantClass)
             }
