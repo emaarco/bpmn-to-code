@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.adapter
 
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
@@ -20,19 +19,17 @@ class MavenValidateMojoSmokeTest {
         bpmnFile: String,
         @TempDir projectDir: File,
     ) {
-        // Copy BPMN file into the temp project
+        // given: a temp project directory with a valid BPMN resource and a configured mojo
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
         val bpmnStream = javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile")!!
         File(resourcesDir, bpmnFile).writeBytes(bpmnStream.readBytes())
-
-        // Instantiate Mojo and set fields via reflection
         val mojo = BpmnValidateMojo()
         setField(mojo, "baseDir", projectDir.absolutePath)
         setField(mojo, "filePattern", "src/main/resources/*.bpmn")
         setField(mojo, "processEngine", engine)
         setField(mojo, "failOnWarning", false)
 
-        // Execute — should not throw
+        // when / then: executing the mojo does not throw
         assertThatCode { mojo.execute() }.doesNotThrowAnyException()
     }
 

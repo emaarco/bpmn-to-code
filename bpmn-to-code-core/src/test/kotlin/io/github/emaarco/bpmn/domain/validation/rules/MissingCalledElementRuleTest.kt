@@ -12,28 +12,42 @@ import org.junit.jupiter.api.Test
 
 class MissingCalledElementRuleTest {
 
-    private val rule = MissingCalledElementRule()
+    private val underTest = MissingCalledElementRule()
 
     @Test
     fun `reports error for call activity with null calledElement`() {
+
+        // given: a call activity with no calledElement set
         val model = testBpmnModel(
             flowNodes = listOf(
-                FlowNodeDefinition(id = "call1", properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = null)))
+                FlowNodeDefinition(
+                    id = "call1",
+                    properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = null)),
+                )
             )
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: an ERROR violation is reported
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
         assertThat(violations[0].severity).isEqualTo(Severity.ERROR)
     }
 
     @Test
     fun `no violations for call activity with calledElement`() {
+
+        // given: a call activity with a valid calledElement reference
         val model = testBpmnModel(
             flowNodes = listOf(
-                FlowNodeDefinition(id = "call1", properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = "my-sub-process")))
+                FlowNodeDefinition(
+                    id = "call1",
+                    properties = FlowNodeProperties.CallActivity(CallActivityDefinition(id = "call1", calledElement = "my-sub-process")),
+                )
             )
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: no violations
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()
     }
 }

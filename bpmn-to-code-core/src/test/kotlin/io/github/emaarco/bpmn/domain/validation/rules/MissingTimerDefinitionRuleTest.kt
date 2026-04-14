@@ -12,28 +12,42 @@ import org.junit.jupiter.api.Test
 
 class MissingTimerDefinitionRuleTest {
 
-    private val rule = MissingTimerDefinitionRule()
+    private val underTest = MissingTimerDefinitionRule()
 
     @Test
     fun `reports error for timer with null type`() {
+
+        // given: a timer flow node with no type or value
         val model = testBpmnModel(
             flowNodes = listOf(
-                FlowNodeDefinition(id = "timer1", properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = null, value = null)))
+                FlowNodeDefinition(
+                    id = "timer1",
+                    properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = null, value = null)),
+                )
             )
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: an ERROR violation is reported
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
         assertThat(violations[0].severity).isEqualTo(Severity.ERROR)
     }
 
     @Test
     fun `no violations for timer with type and value`() {
+
+        // given: a timer flow node with a valid type and value
         val model = testBpmnModel(
             flowNodes = listOf(
-                FlowNodeDefinition(id = "timer1", properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = "Duration", value = "PT1H")))
+                FlowNodeDefinition(
+                    id = "timer1",
+                    properties = FlowNodeProperties.Timer(TimerDefinition(id = "timer1", type = "Duration", value = "PT1H")),
+                )
             )
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: no violations
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()
     }
 }

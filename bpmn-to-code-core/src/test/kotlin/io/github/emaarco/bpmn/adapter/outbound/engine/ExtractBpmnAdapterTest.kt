@@ -8,47 +8,49 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import java.io.File
 
 class ExtractBpmnAdapterTest {
 
-    private val extractor = mockk<EngineSpecificExtractor>()
+    private val extractor = mockk<EngineSpecificExtractor>(relaxed = true)
     private val underTest = ExtractBpmnAdapter(
         extractors = mapOf(ProcessEngine.ZEEBE to extractor)
     )
 
     @Test
-    fun `extract returns model using correct extractor`() {
+    fun `extract returns model using the correct extractor`() {
 
-        // given: a dummy extractor that returns an expected BpmnModel
+        // given: a dummy BPMN resource and a stubbed extractor
         val expectedModel = testBpmnModel(processId = "dummyProcess")
-        val dummyFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
-        val inputStream = dummyFile.inputStream()
-        val bpmnFile = BpmnResource(fileName = "dummy.bpmn", content = inputStream)
+        val tempFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
+        val bpmnResource = BpmnResource(
+            fileName = "dummy.bpmn",
+            content = tempFile.inputStream(),
+        )
         every { extractor.extract(any()) } returns expectedModel
 
-        // when: extract is invoked
-        val result = underTest.extract(bpmnFile, ProcessEngine.ZEEBE)
+        // when: extracting with a supported engine
+        val result = underTest.extract(bpmnFile = bpmnResource, engine = ProcessEngine.ZEEBE)
 
-        // then: the extractor is used and the expected model is returned
+        // then: the extractor is called and the model is returned
         verify { extractor.extract(any()) }
         assertThat(result).isEqualTo(expectedModel)
     }
 
     @Test
-    fun `throws exception when no extractor found for engine`() {
-        val dummyFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
-        val inputStream = dummyFile.inputStream()
-        assertThrows(IllegalStateException::class.java) {
-            underTest.extract(
-                BpmnResource(
-                    fileName = "dummy.bpmn",
-                    content = inputStream,
-                ),
-                ProcessEngine.CAMUNDA_7
-            )
-        }
+    fun `extract throws when no extractor is registered for the engine`() {
+
+        // given: a resource targeting an engine with no registered extractor
+        val tempFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
+        val bpmnResource = BpmnResource(
+            fileName = "dummy.bpmn",
+            content = tempFile.inputStream(),
+        )
+
+        // when / then: an exception is thrown
+        assertThatThrownBy { underTest.extract(bpmnFile = bpmnResource, engine = ProcessEngine.CAMUNDA_7) }
+            .isInstanceOf(IllegalStateException::class.java)
     }
 }

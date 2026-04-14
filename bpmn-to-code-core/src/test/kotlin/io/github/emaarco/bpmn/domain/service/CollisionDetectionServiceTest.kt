@@ -1,6 +1,5 @@
 package io.github.emaarco.bpmn.domain.service
 
-import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
@@ -10,62 +9,82 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.testBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class CollisionDetectionServiceTest {
 
-    private val service = CollisionDetectionService()
+    private val underTest = CollisionDetectionService()
 
     @Test
     fun `findCollisions returns empty when no collisions exist`() {
+
+        // given: a model with distinct constant names across all element types
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("Activity_Task1"),
-                FlowNodeDefinition("Activity_Task2"),
-                FlowNodeDefinition("Task1",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
-                FlowNodeDefinition("Task2",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")))),
+                FlowNodeDefinition(id = "Activity_Task1"),
+                FlowNodeDefinition(id = "Activity_Task2"),
+                FlowNodeDefinition(
+                    id = "Task1",
+                    properties = FlowNodeProperties.ServiceTask(
+                        ServiceTaskDefinition(id = "Task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail"))
+                    ),
+                ),
+                FlowNodeDefinition(
+                    id = "Task2",
+                    properties = FlowNodeProperties.ServiceTask(
+                        ServiceTaskDefinition(id = "Task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail"))
+                    ),
+                ),
             ),
             messages = listOf(
-                MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
-                MessageDefinition("Message_SubscriptionConfirmed", "Message_SubscriptionConfirmed"),
+                MessageDefinition(id = "Message_FormSubmitted", name = "Message_FormSubmitted"),
+                MessageDefinition(id = "Message_SubscriptionConfirmed", name = "Message_SubscriptionConfirmed"),
             ),
         )
 
-        assertThat(service.findCollisions(model)).isEmpty()
+        // when / then: no collisions are detected
+        assertThat(underTest.findCollisions(model)).isEmpty()
     }
 
     @Test
     fun `findCollisions allows true duplicates with same original ID`() {
+
+        // given: a model with exact duplicate elements (same id)
         val model = testBpmnModel(
             processId = "TestProcess",
             messages = listOf(
-                MessageDefinition("Message_Test", "Message_Test"),
-                MessageDefinition("Message_Test", "Message_Test"),
+                MessageDefinition(id = "Message_Test", name = "Message_Test"),
+                MessageDefinition(id = "Message_Test", name = "Message_Test"),
             ),
             flowNodes = listOf(
-                FlowNodeDefinition("Activity_SendMail"),
-                FlowNodeDefinition("Activity_SendMail"),
+                FlowNodeDefinition(id = "Activity_SendMail"),
+                FlowNodeDefinition(id = "Activity_SendMail"),
             ),
         )
 
-        assertThat(service.findCollisions(model)).isEmpty()
+        // when / then: true duplicates are not treated as collisions
+        assertThat(underTest.findCollisions(model)).isEmpty()
     }
 
     @Test
     fun `findCollisions detects collision with case variation in FlowNodes`() {
+
+        // given: two flow nodes that differ only in case
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("eventData"),
-                FlowNodeDefinition("EventData"),
+                FlowNodeDefinition(id = "eventData"),
+                FlowNodeDefinition(id = "EventData"),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one collision is reported with the expected constant name
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("FlowNode")
         assertThat(collisions[0].constantName).isEqualTo("EVENT_DATA")
@@ -75,15 +94,20 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collision with separator variation in FlowNodes`() {
+
+        // given: two flow nodes that differ only in separator character
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("endEvent_dataProcessed"),
-                FlowNodeDefinition("endEvent-dataProcessed"),
+                FlowNodeDefinition(id = "endEvent_dataProcessed"),
+                FlowNodeDefinition(id = "endEvent-dataProcessed"),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("FlowNode")
         assertThat(collisions[0].constantName).isEqualTo("END_EVENT_DATA_PROCESSED")
@@ -95,16 +119,21 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collision with mixed case and separator variation`() {
+
+        // given: three flow nodes that all normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("eventData"),
-                FlowNodeDefinition("event-data"),
-                FlowNodeDefinition("event_Data"),
+                FlowNodeDefinition(id = "eventData"),
+                FlowNodeDefinition(id = "event-data"),
+                FlowNodeDefinition(id = "event_Data"),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one collision groups all three IDs
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("FlowNode")
         assertThat(collisions[0].constantName).isEqualTo("EVENT_DATA")
@@ -117,6 +146,8 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in Messages`() {
+
+        // given: two messages that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             messages = listOf(
@@ -125,7 +156,10 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one Message collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("Message")
         assertThat(collisions[0].constantName).isEqualTo("MESSAGE_FORM_SUBMITTED")
@@ -133,17 +167,30 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in ServiceTasks`() {
+
+        // given: two service tasks with implementations that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("task1",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
-                FlowNodeDefinition("task2",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")))),
+                FlowNodeDefinition(
+                    id = "task1",
+                    properties = FlowNodeProperties.ServiceTask(
+                        ServiceTaskDefinition(id = "task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail"))
+                    ),
+                ),
+                FlowNodeDefinition(
+                    id = "task2",
+                    properties = FlowNodeProperties.ServiceTask(
+                        ServiceTaskDefinition(id = "task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail"))
+                    ),
+                ),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one ServiceTask collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("ServiceTask")
         assertThat(collisions[0].constantName).isEqualTo("NEWSLETTER_SEND_MAIL")
@@ -151,6 +198,8 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in Signals`() {
+
+        // given: two signals that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             signals = listOf(
@@ -159,7 +208,10 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one Signal collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("Signal")
         assertThat(collisions[0].constantName).isEqualTo("SIGNAL_COMPLETE")
@@ -167,6 +219,8 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in Errors`() {
+
+        // given: two errors that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             errors = listOf(
@@ -175,7 +229,10 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one Error collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("Error")
         assertThat(collisions[0].constantName).isEqualTo("ERROR_INVALID_MAIL")
@@ -183,17 +240,26 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in Timers`() {
+
+        // given: two timer flow nodes that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("timer1",
-                    properties = FlowNodeProperties.Timer(TimerDefinition("Duration", "Duration", "PT1M"))),
-                FlowNodeDefinition("timer2",
-                    properties = FlowNodeProperties.Timer(TimerDefinition("duration", "Duration", "PT2M"))),
+                FlowNodeDefinition(
+                    id = "timer1",
+                    properties = FlowNodeProperties.Timer(TimerDefinition(id = "Duration", type = "Duration", value = "PT1M")),
+                ),
+                FlowNodeDefinition(
+                    id = "timer2",
+                    properties = FlowNodeProperties.Timer(TimerDefinition(id = "duration", type = "Duration", value = "PT2M")),
+                ),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one Timer collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("Timer")
         assertThat(collisions[0].constantName).isEqualTo("DURATION")
@@ -201,15 +267,20 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects collisions in Variables`() {
+
+        // given: two nodes with variables that normalize to the same constant
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("node1", variables = listOf(VariableDefinition("userId"))),
-                FlowNodeDefinition("node2", variables = listOf(VariableDefinition("user_id"))),
+                FlowNodeDefinition(id = "node1", variables = listOf(VariableDefinition(name = "userId"))),
+                FlowNodeDefinition(id = "node2", variables = listOf(VariableDefinition(name = "user_id"))),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: one Variable collision is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].variableType).isEqualTo("Variable")
         assertThat(collisions[0].constantName).isEqualTo("USER_ID")
@@ -217,11 +288,13 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions detects multiple collisions across different variable types`() {
+
+        // given: a model with collisions in FlowNodes, Messages, and Signals simultaneously
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("endEvent_complete"),
-                FlowNodeDefinition("endEvent-complete"),
+                FlowNodeDefinition(id = "endEvent_complete"),
+                FlowNodeDefinition(id = "endEvent-complete"),
             ),
             messages = listOf(
                 MessageDefinition(id = "msg1", name = "message_sent"),
@@ -233,7 +306,10 @@ class CollisionDetectionServiceTest {
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: three collisions are detected, one per type
         assertThat(collisions).hasSize(3)
         assertThat(collisions.map { it.variableType }).containsExactlyInAnyOrder(
             "FlowNode",
@@ -244,33 +320,24 @@ class CollisionDetectionServiceTest {
 
     @Test
     fun `findCollisions handles mixed valid and collision cases`() {
+
+        // given: a model where most nodes are unique but two share a constant name
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition("Activity_Task1"),
-                FlowNodeDefinition("Activity_Task2"),
-                FlowNodeDefinition("Activity_Task3"),
-                FlowNodeDefinition("endEvent_complete"),
-                FlowNodeDefinition("endEvent-complete"),
+                FlowNodeDefinition(id = "Activity_Task1"),
+                FlowNodeDefinition(id = "Activity_Task2"),
+                FlowNodeDefinition(id = "Activity_Task3"),
+                FlowNodeDefinition(id = "endEvent_complete"),
+                FlowNodeDefinition(id = "endEvent-complete"),
             ),
         )
 
-        val collisions = service.findCollisions(model)
+        // when: checking for collisions
+        val collisions = underTest.findCollisions(model)
+
+        // then: only the colliding pair is reported
         assertThat(collisions).hasSize(1)
         assertThat(collisions[0].constantName).isEqualTo("END_EVENT_COMPLETE")
     }
-
-    private fun testBpmnModel(
-        processId: String,
-        flowNodes: List<FlowNodeDefinition> = emptyList(),
-        messages: List<MessageDefinition> = emptyList(),
-        signals: List<SignalDefinition> = emptyList(),
-        errors: List<ErrorDefinition> = emptyList(),
-    ) = BpmnModel(
-        processId = processId,
-        flowNodes = flowNodes,
-        messages = messages,
-        signals = signals,
-        errors = errors,
-    )
 }

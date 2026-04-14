@@ -10,24 +10,32 @@ import org.junit.jupiter.api.Test
 
 class MissingSignalNameRuleTest {
 
-    private val rule = MissingSignalNameRule()
+    private val underTest = MissingSignalNameRule()
 
     @Test
     fun `reports error for signal with null name`() {
+
+        // given: a signal element with no name
         val model = testBpmnModel(
             signals = listOf(SignalDefinition(id = "sig1", name = null))
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: an ERROR violation is reported
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).hasSize(1)
         assertThat(violations[0].severity).isEqualTo(Severity.ERROR)
     }
 
     @Test
     fun `no violations for signal with name`() {
+
+        // given: a signal element with a valid name
         val model = testBpmnModel(
             signals = listOf(SignalDefinition(id = "sig1", name = "MySignal"))
         )
-        val violations = rule.validate(ValidationContext(model, ProcessEngine.ZEEBE))
+
+        // when / then: no violations
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
         assertThat(violations).isEmpty()
     }
 }

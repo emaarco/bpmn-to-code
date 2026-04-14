@@ -23,15 +23,11 @@ class GradlePluginSmokeTest {
         bpmnFile: String,
         @TempDir projectDir: File,
     ) {
-        // Copy BPMN file into the temp project
+        // given: a minimal Gradle project with the plugin applied and a BPMN resource
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
         val bpmnStream = requireNotNull(javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile"))
         File(resourcesDir, bpmnFile).writeBytes(bpmnStream.readBytes())
-
-        // Write settings.gradle
         File(projectDir, "settings.gradle").writeText("")
-
-        // Write build.gradle (Groovy DSL — avoids classpath issues with typed imports)
         File(projectDir, "build.gradle").writeText(
             """
             plugins {
@@ -49,22 +45,19 @@ class GradlePluginSmokeTest {
             """.trimIndent()
         )
 
-        // Run the task
+        // when: running the generateBpmnModelApi task
         val result = GradleRunner.create()
             .withProjectDir(projectDir)
             .withPluginClasspath()
             .withArguments("generateBpmnModelApi")
             .build()
 
-        // Verify task succeeded
+        // then: the task succeeds and generates the expected files
         assertThat(result.task(":generateBpmnModelApi")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
-
-        // Verify output files were generated
         val packageDir = File(projectDir, "build/generated/io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
         val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
-
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
         val modelFiles = generatedFiles.filter { it.isFile }
         assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }

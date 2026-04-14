@@ -21,14 +21,11 @@ class MavenMojoSmokeTest {
         bpmnFile: String,
         @TempDir projectDir: File,
     ) {
-        // Copy BPMN file into the temp project
+        // given: a temp project directory with a BPMN resource and a configured mojo
         val resourcesDir = File(projectDir, "src/main/resources").also { it.mkdirs() }
         val bpmnStream = requireNotNull(javaClass.classLoader.getResourceAsStream("bpmn/$bpmnFile"))
         File(resourcesDir, bpmnFile).writeBytes(bpmnStream.readBytes())
-
         val outputDir = File(projectDir, "build/generated")
-
-        // Instantiate Mojo and set fields via reflection
         val mojo = BpmnModelMojo()
         setField(mojo, "baseDir", projectDir.absolutePath)
         setField(mojo, "filePattern", "src/main/resources/*.bpmn")
@@ -37,15 +34,14 @@ class MavenMojoSmokeTest {
         setField(mojo, "outputLanguage", language)
         setField(mojo, "processEngine", engine)
 
-        // Execute
+        // when: executing the mojo
         mojo.execute()
 
-        // Verify output files were generated
+        // then: the expected output files are generated
         val packageDir = File(outputDir, "io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
         val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
-
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
         val modelFiles = generatedFiles.filter { it.isFile }
         assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }

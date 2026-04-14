@@ -18,9 +18,8 @@ class BpmnResourceLoaderTest {
 
     @Test
     fun `fromClasspath throws on missing classpath path`() {
-        assertThatThrownBy {
-            BpmnResourceLoader.fromClasspath("nonexistent/path")
-        }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { BpmnResourceLoader.fromClasspath("nonexistent/path") }
+            .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("No classpath resources found")
     }
 
@@ -32,23 +31,29 @@ class BpmnResourceLoaderTest {
 
     @Test
     fun `fromDirectory loads all bpmn files recursively`(@TempDir tempDir: Path) {
+
+        // given: a directory with BPMN files in root and subdirectory, plus a non-BPMN file
         val subDir = Files.createDirectory(tempDir.resolve("sub"))
         Files.createFile(tempDir.resolve("root.bpmn"))
         Files.createFile(subDir.resolve("nested.bpmn"))
         Files.createFile(tempDir.resolve("other.xml"))
 
+        // when: loading from the directory
         val resources = BpmnResourceLoader.fromDirectory(tempDir)
 
+        // then: only the BPMN files are returned
         assertThat(resources.map { it.fileName }).containsExactlyInAnyOrder("root.bpmn", "nested.bpmn")
     }
 
     @Test
     fun `fromDirectory throws when path is not a directory`(@TempDir tempDir: Path) {
+
+        // given: a regular file (not a directory)
         val file = Files.createFile(tempDir.resolve("process.bpmn"))
 
-        assertThatThrownBy {
-            BpmnResourceLoader.fromDirectory(file)
-        }.isInstanceOf(IllegalArgumentException::class.java)
+        // when / then: an exception is thrown
+        assertThatThrownBy { BpmnResourceLoader.fromDirectory(file) }
+            .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("Path is not a directory")
     }
 }

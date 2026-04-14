@@ -27,10 +27,15 @@ class Camunda7ModelExtractorTest {
 
     @Test
     fun `extract returns valid BpmnModel`() {
+
+        // given: the Camunda 7 newsletter BPMN file from classpath
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
+
+        // when: extracting the model
         val bpmnModel = underTest.extract(file.inputStream())
 
+        // then: the model matches the expected structure
         val c7ServiceTasks = listOf(
             ServiceTaskDefinition("Activity_SendWelcomeMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "\${newsletterSendWelcomeMail}", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
             ServiceTaskDefinition("Activity_SendConfirmationMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "#{newsletterSendConfirmationMail}", IMPL_KIND_KEY to "EXTERNAL_TASK")),
