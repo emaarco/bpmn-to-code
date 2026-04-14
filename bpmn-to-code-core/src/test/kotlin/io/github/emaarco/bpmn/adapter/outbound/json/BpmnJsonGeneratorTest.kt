@@ -26,4 +26,48 @@ class BpmnJsonGeneratorTest {
         val expectedContent = expectedFile.readText()
         assertThat(result).isEqualToIgnoringWhitespace(expectedContent)
     }
+
+    @Test
+    fun `includes variantName in JSON when set`() {
+
+        // given: a model with variantName
+        val model = testNewsletterBpmnModel(
+            variantName = "withApproval",
+            escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
+        )
+
+        // when: generating JSON
+        val result = underTest.generate(model)
+
+        // then: variantName appears in the JSON output
+        assertThat(result).contains("\"variantName\": \"withApproval\"")
+    }
+
+    @Test
+    fun `adapter uses variant-aware filename when variantName is set`() {
+
+        // given: a model with variantName
+        val model = testNewsletterBpmnModel(variantName = "withApproval")
+        val adapter = BpmnJsonGenerationAdapter()
+
+        // when: generating JSON via adapter
+        val result = adapter.generateJson(model)
+
+        // then: filename includes variantName
+        assertThat(result.fileName).isEqualTo("newsletterSubscription-withApproval.json")
+    }
+
+    @Test
+    fun `adapter uses plain filename when variantName is not set`() {
+
+        // given: a model without variantName
+        val model = testNewsletterBpmnModel()
+        val adapter = BpmnJsonGenerationAdapter()
+
+        // when: generating JSON via adapter
+        val result = adapter.generateJson(model)
+
+        // then: filename is just processId
+        assertThat(result.fileName).isEqualTo("newsletterSubscription.json")
+    }
 }

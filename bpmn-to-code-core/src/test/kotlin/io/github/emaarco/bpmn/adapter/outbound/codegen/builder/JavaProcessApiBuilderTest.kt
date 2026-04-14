@@ -1,6 +1,9 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
+import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
@@ -58,4 +61,18 @@ class JavaProcessApiBuilderTest {
         assertThat(result.content).isNotEmpty()
     }
 
+    @Test
+    fun `buildApiFile generates variant-scoped Flows and Relations for merged model`() {
+
+        // given: a merged model with two variants
+        val model = buildMultiVariantModel()
+        val modelApi = BpmnModelApi(model, OutputLanguage.JAVA, "de.emaarco.example", ProcessEngine.ZEEBE)
+
+        // when: we build the process API file
+        val result = underTest.buildApiFile(modelApi)
+
+        // then: output contains Variants section instead of flat Flows/Relations
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiJava.txt")).toURI())
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+    }
 }
