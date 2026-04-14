@@ -33,7 +33,7 @@ class BpmnJsonMapper {
             outgoing = outgoing,
             variables = variables.map { it.getRawName() },
             properties = properties.toJson(),
-            customProperties = customProperties.mapValues { (_, v) -> v.toJsonElement() },
+            engineSpecificProperties = engineSpecificProperties.mapValues { (_, v) -> v.toJsonElement() },
         )
     }
 
@@ -49,8 +49,8 @@ class BpmnJsonMapper {
         is FlowNodeProperties.None -> null
         is FlowNodeProperties.ServiceTask -> FlowNodePropertiesJson(
             type = "ServiceTask",
-            implementationValue = definition.customProperties[ServiceTaskDefinition.IMPL_VALUE_KEY] as? String,
-            implementationKind = definition.customProperties[ServiceTaskDefinition.IMPL_KIND_KEY] as? String,
+            implementationValue = definition.engineSpecificProperties[ServiceTaskDefinition.IMPL_VALUE_KEY] as? String,
+            implementationKind = definition.engineSpecificProperties[ServiceTaskDefinition.IMPL_KIND_KEY] as? String,
         )
         is FlowNodeProperties.CallActivity -> FlowNodePropertiesJson(
             type = "CallActivity",

@@ -32,10 +32,10 @@ class OperatonModelExtractorTest {
         val bpmnModel = underTest.extract(file.inputStream())
 
         val opServiceTasks = listOf(
-            ServiceTaskDefinition("Activity_SendWelcomeMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
-            ServiceTaskDefinition("Activity_SendConfirmationMail", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "EXTERNAL_TASK")),
-            ServiceTaskDefinition("EndEvent_RegistrationCompleted", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "EXTERNAL_TASK")),
-            ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", customProperties = mapOf(IMPL_VALUE_KEY to "counterClass", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
+            ServiceTaskDefinition("Activity_SendWelcomeMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendWelcomeMail", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
+            ServiceTaskDefinition("Activity_SendConfirmationMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail", IMPL_KIND_KEY to "EXTERNAL_TASK")),
+            ServiceTaskDefinition("EndEvent_RegistrationCompleted", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "EXTERNAL_TASK")),
+            ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "counterClass", IMPL_KIND_KEY to "DELEGATE_EXPRESSION")),
         )
         val opServiceTaskById = opServiceTasks.associateBy { it.id }
 
@@ -48,14 +48,14 @@ class OperatonModelExtractorTest {
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("reasonCode"), VariableDefinition("abortResult")),
                         incoming = listOf("Timer_After3Days"),
                         outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
-                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
+                        engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
                         variables = listOf(VariableDefinition("subscriptionId")),
                         attachedElements = listOf("Timer_EveryDay"),
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("Activity_SendConfirmationMail"),
                         outgoing = listOf("EndEvent_SubscriptionConfirmed"),
-                        customProperties = mapOf(ASYNC_AFTER_KEY to true)),
+                        engineSpecificProperties = mapOf(ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["Activity_SendConfirmationMail"]!!),
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("otherVariable")),
@@ -67,7 +67,7 @@ class OperatonModelExtractorTest {
                         variables = listOf(VariableDefinition("subscriptionId")),
                         incoming = listOf("SubProcess_Confirmation"),
                         outgoing = listOf("EndEvent_RegistrationCompleted"),
-                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
+                        engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("CompensationEndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
                         incoming = listOf("CallActivity_AbortRegistration")),
                     FlowNodeDefinition("CompensationEvent_OnSubscriptionCounter", BpmnElementType.BOUNDARY_EVENT,
@@ -80,7 +80,7 @@ class OperatonModelExtractorTest {
                         incoming = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT,
                         incoming = listOf("ErrorEvent_InvalidMail"),
-                        customProperties = mapOf(ASYNC_BEFORE_KEY to true, EXCLUSIVE_KEY to false)),
+                        engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT,
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("Activity_ConfirmRegistration")),
@@ -96,7 +96,7 @@ class OperatonModelExtractorTest {
                         variables = listOf(VariableDefinition("subscriptionId")),
                         parentId = "SubProcess_Confirmation",
                         outgoing = listOf("Activity_SendConfirmationMail"),
-                        customProperties = mapOf(ASYNC_BEFORE_KEY to true)),
+                        engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true)),
                     FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
                         variables = listOf(VariableDefinition("subscriptionId")),
                         outgoing = listOf("serviceTask_incrementSubscriptionCounter")),
@@ -128,8 +128,8 @@ class OperatonModelExtractorTest {
                     SequenceFlowDefinition("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration"),
                 ),
                 compensations = listOf(
-                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING, customProperties = mapOf("activityRef" to "serviceTask_incrementSubscriptionCounter", "waitForCompletion" to false)),
-                    CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING, customProperties = mapOf("waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING, engineSpecificProperties = mapOf("activityRef" to "serviceTask_incrementSubscriptionCounter", "waitForCompletion" to false)),
+                    CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING, engineSpecificProperties = mapOf("waitForCompletion" to false)),
                 ),
             )
         )

@@ -25,9 +25,9 @@ class CollisionDetectionServiceTest {
                 FlowNodeDefinition("Activity_Task1"),
                 FlowNodeDefinition("Activity_Task2"),
                 FlowNodeDefinition("Task1",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
                 FlowNodeDefinition("Task2",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")))),
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendConfirmationMail")))),
             ),
             messages = listOf(
                 MessageDefinition("Message_FormSubmitted", "Message_FormSubmitted"),
@@ -137,9 +137,9 @@ class CollisionDetectionServiceTest {
             processId = "TestProcess",
             flowNodes = listOf(
                 FlowNodeDefinition("task1",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task1", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task1", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.sendMail")))),
                 FlowNodeDefinition("task2",
-                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task2", customProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")))),
+                    properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("task2", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter_sendMail")))),
             ),
         )
 

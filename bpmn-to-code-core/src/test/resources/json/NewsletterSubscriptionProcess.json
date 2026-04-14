@@ -159,7 +159,7 @@
                 "type": "ServiceTask",
                 "implementationValue": "newsletter.sendWelcomeMail"
             },
-            "customProperties": {
+            "engineSpecificProperties": {
                 "asyncBefore": true,
                 "asyncAfter": true,
                 "exclusive": false

@@ -125,7 +125,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
                 ?.takeIf { it.isNotBlank() }
             ServiceTaskDefinition(
                 id = id,
-                customProperties = buildMap {
+                engineSpecificProperties = buildMap {
                     put(implValueKey, type)
                     put(implKindKey, ZeebeImplementationKind.JOB_WORKER.name)
                 }
@@ -135,8 +135,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun extractZeebeMessages(modelInstance: ModelInstance): List<MessageDefinition> {
         return modelInstance.findAllMessagesWithSource().map { (elementId, name, message) ->
-            val customProperties = message?.zeebeSubscriptionProperties() ?: emptyMap()
-            MessageDefinition(id = elementId, name = name, customProperties = customProperties)
+            val engineSpecificProperties = message?.zeebeSubscriptionProperties() ?: emptyMap()
+            MessageDefinition(id = elementId, name = name, engineSpecificProperties = engineSpecificProperties)
         }
     }
 

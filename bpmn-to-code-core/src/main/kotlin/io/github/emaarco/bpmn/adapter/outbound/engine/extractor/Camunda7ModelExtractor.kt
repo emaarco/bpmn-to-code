@@ -97,8 +97,8 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             val properties = resolveProperties(node.id, serviceTaskById, callActivityById, timerById)
             val variables = variablesPerNode[node.id] ?: emptyList()
             val attachedElements = attachedElementsById[node.id] ?: emptyList()
-            val customProperties = asyncPerNode[node.id] ?: emptyMap()
-            node.copy(properties = properties, variables = variables, attachedElements = attachedElements, customProperties = customProperties)
+            val engineSpecificProperties = asyncPerNode[node.id] ?: emptyMap()
+            node.copy(properties = properties, variables = variables, attachedElements = attachedElements, engineSpecificProperties = engineSpecificProperties)
         }
     }
 
@@ -155,7 +155,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val (kind, implValue) = this.detectImplementation()
         return ServiceTaskDefinition(
             id = taskId,
-            customProperties = buildMap {
+            engineSpecificProperties = buildMap {
                 put(implValueKey, implValue)
                 put(implKindKey, kind)
             }
@@ -178,7 +178,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             val taskId = event.parentElement?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             ServiceTaskDefinition(
                 id = taskId,
-                customProperties = buildMap {
+                engineSpecificProperties = buildMap {
                     put(implValueKey, implValue)
                     put(implKindKey, kind)
                 }

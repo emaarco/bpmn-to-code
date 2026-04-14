@@ -26,7 +26,7 @@ data class FlowNodeJson(
     val outgoing: List<String> = emptyList(),
     val variables: List<String> = emptyList(),
     val properties: FlowNodePropertiesJson? = null,
-    val customProperties: Map<String, JsonElement> = emptyMap(),
+    val engineSpecificProperties: Map<String, JsonElement> = emptyMap(),
 )
 
 @Serializable

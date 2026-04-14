@@ -5,7 +5,7 @@ import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 data class CompensationDefinition(
     val id: String?,
     val type: CompensationType,
-    val customProperties: Map<String, Any?> = emptyMap(),
+    val engineSpecificProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<String> {
     override fun getName() = id?.toUpperSnakeCase() ?: ""
     override fun getValue() = id ?: ""

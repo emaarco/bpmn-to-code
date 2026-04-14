@@ -6,7 +6,7 @@ data class TimerDefinition(
     val id: String?,
     private val type: String?,
     private val value: String?,
-    val customProperties: Map<String, Any?> = emptyMap(),
+    val engineSpecificProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<Pair<String, String>> {
     override fun getName() = id?.toUpperSnakeCase() ?: ""
     override fun getValue() = (type ?: "") to (value ?: "")
