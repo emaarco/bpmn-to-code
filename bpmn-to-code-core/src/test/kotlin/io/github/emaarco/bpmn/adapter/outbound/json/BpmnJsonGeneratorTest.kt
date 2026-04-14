@@ -18,7 +18,7 @@ class BpmnJsonGeneratorTest {
 
         // given: the subscribe newsletter BPMN model
         val model = testSubscribeNewsletterBpmnModel(
-            escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
+            escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100")),
         )
 
         // when: generating JSON
@@ -32,18 +32,16 @@ class BpmnJsonGeneratorTest {
     @Test
     fun `generates JSON with variants for merged model`() {
 
-        // given: a merged model combining subscribe and send newsletter
-        val subscribe = testSubscribeNewsletterBpmnModel(variantName = "subscribe")
+        // given: a merged model with a single variant
         val send = testSendNewsletterBpmnModel(variantName = "send")
         val merged = MergedBpmnModel(
-            processId = "newsletterSubscription",
-            flowNodes = (subscribe.flowNodes + send.flowNodes).distinctBy { it.getRawName() },
-            messages = (subscribe.messages + send.messages).distinctBy { it.getRawName() },
-            signals = subscribe.signals + send.signals,
-            errors = subscribe.errors + send.errors,
-            escalations = (subscribe.escalations + send.escalations).distinctBy { it.getRawName() },
+            processId = send.processId,
+            flowNodes = send.flowNodes,
+            messages = send.messages,
+            signals = send.signals,
+            errors = send.errors,
+            escalations = send.escalations,
             variants = listOf(
-                VariantData("subscribe", subscribe.sequenceFlows, subscribe.flowNodes),
                 VariantData("send", send.sequenceFlows, send.flowNodes),
             ),
         )

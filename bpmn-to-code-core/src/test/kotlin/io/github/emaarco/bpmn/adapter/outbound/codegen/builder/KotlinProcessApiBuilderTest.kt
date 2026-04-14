@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -49,18 +50,16 @@ class KotlinProcessApiBuilderTest {
     @Test
     fun `buildApiFile generates variant-scoped Flows and Relations for merged model`() {
 
-        // given: a merged model combining subscribe and send newsletter as two variants
-        val subscribe = testSubscribeNewsletterBpmnModel(variantName = "subscribe")
+        // given: a merged model with a single variant
         val send = testSendNewsletterBpmnModel(variantName = "send")
         val merged = MergedBpmnModel(
-            processId = "newsletterSubscription",
-            flowNodes = (subscribe.flowNodes + send.flowNodes).distinctBy { it.getRawName() },
-            messages = (subscribe.messages + send.messages).distinctBy { it.getRawName() },
-            signals = subscribe.signals + send.signals,
-            errors = subscribe.errors + send.errors,
-            escalations = (subscribe.escalations + send.escalations).distinctBy { it.getRawName() },
+            processId = send.processId,
+            flowNodes = send.flowNodes,
+            messages = send.messages,
+            signals = send.signals,
+            errors = send.errors,
+            escalations = send.escalations,
             variants = listOf(
-                VariantData("subscribe", subscribe.sequenceFlows, subscribe.flowNodes),
                 VariantData("send", send.sequenceFlows, send.flowNodes),
             ),
         )

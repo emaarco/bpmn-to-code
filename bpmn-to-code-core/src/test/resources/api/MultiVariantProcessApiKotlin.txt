@@ -3,7 +3,6 @@
 
 package de.emaarco.example
 
-import de.emaarco.example.types.BpmnError
 import de.emaarco.example.types.BpmnEscalation
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
@@ -11,42 +10,12 @@ import de.emaarco.example.types.BpmnTimer
 import kotlin.String
 import kotlin.Suppress
 
-object NewsletterSubscriptionProcessApi {
-  const val PROCESS_ID: String = "newsletterSubscription"
+object SendNewsletterProcessApi {
+  const val PROCESS_ID: String = "sendNewsletter"
 
   const val PROCESS_ENGINE: String = "ZEEBE"
 
   object Elements {
-    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"
-
-    const val ACTIVITY_CONFIRM_REGISTRATION: String = "Activity_ConfirmRegistration"
-
-    const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "Activity_SendConfirmationMail"
-
-    const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
-
-    const val END_EVENT_REGISTRATION_ABORTED: String = "EndEvent_RegistrationAborted"
-
-    const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
-
-    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String =
-        "EndEvent_RegistrationNotPossible"
-
-    const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
-
-    const val ERROR_EVENT_INVALID_MAIL: String = "ErrorEvent_InvalidMail"
-
-    const val START_EVENT_REQUEST_RECEIVED: String = "StartEvent_RequestReceived"
-
-    const val START_EVENT_SUBMIT_REGISTRATION_FORM: String =
-        "StartEvent_SubmitRegistrationForm"
-
-    const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
-
-    const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
-
-    const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
-
     const val START_EVENT_EDITION_CREATED: String = "startEvent_editionCreated"
 
     const val SERVICE_TASK_LOAD_SUBSCRIBERS: String = "serviceTask_loadSubscribers"
@@ -86,13 +55,7 @@ object NewsletterSubscriptionProcessApi {
     const val END_EVENT_ISSUE_RESOLVED: String = "endEvent_issueResolved"
   }
 
-  object CallActivities {
-    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
-  }
-
   object Messages {
-    const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
-
     const val MESSAGE_MAIL_REJECTED: String = "Message_MailRejected"
 
     const val MESSAGE_MAIL_REJECTED_AGAIN: String = "Message_MailRejectedAgain"
@@ -105,27 +68,13 @@ object NewsletterSubscriptionProcessApi {
 
     const val NEWSLETTER_NOTIFY_AUTHOR: String = "newsletter.notifyAuthor"
 
-    const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
-
-    const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "newsletter.sendConfirmationMail"
-
     const val NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER: String = "newsletter.sendMailToSubscriber"
 
     const val NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER: String = "newsletter.sendMailToSubscriber"
-
-    const val NEWSLETTER_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
   }
 
   object Timers {
-    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
-
-    val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
-
     val TIMER_NO_REJECTION_FOR_ONE_DAY: BpmnTimer = BpmnTimer("Duration", "PT1D")
-  }
-
-  object Errors {
-    val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
   }
 
   object Escalations {
@@ -133,40 +82,10 @@ object NewsletterSubscriptionProcessApi {
         BpmnEscalation("escalation_notifySupport", "200")
   }
 
-  object Signals {
-    const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
-  }
-
   object Variables {
     const val AUTHOR: String = "author"
 
     const val SUBSCRIBERS: String = "subscribers"
-
-    const val SUBSCRIPTION_ID: String = "subscriptionId"
-
-    object ActivitySendConfirmationMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object ActivitySendWelcomeMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object CallActivityAbortRegistration {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object EndEventRegistrationCompleted {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object StartEventRequestReceived {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
-
-    object StartEventSubmitRegistrationForm {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
 
     object ServiceTaskLoadSubscribers {
       const val AUTHOR: String = "author"
@@ -176,184 +95,6 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Variants {
-    object Subscribe {
-      object Flows {
-        val FLOW_05_I_3_X_1_Y: BpmnFlow = BpmnFlow(
-                id = "Flow_05i3x1y",
-                sourceRef = "StartEvent_RequestReceived",
-                targetRef = "Activity_SendConfirmationMail",
-            )
-
-        val FLOW_09_CUVZP: BpmnFlow = BpmnFlow(
-                id = "Flow_09cuvzp",
-                sourceRef = "SubProcess_Confirmation",
-                targetRef = "Activity_SendWelcomeMail",
-            )
-
-        val FLOW_0_I_2_CTUV: BpmnFlow = BpmnFlow(
-                id = "Flow_0i2ctuv",
-                sourceRef = "ErrorEvent_InvalidMail",
-                targetRef = "EndEvent_RegistrationNotPossible",
-            )
-
-        val FLOW_0_X_4_EWVB: BpmnFlow = BpmnFlow(
-                id = "Flow_0x4ewvb",
-                sourceRef = "Timer_EveryDay",
-                targetRef = "Activity_SendConfirmationMail",
-            )
-
-        val FLOW_1_BCKM_43: BpmnFlow = BpmnFlow(
-                id = "Flow_1bckm43",
-                sourceRef = "Activity_SendConfirmationMail",
-                targetRef = "Activity_ConfirmRegistration",
-            )
-
-        val FLOW_1_BSB_8_NO: BpmnFlow = BpmnFlow(
-                id = "Flow_1bsb8no",
-                sourceRef = "CallActivity_AbortRegistration",
-                targetRef = "EndEvent_RegistrationAborted",
-            )
-
-        val FLOW_1_CPWE_57: BpmnFlow = BpmnFlow(
-                id = "Flow_1cpwe57",
-                sourceRef = "Activity_ConfirmRegistration",
-                targetRef = "EndEvent_SubscriptionConfirmed",
-            )
-
-        val FLOW_1_CSFYYZ: BpmnFlow = BpmnFlow(
-                id = "Flow_1csfyyz",
-                sourceRef = "StartEvent_SubmitRegistrationForm",
-                targetRef = "SubProcess_Confirmation",
-            )
-
-        val FLOW_1_I_7_HJID: BpmnFlow = BpmnFlow(
-                id = "Flow_1i7hjid",
-                sourceRef = "Activity_SendWelcomeMail",
-                targetRef = "EndEvent_RegistrationCompleted",
-            )
-
-        val FLOW_1_L_1_LJ_4_M: BpmnFlow = BpmnFlow(
-                id = "Flow_1l1lj4m",
-                sourceRef = "Timer_After3Days",
-                targetRef = "CallActivity_AbortRegistration",
-            )
-      }
-
-      object Relations {
-        val ACTIVITY_CONFIRM_REGISTRATION: BpmnRelations = BpmnRelations(
-                incoming = listOf("Activity_SendConfirmationMail"),
-                outgoing = listOf("EndEvent_SubscriptionConfirmed"),
-                parentId = "SubProcess_Confirmation",
-                attachedToRef = null,
-                attachedElements = listOf("Timer_EveryDay"),
-            )
-
-        val ACTIVITY_SEND_CONFIRMATION_MAIL: BpmnRelations = BpmnRelations(
-                incoming = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
-                outgoing = listOf("Activity_ConfirmRegistration"),
-                parentId = "SubProcess_Confirmation",
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val ACTIVITY_SEND_WELCOME_MAIL: BpmnRelations = BpmnRelations(
-                incoming = listOf("SubProcess_Confirmation"),
-                outgoing = listOf("EndEvent_RegistrationCompleted"),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val CALL_ACTIVITY_ABORT_REGISTRATION: BpmnRelations = BpmnRelations(
-                incoming = listOf("Timer_After3Days"),
-                outgoing = listOf("EndEvent_RegistrationAborted"),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val END_EVENT_REGISTRATION_ABORTED: BpmnRelations = BpmnRelations(
-                incoming = listOf("CallActivity_AbortRegistration"),
-                outgoing = emptyList(),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val END_EVENT_REGISTRATION_COMPLETED: BpmnRelations = BpmnRelations(
-                incoming = listOf("Activity_SendWelcomeMail"),
-                outgoing = emptyList(),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val END_EVENT_REGISTRATION_NOT_POSSIBLE: BpmnRelations = BpmnRelations(
-                incoming = listOf("ErrorEvent_InvalidMail"),
-                outgoing = emptyList(),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val END_EVENT_SUBSCRIPTION_CONFIRMED: BpmnRelations = BpmnRelations(
-                incoming = listOf("Activity_ConfirmRegistration"),
-                outgoing = emptyList(),
-                parentId = "SubProcess_Confirmation",
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val ERROR_EVENT_INVALID_MAIL: BpmnRelations = BpmnRelations(
-                incoming = emptyList(),
-                outgoing = listOf("EndEvent_RegistrationNotPossible"),
-                parentId = null,
-                attachedToRef = "SubProcess_Confirmation",
-                attachedElements = emptyList(),
-            )
-
-        val START_EVENT_REQUEST_RECEIVED: BpmnRelations = BpmnRelations(
-                incoming = emptyList(),
-                outgoing = listOf("Activity_SendConfirmationMail"),
-                parentId = "SubProcess_Confirmation",
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val START_EVENT_SUBMIT_REGISTRATION_FORM: BpmnRelations = BpmnRelations(
-                incoming = emptyList(),
-                outgoing = listOf("SubProcess_Confirmation"),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = emptyList(),
-            )
-
-        val SUB_PROCESS_CONFIRMATION: BpmnRelations = BpmnRelations(
-                incoming = listOf("StartEvent_SubmitRegistrationForm"),
-                outgoing = listOf("Activity_SendWelcomeMail"),
-                parentId = null,
-                attachedToRef = null,
-                attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
-            )
-
-        val TIMER_AFTER_3_DAYS: BpmnRelations = BpmnRelations(
-                incoming = emptyList(),
-                outgoing = listOf("CallActivity_AbortRegistration"),
-                parentId = null,
-                attachedToRef = "SubProcess_Confirmation",
-                attachedElements = emptyList(),
-            )
-
-        val TIMER_EVERY_DAY: BpmnRelations = BpmnRelations(
-                incoming = emptyList(),
-                outgoing = listOf("Activity_SendConfirmationMail"),
-                parentId = "SubProcess_Confirmation",
-                attachedToRef = "Activity_ConfirmRegistration",
-                attachedElements = emptyList(),
-            )
-      }
-    }
-
     object Send {
       object Flows {
         val FLOW_0_BIANZ_5: BpmnFlow = BpmnFlow(

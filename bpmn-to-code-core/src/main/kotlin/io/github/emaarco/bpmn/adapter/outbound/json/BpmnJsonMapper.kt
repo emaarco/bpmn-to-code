@@ -34,7 +34,6 @@ class BpmnJsonMapper {
     private fun toVariantJson(model: MergedBpmnModel): BpmnModelJson {
         return BpmnModelJson(
             processId = model.processId,
-            flowNodes = FlowNodeSorter.sort(model.flowNodes).map { it.toJson() },
             messages = model.messages.mapNotNull { it.toJson() },
             signals = model.signals.mapNotNull { it.toJson() },
             errors = model.errors.mapNotNull { it.toJson() },
