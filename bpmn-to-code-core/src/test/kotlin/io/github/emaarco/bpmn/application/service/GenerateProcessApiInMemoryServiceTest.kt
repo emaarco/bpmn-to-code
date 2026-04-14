@@ -52,7 +52,7 @@ class GenerateProcessApiInMemoryServiceTest {
 
         // then: BpmnFile is created, models are extracted, code is generated
         verify { bpmnService.extract(match { it.fileName == "test.bpmn" }, eq(ProcessEngine.ZEEBE)) }
-        verify { codeGenerator.generateCode(match { it.model == dummyModel }) }
+        verify { codeGenerator.generateCode(match { it.model.processId == dummyModel.processId }) }
         assertThat(result).hasSize(1)
         assertThat(result[0]).isEqualTo(expectedGeneratedFile)
         confirmVerified(codeGenerator, bpmnService)

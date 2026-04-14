@@ -5,10 +5,10 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
-import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
+import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import io.github.emaarco.bpmn.domain.validation.ValidationPhase
@@ -36,7 +36,7 @@ class GenerateProcessApiInMemoryService(
 
     private fun toModelApi(
         command: GenerateProcessApiInMemoryUseCase.Command,
-        model: BpmnModel
+        model: ProcessModel,
     ) = BpmnModelApi(
         model = model,
         outputLanguage = command.outputLanguage,

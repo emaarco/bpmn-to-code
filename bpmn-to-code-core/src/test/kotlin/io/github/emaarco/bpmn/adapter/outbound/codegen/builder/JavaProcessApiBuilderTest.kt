@@ -1,9 +1,15 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import io.github.emaarco.bpmn.domain.BpmnModelApi
+import io.github.emaarco.bpmn.domain.MergedBpmnModel
+import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
+import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
-import io.github.emaarco.bpmn.domain.testNewsletterBpmnModel
+import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
+import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -18,8 +24,8 @@ class JavaProcessApiBuilderTest {
         // given: a BPMN model with custom service task implementations
         val modelApi = testBpmnModelApi(
             packagePath = "de.emaarco.example",
-            model = testNewsletterBpmnModel(
-                flowNodes = buildNewsletterFlowNodes(
+            model = testSubscribeNewsletterBpmnModel(
+                flowNodes = buildSubscribeNewsletterFlowNodes(
                     confirmationMailImpl = "#{newsletterSendConfirmationMail}",
                     welcomeMailImpl = "\${newsletterSendWelcomeMail}",
                     registrationCompletedImpl = "newsletter.registrationCompleted",
@@ -44,10 +50,10 @@ class JavaProcessApiBuilderTest {
     fun `maps content of id to valid variable name format`() {
 
         // given: a model with flow nodes that have slashes in their names
-        val defaultModel = testNewsletterBpmnModel()
+        val defaultModel = testSubscribeNewsletterBpmnModel()
         val modifiedNodes = defaultModel.flowNodes.map { it.copy(id = it.getName().replace("_", "-")) }
         val modelApi = testBpmnModelApi(
-            model = testNewsletterBpmnModel(flowNodes = modifiedNodes),
+            model = testSubscribeNewsletterBpmnModel(flowNodes = modifiedNodes),
             packagePath = "de.emaarco.example"
         )
 
@@ -58,4 +64,29 @@ class JavaProcessApiBuilderTest {
         assertThat(result.content).isNotEmpty()
     }
 
+    @Test
+    fun `buildApiFile generates variant-scoped Flows and Relations for merged model`() {
+
+        // given: a merged model with a single variant
+        val send = testSendNewsletterBpmnModel(variantName = "send")
+        val merged = MergedBpmnModel(
+            processId = send.processId,
+            flowNodes = send.flowNodes,
+            messages = send.messages,
+            signals = send.signals,
+            errors = send.errors,
+            escalations = send.escalations,
+            variants = listOf(
+                VariantData("send", send.sequenceFlows, send.flowNodes),
+            ),
+        )
+        val modelApi = BpmnModelApi(merged, OutputLanguage.JAVA, "de.emaarco.example", ProcessEngine.ZEEBE)
+
+        // when: we build the process API file
+        val result = underTest.buildApiFile(modelApi)
+
+        // then: output contains Variants section instead of flat Flows/Relations
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiJava.txt")).toURI())
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+    }
 }

@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.application.port.outbound.GenerateJsonPort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessJsonPort
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
+import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import io.github.emaarco.bpmn.domain.validation.ValidationPhase
 
 class GenerateProcessJsonService(
@@ -19,12 +20,16 @@ class GenerateProcessJsonService(
     private val fileSaver: SaveProcessJsonPort = ProcessJsonFileSaver(),
 ) : GenerateProcessJsonFromFilesystemUseCase {
 
+    private val modelMergerService = ModelMergerService()
+
     override fun generateProcessJson(command: GenerateProcessJsonFromFilesystemUseCase.Command) {
         val validationService = BpmnValidationService(command.validationConfig)
         val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
         val models = inputFiles.map { bpmnExtractor.extract(it, command.engine) }
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
-        val generatedFiles = models.map { jsonGenerator.generateJson(it) }
+        val mergedModels = modelMergerService.mergeModels(models)
+        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
+        val generatedFiles = mergedModels.map { jsonGenerator.generateJson(it) }
         fileSaver.writeFiles(generatedFiles, command.outputFolderPath)
     }
 }

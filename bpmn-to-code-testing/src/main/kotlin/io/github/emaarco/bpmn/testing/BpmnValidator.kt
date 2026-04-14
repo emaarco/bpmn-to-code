@@ -122,8 +122,8 @@ class BpmnValidator private constructor(
         }
 
         val mergedModels = ModelMergerService().mergeModels(models)
-        val postMergeViolations = mergedModels.flatMap { model ->
-            val ctx = ValidationContext(model, engine)
+        val postMergeViolations = mergedModels.flatMap { merged ->
+            val ctx = ValidationContext(merged, engine)
             val violations = postMergeRules.flatMap { it.validate(ctx) }
             applyPolicy(violations)
         }
