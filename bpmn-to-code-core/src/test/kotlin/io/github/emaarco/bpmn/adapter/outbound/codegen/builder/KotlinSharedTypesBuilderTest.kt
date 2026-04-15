@@ -15,26 +15,6 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.junit.jupiter.api.Test
 import java.io.File
 
-@OptIn(K1Deprecation::class)
-private val kotlinEnvironment by lazy {
-    val config = CompilerConfiguration()
-    config.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-    KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-}
-
-private fun assertKotlinSyntaxValid(source: String) {
-    val file = KtPsiFactory(kotlinEnvironment.project).createFile(source)
-    val errors = mutableListOf<String>()
-    file.accept(object : KtTreeVisitorVoid() {
-        override fun visitErrorElement(element: PsiErrorElement) {
-            errors.add(element.errorDescription)
-        }
-    })
-    assertThat(errors)
-        .withFailMessage { "Kotlin syntax errors in generated output: $errors" }
-        .isEmpty()
-}
-
 class KotlinSharedTypesBuilderTest {
 
     private val underTest = KotlinSharedTypesBuilder()
@@ -63,4 +43,27 @@ class KotlinSharedTypesBuilderTest {
         }
     }
 
+    companion object {
+
+        @OptIn(K1Deprecation::class)
+        private val kotlinEnvironment by lazy {
+            val config = CompilerConfiguration()
+            config.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        }
+
+        @OptIn(K1Deprecation::class)
+        private fun assertKotlinSyntaxValid(source: String) {
+            val file = KtPsiFactory(kotlinEnvironment.project).createFile(source)
+            val errors = mutableListOf<String>()
+            file.accept(object : KtTreeVisitorVoid() {
+                override fun visitErrorElement(element: PsiErrorElement) {
+                    errors.add(element.errorDescription)
+                }
+            })
+            assertThat(errors)
+                .withFailMessage { "Kotlin syntax errors in generated output: $errors" }
+                .isEmpty()
+        }
+    }
 }

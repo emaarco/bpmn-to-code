@@ -10,14 +10,14 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import java.io.File
 
-private fun assertJsonSyntaxValid(source: String) {
-    runCatching { Json.parseToJsonElement(source) }
-        .onFailure { fail("JSON syntax error in generated output: ${it.message}") }
-}
-
 class BpmnJsonGeneratorTest {
 
     private val underTest = BpmnJsonGenerator()
+
+    private fun assertJsonSyntaxValid(source: String) {
+        runCatching { Json.parseToJsonElement(source) }
+            .onFailure { fail("JSON syntax error in generated output: ${it.message}") }
+    }
 
     @Test
     fun `generates correct JSON for single model`() {

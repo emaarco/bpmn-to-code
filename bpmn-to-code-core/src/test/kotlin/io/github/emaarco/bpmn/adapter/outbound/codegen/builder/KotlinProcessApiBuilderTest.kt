@@ -24,26 +24,6 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.junit.jupiter.api.Test
 import java.io.File
 
-@OptIn(K1Deprecation::class)
-private val kotlinEnvironment by lazy {
-    val config = CompilerConfiguration()
-    config.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-    KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-}
-
-private fun assertKotlinSyntaxValid(source: String) {
-    val file = KtPsiFactory(kotlinEnvironment.project).createFile(source)
-    val errors = mutableListOf<String>()
-    file.accept(object : KtTreeVisitorVoid() {
-        override fun visitErrorElement(element: PsiErrorElement) {
-            errors.add(element.errorDescription)
-        }
-    })
-    assertThat(errors)
-        .withFailMessage { "Kotlin syntax errors in generated output: $errors" }
-        .isEmpty()
-}
-
 class KotlinProcessApiBuilderTest {
 
     private val underTest = KotlinProcessApiBuilder()
@@ -101,5 +81,29 @@ class KotlinProcessApiBuilderTest {
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiKotlin.txt")).toURI())
         assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
         assertKotlinSyntaxValid(result.content)
+    }
+
+    companion object {
+
+        @OptIn(K1Deprecation::class)
+        private val kotlinEnvironment by lazy {
+            val config = CompilerConfiguration()
+            config.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        }
+
+        @OptIn(K1Deprecation::class)
+        private fun assertKotlinSyntaxValid(source: String) {
+            val file = KtPsiFactory(kotlinEnvironment.project).createFile(source)
+            val errors = mutableListOf<String>()
+            file.accept(object : KtTreeVisitorVoid() {
+                override fun visitErrorElement(element: PsiErrorElement) {
+                    errors.add(element.errorDescription)
+                }
+            })
+            assertThat(errors)
+                .withFailMessage { "Kotlin syntax errors in generated output: $errors" }
+                .isEmpty()
+        }
     }
 }
