@@ -3,7 +3,7 @@ package io.github.emaarco.bpmn.adapter.inbound
 import io.github.emaarco.bpmn.application.port.inbound.ValidateBpmnFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.service.ValidateBpmnService
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
 
 class ValidateBpmnFilesystemPlugin(

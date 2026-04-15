@@ -5,7 +5,7 @@ import io.github.emaarco.bpmn.application.service.GenerateProcessApiInMemoryServ
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 class CreateProcessApiInMemoryPlugin(
     private val useCase: GenerateProcessApiInMemoryUseCase = GenerateProcessApiInMemoryService(),

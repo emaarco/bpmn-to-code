@@ -2,7 +2,7 @@ package io.github.emaarco.bpmn.application.port.inbound
 
 import io.github.emaarco.bpmn.domain.GeneratedJsonFile
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 interface GenerateProcessJsonInMemoryUseCase {
 

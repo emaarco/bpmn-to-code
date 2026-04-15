@@ -3,11 +3,11 @@ package io.github.emaarco.bpmn.domain.service
 import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
-import io.github.emaarco.bpmn.domain.validation.Severity
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
-import io.github.emaarco.bpmn.domain.validation.ValidationContext
-import io.github.emaarco.bpmn.domain.validation.ValidationPhase
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationContext
+import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import io.github.emaarco.bpmn.domain.validation.rules.CollisionDetectionRule
 import io.github.emaarco.bpmn.domain.validation.rules.EmptyProcessRule
 import io.github.emaarco.bpmn.domain.validation.rules.InvalidIdentifierRule

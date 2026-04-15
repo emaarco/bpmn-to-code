@@ -5,8 +5,8 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModel
-import io.github.emaarco.bpmn.domain.validation.Severity
-import io.github.emaarco.bpmn.domain.validation.ValidationContext
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

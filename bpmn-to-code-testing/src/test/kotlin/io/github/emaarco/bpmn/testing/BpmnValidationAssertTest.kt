@@ -1,8 +1,8 @@
 package io.github.emaarco.bpmn.testing
 
-import io.github.emaarco.bpmn.domain.validation.Severity
+import io.github.emaarco.bpmn.domain.validation.model.Severity
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy

@@ -6,11 +6,11 @@ import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationRule
-import io.github.emaarco.bpmn.domain.validation.Severity
-import io.github.emaarco.bpmn.domain.validation.ValidationContext
-import io.github.emaarco.bpmn.domain.validation.ValidationPhase
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationContext
+import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import java.nio.file.Path
 
 /**

@@ -53,4 +53,18 @@ class ExtractBpmnAdapterTest {
         assertThatThrownBy { underTest.extract(bpmnFile = bpmnResource, engine = ProcessEngine.CAMUNDA_7) }
             .isInstanceOf(IllegalStateException::class.java)
     }
+
+    @Test
+    fun `extract wraps extractor exception in RuntimeException`() {
+
+        // given: an extractor that throws during parsing
+        val tempFile = File.createTempFile("invalid", ".bpmn").apply { deleteOnExit() }
+        val bpmnResource = BpmnResource(fileName = "invalid.bpmn", content = tempFile.inputStream())
+        every { extractor.extract(any()) } throws IllegalArgumentException("invalid BPMN content")
+
+        // when / then: the exception is wrapped in a RuntimeException with file name in the message
+        assertThatThrownBy { underTest.extract(bpmnFile = bpmnResource, engine = ProcessEngine.ZEEBE) }
+            .isInstanceOf(RuntimeException::class.java)
+            .hasMessageContaining("invalid.bpmn")
+    }
 }

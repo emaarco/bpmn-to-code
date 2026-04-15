@@ -9,7 +9,7 @@ import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedJsonFile
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
-import io.github.emaarco.bpmn.domain.validation.ValidationPhase
+import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 
 class GenerateProcessJsonInMemoryService(
     private val jsonGenerator: GenerateJsonPort = BpmnJsonGenerationAdapter(),

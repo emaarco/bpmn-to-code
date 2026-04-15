@@ -1,4 +1,4 @@
-package io.github.emaarco.bpmn.domain.validation
+package io.github.emaarco.bpmn.domain.validation.model
 
 data class ValidationConfig(
     val failOnWarning: Boolean = false,
