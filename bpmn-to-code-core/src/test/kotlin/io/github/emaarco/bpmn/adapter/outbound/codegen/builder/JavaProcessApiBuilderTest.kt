@@ -9,9 +9,16 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
+import com.sun.source.util.JavacTask
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.net.URI
+import javax.tools.Diagnostic
+import javax.tools.DiagnosticCollector
+import javax.tools.JavaFileObject
+import javax.tools.SimpleJavaFileObject
+import javax.tools.ToolProvider
 
 class JavaProcessApiBuilderTest {
 
@@ -42,6 +49,7 @@ class JavaProcessApiBuilderTest {
 
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt")).toURI())
         assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJavaSyntaxValid(result.fileName, result.content)
     }
 
     @Test
@@ -60,6 +68,7 @@ class JavaProcessApiBuilderTest {
 
         // then: expect the generated code contains valid Java
         assertThat(result.content).isNotEmpty()
+        assertJavaSyntaxValid(result.fileName, result.content)
     }
 
     @Test
@@ -86,5 +95,23 @@ class JavaProcessApiBuilderTest {
         // then: output contains Variants section instead of flat Flows/Relations
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiJava.txt")).toURI())
         assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJavaSyntaxValid(result.fileName, result.content)
+    }
+
+    private fun assertJavaSyntaxValid(fileName: String, source: String) {
+        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
+        val diagnostics = DiagnosticCollector<JavaFileObject>()
+        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
+        val sourceObject = object : SimpleJavaFileObject(
+            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
+        ) {
+            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
+        }
+        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
+        task.parse()
+        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
+        assertThat(errors)
+            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
+            .isEmpty()
     }
 }

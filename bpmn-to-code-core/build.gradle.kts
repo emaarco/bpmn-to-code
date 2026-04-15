@@ -19,6 +19,7 @@ dependencies {
     api(libs.slf4jApi)
     api(libs.kotlinLogging)
     testImplementation(libs.bundles.testing)
+    testImplementation(kotlin("compiler-embeddable"))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
