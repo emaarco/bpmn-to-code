@@ -28,6 +28,7 @@ dependencies {
     compileOnly(project(":bpmn-to-code-core"))
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.testing)
+    testImplementation(testFixtures(project(":bpmn-to-code-core")))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 

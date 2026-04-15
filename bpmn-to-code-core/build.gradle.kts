@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     jacoco
+    `java-test-fixtures`
 }
 
 group = "io.github.emaarco"
@@ -19,8 +20,11 @@ dependencies {
     api(libs.slf4jApi)
     api(libs.kotlinLogging)
     testImplementation(libs.bundles.testing)
+    testImplementation(libs.konsist)
     testImplementation(kotlin("compiler-embeddable"))
     testRuntimeOnly(libs.junitPlatformLauncher)
+    testFixturesApi(libs.konsist)
+    testFixturesApi(libs.junit)
 }
 
 sourceSets {
