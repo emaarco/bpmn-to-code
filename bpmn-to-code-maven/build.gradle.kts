@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.mavenPluginAnnotations)
     testImplementation(project(":bpmn-to-code-core"))
     testImplementation(libs.bundles.testing)
+    testImplementation(testFixtures(project(":bpmn-to-code-core")))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 

@@ -17,6 +17,7 @@ mcpKotlinSdk = "0.11.1"
 shadow = "9.4.1"
 slf4j = "2.0.17"
 kotlinLogging = "8.0.01"
+konsist = "0.17.3"
 
 [libraries]
 # Plugin dependencies
@@ -45,6 +46,7 @@ kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "
 mcpKotlinSdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpKotlinSdk" }
 
 # Testing dependencies
+konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher" }
