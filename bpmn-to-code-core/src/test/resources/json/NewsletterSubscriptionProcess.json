@@ -5,11 +5,33 @@
             "id": "StartEvent_SubmitRegistrationForm",
             "elementType": "START_EVENT",
             "outgoing": [
-                "SubProcess_Confirmation"
+                "serviceTask_incrementSubscriptionCounter"
             ],
             "variables": [
                 "subscriptionId"
             ]
+        },
+        {
+            "id": "serviceTask_incrementSubscriptionCounter",
+            "elementType": "SERVICE_TASK",
+            "attachedElements": [
+                "CompensationEvent_OnSubscriptionCounter"
+            ],
+            "incoming": [
+                "StartEvent_SubmitRegistrationForm"
+            ],
+            "outgoing": [
+                "SubProcess_Confirmation"
+            ],
+            "properties": {
+                "type": "ServiceTask",
+                "implementationValue": "counterClass"
+            }
+        },
+        {
+            "id": "CompensationEvent_OnSubscriptionCounter",
+            "elementType": "BOUNDARY_EVENT",
+            "attachedToRef": "serviceTask_incrementSubscriptionCounter"
         },
         {
             "id": "SubProcess_Confirmation",
@@ -19,7 +41,7 @@
                 "Timer_After3Days"
             ],
             "incoming": [
-                "StartEvent_SubmitRegistrationForm"
+                "serviceTask_incrementSubscriptionCounter"
             ],
             "outgoing": [
                 "Activity_SendWelcomeMail"
@@ -126,7 +148,7 @@
                 "Timer_After3Days"
             ],
             "outgoing": [
-                "EndEvent_RegistrationAborted"
+                "CompensationEndEvent_RegistrationAborted"
             ],
             "variables": [
                 "subscriptionId"
@@ -137,7 +159,7 @@
             }
         },
         {
-            "id": "EndEvent_RegistrationAborted",
+            "id": "CompensationEndEvent_RegistrationAborted",
             "elementType": "END_EVENT",
             "incoming": [
                 "CallActivity_AbortRegistration"
@@ -178,6 +200,10 @@
                 "type": "ServiceTask",
                 "implementationValue": "newsletter.registrationCompleted"
             }
+        },
+        {
+            "id": "CompensationTask_DecrementSubscriptionCounter",
+            "elementType": "TASK"
         }
     ],
     "messages": [
@@ -199,11 +225,14 @@
             "code": "500"
         }
     ],
-    "escalations": [
+    "compensations": [
         {
-            "id": "EndEvent_RegistrationNotPossible",
-            "name": "Escalation_RegistrationFailed",
-            "code": "100"
+            "id": "CompensationEndEvent_RegistrationAborted",
+            "activityRef": "CompensationEndEvent_RegistrationAborted"
+        },
+        {
+            "id": "CompensationEvent_OnSubscriptionCounter",
+            "activityRef": "CompensationEvent_OnSubscriptionCounter"
         }
     ],
     "sequenceFlows": [
@@ -232,6 +261,12 @@
             "isDefault": false
         },
         {
+            "id": "Flow_0zdmt0t",
+            "sourceRef": "serviceTask_incrementSubscriptionCounter",
+            "targetRef": "SubProcess_Confirmation",
+            "isDefault": false
+        },
+        {
             "id": "Flow_1bckm43",
             "sourceRef": "Activity_SendConfirmationMail",
             "targetRef": "Activity_ConfirmRegistration",
@@ -240,7 +275,7 @@
         {
             "id": "Flow_1bsb8no",
             "sourceRef": "CallActivity_AbortRegistration",
-            "targetRef": "EndEvent_RegistrationAborted",
+            "targetRef": "CompensationEndEvent_RegistrationAborted",
             "isDefault": false
         },
         {
@@ -252,7 +287,7 @@
         {
             "id": "Flow_1csfyyz",
             "sourceRef": "StartEvent_SubmitRegistrationForm",
-            "targetRef": "SubProcess_Confirmation",
+            "targetRef": "serviceTask_incrementSubscriptionCounter",
             "isDefault": false
         },
         {

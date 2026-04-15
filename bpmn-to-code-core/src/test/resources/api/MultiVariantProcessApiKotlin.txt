@@ -69,8 +69,6 @@ object SendNewsletterProcessApi {
     const val NEWSLETTER_NOTIFY_AUTHOR: String = "newsletter.notifyAuthor"
 
     const val NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER: String = "newsletter.sendMailToSubscriber"
-
-    const val NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER: String = "newsletter.sendMailToSubscriber"
   }
 
   object Timers {

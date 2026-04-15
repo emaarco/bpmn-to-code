@@ -4,7 +4,6 @@
 package de.emaarco.example
 
 import de.emaarco.example.types.BpmnError
-import de.emaarco.example.types.BpmnEscalation
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
 import de.emaarco.example.types.BpmnTimer
@@ -25,16 +24,25 @@ object NewsletterSubscriptionProcessApi {
 
     const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
 
-    const val END_EVENT_REGISTRATION_ABORTED: String = "EndEvent_RegistrationAborted"
+    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String =
+        "CompensationEndEvent_RegistrationAborted"
+
+    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String =
+        "CompensationEvent_OnSubscriptionCounter"
+
+    const val COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER: String =
+        "CompensationTask_DecrementSubscriptionCounter"
 
     const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
 
-    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String =
-        "EndEvent_RegistrationNotPossible"
+    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String = "EndEvent_RegistrationNotPossible"
 
     const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
 
     const val ERROR_EVENT_INVALID_MAIL: String = "ErrorEvent_InvalidMail"
+
+    const val SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER: String =
+        "serviceTask_incrementSubscriptionCounter"
 
     const val START_EVENT_REQUEST_RECEIVED: String = "StartEvent_RequestReceived"
 
@@ -61,6 +69,8 @@ object NewsletterSubscriptionProcessApi {
 
     const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
 
+    const val COUNTER_CLASS: String = "counterClass"
+
     const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
   }
 
@@ -74,9 +84,10 @@ object NewsletterSubscriptionProcessApi {
     val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
   }
 
-  object Escalations {
-    val ESCALATION_REGISTRATION_FAILED: BpmnEscalation =
-        BpmnEscalation("Escalation_RegistrationFailed", "100")
+  object Compensations {
+    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String = "CompensationEndEvent_RegistrationAborted"
+
+    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String = "CompensationEvent_OnSubscriptionCounter"
   }
 
   object Signals {
@@ -140,6 +151,12 @@ object NewsletterSubscriptionProcessApi {
             targetRef = "Activity_SendConfirmationMail",
         )
 
+    val FLOW_0_ZDMT_0_T: BpmnFlow = BpmnFlow(
+            id = "Flow_0zdmt0t",
+            sourceRef = "serviceTask_incrementSubscriptionCounter",
+            targetRef = "SubProcess_Confirmation",
+        )
+
     val FLOW_1_BCKM_43: BpmnFlow = BpmnFlow(
             id = "Flow_1bckm43",
             sourceRef = "Activity_SendConfirmationMail",
@@ -149,7 +166,7 @@ object NewsletterSubscriptionProcessApi {
     val FLOW_1_BSB_8_NO: BpmnFlow = BpmnFlow(
             id = "Flow_1bsb8no",
             sourceRef = "CallActivity_AbortRegistration",
-            targetRef = "EndEvent_RegistrationAborted",
+            targetRef = "CompensationEndEvent_RegistrationAborted",
         )
 
     val FLOW_1_CPWE_57: BpmnFlow = BpmnFlow(
@@ -161,7 +178,7 @@ object NewsletterSubscriptionProcessApi {
     val FLOW_1_CSFYYZ: BpmnFlow = BpmnFlow(
             id = "Flow_1csfyyz",
             sourceRef = "StartEvent_SubmitRegistrationForm",
-            targetRef = "SubProcess_Confirmation",
+            targetRef = "serviceTask_incrementSubscriptionCounter",
         )
 
     val FLOW_1_I_7_HJID: BpmnFlow = BpmnFlow(
@@ -204,14 +221,30 @@ object NewsletterSubscriptionProcessApi {
 
     val CALL_ACTIVITY_ABORT_REGISTRATION: BpmnRelations = BpmnRelations(
             incoming = listOf("Timer_After3Days"),
-            outgoing = listOf("EndEvent_RegistrationAborted"),
+            outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
             parentId = null,
             attachedToRef = null,
             attachedElements = emptyList(),
         )
 
-    val END_EVENT_REGISTRATION_ABORTED: BpmnRelations = BpmnRelations(
+    val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: BpmnRelations = BpmnRelations(
             incoming = listOf("CallActivity_AbortRegistration"),
+            outgoing = emptyList(),
+            parentId = null,
+            attachedToRef = null,
+            attachedElements = emptyList(),
+        )
+
+    val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
+            incoming = emptyList(),
+            outgoing = emptyList(),
+            parentId = null,
+            attachedToRef = "serviceTask_incrementSubscriptionCounter",
+            attachedElements = emptyList(),
+        )
+
+    val COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
+            incoming = emptyList(),
             outgoing = emptyList(),
             parentId = null,
             attachedToRef = null,
@@ -260,14 +293,14 @@ object NewsletterSubscriptionProcessApi {
 
     val START_EVENT_SUBMIT_REGISTRATION_FORM: BpmnRelations = BpmnRelations(
             incoming = emptyList(),
-            outgoing = listOf("SubProcess_Confirmation"),
+            outgoing = listOf("serviceTask_incrementSubscriptionCounter"),
             parentId = null,
             attachedToRef = null,
             attachedElements = emptyList(),
         )
 
     val SUB_PROCESS_CONFIRMATION: BpmnRelations = BpmnRelations(
-            incoming = listOf("StartEvent_SubmitRegistrationForm"),
+            incoming = listOf("serviceTask_incrementSubscriptionCounter"),
             outgoing = listOf("Activity_SendWelcomeMail"),
             parentId = null,
             attachedToRef = null,
@@ -288,6 +321,14 @@ object NewsletterSubscriptionProcessApi {
             parentId = "SubProcess_Confirmation",
             attachedToRef = "Activity_ConfirmRegistration",
             attachedElements = emptyList(),
+        )
+
+    val SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
+            incoming = listOf("StartEvent_SubmitRegistrationForm"),
+            outgoing = listOf("SubProcess_Confirmation"),
+            parentId = null,
+            attachedToRef = null,
+            attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
         )
   }
 }

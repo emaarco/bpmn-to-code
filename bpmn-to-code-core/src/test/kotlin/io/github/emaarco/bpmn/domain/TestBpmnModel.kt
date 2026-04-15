@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
@@ -62,7 +63,7 @@ fun testSubscribeNewsletterBpmnModel(
         FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
             properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
             variables = listOf(VariableDefinition("subscriptionId")),
-            incoming = listOf("Timer_After3Days"), outgoing = listOf("EndEvent_RegistrationAborted")),
+            incoming = listOf("Timer_After3Days"), outgoing = listOf("CompensationEndEvent_RegistrationAborted")),
         FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
             attachedElements = listOf("Timer_EveryDay"),
             parentId = "SubProcess_Confirmation",
@@ -77,8 +78,11 @@ fun testSubscribeNewsletterBpmnModel(
             variables = listOf(VariableDefinition("subscriptionId")),
             incoming = listOf("SubProcess_Confirmation"), outgoing = listOf("EndEvent_RegistrationCompleted"),
             engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
-        FlowNodeDefinition("EndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
+        FlowNodeDefinition("CompensationEndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
             incoming = listOf("CallActivity_AbortRegistration")),
+        FlowNodeDefinition("CompensationEvent_OnSubscriptionCounter", BpmnElementType.BOUNDARY_EVENT,
+            attachedToRef = "serviceTask_incrementSubscriptionCounter"),
+        FlowNodeDefinition("CompensationTask_DecrementSubscriptionCounter", BpmnElementType.TASK),
         FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
             properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("EndEvent_RegistrationCompleted", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted"))),
             variables = listOf(VariableDefinition("subscriptionId")),
@@ -91,16 +95,20 @@ fun testSubscribeNewsletterBpmnModel(
         FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT,
             attachedToRef = "SubProcess_Confirmation",
             outgoing = listOf("EndEvent_RegistrationNotPossible")),
+        FlowNodeDefinition("serviceTask_incrementSubscriptionCounter", BpmnElementType.SERVICE_TASK,
+            properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "counterClass"))),
+            attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
+            incoming = listOf("StartEvent_SubmitRegistrationForm"), outgoing = listOf("SubProcess_Confirmation")),
         FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
             variables = listOf(VariableDefinition("subscriptionId")),
             parentId = "SubProcess_Confirmation",
             outgoing = listOf("Activity_SendConfirmationMail")),
         FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
             variables = listOf(VariableDefinition("subscriptionId")),
-            outgoing = listOf("SubProcess_Confirmation")),
+            outgoing = listOf("serviceTask_incrementSubscriptionCounter")),
         FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS,
             attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
-            incoming = listOf("StartEvent_SubmitRegistrationForm"), outgoing = listOf("Activity_SendWelcomeMail")),
+            incoming = listOf("serviceTask_incrementSubscriptionCounter"), outgoing = listOf("Activity_SendWelcomeMail")),
         FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT,
             properties = FlowNodeProperties.Timer(TimerDefinition("Timer_After3Days", "Duration", "$" + "{testVariable}")),
             attachedToRef = "SubProcess_Confirmation",
@@ -116,10 +124,11 @@ fun testSubscribeNewsletterBpmnModel(
         SequenceFlowDefinition("Flow_09cuvzp", "SubProcess_Confirmation", "Activity_SendWelcomeMail"),
         SequenceFlowDefinition("Flow_0i2ctuv", "ErrorEvent_InvalidMail", "EndEvent_RegistrationNotPossible"),
         SequenceFlowDefinition("Flow_0x4ewvb", "Timer_EveryDay", "Activity_SendConfirmationMail"),
+        SequenceFlowDefinition("Flow_0zdmt0t", "serviceTask_incrementSubscriptionCounter", "SubProcess_Confirmation"),
         SequenceFlowDefinition("Flow_1bckm43", "Activity_SendConfirmationMail", "Activity_ConfirmRegistration"),
-        SequenceFlowDefinition("Flow_1bsb8no", "CallActivity_AbortRegistration", "EndEvent_RegistrationAborted"),
+        SequenceFlowDefinition("Flow_1bsb8no", "CallActivity_AbortRegistration", "CompensationEndEvent_RegistrationAborted"),
         SequenceFlowDefinition("Flow_1cpwe57", "Activity_ConfirmRegistration", "EndEvent_SubscriptionConfirmed"),
-        SequenceFlowDefinition("Flow_1csfyyz", "StartEvent_SubmitRegistrationForm", "SubProcess_Confirmation"),
+        SequenceFlowDefinition("Flow_1csfyyz", "StartEvent_SubmitRegistrationForm", "serviceTask_incrementSubscriptionCounter"),
         SequenceFlowDefinition("Flow_1i7hjid", "Activity_SendWelcomeMail", "EndEvent_RegistrationCompleted"),
         SequenceFlowDefinition("Flow_1l1lj4m", "Timer_After3Days", "CallActivity_AbortRegistration"),
     ),
@@ -133,7 +142,10 @@ fun testSubscribeNewsletterBpmnModel(
         ErrorDefinition("ErrorEvent_InvalidMail", "Error_InvalidMail", "500")
     ),
     escalations: List<EscalationDefinition> = emptyList(),
-    compensations: List<CompensationDefinition> = emptyList(),
+    compensations: List<CompensationDefinition> = listOf(
+        CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING),
+        CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING),
+    ),
 ) = testBpmnModel(
     processId = processId,
     variantName = variantName,

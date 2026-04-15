@@ -3,7 +3,6 @@ package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
-import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
@@ -32,7 +31,6 @@ class KotlinProcessApiBuilderTest {
                     registrationCompletedImpl = "newsletter.registrationCompleted",
                     extraVariables = listOf(VariableDefinition("testVariable")),
                 ),
-                escalations = listOf(EscalationDefinition("EndEvent_RegistrationNotPossible", "Escalation_RegistrationFailed", "100"))
             )
         )
 
