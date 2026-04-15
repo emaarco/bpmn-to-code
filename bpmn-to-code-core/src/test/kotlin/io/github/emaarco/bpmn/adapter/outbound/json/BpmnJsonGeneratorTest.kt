@@ -14,11 +14,6 @@ class BpmnJsonGeneratorTest {
 
     private val underTest = BpmnJsonGenerator()
 
-    private fun assertJsonSyntaxValid(source: String) {
-        runCatching { Json.parseToJsonElement(source) }
-            .onFailure { fail("JSON syntax error in generated output: ${it.message}") }
-    }
-
     @Test
     fun `generates correct JSON for single model`() {
 
@@ -72,5 +67,10 @@ class BpmnJsonGeneratorTest {
 
         // then: filename is processId.json
         assertThat(result.fileName).isEqualTo("newsletterSubscription.json")
+    }
+
+    private fun assertJsonSyntaxValid(source: String) {
+        runCatching { Json.parseToJsonElement(source) }
+            .onFailure { fail("JSON syntax error in generated output: ${it.message}") }
     }
 }

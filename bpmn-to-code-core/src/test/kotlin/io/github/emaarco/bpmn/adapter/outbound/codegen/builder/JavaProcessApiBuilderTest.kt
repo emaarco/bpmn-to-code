@@ -24,23 +24,6 @@ class JavaProcessApiBuilderTest {
 
     private val underTest = JavaProcessApiBuilder()
 
-    private fun assertJavaSyntaxValid(fileName: String, source: String) {
-        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
-        val diagnostics = DiagnosticCollector<JavaFileObject>()
-        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
-        val sourceObject = object : SimpleJavaFileObject(
-            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
-        ) {
-            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
-        }
-        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
-        task.parse()
-        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
-        assertThat(errors)
-            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
-            .isEmpty()
-    }
-
     @Test
     fun `buildApiFile generates correct process API file`() {
 
@@ -113,5 +96,22 @@ class JavaProcessApiBuilderTest {
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiJava.txt")).toURI())
         assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
         assertJavaSyntaxValid(result.fileName, result.content)
+    }
+
+    private fun assertJavaSyntaxValid(fileName: String, source: String) {
+        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
+        val diagnostics = DiagnosticCollector<JavaFileObject>()
+        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
+        val sourceObject = object : SimpleJavaFileObject(
+            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
+        ) {
+            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
+        }
+        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
+        task.parse()
+        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
+        assertThat(errors)
+            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
+            .isEmpty()
     }
 }

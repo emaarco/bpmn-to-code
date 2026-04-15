@@ -16,23 +16,6 @@ class JavaSharedTypesBuilderTest {
 
     private val underTest = JavaSharedTypesBuilder()
 
-    private fun assertJavaSyntaxValid(fileName: String, source: String) {
-        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
-        val diagnostics = DiagnosticCollector<JavaFileObject>()
-        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
-        val sourceObject = object : SimpleJavaFileObject(
-            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
-        ) {
-            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
-        }
-        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
-        task.parse()
-        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
-        assertThat(errors)
-            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
-            .isEmpty()
-    }
-
     @Test
     fun `buildTypeFiles generates all 5 shared type files`() {
 
@@ -55,6 +38,23 @@ class JavaSharedTypesBuilderTest {
             assertThat(typeFile.content).isEqualToIgnoringWhitespace(File(fixtureResource.toURI()).readText())
             assertJavaSyntaxValid(typeFile.fileName, typeFile.content)
         }
+    }
+
+    private fun assertJavaSyntaxValid(fileName: String, source: String) {
+        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
+        val diagnostics = DiagnosticCollector<JavaFileObject>()
+        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
+        val sourceObject = object : SimpleJavaFileObject(
+            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
+        ) {
+            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
+        }
+        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
+        task.parse()
+        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
+        assertThat(errors)
+            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
+            .isEmpty()
     }
 
 }
