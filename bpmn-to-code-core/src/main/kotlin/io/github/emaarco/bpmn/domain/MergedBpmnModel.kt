@@ -18,6 +18,7 @@ data class MergedBpmnModel(
 
     override val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }
+            .distinctBy { it.getRawName() }
             .sortedBy { it.getRawName() }
 
     override val callActivities: List<CallActivityDefinition>

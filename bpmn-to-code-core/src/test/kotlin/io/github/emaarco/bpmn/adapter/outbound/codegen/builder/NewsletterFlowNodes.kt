@@ -21,7 +21,7 @@ internal fun buildSubscribeNewsletterFlowNodes(
         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
         variables = listOf(VariableDefinition("subscriptionId")),
         incoming = listOf("Timer_After3Days"),
-        outgoing = listOf("EndEvent_RegistrationAborted"),
+        outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
     ),
     FlowNodeDefinition(
         id = "Activity_ConfirmRegistration",
@@ -49,9 +49,18 @@ internal fun buildSubscribeNewsletterFlowNodes(
         outgoing = listOf("EndEvent_RegistrationCompleted"),
     ),
     FlowNodeDefinition(
-        id = "EndEvent_RegistrationAborted",
+        id = "CompensationEndEvent_RegistrationAborted",
         elementType = BpmnElementType.END_EVENT,
         incoming = listOf("CallActivity_AbortRegistration"),
+    ),
+    FlowNodeDefinition(
+        id = "CompensationEvent_OnSubscriptionCounter",
+        elementType = BpmnElementType.BOUNDARY_EVENT,
+        attachedToRef = "serviceTask_incrementSubscriptionCounter",
+    ),
+    FlowNodeDefinition(
+        id = "CompensationTask_DecrementSubscriptionCounter",
+        elementType = BpmnElementType.TASK,
     ),
     FlowNodeDefinition(
         id = "EndEvent_RegistrationCompleted",
@@ -78,6 +87,14 @@ internal fun buildSubscribeNewsletterFlowNodes(
         outgoing = listOf("EndEvent_RegistrationNotPossible"),
     ),
     FlowNodeDefinition(
+        id = "serviceTask_incrementSubscriptionCounter",
+        elementType = BpmnElementType.SERVICE_TASK,
+        properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "counterClass"))),
+        attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
+        incoming = listOf("StartEvent_SubmitRegistrationForm"),
+        outgoing = listOf("SubProcess_Confirmation"),
+    ),
+    FlowNodeDefinition(
         id = "StartEvent_RequestReceived",
         elementType = BpmnElementType.START_EVENT,
         variables = listOf(VariableDefinition("subscriptionId")),
@@ -88,13 +105,13 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "StartEvent_SubmitRegistrationForm",
         elementType = BpmnElementType.START_EVENT,
         variables = listOf(VariableDefinition("subscriptionId")),
-        outgoing = listOf("SubProcess_Confirmation"),
+        outgoing = listOf("serviceTask_incrementSubscriptionCounter"),
     ),
     FlowNodeDefinition(
         id = "SubProcess_Confirmation",
         elementType = BpmnElementType.SUB_PROCESS,
         attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
-        incoming = listOf("StartEvent_SubmitRegistrationForm"),
+        incoming = listOf("serviceTask_incrementSubscriptionCounter"),
         outgoing = listOf("Activity_SendWelcomeMail"),
     ),
     FlowNodeDefinition(

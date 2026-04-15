@@ -65,8 +65,6 @@ public final class SendNewsletterProcessApi {
     public static final String NEWSLETTER_NOTIFY_AUTHOR = "newsletter.notifyAuthor";
 
     public static final String NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER = "newsletter.sendMailToSubscriber";
-
-    public static final String NEWSLETTER_SEND_MAIL_TO_SUBSCRIBER = "newsletter.sendMailToSubscriber";
   }
 
   public static final class Timers {
