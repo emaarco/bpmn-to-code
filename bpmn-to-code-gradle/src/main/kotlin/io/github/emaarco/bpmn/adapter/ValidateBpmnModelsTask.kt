@@ -2,8 +2,8 @@ package io.github.emaarco.bpmn.adapter
 
 import io.github.emaarco.bpmn.adapter.inbound.ValidateBpmnFilesystemPlugin
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Incubating

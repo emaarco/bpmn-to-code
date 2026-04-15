@@ -1,5 +1,7 @@
 package io.github.emaarco.bpmn.domain.validation
 
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

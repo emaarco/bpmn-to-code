@@ -2,7 +2,7 @@ package io.github.emaarco.bpmn.adapter.inbound
 
 import io.github.emaarco.bpmn.application.port.inbound.ValidateBpmnFromFilesystemUseCase
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -40,6 +40,35 @@ class ValidateBpmnFilesystemPluginTest {
                     filePattern = "*.bpmn",
                     engine = ProcessEngine.ZEEBE,
                     validationConfig = config,
+                )
+            )
+        }
+        assertThat(result).isEqualTo(expectedResult)
+        confirmVerified(useCase)
+    }
+
+    @Test
+    fun `execute uses default validation config when not provided`() {
+
+        // given: an expected validation result
+        val expectedResult = ValidationResult(emptyList())
+        every { useCase.validateBpmn(any()) } returns expectedResult
+
+        // when: execute is called without explicit validationConfig
+        val result = underTest.execute(
+            baseDir = "/path/to/bpmn",
+            filePattern = "*.bpmn",
+            engine = ProcessEngine.CAMUNDA_7,
+        )
+
+        // then: use case is called with a default validation config
+        verify {
+            useCase.validateBpmn(
+                ValidateBpmnFromFilesystemUseCase.Command(
+                    baseDir = "/path/to/bpmn",
+                    filePattern = "*.bpmn",
+                    engine = ProcessEngine.CAMUNDA_7,
+                    validationConfig = ValidationConfig(),
                 )
             )
         }

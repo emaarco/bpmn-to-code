@@ -1,4 +1,4 @@
-package io.github.emaarco.bpmn.domain.validation
+package io.github.emaarco.bpmn.domain.validation.model
 
 /**
  * Represents a single variable name collision within a BPMN model.

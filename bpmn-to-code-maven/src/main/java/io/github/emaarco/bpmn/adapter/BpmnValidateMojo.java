@@ -2,9 +2,9 @@ package io.github.emaarco.bpmn.adapter;
 
 import io.github.emaarco.bpmn.adapter.inbound.ValidateBpmnFilesystemPlugin;
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine;
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig;
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig;
 import io.github.emaarco.bpmn.domain.validation.ValidationResult;
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation;
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;

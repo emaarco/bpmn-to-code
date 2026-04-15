@@ -3,7 +3,7 @@ package io.github.emaarco.bpmn.adapter.inbound
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessJsonFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.service.GenerateProcessJsonService
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 class CreateProcessJsonFilesystemPlugin(
     private val useCase: GenerateProcessJsonFromFilesystemUseCase = GenerateProcessJsonService(),

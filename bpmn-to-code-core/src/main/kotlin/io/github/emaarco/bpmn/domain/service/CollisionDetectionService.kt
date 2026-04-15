@@ -2,7 +2,7 @@ package io.github.emaarco.bpmn.domain.service
 
 import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
-import io.github.emaarco.bpmn.domain.validation.CollisionDetail
+import io.github.emaarco.bpmn.domain.validation.model.CollisionDetail
 
 /**
  * Domain service responsible for detecting name collisions in BPMN models.

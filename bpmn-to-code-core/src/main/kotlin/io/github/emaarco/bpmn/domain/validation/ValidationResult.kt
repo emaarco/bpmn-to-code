@@ -1,5 +1,8 @@
 package io.github.emaarco.bpmn.domain.validation
 
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
+
 data class ValidationResult(
     val violations: List<ValidationViolation>,
 ) {

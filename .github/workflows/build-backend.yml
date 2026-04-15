@@ -63,3 +63,7 @@ jobs:
       # Step 4: Run Gradle build
       - name: Run Gradle Build
         run: ./gradlew build --warning-mode all
+
+      # Step 5: Enforce per-class test coverage (≥ 80%)
+      - name: Check Coverage
+        run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification

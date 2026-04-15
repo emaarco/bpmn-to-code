@@ -7,8 +7,8 @@ import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
-import io.github.emaarco.bpmn.domain.validation.Severity
-import io.github.emaarco.bpmn.domain.validation.ValidationPhase
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
 
 class ValidateBpmnService(

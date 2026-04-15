@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFil
 import io.github.emaarco.bpmn.application.service.GenerateProcessApiService
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 class CreateProcessApiFilesystemPlugin(
     private val useCase: GenerateProcessApiFromFilesystemUseCase = GenerateProcessApiService(),

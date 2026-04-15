@@ -3,7 +3,7 @@ package io.github.emaarco.bpmn.adapter;
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiFilesystemPlugin;
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage;
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine;
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig;
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;

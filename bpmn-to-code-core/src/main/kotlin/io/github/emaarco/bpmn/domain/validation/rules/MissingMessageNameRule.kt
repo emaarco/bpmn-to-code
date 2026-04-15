@@ -1,9 +1,9 @@
 package io.github.emaarco.bpmn.domain.validation.rules
 
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationRule
-import io.github.emaarco.bpmn.domain.validation.Severity
-import io.github.emaarco.bpmn.domain.validation.ValidationContext
-import io.github.emaarco.bpmn.domain.validation.ValidationViolation
+import io.github.emaarco.bpmn.domain.validation.model.Severity
+import io.github.emaarco.bpmn.domain.validation.model.ValidationContext
+import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 
 class MissingMessageNameRule : BpmnValidationRule {
 

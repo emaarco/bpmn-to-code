@@ -11,7 +11,7 @@ import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService
-import io.github.emaarco.bpmn.domain.validation.ValidationPhase
+import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 
 class GenerateProcessApiInMemoryService(
     private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),

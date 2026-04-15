@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessJsonInMemo
 import io.github.emaarco.bpmn.application.service.GenerateProcessJsonInMemoryService
 import io.github.emaarco.bpmn.domain.GeneratedJsonFile
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
-import io.github.emaarco.bpmn.domain.validation.ValidationConfig
+import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 class CreateProcessJsonInMemoryPlugin(
     private val useCase: GenerateProcessJsonInMemoryUseCase = GenerateProcessJsonInMemoryService(),
