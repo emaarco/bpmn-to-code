@@ -225,6 +225,16 @@
             "code": "500"
         }
     ],
+    "compensations": [
+        {
+            "id": "CompensationEndEvent_RegistrationAborted",
+            "activityRef": "CompensationEndEvent_RegistrationAborted"
+        },
+        {
+            "id": "CompensationEvent_OnSubscriptionCounter",
+            "activityRef": "CompensationEvent_OnSubscriptionCounter"
+        }
+    ],
     "sequenceFlows": [
         {
             "id": "Flow_05i3x1y",

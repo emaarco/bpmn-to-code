@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
 import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
@@ -141,7 +142,10 @@ fun testSubscribeNewsletterBpmnModel(
         ErrorDefinition("ErrorEvent_InvalidMail", "Error_InvalidMail", "500")
     ),
     escalations: List<EscalationDefinition> = emptyList(),
-    compensations: List<CompensationDefinition> = emptyList(),
+    compensations: List<CompensationDefinition> = listOf(
+        CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING),
+        CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING),
+    ),
 ) = testBpmnModel(
     processId = processId,
     variantName = variantName,

@@ -84,6 +84,12 @@ object NewsletterSubscriptionProcessApi {
     val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
   }
 
+  object Compensations {
+    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String = "CompensationEndEvent_RegistrationAborted"
+
+    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String = "CompensationEvent_OnSubscriptionCounter"
+  }
+
   object Signals {
     const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
   }

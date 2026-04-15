@@ -77,6 +77,12 @@ public final class NewsletterSubscriptionProcessApi {
     public static final BpmnError ERROR_INVALID_MAIL = new BpmnError("Error_InvalidMail", "500");
   }
 
+  public static final class Compensations {
+    public static final String COMPENSATION_END_EVENT_REGISTRATION_ABORTED = "CompensationEndEvent_RegistrationAborted";
+
+    public static final String COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = "CompensationEvent_OnSubscriptionCounter";
+  }
+
   public static final class Signals {
     public static final String SIGNAL_REGISTRATION_NOT_POSSIBLE = "Signal_RegistrationNotPossible";
   }
