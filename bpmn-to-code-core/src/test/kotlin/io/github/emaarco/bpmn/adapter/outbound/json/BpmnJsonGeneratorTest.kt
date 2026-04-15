@@ -4,7 +4,9 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
+import kotlinx.serialization.json.Json
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -24,6 +26,7 @@ class BpmnJsonGeneratorTest {
         // then: expect the generated JSON to match the expected snapshot
         val expectedFile = File(javaClass.getResource("/json/NewsletterSubscriptionProcess.json")!!.toURI())
         assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJsonSyntaxValid(result)
     }
 
     @Test
@@ -49,6 +52,7 @@ class BpmnJsonGeneratorTest {
         // then: expect the generated JSON to match the expected snapshot
         val expectedFile = File(javaClass.getResource("/json/MultiVariantNewsletterProcess.json")!!.toURI())
         assertThat(result).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJsonSyntaxValid(result)
     }
 
     @Test
@@ -63,5 +67,10 @@ class BpmnJsonGeneratorTest {
 
         // then: filename is processId.json
         assertThat(result.fileName).isEqualTo("newsletterSubscription.json")
+    }
+
+    private fun assertJsonSyntaxValid(source: String) {
+        runCatching { Json.parseToJsonElement(source) }
+            .onFailure { fail("JSON syntax error in generated output: ${it.message}") }
     }
 }
