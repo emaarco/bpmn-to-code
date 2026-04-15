@@ -34,6 +34,13 @@ The core follows hexagonal architecture with clear separation of concerns:
 
 ## Common Commands
 
+### One-time setup
+Install [Lefthook](https://github.com/evilmartians/lefthook) and register the git hooks (runs coverage check before push):
+```bash
+brew install lefthook  # or see docs/development/contributing.md for other platforms
+lefthook install
+```
+
 ### Build and Test
 ```bash
 # Build entire project
