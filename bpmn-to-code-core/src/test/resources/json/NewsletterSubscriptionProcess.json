@@ -3,6 +3,7 @@
     "flowNodes": [
         {
             "id": "StartEvent_SubmitRegistrationForm",
+            "displayName": "Submit newsletter form",
             "elementType": "START_EVENT",
             "outgoing": [
                 "serviceTask_incrementSubscriptionCounter"
@@ -13,6 +14,7 @@
         },
         {
             "id": "serviceTask_incrementSubscriptionCounter",
+            "displayName": "Increment subscription counter",
             "elementType": "SERVICE_TASK",
             "attachedElements": [
                 "CompensationEvent_OnSubscriptionCounter"
@@ -30,11 +32,13 @@
         },
         {
             "id": "CompensationEvent_OnSubscriptionCounter",
+            "displayName": "Registration aborted",
             "elementType": "BOUNDARY_EVENT",
             "attachedToRef": "serviceTask_incrementSubscriptionCounter"
         },
         {
             "id": "SubProcess_Confirmation",
+            "displayName": "Subscription Confirmation",
             "elementType": "SUB_PROCESS",
             "attachedElements": [
                 "ErrorEvent_InvalidMail",
@@ -49,6 +53,7 @@
         },
         {
             "id": "StartEvent_RequestReceived",
+            "displayName": "Subscription requested",
             "elementType": "START_EVENT",
             "parentId": "SubProcess_Confirmation",
             "outgoing": [
@@ -60,6 +65,7 @@
         },
         {
             "id": "Activity_SendConfirmationMail",
+            "displayName": "Send confirmation mail",
             "elementType": "SERVICE_TASK",
             "parentId": "SubProcess_Confirmation",
             "incoming": [
@@ -79,6 +85,7 @@
         },
         {
             "id": "Activity_ConfirmRegistration",
+            "displayName": "Confirm subscription",
             "elementType": "USER_TASK",
             "parentId": "SubProcess_Confirmation",
             "attachedElements": [
@@ -93,6 +100,7 @@
         },
         {
             "id": "Timer_EveryDay",
+            "displayName": "Every day",
             "elementType": "BOUNDARY_EVENT",
             "parentId": "SubProcess_Confirmation",
             "attachedToRef": "Activity_ConfirmRegistration",
@@ -107,6 +115,7 @@
         },
         {
             "id": "EndEvent_SubscriptionConfirmed",
+            "displayName": "Subscription confirmed",
             "elementType": "END_EVENT",
             "parentId": "SubProcess_Confirmation",
             "incoming": [
@@ -115,6 +124,7 @@
         },
         {
             "id": "ErrorEvent_InvalidMail",
+            "displayName": "Invalid Mail",
             "elementType": "BOUNDARY_EVENT",
             "attachedToRef": "SubProcess_Confirmation",
             "outgoing": [
@@ -123,6 +133,7 @@
         },
         {
             "id": "EndEvent_RegistrationNotPossible",
+            "displayName": "Registration not possible",
             "elementType": "END_EVENT",
             "incoming": [
                 "ErrorEvent_InvalidMail"
@@ -130,6 +141,7 @@
         },
         {
             "id": "Timer_After3Days",
+            "displayName": "After 3 days",
             "elementType": "BOUNDARY_EVENT",
             "attachedToRef": "SubProcess_Confirmation",
             "outgoing": [
@@ -143,6 +155,7 @@
         },
         {
             "id": "CallActivity_AbortRegistration",
+            "displayName": "Abort registration",
             "elementType": "CALL_ACTIVITY",
             "incoming": [
                 "Timer_After3Days"
@@ -160,6 +173,7 @@
         },
         {
             "id": "CompensationEndEvent_RegistrationAborted",
+            "displayName": "Registration aborted",
             "elementType": "END_EVENT",
             "incoming": [
                 "CallActivity_AbortRegistration"
@@ -167,6 +181,7 @@
         },
         {
             "id": "Activity_SendWelcomeMail",
+            "displayName": "Send Welcome-Mail",
             "elementType": "SERVICE_TASK",
             "incoming": [
                 "SubProcess_Confirmation"
@@ -189,6 +204,7 @@
         },
         {
             "id": "EndEvent_RegistrationCompleted",
+            "displayName": "Registration completed",
             "elementType": "END_EVENT",
             "incoming": [
                 "Activity_SendWelcomeMail"
@@ -203,6 +219,7 @@
         },
         {
             "id": "CompensationTask_DecrementSubscriptionCounter",
+            "displayName": "Decrement subscription counter",
             "elementType": "TASK"
         }
     ],

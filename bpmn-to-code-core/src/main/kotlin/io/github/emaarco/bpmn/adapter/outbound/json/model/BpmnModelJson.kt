@@ -26,6 +26,7 @@ data class VariantJson(
 @Serializable
 data class FlowNodeJson(
     val id: String,
+    val displayName: String? = null,
     val elementType: String,
     val parentId: String? = null,
     val attachedToRef: String? = null,

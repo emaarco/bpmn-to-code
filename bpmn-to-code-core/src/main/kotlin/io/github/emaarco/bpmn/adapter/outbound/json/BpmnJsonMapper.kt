@@ -52,6 +52,7 @@ class BpmnJsonMapper {
     private fun FlowNodeDefinition.toJson(): FlowNodeJson {
         return FlowNodeJson(
             id = id ?: "",
+            displayName = displayName,
             elementType = elementType.name,
             parentId = parentId,
             attachedToRef = attachedToRef,
