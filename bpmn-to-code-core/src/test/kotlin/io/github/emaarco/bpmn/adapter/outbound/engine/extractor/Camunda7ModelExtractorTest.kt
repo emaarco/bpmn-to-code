@@ -44,18 +44,19 @@ class Camunda7ModelExtractorTest {
         )
         val c7ServiceTaskById = c7ServiceTasks.associateBy { it.id }
 
-        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder()
-            .ignoringFieldsMatchingRegexes(".*displayName").isEqualTo(
+        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testSubscribeNewsletterBpmnModel(
                 variantName = "withApproval",
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
+                        displayName = "Abort registration",
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("reasonCode"), VariableDefinition("abortResult")),
                         incoming = listOf("Timer_After3Days"),
                         outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
+                        displayName = "Confirm subscription",
                         variables = listOf(VariableDefinition("subscriptionId")),
                         attachedElements = listOf("Timer_EveryDay"),
                         parentId = "SubProcess_Confirmation",
@@ -63,59 +64,74 @@ class Camunda7ModelExtractorTest {
                         outgoing = listOf("EndEvent_SubscriptionConfirmed"),
                         engineSpecificProperties = mapOf(ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
+                        displayName = "Send confirmation mail",
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["Activity_SendConfirmationMail"]!!),
                         variables = listOf(VariableDefinition("subscriptionId"), VariableDefinition("otherVariable")),
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
                         outgoing = listOf("Activity_ConfirmRegistration")),
                     FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
+                        displayName = "Send Welcome-Mail",
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["Activity_SendWelcomeMail"]!!),
                         variables = listOf(VariableDefinition("subscriptionId")),
                         incoming = listOf("SubProcess_Confirmation"),
                         outgoing = listOf("EndEvent_RegistrationCompleted"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("CompensationEndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
+                        displayName = "Registration aborted",
                         incoming = listOf("CallActivity_AbortRegistration")),
                     FlowNodeDefinition("CompensationEvent_OnSubscriptionCounter", BpmnElementType.BOUNDARY_EVENT,
+                        displayName = "Registration aborted",
                         attachedToRef = "serviceTask_incrementSubscriptionCounter",
                         engineSpecificProperties = mapOf(ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("CompensationTask_DecrementSubscriptionCounter", BpmnElementType.TASK,
+                        displayName = "Decrement subscription counter",
                         variables = listOf(VariableDefinition("subscriptionId"))),
                     FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
+                        displayName = "Registration completed",
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["EndEvent_RegistrationCompleted"]!!),
                         variables = listOf(VariableDefinition("subscriptionId")),
                         incoming = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT,
+                        displayName = "Registration not possible",
                         incoming = listOf("ErrorEvent_InvalidMail"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, EXCLUSIVE_KEY to false)),
                     FlowNodeDefinition("EndEvent_SubscriptionConfirmed", BpmnElementType.END_EVENT,
+                        displayName = "Subscription confirmed",
                         parentId = "SubProcess_Confirmation",
                         incoming = listOf("Activity_ConfirmRegistration")),
                     FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT,
+                        displayName = "Invalid Mail",
                         attachedToRef = "SubProcess_Confirmation",
                         outgoing = listOf("EndEvent_RegistrationNotPossible")),
                     FlowNodeDefinition("serviceTask_incrementSubscriptionCounter", BpmnElementType.SERVICE_TASK,
+                        displayName = "Increment subscription counter",
                         properties = FlowNodeProperties.ServiceTask(c7ServiceTaskById["serviceTask_incrementSubscriptionCounter"]!!),
                         attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
                         incoming = listOf("StartEvent_SubmitRegistrationForm"),
                         outgoing = listOf("SubProcess_Confirmation")),
                     FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
+                        displayName = "Subscription requested",
                         variables = listOf(VariableDefinition("subscriptionId")),
                         parentId = "SubProcess_Confirmation",
                         outgoing = listOf("Activity_SendConfirmationMail"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true)),
                     FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
+                        displayName = "Submit newsletter form",
                         variables = listOf(VariableDefinition("subscriptionId")),
                         outgoing = listOf("serviceTask_incrementSubscriptionCounter")),
                     FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS,
+                        displayName = "Subscription Confirmation",
                         attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
                         incoming = listOf("serviceTask_incrementSubscriptionCounter"),
                         outgoing = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("Timer_After3Days", BpmnElementType.BOUNDARY_EVENT,
+                        displayName = "After 3 days",
                         properties = FlowNodeProperties.Timer(TimerDefinition("Timer_After3Days", "Duration", "\${testVariable}")),
                         attachedToRef = "SubProcess_Confirmation",
                         outgoing = listOf("CallActivity_AbortRegistration")),
                     FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT,
+                        displayName = "Every day",
                         properties = FlowNodeProperties.Timer(TimerDefinition("Timer_EveryDay", "Duration", "PT1M")),
                         attachedToRef = "Activity_ConfirmRegistration",
                         parentId = "SubProcess_Confirmation",
@@ -140,19 +156,6 @@ class Camunda7ModelExtractorTest {
                 ),
             )
         )
-    }
-
-    @Test
-    fun `extract populates displayName from BPMN name attribute`() {
-        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
-        val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
-
-        val flowNodesById = bpmnModel.flowNodes.associateBy { it.id }
-        assertThat(flowNodesById["Activity_SendConfirmationMail"]?.displayName).isEqualTo("Send confirmation mail")
-        assertThat(flowNodesById["Activity_ConfirmRegistration"]?.displayName).isEqualTo("Confirm subscription")
-        assertThat(flowNodesById["StartEvent_SubmitRegistrationForm"]?.displayName).isEqualTo("Submit newsletter form")
-        assertThat(flowNodesById["SubProcess_Confirmation"]?.displayName).isEqualTo("Subscription Confirmation")
     }
 
     @Test
