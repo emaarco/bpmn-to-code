@@ -44,7 +44,8 @@ class Camunda7ModelExtractorTest {
         )
         val c7ServiceTaskById = c7ServiceTasks.associateBy { it.id }
 
-        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
+        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder()
+            .ignoringFieldsMatchingRegexes(".*displayName").isEqualTo(
             testSubscribeNewsletterBpmnModel(
                 variantName = "withApproval",
                 flowNodes = listOf(
@@ -139,6 +140,19 @@ class Camunda7ModelExtractorTest {
                 ),
             )
         )
+    }
+
+    @Test
+    fun `extract populates displayName from BPMN name attribute`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+
+        val flowNodesById = bpmnModel.flowNodes.associateBy { it.id }
+        assertThat(flowNodesById["Activity_SendConfirmationMail"]?.displayName).isEqualTo("Send confirmation mail")
+        assertThat(flowNodesById["Activity_ConfirmRegistration"]?.displayName).isEqualTo("Confirm subscription")
+        assertThat(flowNodesById["StartEvent_SubmitRegistrationForm"]?.displayName).isEqualTo("Submit newsletter form")
+        assertThat(flowNodesById["SubProcess_Confirmation"]?.displayName).isEqualTo("Subscription Confirmation")
     }
 
     @Test

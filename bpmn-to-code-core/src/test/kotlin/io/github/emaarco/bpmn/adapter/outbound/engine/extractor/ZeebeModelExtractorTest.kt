@@ -41,7 +41,8 @@ class ZeebeModelExtractorTest {
             ServiceTaskDefinition("EndEvent_RegistrationCompleted", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.registrationCompleted", IMPL_KIND_KEY to "JOB_WORKER")),
             ServiceTaskDefinition("serviceTask_incrementSubscriptionCounter", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to "newsletter.incrementCounter", IMPL_KIND_KEY to "JOB_WORKER")),
         )
-        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
+        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder()
+            .ignoringFieldsMatchingRegexes(".*displayName").isEqualTo(
             testSubscribeNewsletterBpmnModel(
                 variantName = "withApproval",
                 flowNodes = listOf(

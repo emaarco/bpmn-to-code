@@ -44,7 +44,8 @@ class OperatonModelExtractorTest {
         )
         val opServiceTaskById = opServiceTasks.associateBy { it.id }
 
-        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
+        assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder()
+            .ignoringFieldsMatchingRegexes(".*displayName").isEqualTo(
             testSubscribeNewsletterBpmnModel(
                 variantName = "withApproval",
                 flowNodes = listOf(
