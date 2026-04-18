@@ -269,7 +269,6 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
-            modelApi.model.variables.forEach { variable -> variablesBuilder.addProperty(createAttribute(variable)) }
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }

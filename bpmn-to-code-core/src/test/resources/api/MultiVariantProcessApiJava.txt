@@ -76,10 +76,6 @@ public final class SendNewsletterProcessApi {
   }
 
   public static final class Variables {
-    public static final String AUTHOR = "author";
-
-    public static final String SUBSCRIBERS = "subscribers";
-
     public static final class ServiceTaskLoadSubscribers {
       public static final String AUTHOR = "author";
 

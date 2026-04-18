@@ -95,10 +95,6 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Variables {
-    const val SUBSCRIPTION_ID: String = "subscriptionId"
-
-    const val TEST_VARIABLE: String = "testVariable"
-
     object ActivitySendConfirmationMail {
       const val SUBSCRIPTION_ID: String = "subscriptionId"
 
