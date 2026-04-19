@@ -242,7 +242,8 @@ async function handleGenerate(e) {
 }
 
 function renderResults(files, language) {
-    const languageClass = language === 'JAVA' ? 'java' : 'kotlin';
+    const languageMap = { JAVA: 'java', KOTLIN: 'kotlin', TYPESCRIPT: 'typescript', GO: 'go' };
+    const languageClass = languageMap[language] ?? 'plaintext';
 
     resultsContent.innerHTML = files.map(file => `
         <div class="code-file">
