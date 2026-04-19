@@ -274,7 +274,6 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.variables.forEach { variable -> variablesBuilder.addField(createAttribute(variable)) }
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }

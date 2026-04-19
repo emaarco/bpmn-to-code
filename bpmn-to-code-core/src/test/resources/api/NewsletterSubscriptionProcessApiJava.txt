@@ -88,10 +88,6 @@ public final class NewsletterSubscriptionProcessApi {
   }
 
   public static final class Variables {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
-
-    public static final String TEST_VARIABLE = "testVariable";
-
     public static final class ActivitySendConfirmationMail {
       public static final String SUBSCRIPTION_ID = "subscriptionId";
 

@@ -81,10 +81,6 @@ object SendNewsletterProcessApi {
   }
 
   object Variables {
-    const val AUTHOR: String = "author"
-
-    const val SUBSCRIBERS: String = "subscribers"
-
     object ServiceTaskLoadSubscribers {
       const val AUTHOR: String = "author"
 
