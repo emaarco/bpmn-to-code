@@ -104,6 +104,19 @@
 }
 
 /**
+ * Reduce gap between hero and feature cards
+ */
+.VPHero {
+  padding-bottom: 28px !important;
+}
+
+@media (min-width: 640px) {
+  .VPHero {
+    padding-bottom: 36px !important;
+  }
+}
+
+/**
  * Feature cards
  */
 .VPFeature {
