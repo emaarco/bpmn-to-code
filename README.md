@@ -11,7 +11,7 @@
 
 Type-safe constants from your BPMN model — for your compiler, your tests, and your AI agents.
 
-**Generate · Validate · Surface** — a type-safe BPMN toolkit for JVM projects.
+**Generate · Validate · Surface** — a type-safe BPMN toolkit.
 
 ## What It Does
 
