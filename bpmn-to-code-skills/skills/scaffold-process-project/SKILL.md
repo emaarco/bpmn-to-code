@@ -89,7 +89,7 @@ curl -s "https://start.spring.io/actuator/info" \
 
 Use the returned value as `bootVersion`. Check `resources/compat.md` for engine-specific
 Spring Boot minimums and warn if the fetched version is below them.
-If the fetch fails, use `AskUserQuestion` to ask the user for the Spring Boot version.
+If the fetch fails, fall back to `3.5.0` (the minimum version accepted by `start.spring.io`).
 
 **Kotlin version (GRADLE + KOTLIN only):**
 

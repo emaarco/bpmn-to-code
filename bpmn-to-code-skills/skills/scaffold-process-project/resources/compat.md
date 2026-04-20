@@ -16,6 +16,9 @@ curl -s "https://start.spring.io/actuator/info" \
 This returns the current default Spring Boot version (e.g. `3.5.0`). Use that value as
 `bootVersion` unless the engine constraints below require a different minimum.
 
+> **Important:** `start.spring.io` rejects `bootVersion` below `3.5.0` with HTTP 400.
+> If the fetch fails, always fall back to `3.5.0` — never use an older hardcoded value.
+
 ---
 
 ## Fetching the compatible Kotlin version from the BOM
