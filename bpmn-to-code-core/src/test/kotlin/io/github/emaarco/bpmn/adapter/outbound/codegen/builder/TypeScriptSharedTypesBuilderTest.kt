@@ -10,25 +10,17 @@ class TypeScriptSharedTypesBuilderTest {
     private val underTest = TypeScriptSharedTypesBuilder()
 
     @Test
-    fun `buildTypeFiles generates all 6 shared type files`() {
+    fun `buildTypeFiles generates ProcessApi type file`() {
 
         // when: we build the shared type files
         val results = underTest.buildTypeFiles("de.emaarco.example", OutputLanguage.TYPESCRIPT)
 
-        // then: exactly 6 files in the types sub-package
-        assertThat(results).hasSize(6)
-        assertThat(results.map { it.packagePath }).allMatch { it == "de.emaarco.example.types" }
-        assertThat(results.map { it.fileName }).containsExactlyInAnyOrder(
-            "BpmnTimer.ts", "BpmnError.ts", "BpmnEscalation.ts", "BpmnFlow.ts", "BpmnRelations.ts", "ProcessApi.ts"
-        )
+        // then: a single ProcessApi.ts in the types sub-package
+        assertThat(results).hasSize(1)
+        assertThat(results[0].packagePath).isEqualTo("de.emaarco.example.types")
+        assertThat(results[0].fileName).isEqualTo("ProcessApi.ts")
 
-        // and: each file matches its expected fixture
-        results.forEach { typeFile ->
-            val fixtureName = typeFile.fileName.replace(".ts", "TypeScript.txt")
-            val fixtureResource = requireNotNull(javaClass.getResource("/api/types/$fixtureName")) {
-                "Missing fixture: /api/types/$fixtureName"
-            }
-            assertThat(typeFile.content).isEqualToIgnoringWhitespace(File(fixtureResource.toURI()).readText())
-        }
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/types/ProcessApiTypeScript.txt")).toURI())
+        assertThat(results[0].content).isEqualToIgnoringWhitespace(expectedFile.readText())
     }
 }

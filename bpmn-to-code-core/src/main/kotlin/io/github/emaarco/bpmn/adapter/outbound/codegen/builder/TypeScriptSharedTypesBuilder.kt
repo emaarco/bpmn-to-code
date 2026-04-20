@@ -9,44 +9,32 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
     override fun buildTypeFiles(packagePath: String, language: OutputLanguage): List<GeneratedApiFile> {
         val typesPackage = "$packagePath.types"
         return listOf(
-            buildFile(typesPackage, language, "BpmnTimer.ts", buildBpmnTimerContent()),
-            buildFile(typesPackage, language, "BpmnError.ts", buildBpmnErrorContent()),
-            buildFile(typesPackage, language, "BpmnEscalation.ts", buildBpmnEscalationContent()),
-            buildFile(typesPackage, language, "BpmnFlow.ts", buildBpmnFlowContent()),
-            buildFile(typesPackage, language, "BpmnRelations.ts", buildBpmnRelationsContent()),
-            buildFile(typesPackage, language, "ProcessApi.ts", buildProcessApiContent()),
+            GeneratedApiFile(
+                fileName = "ProcessApi.ts",
+                packagePath = typesPackage,
+                content = buildProcessApiContent(),
+                language = language,
+            )
         )
     }
 
-    private fun buildBpmnTimerContent() = buildString {
+    private fun buildProcessApiContent() = buildString {
         appendLine("// $autoGenComment")
         appendLine()
         appendLine("export interface BpmnTimer {")
         appendLine("  type: string;")
         appendLine("  timerValue: string;")
-        append("}")
-    }
-
-    private fun buildBpmnErrorContent() = buildString {
-        appendLine("// $autoGenComment")
+        appendLine("}")
         appendLine()
         appendLine("export interface BpmnError {")
         appendLine("  name: string;")
         appendLine("  code: string;")
-        append("}")
-    }
-
-    private fun buildBpmnEscalationContent() = buildString {
-        appendLine("// $autoGenComment")
+        appendLine("}")
         appendLine()
         appendLine("export interface BpmnEscalation {")
         appendLine("  name: string;")
         appendLine("  code: string;")
-        append("}")
-    }
-
-    private fun buildBpmnFlowContent() = buildString {
-        appendLine("// $autoGenComment")
+        appendLine("}")
         appendLine()
         appendLine("export interface BpmnFlow {")
         appendLine("  id: string;")
@@ -54,11 +42,7 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
         appendLine("  targetRef: string;")
         appendLine("  condition?: string;")
         appendLine("  isDefault?: boolean;")
-        append("}")
-    }
-
-    private fun buildBpmnRelationsContent() = buildString {
-        appendLine("// $autoGenComment")
+        appendLine("}")
         appendLine()
         appendLine("export interface BpmnRelations {")
         appendLine("  incoming: string[];")
@@ -66,17 +50,7 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
         appendLine("  parentId: string | null;")
         appendLine("  attachedToRef: string | null;")
         appendLine("  attachedElements: string[];")
-        append("}")
-    }
-
-    private fun buildProcessApiContent() = buildString {
-        appendLine("// $autoGenComment")
-        appendLine()
-        appendLine("import type { BpmnError } from \"./BpmnError\";")
-        appendLine("import type { BpmnEscalation } from \"./BpmnEscalation\";")
-        appendLine("import type { BpmnFlow } from \"./BpmnFlow\";")
-        appendLine("import type { BpmnRelations } from \"./BpmnRelations\";")
-        appendLine("import type { BpmnTimer } from \"./BpmnTimer\";")
+        appendLine("}")
         appendLine()
         appendLine("export interface ProcessApi {")
         appendLine("  PROCESS_ID: string;")
@@ -99,12 +73,4 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
         appendLine("  }>;")
         append("}")
     }
-
-    private fun buildFile(typesPackage: String, language: OutputLanguage, fileName: String, content: String) =
-        GeneratedApiFile(
-            fileName = fileName,
-            packagePath = typesPackage,
-            content = content,
-            language = language,
-        )
 }
