@@ -717,6 +717,46 @@ footer {
     transition: color 0.2s ease;
 }
 
+/* Tab Switcher */
+.tab-switcher {
+    display: flex;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+    background: var(--bg-gray);
+}
+
+.tab-btn-active {
+    color: var(--primary-color);
+    background: var(--brand-soft);
+    font-weight: 600;
+}
+
+.form-row-single {
+    grid-template-columns: 1fr;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .navbar-inner {
@@ -834,4 +874,5 @@ footer {
         gap: 1.25rem;
         padding: 0.75rem;
     }
+
 }
