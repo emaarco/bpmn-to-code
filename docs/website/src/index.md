@@ -3,31 +3,30 @@ layout: home
 
 hero:
   name: bpmn-to-code
-  text: Your BPMN model changes. Your code doesn't break.
-  tagline: Stop hardcoding element IDs, messages, and worker types. Generate a type-safe Process API that stays in sync with your BPMN models.
+  text: Your BPMN model in your toolchain.
+  tagline: "compiler-safe · validated · AI-ready"
   actions:
     - theme: brand
       text: ✨ Try in Browser
       link: https://bpmn-to-code.miragon.io/static/index.html
-    - theme: alt
-      text: Why bpmn-to-code
-      link: /overview/why
-    - theme: alt
-      text: Get Started (Gradle)
-      link: /getting-started/gradle
-    - theme: alt
-      text: Get Started (Maven)
-      link: /getting-started/maven
 
 features:
-  - title: 🛡️ Compile-Time Safety
-    details: Rename a BPMN element and the compiler tells you every spot that needs updating. No more silent runtime failures.
+  - title: 🔒 Generate — Compile-Time Safety
+    details: Type-safe constants generated from your BPMN model. Rename an element and the compiler tells you every place that breaks. No more silent runtime failures from hardcoded strings.
+    link: /getting-started/gradle
+    linkText: Get started
+  - title: ✅ Validate — Architecture Rules for BPMN
+    details: Like ArchUnit, but for your process models. Catch missing implementations, undefined timers, and naming violations at build time — before they reach production. Early access — API may evolve.
+    link: /validate/
+    linkText: Explore validation
+  - title: 🤖 Surface — AI-Ready by Design
+    details: Exports structured JSON for AI agents and code reviewers. Ships with Agent Skills for setup and migration, and an MCP Server that generates typed APIs from BPMN inside your AI conversation.
+    link: /surface/
+    linkText: See AI integration
   - title: 🔧 Works With Your Stack
     details: Zeebe, Camunda 7, and Operaton. Java and Kotlin. Gradle and Maven. Fits into what you already use.
-  - title: 🌐 Try It Instantly
-    details: Paste your BPMN into the web app and see the generated code in seconds. No installation required.
-  - title: ⚡ Minimal Setup Effort
-    details: Available as a Gradle and Maven plugin. Also serves AI skills that auto-configure the plugin and migrate your existing code.
+    link: /engines/zeebe
+    linkText: See supported engines
 ---
 
 ## The problem it solves
@@ -67,4 +66,3 @@ fun sendConfirmationMail() { /* ... */ }
 ```
 
 :::
-

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'bpmn-to-code',
   titleTemplate: false,
-  description: 'Generate type-safe API definitions from BPMN process models',
+  description: 'Type-safe BPMN toolkit — generate APIs, validate models, surface process structure to your toolchain.',
   base: '/bpmn-to-code/',
 
   head: [
@@ -14,9 +14,9 @@ export default defineConfig({
     logo: '/favicon.png',
 
     nav: [
-      { text: 'Build Plugins', link: '/getting-started/gradle' },
-      { text: 'Standalone', link: '/web/' },
-      { text: 'Engines', link: '/engines/zeebe' },
+      { text: 'Generate', link: '/getting-started/gradle' },
+      { text: 'Validate', link: '/validate/' },
+      { text: 'Surface', link: '/surface/' },
       {
         text: 'Links',
         items: [
@@ -35,7 +35,7 @@ export default defineConfig({
         ],
       },
       {
-        text: 'Build Plugins',
+        text: 'Generate',
         items: [
           {
             text: 'Gradle',
@@ -53,35 +53,40 @@ export default defineConfig({
               { text: 'Advanced', link: '/getting-started/maven-advanced' },
             ],
           },
+          { text: 'Generated API', link: '/guide/generated-api' },
+          { text: 'Configuration', link: '/guide/configuration' },
         ],
       },
       {
-        text: 'Standalone',
+        text: 'Validate',
         items: [
-          { text: 'Web App', link: '/web/' },
+          { text: 'Build-time Validation', link: '/validate/' },
+          { text: 'Testing Module', link: '/validate/testing' },
+        ],
+      },
+      {
+        text: 'Surface',
+        items: [
+          { text: 'Overview', link: '/surface/' },
+          { text: 'JSON Export', link: '/surface/json' },
+          { text: 'Agent Skills', link: '/skills/' },
           { text: 'MCP Server', link: '/mcp/' },
         ],
       },
       {
-        text: 'Guide',
+        text: 'Reference',
         items: [
-          { text: 'Configuration', link: '/guide/configuration' },
-          { text: 'Generated API', link: '/guide/generated-api' },
-        ],
-      },
-      {
-        text: 'Engines',
-        items: [
-          { text: 'Zeebe', link: '/engines/zeebe' },
-          { text: 'Camunda 7', link: '/engines/camunda7' },
-          { text: 'Operaton', link: '/engines/operaton' },
-        ],
-      },
-      {
-        text: 'Extras',
-        items: [
+          {
+            text: 'Engines',
+            collapsed: true,
+            items: [
+              { text: 'Zeebe', link: '/engines/zeebe' },
+              { text: 'Camunda 7', link: '/engines/camunda7' },
+              { text: 'Operaton', link: '/engines/operaton' },
+            ],
+          },
+          { text: 'Web App', link: '/web/' },
           { text: 'Examples', link: '/recipes/examples' },
-          { text: 'AI Skills', link: '/skills/' },
           { text: 'Common Patterns', link: '/recipes/common-patterns' },
         ],
       },

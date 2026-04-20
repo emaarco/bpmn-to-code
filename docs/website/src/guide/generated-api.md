@@ -9,14 +9,18 @@ The generated Process API is an `object` (Kotlin) or `class` (Java) with nested 
 | Section | Contents |
 |---------|----------|
 | `PROCESS_ID` | The process identifier from the BPMN model |
+| `PROCESS_ENGINE` | The engine the API was generated for (`ZEEBE`, `CAMUNDA_7`, `OPERATON`) |
 | `Elements` | All flow node IDs (tasks, events, gateways, subprocesses) |
 | `CallActivities` | Called process IDs for call activity elements |
 | `Messages` | Message names from message events and receive tasks |
 | `TaskTypes` | Worker types / topics / delegate expressions from service tasks |
-| `Timers` | Timer configurations with type and value |
-| `Errors` | Error definitions with name and code |
+| `Timers` | Timer configurations with type and value (`BpmnTimer`) |
+| `Errors` | Error definitions with name and code (`BpmnError`) |
+| `Compensations` | Compensation event IDs |
 | `Signals` | Signal names from signal events |
-| `Variables` | All extracted process variables |
+| `Variables` | All extracted process variables, with per-element sub-objects |
+| `Flows` | Sequence flows with `sourceRef`, `targetRef`, `conditionExpression`, `isDefault` |
+| `Relations` | Per-element topology: `incoming`, `outgoing`, `parentId`, `attachedToRef`, `attachedElements` |
 
 Sections are only included when the BPMN model contains matching elements.
 
@@ -32,64 +36,90 @@ Given a newsletter subscription BPMN process, bpmn-to-code generates:
 
 package de.emaarco.example
 
-object NewsletterSubscriptionProcessApiV1 {
-    const val PROCESS_ID: String = "newsletterSubscription"
+import de.emaarco.example.types.BpmnError
+import de.emaarco.example.types.BpmnFlow
+import de.emaarco.example.types.BpmnRelations
+import de.emaarco.example.types.BpmnTimer
 
-    object Elements {
-        const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
-        const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
-        const val ERROR_EVENT_INVALID_MAIL: String = "ErrorEvent_InvalidMail"
-        const val ACTIVITY_CONFIRM_REGISTRATION: String = "Activity_ConfirmRegistration"
-        const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
-        const val END_EVENT_REGISTRATION_ABORTED: String = "EndEvent_RegistrationAborted"
-        const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
-        const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
-        const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String = "EndEvent_RegistrationNotPossible"
-        const val ACTIVITY_ABORT_REGISTRATION: String = "Activity_AbortRegistration"
-        const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
-        const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "Activity_SendConfirmationMail"
-        const val START_EVENT_SUBMIT_REGISTRATION_FORM: String = "StartEvent_SubmitRegistrationForm"
-        const val START_EVENT_REQUEST_RECEIVED: String = "StartEvent_RequestReceived"
+object NewsletterSubscriptionProcessApi {
+  const val PROCESS_ID: String = "newsletterSubscription"
+  const val PROCESS_ENGINE: String = "ZEEBE"
+
+  object Elements {
+    const val ACTIVITY_CONFIRM_REGISTRATION: String = "Activity_ConfirmRegistration"
+    const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "Activity_SendConfirmationMail"
+    const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
+    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"
+    const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
+    const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
+    const val START_EVENT_SUBMIT_REGISTRATION_FORM: String = "StartEvent_SubmitRegistrationForm"
+    const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
+    const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
+    // ... all other elements
+  }
+
+  object CallActivities {
+    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
+  }
+
+  object Messages {
+    const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
+  }
+
+  object TaskTypes {
+    const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
+    const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
+    const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
+  }
+
+  object Timers {
+    val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
+    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
+  }
+
+  object Errors {
+    val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
+  }
+
+  object Compensations {
+    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String = "CompensationEndEvent_RegistrationAborted"
+  }
+
+  object Signals {
+    const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
+  }
+
+  object Variables {
+    const val SUBSCRIPTION_ID: String = "subscriptionId"
+
+    object ActivitySendConfirmationMail {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
     }
 
-    object Messages {
-        const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
-        const val MESSAGE_SUBSCRIPTION_CONFIRMED: String = "Message_SubscriptionConfirmed"
+    object ActivitySendWelcomeMail {
+      const val SUBSCRIPTION_ID: String = "subscriptionId"
     }
+  }
 
-    object TaskTypes {
-        const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
-        const val NEWSLETTER_ABORT_REGISTRATION: String = "newsletter.abortRegistration"
-        const val NEWSLETTER_SEND_WELCOME_MAIL: String = "newsletter.sendWelcomeMail"
-        const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "newsletter.sendConfirmationMail"
-    }
+  object Flows {
+    val FLOW_05_I_3_X_1_Y: BpmnFlow = BpmnFlow(
+      id = "Flow_05i3x1y",
+      sourceRef = "StartEvent_RequestReceived",
+      targetRef = "Activity_SendConfirmationMail",
+    )
+    // ... all sequence flows
+  }
 
-    object Timers {
-        val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
-        val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "PT2M30S")
-
-        data class BpmnTimer(
-            val type: String,
-            val timerValue: String,
-        )
-    }
-
-    object Errors {
-        val ERROR_INVALID_MAIL: BpmnError = BpmnError("Error_InvalidMail", "500")
-
-        data class BpmnError(
-            val name: String,
-            val code: String,
-        )
-    }
-
-    object Signals {
-        const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
-    }
-
-    object Variables {
-        const val SUBSCRIPTION_ID: String = "subscriptionId"
-    }
+  object Relations {
+    val ACTIVITY_CONFIRM_REGISTRATION: BpmnRelations = BpmnRelations(
+      incoming = listOf("Activity_SendConfirmationMail"),
+      outgoing = listOf("EndEvent_SubscriptionConfirmed"),
+      parentId = "SubProcess_Confirmation",
+      attachedToRef = null,
+      attachedElements = listOf("Timer_EveryDay"),
+    )
+    // ... all elements
+  }
 }
 ```
 
@@ -97,25 +127,76 @@ object NewsletterSubscriptionProcessApiV1 {
 // Generated by bpmn-to-code
 package de.emaarco.example;
 
-public class NewsletterSubscriptionProcessApiV1 {
+import de.emaarco.example.types.BpmnError;
+import de.emaarco.example.types.BpmnFlow;
+import de.emaarco.example.types.BpmnRelations;
+import de.emaarco.example.types.BpmnTimer;
+
+public class NewsletterSubscriptionProcessApi {
     public static final String PROCESS_ID = "newsletterSubscription";
+    public static final String PROCESS_ENGINE = "ZEEBE";
 
     public static class Elements {
-        public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
         public static final String ACTIVITY_CONFIRM_REGISTRATION = "Activity_ConfirmRegistration";
+        public static final String ACTIVITY_SEND_WELCOME_MAIL = "Activity_SendWelcomeMail";
         // ... same constants as Kotlin, with Java syntax
     }
 
     public static class Messages {
         public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
-        public static final String MESSAGE_SUBSCRIPTION_CONFIRMED = "Message_SubscriptionConfirmed";
     }
 
-    // ... same structure for TaskTypes, Timers, Errors, Signals, Variables
+    // ... same structure for TaskTypes, Timers, Errors, Compensations, Signals, Variables, Flows, Relations
 }
 ```
 
 :::
+
+## Flows
+
+The `Flows` section contains every sequence flow in the process as a `BpmnFlow` data class:
+
+```kotlin
+data class BpmnFlow(
+    val id: String,
+    val sourceRef: String,
+    val targetRef: String,
+    val conditionExpression: String? = null,
+    val isDefault: Boolean = false,
+)
+```
+
+Use `Flows` to build process-aware test fixtures or to inspect routing logic in your application code.
+
+## Relations
+
+The `Relations` section maps every flow node to its topology information via `BpmnRelations`:
+
+```kotlin
+data class BpmnRelations(
+    val incoming: List<String>,      // IDs of incoming sequence flows or elements
+    val outgoing: List<String>,      // IDs of outgoing sequence flows or elements
+    val parentId: String?,           // parent subprocess ID, if any
+    val attachedToRef: String?,      // element this boundary event is attached to
+    val attachedElements: List<String>, // boundary events attached to this element
+)
+```
+
+This is useful for traversing process topology in tests, validations, or analysis tools.
+
+## Per-Element Variables
+
+The top-level `Variables` object contains all variables across the process. Nested sub-objects group variables by the element they were extracted from:
+
+```kotlin
+object Variables {
+    const val SUBSCRIPTION_ID: String = "subscriptionId"  // appears in any element
+
+    object ActivitySendConfirmationMail {
+        const val SUBSCRIPTION_ID: String = "subscriptionId"  // from this element's I/O mapping
+    }
+}
+```
 
 ## Variable Extraction
 
@@ -133,4 +214,4 @@ bpmn-to-code **only extracts variables from explicit BPMN definitions** — I/O 
 
 When multiple BPMN files share the same `processId`, bpmn-to-code **merges them into a single API**. The generated API contains the superset of all elements across all files.
 
-This is useful for process variants (e.g. dev vs prod configurations) that share the same process identifier.
+This is useful for process variants (e.g. dev vs prod configurations) that share the same process identifier. If multiple files define the same `processId`, use the `variantName` BPMN extension property to distinguish them and prevent silent overwrites in the JSON output.
