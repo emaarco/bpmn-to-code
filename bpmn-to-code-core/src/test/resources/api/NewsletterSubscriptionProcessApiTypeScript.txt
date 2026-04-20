@@ -60,8 +60,6 @@ export const NewsletterSubscriptionProcessApi = {
   },
 
   Variables: {
-    SUBSCRIPTION_ID: "subscriptionId",
-    TEST_VARIABLE: "testVariable",
     ActivitySendConfirmationMail: {
       SUBSCRIPTION_ID: "subscriptionId",
       TEST_VARIABLE: "testVariable",

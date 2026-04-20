@@ -18,7 +18,7 @@ export interface ProcessApi {
   Escalations?: Record<string, BpmnEscalation>;
   Compensations?: Record<string, string>;
   Signals?: Record<string, string>;
-  Variables?: Record<string, string | Record<string, string>>;
+  Variables?: Record<string, Record<string, string>>;
   Flows?: Record<string, BpmnFlow>;
   Relations?: Record<string, BpmnRelations>;
   Variants?: Record<string, {

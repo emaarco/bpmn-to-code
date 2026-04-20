@@ -90,7 +90,7 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
         appendLine("  Escalations?: Record<string, BpmnEscalation>;")
         appendLine("  Compensations?: Record<string, string>;")
         appendLine("  Signals?: Record<string, string>;")
-        appendLine("  Variables?: Record<string, string | Record<string, string>>;")
+        appendLine("  Variables?: Record<string, Record<string, string>>;")
         appendLine("  Flows?: Record<string, BpmnFlow>;")
         appendLine("  Relations?: Record<string, BpmnRelations>;")
         appendLine("  Variants?: Record<string, {")

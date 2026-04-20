@@ -48,8 +48,6 @@ export const SendNewsletterProcessApi = {
   },
 
   Variables: {
-    AUTHOR: "author",
-    SUBSCRIBERS: "subscribers",
     ServiceTaskLoadSubscribers: {
       AUTHOR: "author",
       SUBSCRIBERS: "subscribers",

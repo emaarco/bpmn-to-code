@@ -201,12 +201,9 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
 
     private class VariablesWriter : ObjectWriter<StringBuilder> {
         override val objectType = ApiObjectType.VARIABLES
-        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
+        override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.flowNodes.any { it.variables.isNotEmpty() }
         override fun write(builder: StringBuilder, modelApi: BpmnModelApi) {
             builder.appendLine("  Variables: {")
-            modelApi.model.variables.forEach { variable ->
-                builder.appendLine("    ${variable.getName()}: \"${variable.getValue()}\",")
-            }
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }
