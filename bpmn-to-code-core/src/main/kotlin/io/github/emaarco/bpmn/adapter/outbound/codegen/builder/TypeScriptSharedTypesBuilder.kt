@@ -14,6 +14,7 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
             buildFile(typesPackage, language, "BpmnEscalation.ts", buildBpmnEscalationContent()),
             buildFile(typesPackage, language, "BpmnFlow.ts", buildBpmnFlowContent()),
             buildFile(typesPackage, language, "BpmnRelations.ts", buildBpmnRelationsContent()),
+            buildFile(typesPackage, language, "ProcessApi.ts", buildProcessApiContent()),
         )
     }
 
@@ -65,6 +66,37 @@ class TypeScriptSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBu
         appendLine("  parentId: string | null;")
         appendLine("  attachedToRef: string | null;")
         appendLine("  attachedElements: string[];")
+        append("}")
+    }
+
+    private fun buildProcessApiContent() = buildString {
+        appendLine("// $autoGenComment")
+        appendLine()
+        appendLine("import type { BpmnError } from \"./BpmnError\";")
+        appendLine("import type { BpmnEscalation } from \"./BpmnEscalation\";")
+        appendLine("import type { BpmnFlow } from \"./BpmnFlow\";")
+        appendLine("import type { BpmnRelations } from \"./BpmnRelations\";")
+        appendLine("import type { BpmnTimer } from \"./BpmnTimer\";")
+        appendLine()
+        appendLine("export interface ProcessApi {")
+        appendLine("  PROCESS_ID: string;")
+        appendLine("  PROCESS_ENGINE: string;")
+        appendLine("  Elements: Record<string, string>;")
+        appendLine("  CallActivities?: Record<string, string>;")
+        appendLine("  Messages?: Record<string, string>;")
+        appendLine("  TaskTypes?: Record<string, string>;")
+        appendLine("  Timers?: Record<string, BpmnTimer>;")
+        appendLine("  Errors?: Record<string, BpmnError>;")
+        appendLine("  Escalations?: Record<string, BpmnEscalation>;")
+        appendLine("  Compensations?: Record<string, string>;")
+        appendLine("  Signals?: Record<string, string>;")
+        appendLine("  Variables?: Record<string, string | Record<string, string>>;")
+        appendLine("  Flows?: Record<string, BpmnFlow>;")
+        appendLine("  Relations?: Record<string, BpmnRelations>;")
+        appendLine("  Variants?: Record<string, {")
+        appendLine("    Flows?: Record<string, BpmnFlow>;")
+        appendLine("    Relations?: Record<string, BpmnRelations>;")
+        appendLine("  }>;")
         append("}")
     }
 

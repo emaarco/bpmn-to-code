@@ -6,11 +6,9 @@ import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.MergedBpmnModel
-import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
 class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<StringBuilder>() {
@@ -38,14 +36,14 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
         val sb = StringBuilder()
 
         sb.appendLine("// $autoGenComment")
-        appendImports(sb, modelApi)
+        appendImports(sb)
 
         sb.appendLine("export const $objectName = {")
 
         val relevantWriters = objectWriters.filter { it.value.shouldWrite(modelApi) }
         relevantWriters.forEach { (_, writer) -> writer.write(sb, modelApi) }
 
-        sb.append("};")
+        sb.append("} as const satisfies ProcessApi;")
 
         return GeneratedApiFile(
             fileName = "$objectName.ts",
@@ -55,28 +53,9 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
         )
     }
 
-    private fun appendImports(sb: StringBuilder, modelApi: BpmnModelApi) {
-        val hasErrors = modelApi.model.errors.isNotEmpty()
-        val hasEscalations = modelApi.model.escalations.isNotEmpty()
-        val hasFlows = modelApi.model is BpmnModel && modelApi.model.sequenceFlows.isNotEmpty()
-        val hasMergedFlows = modelApi.model is MergedBpmnModel &&
-            modelApi.model.variants.any { it.sequenceFlows.isNotEmpty() }
-        val needsFlowTypes = hasFlows || hasMergedFlows
-        val hasTimers = modelApi.model.timers.isNotEmpty()
-
-        if (!hasErrors && !hasEscalations && !needsFlowTypes && !hasTimers) {
-            sb.appendLine()
-            return
-        }
-
+    private fun appendImports(sb: StringBuilder) {
         sb.appendLine()
-        if (hasErrors) sb.appendLine("import type { BpmnError } from \"./types/BpmnError\";")
-        if (hasEscalations) sb.appendLine("import type { BpmnEscalation } from \"./types/BpmnEscalation\";")
-        if (needsFlowTypes) {
-            sb.appendLine("import type { BpmnFlow } from \"./types/BpmnFlow\";")
-            sb.appendLine("import type { BpmnRelations } from \"./types/BpmnRelations\";")
-        }
-        if (hasTimers) sb.appendLine("import type { BpmnTimer } from \"./types/BpmnTimer\";")
+        sb.appendLine("import type { ProcessApi } from \"./types/ProcessApi\";")
         sb.appendLine()
     }
 
@@ -84,7 +63,7 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
         override val objectType = ApiObjectType.PROCESS_ID
         override fun shouldWrite(modelApi: BpmnModelApi) = true
         override fun write(builder: StringBuilder, modelApi: BpmnModelApi) {
-            builder.appendLine("  PROCESS_ID: \"${modelApi.model.processId}\" as const,")
+            builder.appendLine("  PROCESS_ID: \"${modelApi.model.processId}\",")
         }
     }
 
@@ -92,7 +71,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
         override val objectType = ApiObjectType.PROCESS_ENGINE
         override fun shouldWrite(modelApi: BpmnModelApi) = true
         override fun write(builder: StringBuilder, modelApi: BpmnModelApi) {
-            builder.appendLine("  PROCESS_ENGINE: \"${modelApi.engine.name}\" as const,")
+            builder.appendLine("  PROCESS_ENGINE: \"${modelApi.engine.name}\",")
+            builder.appendLine()
         }
     }
 
@@ -104,7 +84,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model.flowNodes.forEach { node ->
                 builder.appendLine("    ${node.getName()}: \"${node.getValue()}\",")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -116,7 +97,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model.callActivities.forEach { ca ->
                 builder.appendLine("    ${ca.getName()}: \"${ca.getValue()}\",")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -128,7 +110,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model.messages.forEach { msg ->
                 builder.appendLine("    ${msg.getName()}: \"${msg.getValue()}\",")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -143,7 +126,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                 .forEach { task ->
                     builder.appendLine("    ${task.getName()}: \"${task.getValue()}\",")
                 }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -156,7 +140,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                 val (timerType, timerValue) = timer.getValue()
                 builder.appendLine("    ${timer.getName()}: { type: \"$timerType\", timerValue: \"$timerValue\" },")
             }
-            builder.appendLine("  } as const satisfies Record<string, BpmnTimer>,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -169,7 +154,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                 val (name, code) = error.getValue()
                 builder.appendLine("    ${error.getName()}: { name: \"$name\", code: \"$code\" },")
             }
-            builder.appendLine("  } as const satisfies Record<string, BpmnError>,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -182,7 +168,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                 val (name, code) = esc.getValue()
                 builder.appendLine("    ${esc.getName()}: { name: \"$name\", code: \"$code\" },")
             }
-            builder.appendLine("  } as const satisfies Record<string, BpmnEscalation>,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -194,7 +181,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model.compensations.forEach { comp ->
                 builder.appendLine("    ${comp.getName()}: \"${comp.getValue()}\",")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -206,7 +194,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model.signals.forEach { signal ->
                 builder.appendLine("    ${signal.getName()}: \"${signal.getValue()}\",")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -229,7 +218,8 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                     }
                     builder.appendLine("    },")
                 }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
@@ -239,6 +229,7 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model is BpmnModel && modelApi.model.sequenceFlows.isNotEmpty()
         override fun write(builder: StringBuilder, modelApi: BpmnModelApi) {
             appendFlowsBlock(builder, "  ", modelApi.model.sequenceFlows)
+            builder.appendLine()
         }
     }
 
@@ -248,6 +239,7 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             modelApi.model is BpmnModel && modelApi.model.sequenceFlows.isNotEmpty()
         override fun write(builder: StringBuilder, modelApi: BpmnModelApi) {
             appendRelationsBlock(builder, "  ", modelApi.model.flowNodes)
+            builder.appendLine()
         }
     }
 
@@ -262,23 +254,28 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
                 builder.appendLine("    $variantName: {")
                 if (variant.sequenceFlows.isNotEmpty()) {
                     appendFlowsBlock(builder, "      ", variant.sequenceFlows)
+                    builder.appendLine()
                     appendRelationsBlock(builder, "      ", variant.flowNodes)
                 }
                 builder.appendLine("    },")
             }
-            builder.appendLine("  } as const,")
+            builder.appendLine("  },")
+            builder.appendLine()
         }
     }
 
     private fun appendFlowsBlock(sb: StringBuilder, indent: String, flows: List<SequenceFlowDefinition>) {
         sb.appendLine("${indent}Flows: {")
         flows.forEach { flow ->
-            sb.append("${indent}  ${flow.getName()}: { id: \"${flow.id ?: ""}\", sourceRef: \"${flow.sourceRef}\", targetRef: \"${flow.targetRef}\"")
-            if (flow.conditionExpression != null) sb.append(", condition: \"${flow.conditionExpression}\"")
-            if (flow.isDefault) sb.append(", isDefault: true")
-            sb.appendLine(" },")
+            sb.appendLine("${indent}  ${flow.getName()}: {")
+            sb.appendLine("${indent}    id: \"${flow.id ?: ""}\",")
+            sb.appendLine("${indent}    sourceRef: \"${flow.sourceRef}\",")
+            sb.appendLine("${indent}    targetRef: \"${flow.targetRef}\",")
+            if (flow.conditionExpression != null) sb.appendLine("${indent}    condition: \"${flow.conditionExpression}\",")
+            if (flow.isDefault) sb.appendLine("${indent}    isDefault: true,")
+            sb.appendLine("${indent}  },")
         }
-        sb.appendLine("${indent}} as const satisfies Record<string, BpmnFlow>,")
+        sb.appendLine("${indent}},")
     }
 
     private fun appendRelationsBlock(sb: StringBuilder, indent: String, flowNodes: List<FlowNodeDefinition>) {
@@ -287,15 +284,15 @@ class TypeScriptProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuil
             .filter { it.id != null }
             .sortedBy { it.getRawName() }
             .forEach { node ->
-                sb.append("${indent}  ${node.getName()}: { ")
-                sb.append("incoming: ${tsStringArray(node.incoming)}, ")
-                sb.append("outgoing: ${tsStringArray(node.outgoing)}, ")
-                sb.append("parentId: ${tsNullableString(node.parentId)}, ")
-                sb.append("attachedToRef: ${tsNullableString(node.attachedToRef)}, ")
-                sb.append("attachedElements: ${tsStringArray(node.attachedElements)}")
-                sb.appendLine(" },")
+                sb.appendLine("${indent}  ${node.getName()}: {")
+                sb.appendLine("${indent}    incoming: ${tsStringArray(node.incoming)},")
+                sb.appendLine("${indent}    outgoing: ${tsStringArray(node.outgoing)},")
+                sb.appendLine("${indent}    parentId: ${tsNullableString(node.parentId)},")
+                sb.appendLine("${indent}    attachedToRef: ${tsNullableString(node.attachedToRef)},")
+                sb.appendLine("${indent}    attachedElements: ${tsStringArray(node.attachedElements)},")
+                sb.appendLine("${indent}  },")
             }
-        sb.appendLine("${indent}} as const satisfies Record<string, BpmnRelations>,")
+        sb.appendLine("${indent}},")
     }
 
     private fun tsStringArray(items: List<String>): String {

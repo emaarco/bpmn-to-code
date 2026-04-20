@@ -10,16 +10,16 @@ class TypeScriptSharedTypesBuilderTest {
     private val underTest = TypeScriptSharedTypesBuilder()
 
     @Test
-    fun `buildTypeFiles generates all 5 shared type files`() {
+    fun `buildTypeFiles generates all 6 shared type files`() {
 
         // when: we build the shared type files
         val results = underTest.buildTypeFiles("de.emaarco.example", OutputLanguage.TYPESCRIPT)
 
-        // then: exactly 5 files in the types sub-package
-        assertThat(results).hasSize(5)
+        // then: exactly 6 files in the types sub-package
+        assertThat(results).hasSize(6)
         assertThat(results.map { it.packagePath }).allMatch { it == "de.emaarco.example.types" }
         assertThat(results.map { it.fileName }).containsExactlyInAnyOrder(
-            "BpmnTimer.ts", "BpmnError.ts", "BpmnEscalation.ts", "BpmnFlow.ts", "BpmnRelations.ts"
+            "BpmnTimer.ts", "BpmnError.ts", "BpmnEscalation.ts", "BpmnFlow.ts", "BpmnRelations.ts", "ProcessApi.ts"
         )
 
         // and: each file matches its expected fixture
