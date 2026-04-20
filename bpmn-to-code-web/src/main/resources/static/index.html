@@ -18,7 +18,6 @@
             <a class="version-badge" id="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" style="display: none;"></a>
         </a>
         <div class="navbar-links">
-            <a href="/static/json.html">JSON Export</a>
             <a href="https://emaarco.github.io/bpmn-to-code/" target="_blank">Documentation</a>
             <a href="https://github.com/emaarco/bpmn-to-code" target="_blank" class="navbar-icon" aria-label="GitHub">
                 <svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20">
@@ -36,13 +35,13 @@
         <p class="hero-text">Your BPMN model changes.<br>Your code doesn't break.</p>
         <p class="hero-description">
             Stop hardcoding element IDs, messages, and worker types.
-            Generate a type-safe Process API that stays in sync with your BPMN models.
+            Generate a type-safe Process API or structured JSON from your BPMN models.
         </p>
         <div class="hero-features">
             <span class="feature-badge">Compile-Time Safety</span>
             <span class="feature-badge">Zeebe / Camunda 7 / Operaton</span>
             <span class="feature-badge">Java &amp; Kotlin</span>
-            <span class="feature-badge">Gradle &amp; Maven</span>
+            <span class="feature-badge">JSON Export</span>
         </div>
     </header>
 
@@ -61,6 +60,12 @@
             <a href="https://github.com/emaarco/bpmn-to-code/issues" target="_blank">report them on GitHub</a>.
             Your feedback helps make this tool better!
         </div>
+    </div>
+
+    <!-- Tab Switcher -->
+    <div class="tab-switcher">
+        <button class="tab-btn tab-btn-active" data-tab="code" id="tab-code">Code API</button>
+        <button class="tab-btn" data-tab="json" id="tab-json">JSON Export</button>
     </div>
 
     <main>
@@ -91,10 +96,10 @@
 
         <!-- Step 2: Configure Generation -->
         <section class="card config-section" id="config-section" style="display: none;">
-            <h2>2. Configure Generation</h2>
+            <h2 id="config-heading">2. Configure Generation</h2>
             <form id="config-form">
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row" id="form-row">
+                    <div class="form-group" id="language-group">
                         <label for="output-language">Output Language</label>
                         <select id="output-language">
                             <option selected value="KOTLIN">Kotlin</option>
@@ -120,7 +125,7 @@
 
         <!-- Step 3: Results -->
         <section class="card results-section" id="results-section" style="display: none;">
-            <h2>3. Generated Code</h2>
+            <h2 id="results-heading">3. Generated Code</h2>
             <div id="results-content"></div>
         </section>
 
@@ -143,7 +148,7 @@
         <!-- Loading State -->
         <div class="loading" id="loading" style="display: none;">
             <div class="spinner"></div>
-            <p>Generating code...</p>
+            <p id="loading-text">Generating code...</p>
         </div>
 
         <!-- Error Display -->
@@ -242,6 +247,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
-<script src="/static/js/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="/static/js/main.js"></script>
 </body>
 </html>
