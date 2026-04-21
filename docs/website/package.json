@@ -9,5 +9,9 @@
   "devDependencies": {
     "vitepress": "1.6.4",
     "vue": "3.5.32"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
+    "@fontsource-variable/manrope": "5.2.8"
   }
 }
