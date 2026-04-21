@@ -17,7 +17,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <a v-if="version" class="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank">
-    {{ version }}
+  <a v-if="version" class="version-badge" href="https://github.com/emaarco/bpmn-to-code/releases" target="_blank" rel="noopener">
+    <span class="v-dot"></span>{{ version }}
   </a>
 </template>
