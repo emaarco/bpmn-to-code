@@ -21,7 +21,7 @@ konsist = "0.17.3"
 
 [libraries]
 # Plugin dependencies
-mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.14" }
+mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.15" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.2" }
 # Production dependencies
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
