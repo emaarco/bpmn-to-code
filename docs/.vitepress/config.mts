@@ -6,7 +6,7 @@ export default defineConfig({
   description: 'Type-safe BPMN toolkit — generate APIs, validate models, surface process structure to your toolchain.',
   base: '/bpmn-to-code/',
   appearance: false,
-  ignoreDeadLinks: [/\/\.agent\//],
+  ignoreDeadLinks: [/\/\.claude\//],
 
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/bpmn-to-code/favicon.png' }],
