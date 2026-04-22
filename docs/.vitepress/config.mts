@@ -42,7 +42,7 @@ export default defineConfig({
         items: [
           {
             text: 'Gradle',
-            collapsed: false,
+            collapsed: true,
             items: [
               { text: 'Setup', link: '/getting-started/gradle' },
               { text: 'Advanced', link: '/getting-started/gradle-advanced' },
@@ -50,7 +50,7 @@ export default defineConfig({
           },
           {
             text: 'Maven',
-            collapsed: false,
+            collapsed: true,
             items: [
               { text: 'Setup', link: '/getting-started/maven' },
               { text: 'Advanced', link: '/getting-started/maven-advanced' },
