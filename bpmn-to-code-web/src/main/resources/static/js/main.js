@@ -1,21 +1,19 @@
 const TAB_CONFIG = {
     code: {
-        configHeading: '2. Configure Generation',
+        configHeading: 'Configure Generation',
         generateLabel: 'Generate Process API',
-        resultsHeading: '3. Generated Code',
+        resultsHeading: 'Generated Code',
         loadingText: 'Generating code...',
         showLanguage: true,
-        showCta: true,
         apiEndpoint: '/api/generate',
         downloadMime: 'text/plain',
     },
     json: {
-        configHeading: '2. Select Process Engine',
+        configHeading: 'Select Process Engine',
         generateLabel: 'Generate JSON',
-        resultsHeading: '3. Generated JSON',
+        resultsHeading: 'Generated JSON',
         loadingText: 'Generating JSON...',
         showLanguage: false,
-        showCta: false,
         apiEndpoint: '/api/generate-json',
         downloadMime: 'application/json',
     }
@@ -60,7 +58,6 @@ function switchTab(tab) {
     document.getElementById('form-row').classList.toggle('form-row-single', !cfg.showLanguage);
 
     document.getElementById('results-section').style.display = 'none';
-    document.getElementById('cta-section').style.display = 'none';
     document.getElementById('error-message').style.display = 'none';
     document.getElementById('results-content').innerHTML = '';
     state.generatedFiles = [];
@@ -94,6 +91,9 @@ function setupEventListeners() {
 
     configForm.addEventListener('submit', handleGenerate);
     trySampleBtn.addEventListener('click', loadSample);
+
+    document.getElementById('download-all-btn').addEventListener('click', downloadAllAsZip);
+    document.getElementById('reset-btn').addEventListener('click', resetGeneration);
 }
 
 function handleFileSelect(e) {
@@ -136,7 +136,6 @@ function removeFile(fileName) {
         document.getElementById('config-section').style.display = 'none';
         document.getElementById('results-section').style.display = 'none';
         document.getElementById('bpmn-viewer-container').style.display = 'none';
-        document.getElementById('cta-section').style.display = 'none';
         state.currentBpmnXml = null;
         state.selectedFileIndex = 0;
         renderFileList();
@@ -236,7 +235,6 @@ async function handleGenerate(e) {
 
     resultsSection.style.display = 'none';
     errorMessage.style.display = 'none';
-    document.getElementById('cta-section').style.display = 'none';
     loading.style.display = 'block';
     generateBtn.disabled = true;
 
@@ -265,9 +263,6 @@ async function handleGenerate(e) {
             state.generatedFiles = result.files;
             renderResults(result.files);
             resultsSection.style.display = 'block';
-            if (cfg.showCta) {
-                document.getElementById('cta-section').style.display = 'block';
-            }
             resultsSection.scrollIntoView({ behavior: 'smooth' });
         } else {
             showError(result.error || 'Unknown error occurred');
@@ -287,23 +282,26 @@ function renderResults(files) {
         ? 'json'
         : (document.getElementById('output-language').value === 'JAVA' ? 'java' : 'kotlin');
 
-    document.getElementById('results-content').innerHTML = files.map((file, index) => `
+    document.getElementById('results-content').innerHTML = files.map((file, index) => {
+        const icon = fileIconFor(file.fileName);
+        return `
         <div class="code-file">
             <div class="code-file-header">
-                <div>
+                <span class="code-file-icon ${icon.cls}">${icon.label}</span>
+                <div class="code-file-title-group">
                     <div class="code-file-title">${escapeHtml(file.fileName)}</div>
                     <div class="code-file-meta">Process: ${escapeHtml(file.processId)}</div>
                 </div>
                 <div class="code-file-actions">
-                    <button class="btn-copy" onclick="copyToClipboard(${index})">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <button type="button" class="btn-copy" onclick="copyToClipboard(${index})">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
                         Copy
                     </button>
-                    <button class="btn-download" onclick="downloadFile('${escapeHtml(file.fileName)}', ${index})">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <button type="button" class="btn-download" onclick="downloadFile('${escapeHtml(file.fileName)}', ${index})">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -316,32 +314,40 @@ function renderResults(files) {
                 <pre><code class="language-${languageClass}">${escapeHtml(file.content)}</code></pre>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
-    document.querySelectorAll('pre code').forEach((block) => {
+    document.querySelectorAll('#results-content pre code').forEach((block) => {
         hljs.highlightElement(block);
     });
+}
+
+function fileIconFor(fileName) {
+    const name = (fileName || '').toLowerCase();
+    if (name.endsWith('.kt')) return { cls: 'ci-kt', label: 'Kt' };
+    if (name.endsWith('.java')) return { cls: 'ci-jv', label: 'Jv' };
+    if (name.endsWith('.json')) return { cls: 'ci-json', label: '{ }' };
+    return { cls: 'ci-kt', label: 'Kt' };
 }
 
 function copyToClipboard(index) {
     const file = state.generatedFiles[index];
 
     navigator.clipboard.writeText(file.content).then(() => {
-        const buttons = document.querySelectorAll('.btn-copy');
+        const buttons = document.querySelectorAll('#results-content .btn-copy');
         const button = buttons[index];
+        if (!button) return;
         const originalHTML = button.innerHTML;
 
         button.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             Copied!
         `;
-        button.style.background = '#10b981';
 
         setTimeout(() => {
             button.innerHTML = originalHTML;
-            button.style.background = '';
         }, 2000);
     }).catch(err => {
         console.error('Failed to copy:', err);
@@ -361,6 +367,53 @@ function downloadFile(fileName, index) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+}
+
+async function downloadAllAsZip() {
+    if (!state.generatedFiles.length) return;
+    if (typeof JSZip === 'undefined') {
+        showError('Zip download is unavailable (failed to load JSZip).');
+        return;
+    }
+
+    const btn = document.getElementById('download-all-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Packaging...';
+
+    try {
+        const zip = new JSZip();
+        state.generatedFiles.forEach(file => {
+            zip.file(file.fileName, file.content);
+        });
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const processId = state.generatedFiles[0].processId || 'bpmn-to-code';
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${processId}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error('Failed to build zip:', err);
+        showError('Failed to build zip: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+
+function resetGeneration() {
+    state.generatedFiles = [];
+    document.getElementById('results-content').innerHTML = '';
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('error-message').style.display = 'none';
+    const config = document.getElementById('config-section');
+    if (config.style.display !== 'none') {
+        config.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 function showError(message) {
@@ -416,7 +469,6 @@ async function loadConfiguration() {
 function setupLegalLinks(legalLinks) {
     const imprintLink = document.getElementById('imprint-link');
     const privacyLink = document.getElementById('privacy-link');
-    const separator = document.getElementById('legal-separator');
 
     if (legalLinks.imprintUrl) {
         imprintLink.href = legalLinks.imprintUrl;
@@ -430,11 +482,5 @@ function setupLegalLinks(legalLinks) {
         privacyLink.style.display = 'inline';
     } else {
         privacyLink.style.display = 'none';
-    }
-
-    if (legalLinks.imprintUrl && legalLinks.privacyUrl) {
-        separator.style.display = 'inline';
-    } else {
-        separator.style.display = 'none';
     }
 }
