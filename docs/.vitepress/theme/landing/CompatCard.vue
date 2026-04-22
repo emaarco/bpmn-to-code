@@ -20,8 +20,8 @@
     <div class="compat-row">
       <span class="row-label">build</span>
       <span class="row-items">
-        <a class="compat-item" href="https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle" target="_blank"><span class="lang-badge gradle">Gr</span>Gradle</a>
-        <a class="compat-item" href="https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven" target="_blank"><span class="lang-badge maven">Mv</span>Maven</a>
+        <a class="compat-item" href="https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle" target="_blank"><span class="lang-badge gradle">Gr</span><span class="link-label">Gradle</span></a>
+        <a class="compat-item" href="https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven" target="_blank"><span class="lang-badge maven">Mv</span><span class="link-label">Maven</span></a>
       </span>
     </div>
   </div>
