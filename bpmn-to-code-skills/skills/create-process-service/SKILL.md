@@ -1,11 +1,11 @@
 ---
-name: scaffold-process-project
+name: create-process-service
 argument-hint: "<path/to/process.bpmn> [--output-dir <dir>] [--group-id <id>] [--artifact-id <id>] [--build-tool gradle|maven]"
-description: "Scaffold a complete Spring Boot service project from a BPMN file with hexagonal architecture. Bootstraps via Spring Initializr, configures bpmn-to-code, and generates workers, use cases, and services wired to ProcessApi constants — no raw strings anywhere. Use when the user wants to start a new process service from a BPMN model."
+description: "Create a complete Spring Boot service project from a BPMN file with hexagonal architecture. Bootstraps via Spring Initializr, configures bpmn-to-code, and generates workers, use cases, and services wired to ProcessApi constants — no raw strings anywhere. Use when the user wants to start a new process service from a BPMN model."
 allowed-tools: Read, Write, Edit, Glob, Bash(curl *), Bash(unzip *), Bash(mkdir *), Bash(cp *), Bash(java *), Bash(./gradlew *), Bash(mvn *), Bash(./mvnw *), WebFetch, AskUserQuestion
 ---
 
-# Skill: scaffold-process-project
+# Skill: create-process-service
 
 Bootstrap a complete, compilable Spring Boot service project from a `.bpmn` file following
 hexagonal architecture. Every layer is generated — workers (or delegates), use case interfaces,

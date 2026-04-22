@@ -1,4 +1,4 @@
-# scaffold-process-project — Observed Issues & Improvement Notes
+# create-process-service — Observed Issues & Improvement Notes
 
 Recorded during end-to-end test run on 2026-04-19 (ZEEBE + Gradle, process-engine-api approach,
 input: `shared/bpmn/c8-subscribe-newsletter.bpmn`).
