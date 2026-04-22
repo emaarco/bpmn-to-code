@@ -1,5 +1,5 @@
 > **bpmn-to-code is early-stage and actively developing.**
-> The three pillars — Generate, Validate, Surface — are taking shape, but expect rough edges.
+> The four pillars — Generate, Validate, Surface, Ship — are taking shape, but expect rough edges.
 > Feedback and contributions are very welcome.
 
 [![Documentation](https://img.shields.io/badge/docs-bpmn--to--code-blue?style=flat-square)](https://emaarco.github.io/bpmn-to-code/)
@@ -11,7 +11,7 @@
 
 Type-safe constants from your BPMN model — for your compiler, your tests, and your AI agents.
 
-**Generate · Validate · Surface** — a type-safe BPMN toolkit for JVM projects.
+**Generate · Validate · Surface · Ship** — a type-safe BPMN toolkit for JVM projects.
 
 ## What It Does
 
@@ -64,6 +64,17 @@ BPMN files are XML — technically readable, but full of visual layout data, nam
 - **Structured** — flow nodes, sequence flows, messages, and errors in predictable, typed fields
 
 The result is a compact, deterministic representation that AI agents can reason about accurately — with no hallucinated element IDs, because the JSON is derived directly from the BPMN model by rule.
+
+### Ship — Agent Skills _(beta)_
+
+Drop-in agent skills that automate the entire setup workflow. Integrate the plugin into your project in one prompt, scaffold a complete process service from a BPMN file, and migrate hardcoded strings to the generated API — without touching any config manually.
+
+```bash
+/plugin marketplace add emaarco/bpmn-to-code
+/plugin install bpmn-to-code@bpmn-to-code
+```
+
+Works with Claude Code out of the box.
 
 ## Gradle Setup
 
@@ -128,19 +139,6 @@ dependencies {
 - 🌐 [Web App](https://bpmn-to-code.miragon.io/static/index.html) — Try in browser, no installation
 - 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Self-hostable container
 - 🤖 [MCP Server](bpmn-to-code-mcp/README.md) — AI-assisted generation inside your editor
-
-## AI Agent Skills _(beta)_
-
-New to the project? The AI skills can set up the plugin for you, migrate existing hardcoded strings to the generated API, and scaffold worker stubs — no manual config needed.
-
-bpmn-to-code ships with [AI skills](docs/skills.md) for Claude Code:
-
-```bash
-/plugin marketplace add emaarco/bpmn-to-code
-/plugin install bpmn-to-code@bpmn-to-code
-```
-
-Skills cover plugin setup (Gradle & Maven), API migration, issue management, ADR writing, and code review.
 
 ## Project Structure
 
