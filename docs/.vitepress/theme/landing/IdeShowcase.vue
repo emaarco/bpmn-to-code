@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
           :class="{ active: i === activeIdx }"
           @click="onTabClick(i)"
         >
-          <span class="tab-ico" :class="tab.iconClass">{{ tab.iconText }}</span>{{ tab.label }}
+          <span class="tab-ico" :class="tab.iconClass">{{ tab.iconText }}</span>{{ tab.label }}<span v-if="tab.beta" class="tab-beta">beta</span>
         </button>
       </div>
       <div class="ide-body">

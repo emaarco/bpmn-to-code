@@ -260,3 +260,6 @@
 @media (max-width:640px) {
   .landing-root .compat-card .compat-row { grid-template-columns:1fr; gap:4px; }
 }
+
+/* beta chip on IDE tabs */
+.landing-root .tab-beta { display:inline-flex; align-items:center; padding:1px 5px; font-family:'JetBrains Mono Variable',ui-monospace,monospace; font-size:9px; font-weight:700; border-radius:999px; background:rgba(206,108,0,.12); color:#B25A00; border:1px solid rgba(206,108,0,.25); margin-left:5px; vertical-align:middle; line-height:1.4; }

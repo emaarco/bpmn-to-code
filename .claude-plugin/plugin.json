@@ -1,0 +1,6 @@
+{
+  "name": "bpmn-to-code",
+  "description": "AI skills for developing and maintaining the bpmn-to-code plugin",
+  "version": "2.0.0",
+  "author": { "name": "emaarco" }
+}

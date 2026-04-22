@@ -1,5 +1,9 @@
 # 🧪 Testing Module
 
+::: warning Beta
+This module is in beta. The API may change in a future release. [Leave feedback](https://github.com/emaarco/bpmn-to-code/issues) if you're using it.
+:::
+
 The `bpmn-to-code-testing` library lets you write architecture tests for your BPMN process models — the same way [ArchUnit](https://www.archunit.org/) lets you write architecture tests for Java code.
 
 Add it to your test scope, write a test, and your CI will catch modeling issues before they reach production.

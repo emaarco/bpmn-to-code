@@ -11,6 +11,7 @@ export interface IdeTab {
   paneType: 'image' | 'code'
   src?: string
   code?: string
+  beta?: boolean
 }
 
 export const ideTabs: IdeTab[] = [
@@ -64,6 +65,7 @@ export const ideTabs: IdeTab[] = [
     iconClass: 'kt',
     iconText: 'Kt',
     paneType: 'code',
+    beta: true,
     code: [
       `<span class="line"><span class="tok-k">class</span> <span class="tok-t">SubscriptionRulesTest</span> {</span>`,
       `<span class="line"> </span>`,
@@ -96,6 +98,7 @@ export const ideTabs: IdeTab[] = [
     iconClass: 'json',
     iconText: '{}',
     paneType: 'code',
+    beta: true,
     code: [
       `<span class="line">{</span>`,
       `<span class="line">  <span class="tok-s">"processId"</span>: <span class="tok-s">"subscription"</span>,</span>`,
@@ -226,8 +229,8 @@ export interface Skill {
 export const skills: Skill[] = [
   {
     icon: '\u2708',
-    name: 'scaffold-process-project',
-    description: 'Bootstrap a complete Spring Boot process service from a BPMN file — hexagonal layers, workers, Docker Compose, all wired to the generated Process API.',
+    name: 'create-process-service',
+    description: 'Create a complete Spring Boot process service from a BPMN file — hexagonal layers, workers, Docker Compose, all wired to the generated Process API.',
   },
   {
     icon: '\u270E',

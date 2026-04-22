@@ -1,5 +1,9 @@
 # 🧠 AI Agent Skills
 
+::: warning Beta
+Agent skills are in beta. Skill names and instructions may change in a future release. [Leave feedback](https://github.com/emaarco/bpmn-to-code/issues) if you're using them.
+:::
+
 bpmn-to-code ships with reusable skills for AI coding assistants. Skills work with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) out of the box.
 
 ## Available Skills
