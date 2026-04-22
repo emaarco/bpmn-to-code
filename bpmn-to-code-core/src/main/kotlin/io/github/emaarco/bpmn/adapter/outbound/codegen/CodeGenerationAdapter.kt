@@ -1,9 +1,13 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen
 
+import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.GoProcessApiBuilder
+import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.GoSharedTypesBuilder
 import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.JavaProcessApiBuilder
 import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.JavaSharedTypesBuilder
 import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.KotlinProcessApiBuilder
 import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.KotlinSharedTypesBuilder
+import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.TypeScriptProcessApiBuilder
+import io.github.emaarco.bpmn.adapter.outbound.codegen.builder.TypeScriptSharedTypesBuilder
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.domain.BpmnModelApi
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
@@ -36,11 +40,15 @@ class CodeGenerationAdapter(
     companion object {
         val processApiBuilders = mapOf(
             OutputLanguage.KOTLIN to KotlinProcessApiBuilder(),
-            OutputLanguage.JAVA to JavaProcessApiBuilder()
+            OutputLanguage.JAVA to JavaProcessApiBuilder(),
+            OutputLanguage.TYPESCRIPT to TypeScriptProcessApiBuilder(),
+            OutputLanguage.GO to GoProcessApiBuilder(),
         )
         val sharedTypesBuilders = mapOf(
             OutputLanguage.KOTLIN to KotlinSharedTypesBuilder(),
-            OutputLanguage.JAVA to JavaSharedTypesBuilder()
+            OutputLanguage.JAVA to JavaSharedTypesBuilder(),
+            OutputLanguage.TYPESCRIPT to TypeScriptSharedTypesBuilder(),
+            OutputLanguage.GO to GoSharedTypesBuilder(),
         )
     }
 

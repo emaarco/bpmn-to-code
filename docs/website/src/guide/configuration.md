@@ -10,7 +10,7 @@ All plugin parameters, available for both the Gradle and Maven plugins.
 | `filePattern` | `String` | yes | — | Glob pattern to locate BPMN files (e.g. `src/main/resources/**/*.bpmn`) |
 | `outputFolderPath` | `String` | yes | — | Directory where generated code is written |
 | `packagePath` | `String` | yes | — | Package name for generated classes (e.g. `com.example.process`) |
-| `outputLanguage` | `OutputLanguage` | yes | — | `KOTLIN` or `JAVA` |
+| `outputLanguage` | `OutputLanguage` | yes | — | `KOTLIN`, `JAVA`, `TYPESCRIPT` ⚠️, or `GO` ⚠️ |
 | `processEngine` | `ProcessEngine` | yes | — | `ZEEBE`, `CAMUNDA_7`, or `OPERATON` |
 
 ## Process Engines
@@ -27,10 +27,16 @@ Operaton is an open-source fork of Camunda 7. It uses the same patterns for I/O 
 
 ## Output Languages
 
-| Language | Value | Generated Output |
-|----------|-------|-----------------|
-| Kotlin | `KOTLIN` | `object` with `const val` properties |
-| Java | `JAVA` | `class` with `public static final` fields |
+| Language | Value | Generated Output | Status |
+|----------|-------|-----------------|--------|
+| Kotlin | `KOTLIN` | `object` with `const val` properties | stable |
+| Java | `JAVA` | `class` with `public static final` fields | stable |
+| TypeScript | `TYPESCRIPT` | `export const` object with typed properties | experimental ⚠️ |
+| Go | `GO` | package-level `var` structs | experimental ⚠️ |
+
+::: warning Experimental languages
+TypeScript and Go support is functional but not yet considered stable. Output format may change in future releases.
+:::
 
 ## Examples
 

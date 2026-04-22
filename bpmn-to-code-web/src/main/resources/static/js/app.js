@@ -4,7 +4,8 @@ const state = {
     generatedFiles: [],
     bpmnViewer: null,
     currentBpmnXml: null,
-    selectedFileIndex: 0
+    selectedFileIndex: 0,
+    activeTab: 'code'
 };
 
 // DOM Elements
@@ -51,11 +52,30 @@ function setupEventListeners() {
         }
     });
 
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
     // Form submission
     configForm.addEventListener('submit', handleGenerate);
 
     // Try with sample
     trySampleBtn.addEventListener('click', loadSample);
+}
+
+function switchTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('tab-btn-active', btn.dataset.tab === tab);
+    });
+    const isJson = tab === 'json';
+    document.getElementById('language-group').style.display = isJson ? 'none' : '';
+    document.getElementById('generate-btn').textContent = isJson ? 'Generate JSON' : 'Generate Process API';
+    document.getElementById('config-heading').textContent = isJson ? '2. Configure Export' : '2. Configure Generation';
+    document.getElementById('results-heading').textContent = isJson ? '3. Generated JSON' : '3. Generated Code';
+    resultsSection.style.display = 'none';
+    ctaSection.style.display = 'none';
 }
 
 function handleFileSelect(e) {
@@ -204,12 +224,15 @@ async function handleGenerate(e) {
             }))
         );
 
-        const config = {
-            outputLanguage: document.getElementById('output-language').value,
-            processEngine: document.getElementById('process-engine').value
-        };
+        const processEngine = document.getElementById('process-engine').value;
+        const isJson = state.activeTab === 'json';
 
-        const response = await fetch('/api/generate', {
+        const endpoint = isJson ? '/api/generate-json' : '/api/generate';
+        const config = isJson
+            ? { processEngine }
+            : { outputLanguage: document.getElementById('output-language').value, processEngine };
+
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -224,7 +247,7 @@ async function handleGenerate(e) {
 
         if (result.success) {
             state.generatedFiles = result.files;
-            renderResults(result.files, config.outputLanguage);
+            renderResults(result.files, isJson ? 'JSON' : config.outputLanguage);
             resultsSection.style.display = 'block';
             ctaSection.style.display = 'block';
             resultsSection.scrollIntoView({behavior: 'smooth'});
@@ -242,7 +265,8 @@ async function handleGenerate(e) {
 }
 
 function renderResults(files, language) {
-    const languageClass = language === 'JAVA' ? 'java' : 'kotlin';
+    const languageMap = { JAVA: 'java', KOTLIN: 'kotlin', TYPESCRIPT: 'typescript', GO: 'go', JSON: 'json' };
+    const languageClass = languageMap[language] ?? 'plaintext';
 
     resultsContent.innerHTML = files.map(file => `
         <div class="code-file">
