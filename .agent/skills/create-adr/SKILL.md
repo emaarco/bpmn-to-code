@@ -7,13 +7,13 @@ description: Write a new Architectural Decision Record (ADR) for this project. U
 
 # Skill: create-adr
 
-Write a new Architectural Decision Record following the format used in `docs/adr/`.
+Write a new Architectural Decision Record following the format used in `docs/contributing/adr/`.
 
 ## Instructions
 
 ### Step 1: Determine the next ADR number
 
-Use Glob to list all files matching `docs/adr/*.md` (excluding `README.md`). 
+Use Glob to list all files matching `docs/contributing/adr/*.md` (excluding `README.md`). 
 Extract the three-digit numeric prefix from each filename (e.g. `011` from `011-variable-name-collision-detection.md`). 
 
 The next number is the highest existing prefix plus one, zero-padded to three digits.
@@ -23,13 +23,13 @@ If no ADR files exist, start at `001`.
 
 Convert `$ARGUMENTS` to kebab-case: lowercase, replace spaces/underscores with hyphens, remove non-alphanumeric characters (except hyphens), collapse consecutive hyphens.
 
-Target: `docs/adr/{NNN}-{slug}.md`
+Target: `docs/contributing/adr/{NNN}-{slug}.md`
 
 ### Step 3: Read existing ADRs for content style
 
 Read 1-2 recent ADRs to understand **content style and level of detail**:
-- `docs/adr/011-variable-name-collision-detection.md`
-- `docs/adr/010-operaton-namespace-only-extractor.md`
+- `docs/contributing/adr/011-variable-name-collision-detection.md`
+- `docs/contributing/adr/010-operaton-namespace-only-extractor.md`
 
 **Note**: Read these ONLY for writing style and technical detail level. Structure is defined in Step 5.
 
@@ -78,7 +78,7 @@ Show the complete draft to the user before writing.
 ### Step 6: Confirm and write
 
 Ask: "Write this ADR to `{target-path}`? (yes / edit / cancel)"
-- **yes** → write file, then update the index in `docs/adr/README.md` by adding a link under the appropriate category
+- **yes** → write file, then update the index in `docs/contributing/adr/README.md` by adding a link under the appropriate category
 - **edit** → apply changes, show updated draft, ask again
 - **cancel** → stop without writing
 

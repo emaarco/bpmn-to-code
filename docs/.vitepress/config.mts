@@ -5,6 +5,8 @@ export default defineConfig({
   titleTemplate: false,
   description: 'Type-safe BPMN toolkit — generate APIs, validate models, surface process structure to your toolchain.',
   base: '/bpmn-to-code/',
+  appearance: false,
+  ignoreDeadLinks: [/\/\.agent\//],
 
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/bpmn-to-code/favicon.png' }],
@@ -17,6 +19,7 @@ export default defineConfig({
       { text: 'Generate', link: '/getting-started/gradle' },
       { text: 'Validate', link: '/validate/' },
       { text: 'Surface', link: '/surface/' },
+      { text: 'Ship', link: '/skills/' },
       {
         text: 'Links',
         items: [
@@ -39,7 +42,7 @@ export default defineConfig({
         items: [
           {
             text: 'Gradle',
-            collapsed: false,
+            collapsed: true,
             items: [
               { text: 'Setup', link: '/getting-started/gradle' },
               { text: 'Advanced', link: '/getting-started/gradle-advanced' },
@@ -47,7 +50,7 @@ export default defineConfig({
           },
           {
             text: 'Maven',
-            collapsed: false,
+            collapsed: true,
             items: [
               { text: 'Setup', link: '/getting-started/maven' },
               { text: 'Advanced', link: '/getting-started/maven-advanced' },
@@ -69,8 +72,13 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/surface/' },
           { text: 'JSON Export', link: '/surface/json' },
-          { text: 'Agent Skills', link: '/skills/' },
           { text: 'MCP Server', link: '/mcp/' },
+        ],
+      },
+      {
+        text: 'Ship',
+        items: [
+          { text: 'Agent Skills', link: '/skills/' },
         ],
       },
       {
@@ -90,6 +98,17 @@ export default defineConfig({
           { text: 'Common Patterns', link: '/recipes/common-patterns' },
         ],
       },
+      {
+        text: 'Contributing',
+        collapsed: true,
+        items: [
+          { text: 'Contributing Guide', link: '/contributing/' },
+          { text: 'AI Skills Architecture', link: '/contributing/ai-skills' },
+          { text: 'Docker Deployment', link: '/contributing/docker-hub-deployment' },
+          { text: 'Best Practices', link: '/contributing/best-practices' },
+          { text: 'Architecture Decisions', link: '/contributing/adr/' },
+        ],
+      },
     ],
 
     socialLinks: [
@@ -101,7 +120,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/emaarco/bpmn-to-code/edit/main/docs/website/src/:path',
+      pattern: 'https://github.com/emaarco/bpmn-to-code/edit/main/docs/:path',
     },
 
     footer: {

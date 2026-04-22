@@ -1,0 +1,17 @@
+{
+  "name": "bpmn-to-code-docs",
+  "private": true,
+  "scripts": {
+    "dev": "portless run sh -c '(open $PORTLESS_URL/bpmn-to-code/) & vitepress dev --port $PORT --host 127.0.0.1'",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4",
+    "vue": "3.5.33"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
+    "@fontsource-variable/manrope": "5.2.8"
+  }
+}

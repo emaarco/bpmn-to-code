@@ -20,7 +20,7 @@ Develop and visually verify changes to the bpmn-to-code web module.
 
 ### Step 1 — Understand the architecture
 
-Read ADR 009 (`docs/adr/009-ktor-static-frontend-single-module.md`) for architectural context.
+Read ADR 009 (`docs/contributing/adr/009-ktor-static-frontend-single-module.md`) for architectural context.
 
 Key facts:
 - **Backend**: Ktor 3.x (Kotlin) serving static files + REST API

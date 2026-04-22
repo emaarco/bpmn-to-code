@@ -20,15 +20,15 @@ Develop and visually verify changes to the bpmn-to-code documentation site.
 
 ### Step 1 — Understand the architecture
 
-The documentation site uses VitePress at `docs/website/`.
+The documentation site uses VitePress at `docs/`.
 
 Key facts:
-- **Content**: Markdown files in `docs/website/src/` (e.g. `index.md` for landing page)
-- **Config**: `docs/website/src/.vitepress/config.mts` — site title, navigation, sidebar, footer, social links
-- **Theme**: `docs/website/src/.vitepress/theme/` — custom theme extending DefaultTheme
+- **Content**: Markdown files in `docs/` (e.g. `index.md` for landing page)
+- **Config**: `docs/.vitepress/config.mts` — site title, navigation, sidebar, footer, social links
+- **Theme**: `docs/.vitepress/theme/` — custom theme extending DefaultTheme
 - **Vue components**: e.g. `VersionBadge.vue` (fetches latest GitHub release, displays in nav bar)
-- **Custom CSS**: `docs/website/src/.vitepress/theme/style.css`
-- **Dependencies**: Read versions from `docs/website/package.json` (do not hardcode)
+- **Custom CSS**: `docs/.vitepress/theme/style.css`
+- **Dependencies**: Read versions from `docs/package.json` (do not hardcode)
 
 ### Step 2 — Review current state
 
@@ -36,15 +36,17 @@ Read the files relevant to `$ARGUMENTS`. Key files and their purposes:
 
 | File | Purpose |
 |------|---------|
-| `docs/website/src/index.md` | Landing page: hero section, feature cards, code comparison |
-| `docs/website/src/.vitepress/config.mts` | Site config: nav bar, sidebar, footer, social links |
-| `docs/website/src/.vitepress/theme/index.ts` | Theme setup: extends DefaultTheme, registers components |
-| `docs/website/src/.vitepress/theme/style.css` | Custom CSS overrides |
-| `docs/website/src/.vitepress/theme/components/*.vue` | Custom Vue components |
-| `docs/website/src/web/index.md` | "Try in Browser" page linking to web module |
-| `docs/website/src/getting-started/*.md` | Gradle and Maven setup guides |
-| `docs/website/src/engines/*.md` | Engine-specific documentation |
-| `docs/website/src/guide/*.md` | Configuration and generated API guides |
+| `docs/index.md` | Landing page: hero section, feature cards, code comparison |
+| `docs/.vitepress/config.mts` | Site config: nav bar, sidebar, footer, social links |
+| `docs/.vitepress/theme/index.ts` | Theme setup: extends DefaultTheme, registers components |
+| `docs/.vitepress/theme/style.css` | Custom CSS overrides |
+| `docs/.vitepress/theme/components/*.vue` | Custom Vue components |
+| `docs/web/index.md` | "Try in Browser" page linking to web module |
+| `docs/getting-started/*.md` | Gradle and Maven setup guides |
+| `docs/engines/*.md` | Engine-specific documentation |
+| `docs/guide/*.md` | Configuration and generated API guides |
+| `docs/contributing/*.md` | Contributing guide, AI skills, Docker deployment, best practices |
+| `docs/contributing/adr/*.md` | Architectural Decision Records |
 
 ### Step 3 — Make changes
 
@@ -53,19 +55,19 @@ Follow these conventions:
 - **Vue components**: Vue 3 Composition API (`<script setup>`). Register in `theme/index.ts`.
 - **Navigation**: Update `config.mts` `themeConfig.nav` and `themeConfig.sidebar` for new pages.
 - **Links**: Use relative paths for internal links. External links get `target: _blank`.
-- **Images**: Store in `docs/website/src/public/` and reference with absolute paths.
+- **Images**: Store in `docs/public/` and reference with absolute paths.
 
 ### Step 4 — Build and run locally
 
 ```bash
 # Start dev server (with hot reload)
-cd docs/website && npm run dev
+cd docs && npm run dev
 
 # Build for production (catches broken links)
-cd docs/website && npm run build
+cd docs && npm run build
 
 # Preview production build
-cd docs/website && npm run preview
+cd docs && npm run preview
 ```
 
 ### Step 5 — Visual verification (only on request)
@@ -74,7 +76,7 @@ cd docs/website && npm run preview
 
 **Prerequisite**: Playwright MCP must be configured in the agent's MCP settings.
 
-1. Ensure the docs site is running (`cd docs/website && npm run dev` in the background)
+1. Ensure the docs site is running (`cd docs && npm run dev` in the background)
 2. Navigate to the local dev server URL
 3. Perform only the verification steps the user requested
 4. Store screenshots in `.tmp/` (gitignored). **Never check screenshots into git.**

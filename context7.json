@@ -5,15 +5,15 @@
   "projectTitle": "bpmn-to-code",
   "description": "Gradle and Maven plugin that generates type-safe API definitions from BPMN process models. Supports Camunda 7, Zeebe, and Operaton engines with Kotlin and Java output.",
   "folders": [
-    "docs/website/src/getting-started",
-    "docs/website/src/guide",
-    "docs/website/src/engines",
-    "docs/website/src/recipes",
-    "docs/website/src/mcp",
-    "docs/website/src/skills",
-    "docs/website/src/web",
-    "docs/adr",
-    "docs/development"
+    "docs/getting-started",
+    "docs/guide",
+    "docs/engines",
+    "docs/recipes",
+    "docs/mcp",
+    "docs/skills",
+    "docs/web",
+    "docs/contributing/adr",
+    "docs/contributing"
   ],
   "excludeFolders": [
     "build",
