@@ -199,7 +199,8 @@
 .landing-root .compat-card .compat-row:last-child { border-bottom:0; }
 .landing-root .compat-card .row-label { font-family:'JetBrains Mono Variable', ui-monospace, monospace; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-muted); }
 .landing-root .compat-card .row-items { display:flex; flex-wrap:wrap; gap:18px; }
-.landing-root .compat-card .compat-item { display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--fg); }
+.landing-root .compat-card .compat-item { display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--fg); text-decoration:none; }
+.landing-root .compat-card a.compat-item:hover { color:var(--green); text-decoration:underline; text-underline-offset:3px; }
 .landing-root .compat-card .compat-item .dot { width:8px; height:8px; border-radius:50%; }
 .landing-root .compat-card .dot.zeebe { background:#FA4F5B; }
 .landing-root .compat-card .dot.camunda7 { background:#0C6AA7; }
