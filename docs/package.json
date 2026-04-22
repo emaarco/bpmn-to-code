@@ -2,9 +2,9 @@
   "name": "bpmn-to-code-docs",
   "private": true,
   "scripts": {
-    "dev": "portless run sh -c '(open $PORTLESS_URL/bpmn-to-code/) & vitepress dev src --port $PORT --host 127.0.0.1'",
-    "build": "vitepress build src",
-    "preview": "vitepress preview src"
+    "dev": "portless run sh -c '(open $PORTLESS_URL/bpmn-to-code/) & vitepress dev --port $PORT --host 127.0.0.1'",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
   "devDependencies": {
     "vitepress": "1.6.4",

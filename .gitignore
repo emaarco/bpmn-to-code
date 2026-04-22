@@ -8,7 +8,7 @@ bin
 target
 .agent/settings.local.json
 .agent/.tmp
-docs/website/node_modules
-docs/website/src/.vitepress/dist
-docs/website/src/.vitepress/cache
+docs/node_modules
+docs/.vitepress/dist
+docs/.vitepress/cache
 .gstack/
