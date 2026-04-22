@@ -61,7 +61,13 @@ Document decisions that:
 ### Features
 - [ADR 006: File-Based Versioning](006-file-based-versioning.md) - API versioning strategy (deprecated — feature removed)
 - [ADR 007: Variable Extraction Scope](007-variable-extraction-scope.md) - Explicit variable definitions only
+- [ADR 011: Variable Name Collision Detection](011-variable-name-collision-detection.md) - Handling duplicate variable names
+- [ADR 012: JSON Export](012-json-export.md) - Structured JSON representation of process models
+- [ADR 014: Shared BPMN Types](014-shared-bpmn-types.md) - Common type definitions across engines
 
 ### Web Module
 - [ADR 008: Web Module for Browser-Based Access](008-web-module-for-browser-access.md) - Strategic decision for web application
 - [ADR 009: Ktor with Static Frontend (Single Module)](009-ktor-static-frontend-single-module.md) - Technology choices for web module
+
+### Testing
+- [ADR 013: Testing Module](013-testing-module.md) - Arch-Unit style BPMN model validation framework
