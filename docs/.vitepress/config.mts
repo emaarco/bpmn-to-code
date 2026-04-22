@@ -6,6 +6,7 @@ export default defineConfig({
   description: 'Type-safe BPMN toolkit — generate APIs, validate models, surface process structure to your toolchain.',
   base: '/bpmn-to-code/',
   appearance: false,
+  ignoreDeadLinks: [/\/\.agent\//],
 
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/bpmn-to-code/favicon.png' }],
@@ -18,6 +19,7 @@ export default defineConfig({
       { text: 'Generate', link: '/getting-started/gradle' },
       { text: 'Validate', link: '/validate/' },
       { text: 'Surface', link: '/surface/' },
+      { text: 'Ship', link: '/skills/' },
       {
         text: 'Links',
         items: [
@@ -70,8 +72,13 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/surface/' },
           { text: 'JSON Export', link: '/surface/json' },
-          { text: 'Agent Skills', link: '/skills/' },
           { text: 'MCP Server', link: '/mcp/' },
+        ],
+      },
+      {
+        text: 'Ship',
+        items: [
+          { text: 'Agent Skills', link: '/skills/' },
         ],
       },
       {
@@ -91,6 +98,37 @@ export default defineConfig({
           { text: 'Common Patterns', link: '/recipes/common-patterns' },
         ],
       },
+      {
+        text: 'Contributing',
+        collapsed: true,
+        items: [
+          { text: 'Contributing Guide', link: '/contributing/' },
+          { text: 'AI Skills Architecture', link: '/contributing/ai-skills' },
+          { text: 'Docker Deployment', link: '/contributing/docker-hub-deployment' },
+          { text: 'Best Practices', link: '/contributing/best-practices' },
+          {
+            text: 'Architecture Decisions',
+            collapsed: true,
+            items: [
+              { text: 'Overview', link: '/contributing/adr/' },
+              { text: '001 – Hexagonal Architecture', link: '/contributing/adr/001-hexagonal-architecture' },
+              { text: '002 – Model Merging', link: '/contributing/adr/002-model-merging' },
+              { text: '003 – Generated API Structure', link: '/contributing/adr/003-generated-api-structure' },
+              { text: '004 – Multi-Engine Strategy', link: '/contributing/adr/004-strategy-pattern-multi-engine' },
+              { text: '005 – Code Generation Strategy', link: '/contributing/adr/005-strategy-pattern-code-generation' },
+              { text: '006 – File-Based Versioning', link: '/contributing/adr/006-file-based-versioning' },
+              { text: '007 – Variable Extraction Scope', link: '/contributing/adr/007-variable-extraction-scope' },
+              { text: '008 – Web Module', link: '/contributing/adr/008-web-module-for-browser-access' },
+              { text: '009 – Ktor Static Frontend', link: '/contributing/adr/009-ktor-static-frontend-single-module' },
+              { text: '010 – Operaton Namespace Extractor', link: '/contributing/adr/010-operaton-namespace-only-extractor' },
+              { text: '011 – Variable Name Collision', link: '/contributing/adr/011-variable-name-collision-detection' },
+              { text: '012 – JSON Export', link: '/contributing/adr/012-json-export' },
+              { text: '013 – Testing Module', link: '/contributing/adr/013-testing-module' },
+              { text: '014 – Shared BPMN Types', link: '/contributing/adr/014-shared-bpmn-types' },
+            ],
+          },
+        ],
+      },
     ],
 
     socialLinks: [
@@ -102,7 +140,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/emaarco/bpmn-to-code/edit/main/docs/website/src/:path',
+      pattern: 'https://github.com/emaarco/bpmn-to-code/edit/main/docs/:path',
     },
 
     footer: {

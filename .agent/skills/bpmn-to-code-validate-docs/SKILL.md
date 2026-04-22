@@ -16,9 +16,9 @@ For each engine (Zeebe, Camunda 7, Operaton), compare the doc page against its e
 
 | Engine | Doc page | Extractor |
 |--------|----------|-----------|
-| Zeebe | `docs/website/src/engines/zeebe.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/zeebe/ZeebeModelExtractor.kt` |
-| Camunda 7 | `docs/website/src/engines/camunda7.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/camunda7/Camunda7ModelExtractor.kt` |
-| Operaton | `docs/website/src/engines/operaton.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/operaton/OperatonModelExtractor.kt` |
+| Zeebe | `docs/engines/zeebe.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/zeebe/ZeebeModelExtractor.kt` |
+| Camunda 7 | `docs/engines/camunda7.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/camunda7/Camunda7ModelExtractor.kt` |
+| Operaton | `docs/engines/operaton.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/operaton/OperatonModelExtractor.kt` |
 
 For each engine, verify:
 - **Service task detection**: Which attributes/elements are parsed? Does the doc match?
@@ -31,7 +31,7 @@ Also check the shared extractors in `bpmn-to-code-core/src/main/kotlin/io/github
 
 ### 2. Configuration page vs plugin parameters
 
-Compare `docs/website/src/guide/configuration.md` against:
+Compare `docs/guide/configuration.md` against:
 - `bpmn-to-code-gradle/src/main/kotlin/io/github/emaarco/bpmn/adapter/GenerateBpmnModelsTask.kt`
 - `bpmn-to-code-maven/src/main/kotlin/io/github/emaarco/bpmn/adapter/BpmnModelMojo.java`
 
@@ -44,7 +44,7 @@ Verify:
 
 ### 3. Generated API page vs code generators
 
-Compare `docs/website/src/guide/generated-api.md` against:
+Compare `docs/guide/generated-api.md` against:
 - `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/codegen/`
 
 Verify:
@@ -54,7 +54,7 @@ Verify:
 
 ### 4. Getting started pages vs actual plugin versions
 
-Check that version numbers in `docs/website/src/getting-started/gradle.md` and `maven.md` match the latest published versions (check `gradle.properties` or the latest release tag).
+Check that version numbers in `docs/getting-started/gradle.md` and `maven.md` match the latest published versions (check `gradle.properties` or the latest release tag).
 
 ## How to run
 
