@@ -1,10 +1,10 @@
 # 🤖 Surface — AI-Ready by Design
 
-The Surface pillar makes your process structure accessible to AI agents, code reviewers, and your build toolchain — deterministically, on every run.
-
 ::: warning Beta
 JSON Export and Agent Skills are in beta. Outputs and skill instructions may change in a future release. [Leave feedback](https://github.com/emaarco/bpmn-to-code/issues) if you're using them.
 :::
+
+The Surface pillar makes your process structure accessible to AI agents, code reviewers, and your build toolchain — deterministically, on every run.
 
 Three capabilities, all derived from the same BPMN model:
 
