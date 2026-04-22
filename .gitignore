@@ -6,8 +6,9 @@ bin
 .vscode
 .DS_Store
 target
-.agent/settings.local.json
-.agent/.tmp
+.claude/settings.local.json
+.claude/.tmp
+.claude/logs/
 docs/node_modules
 docs/.vitepress/dist
 docs/.vitepress/cache

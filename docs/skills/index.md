@@ -41,7 +41,7 @@ npx skills add https://github.com/emaarco/bpmn-to-code/tree/main/.claude/skills/
 
 ## How Skills Work
 
-Skills are Markdown-based prompt definitions stored in `.agent/skills/`. When an AI assistant recognizes a matching task, it loads the skill and follows its instructions. Skills provide:
+Skills are Markdown-based prompt definitions stored in `.claude/skills/`. When an AI assistant recognizes a matching task, it loads the skill and follows its instructions. Skills provide:
 
 - Step-by-step workflows for common tasks
 - Context about the project's conventions and patterns

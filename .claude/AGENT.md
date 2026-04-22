@@ -115,5 +115,5 @@ You are a knowledgeable colleague, not someone who passively takes orders. If so
 
 ## AI Skills
 
-Reusable skill definitions live in `.agent/skills/`. Agent-specific symlinks (e.g., `.claude` → `.agent`) provide compatibility. New skills should be created under `.agent/skills/<skill-name>/SKILL.md`. See [docs/development/ai-skills.md](docs/development/ai-skills.md) for details.
+Reusable skill definitions live in `.claude/skills/`. New skills should be created under `.claude/skills/<skill-name>/SKILL.md`. See [docs/development/ai-skills.md](docs/development/ai-skills.md) for details.
 
