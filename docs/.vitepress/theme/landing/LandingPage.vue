@@ -50,7 +50,7 @@ import { ideTabs, generateCompare, surfaceCompare, validateRules, skills } from 
     <!-- P2 — Validate -->
     <section class="problem">
       <div class="problem-intro">
-        <span class="pillar-badge validate"><span class="num">2</span>Validate <span class="eyebrow">&middot; architecture rules</span></span>
+        <span class="pillar-badge validate"><span class="num">2</span>Validate <span class="eyebrow">&middot; architecture rules</span></span><span class="beta-chip">beta</span>
         <h2>Process rules <span class="grad-p">erode between deploys.</span></h2>
         <p>Missing implementations, undefined timers, inconsistent naming &mdash; without architectural tests, BPMN quality drifts silently. The testing module ships as a JUnit-friendly rule set you drop into any project. Catch violations in your test suite, not in staging.</p>
         <a class="pillar-link" :href="withBase('/validate/')">See the validation rules <span class="arrow">&rarr;</span></a>
@@ -69,7 +69,7 @@ import { ideTabs, generateCompare, surfaceCompare, validateRules, skills } from 
     <!-- P3 — Surface -->
     <section class="problem">
       <div class="problem-intro">
-        <span class="pillar-badge context"><span class="num">3</span>Surface <span class="eyebrow">&middot; context for your AI</span></span>
+        <span class="pillar-badge context"><span class="num">3</span>Surface <span class="eyebrow">&middot; context for your AI</span></span><span class="beta-chip">beta</span>
         <h2>Agents can&rsquo;t read your <span class="grad-ctx">.bpmn file.</span></h2>
         <p>Raw BPMN is 80% rendering metadata &mdash; shapes, bounds, waypoints. Agents waste context on pixels instead of process logic. bpmn-to-code emits a semantic JSON model built for AI context, not for diagrams, and exposes it over an MCP server your agent can query directly.</p>
         <a class="pillar-link" :href="withBase('/surface/')">Read the JSON surface spec <span class="arrow">&rarr;</span></a>
@@ -89,7 +89,7 @@ import { ideTabs, generateCompare, surfaceCompare, validateRules, skills } from 
     <!-- P4 — Agent Skills (offering) -->
     <section class="offering">
       <div class="offering-intro">
-        <span class="pillar-badge skills"><span class="num">4</span>Ship <span class="eyebrow">&middot; with Agent Skills</span></span>
+        <span class="pillar-badge skills"><span class="num">4</span>Ship <span class="eyebrow">&middot; with Agent Skills</span></span><span class="beta-chip">beta</span>
         <h2>Build processes <em>with</em> agents, not around them.</h2>
         <p>Drop-in agent skills, built on everything bpmn-to-code offers. Integrate the plugin into your project in one prompt, scaffold process services from a diagram, and get architectural tests written for you &mdash; while you focus on modeling the business logic. Works with Claude Code and any other agent supporting the <a href="https://agentskills.io" target="_blank" rel="noopener">agentskills.io</a> standard.</p>
         <a class="pillar-link" :href="withBase('/skills/')">See all skills <span class="arrow">&rarr;</span></a>

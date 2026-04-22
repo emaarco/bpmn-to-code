@@ -11,6 +11,7 @@ export interface IdeTab {
   paneType: 'image' | 'code'
   src?: string
   code?: string
+  beta?: boolean
 }
 
 export const ideTabs: IdeTab[] = [
@@ -64,6 +65,7 @@ export const ideTabs: IdeTab[] = [
     iconClass: 'kt',
     iconText: 'Kt',
     paneType: 'code',
+    beta: true,
     code: [
       `<span class="line"><span class="tok-k">class</span> <span class="tok-t">SubscriptionRulesTest</span> {</span>`,
       `<span class="line"> </span>`,
@@ -96,6 +98,7 @@ export const ideTabs: IdeTab[] = [
     iconClass: 'json',
     iconText: '{}',
     paneType: 'code',
+    beta: true,
     code: [
       `<span class="line">{</span>`,
       `<span class="line">  <span class="tok-s">"processId"</span>: <span class="tok-s">"subscription"</span>,</span>`,

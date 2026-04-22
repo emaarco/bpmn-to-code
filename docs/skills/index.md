@@ -1,4 +1,4 @@
-# 🧠 AI Agent Skills
+# 🧠 AI Agent Skills <Badge type="warning" text="beta" />
 
 bpmn-to-code ships with reusable skills for AI coding assistants. Skills work with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) out of the box.
 

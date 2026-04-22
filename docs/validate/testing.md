@@ -1,4 +1,4 @@
-# 🧪 Testing Module
+# 🧪 Testing Module <Badge type="warning" text="beta" />
 
 The `bpmn-to-code-testing` library lets you write architecture tests for your BPMN process models — the same way [ArchUnit](https://www.archunit.org/) lets you write architecture tests for Java code.
 

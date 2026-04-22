@@ -29,7 +29,7 @@ fun send() { ... }
 fun send() { ... }
 ```
 
-### Validate — Architecture Rules for BPMN
+### Validate — Architecture Rules for BPMN _(beta)_
 
 Like ArchUnit for Java, `bpmn-to-code-testing` lets you write architecture tests for your BPMN models. The standalone `validateBpmnModels` Gradle task and `validate-bpmn` Maven goal run the same checks in CI.
 
@@ -43,7 +43,7 @@ BpmnValidator
 
 11 built-in rules cover missing implementations, undefined timers, empty processes, naming violations, and variable collisions. Add custom rules by implementing `BpmnValidationRule`.
 
-### Surface — Process Structure in Code
+### Surface — Process Structure in Code _(beta)_
 
 Generates a structured JSON alongside the API. Your process is readable by AI agents, code reviewers, and CI — without opening Camunda Modeler.
 
@@ -129,7 +129,7 @@ dependencies {
 - 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Self-hostable container
 - 🤖 [MCP Server](bpmn-to-code-mcp/README.md) — AI-assisted generation inside your editor
 
-## AI Agent Skills
+## AI Agent Skills _(beta)_
 
 New to the project? The AI skills can set up the plugin for you, migrate existing hardcoded strings to the generated API, and scaffold worker stubs — no manual config needed.
 

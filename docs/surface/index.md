@@ -4,7 +4,7 @@ The Surface pillar makes your process structure accessible to AI agents, code re
 
 Three capabilities, all derived from the same BPMN model:
 
-## JSON Export
+## JSON Export <Badge type="warning" text="beta" />
 
 Generates a structured JSON file alongside the Kotlin/Java API. Every flow node, sequence flow, message, signal, and error — sorted in process-flow order, stripped of layout noise.
 
@@ -12,7 +12,7 @@ Designed for AI agents (paste or stream into your assistant's context), code rev
 
 [See JSON Export →](/surface/json)
 
-## Agent Skills
+## Agent Skills <Badge type="warning" text="beta" />
 
 Reusable Claude Code skills that automate common workflows: setting up the plugin in a new project, migrating hardcoded strings to the generated API, and scaffolding worker stubs.
 
