@@ -16,7 +16,6 @@ import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import javax.lang.model.element.Modifier.FINAL
@@ -319,28 +318,34 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc(
                     "Process variables grouped by the BPMN element that declares them.\n" +
-                        "When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.\n"
+                        "Direction is encoded in each variable's wrapper type: {@code VariableName.Input}, {@code VariableName.Output}, or {@code VariableName.InOut} when the variable is both read and written by the same element.\n" +
+                        "Consumer APIs that take a specific subtype (for example, a method accepting {@code VariableName.Output}) get compile-time direction enforcement.\n"
                 )
-            modelApi.model.flowNodes
+            val nodesWithVariables = modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }
-                .forEach { node ->
-                    val className = node.getRawName().toCamelCase()
-                    val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
-                    val byDirection = node.variables.groupBy { it.direction }
-                    val inputs = byDirection[VariableDirection.INPUT].orEmpty().sortedBy { it.getRawName() }
-                    val outputs = byDirection[VariableDirection.OUTPUT].orEmpty().sortedBy { it.getRawName() }
-                    if (inputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Inputs", inputs, variableNameClass))
-                    if (outputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Outputs", outputs, variableNameClass))
-                    variablesBuilder.addType(nodeVarsBuilder.build())
+            for (node in nodesWithVariables) {
+                val className = node.getRawName().toCamelCase()
+                val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
+                val variablesByName = node.variables.groupBy { it.getRawName() }
+                val sortedNames = variablesByName.keys.sorted()
+                for (rawName in sortedNames) {
+                    val group = variablesByName.getValue(rawName)
+                    val directions = group.map { it.direction }.toSet()
+                    val subtype = VariableNameSubtype.chooseFor(directions)
+                    nodeVarsBuilder.addField(createDirectionalAttribute(group.first(), subtype, variableNameClass))
                 }
+                variablesBuilder.addType(nodeVarsBuilder.build())
+            }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun buildDirectionClass(name: String, variables: List<VariableDefinition>, wrapperClass: ClassName): TypeSpec {
-            val classBuilder = TypeSpec.classBuilder(name).addModifiers(PUBLIC, STATIC, FINAL)
-            variables.forEach { classBuilder.addField(createTypedAttribute(it, wrapperClass)) }
-            return classBuilder.build()
+        private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): FieldSpec {
+            val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
+            return FieldSpec.builder(subtypeClass, variable.getName())
+                .addModifiers(PUBLIC, STATIC, FINAL)
+                .initializer("new \$T(\$S)", subtypeClass, variable.getValue())
+                .build()
         }
     }
 

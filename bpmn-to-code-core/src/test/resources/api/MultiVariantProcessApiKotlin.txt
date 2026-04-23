@@ -102,15 +102,14 @@ object SendNewsletterProcessApi {
 
   /**
    * Process variables grouped by the BPMN element that declares them.
-   * When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list.
+   * Direction is encoded in each variable's wrapper type: `VariableName.Input`, `VariableName.Output`, or `VariableName.InOut` when the variable is both read and written by the same element.
+   * Consumer APIs that take a specific subtype (e.g. `fun setOutput(v: VariableName.Output)`) get compile-time direction enforcement.
    */
   object Variables {
     object ServiceTaskLoadSubscribers {
-      object Outputs {
-        val AUTHOR: VariableName = VariableName("author")
+      val AUTHOR: VariableName.Output = VariableName.Output("author")
 
-        val SUBSCRIBERS: VariableName = VariableName("subscribers")
-      }
+      val SUBSCRIBERS: VariableName.Output = VariableName.Output("subscribers")
     }
   }
 

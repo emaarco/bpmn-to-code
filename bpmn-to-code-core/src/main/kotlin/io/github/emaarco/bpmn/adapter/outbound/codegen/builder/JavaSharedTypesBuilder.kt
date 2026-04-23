@@ -9,8 +9,16 @@ import com.palantir.javapoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
+import javax.lang.model.element.Modifier.ABSTRACT
 import javax.lang.model.element.Modifier.FINAL
 import javax.lang.model.element.Modifier.PUBLIC
+import javax.lang.model.element.Modifier.SEALED
+
+private const val VARIABLE_NAME_JAVADOC: String =
+    "Name of a process variable declared by a BPMN element.\n\n" +
+        "Direction is encoded in the subtype so consumer APIs can enforce it at compile time\n" +
+        "(for example, a method accepting {@code VariableName.Output} rejects inputs).\n" +
+        "{@code toString()} returns the underlying string, so {@code .value()} is optional in string contexts.\n"
 
 /**
  * Generates shared BPMN types as standalone Java files in the `{packagePath}.types` sub-package:
@@ -32,7 +40,7 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
             buildValueRecordFile(typesPackage, "ProcessId", language),
             buildValueRecordFile(typesPackage, "ElementId", language),
             buildValueRecordFile(typesPackage, "MessageName", language),
-            buildValueRecordFile(typesPackage, "VariableName", language),
+            buildVariableNameFile(typesPackage, language),
             buildValueRecordFile(typesPackage, "SignalName", language),
         )
     }
@@ -47,14 +55,69 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
     }
 
     private fun buildValueRecordFile(typesPackage: String, recordName: String, language: OutputLanguage): GeneratedApiFile {
-        val recordConstructor = MethodSpec.constructorBuilder()
-            .addParameter(String::class.java, "value")
-            .build()
-        val typeSpec = TypeSpec.recordBuilder(recordName)
-            .addModifiers(PUBLIC)
-            .recordConstructor(recordConstructor)
-            .build()
+        val typeSpec = buildValueRecordSpec(recordName, topLevel = true)
         return buildTypeFile(typesPackage, recordName, typeSpec, language)
+    }
+
+    private fun buildValueRecordSpec(recordName: String, topLevel: Boolean, superInterface: ClassName? = null, javadoc: String? = null): TypeSpec {
+        val builder = TypeSpec.recordBuilder(recordName)
+            .addModifiers(PUBLIC)
+            .recordConstructor(
+                MethodSpec.constructorBuilder()
+                    .addParameter(String::class.java, "value")
+                    .build()
+            )
+            .addMethod(toStringReturningValue())
+        if (superInterface != null) builder.addSuperinterface(superInterface)
+        if (javadoc != null) builder.addJavadoc(javadoc)
+        if (!topLevel) builder.addModifiers(javax.lang.model.element.Modifier.STATIC)
+        return builder.build()
+    }
+
+    private fun toStringReturningValue(): MethodSpec {
+        return MethodSpec.methodBuilder("toString")
+            .addAnnotation(Override::class.java)
+            .addModifiers(PUBLIC)
+            .returns(String::class.java)
+            .addStatement("return value")
+            .build()
+    }
+
+    private fun buildVariableNameFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val variableNameClass = ClassName.get(typesPackage, "VariableName")
+        val inputRecord = buildValueRecordSpec(
+            recordName = "Input",
+            topLevel = false,
+            superInterface = variableNameClass,
+            javadoc = "A variable read by the declaring element (BPMN input mapping).\n",
+        )
+        val outputRecord = buildValueRecordSpec(
+            recordName = "Output",
+            topLevel = false,
+            superInterface = variableNameClass,
+            javadoc = "A variable written by the declaring element (BPMN output mapping).\n",
+        )
+        val inOutRecord = buildValueRecordSpec(
+            recordName = "InOut",
+            topLevel = false,
+            superInterface = variableNameClass,
+            javadoc = "A variable read AND written by the declaring element.\n",
+        )
+
+        val valueAccessor = MethodSpec.methodBuilder("value")
+            .addModifiers(PUBLIC, ABSTRACT)
+            .returns(String::class.java)
+            .build()
+
+        val sealedInterface = TypeSpec.interfaceBuilder("VariableName")
+            .addModifiers(PUBLIC, SEALED)
+            .addJavadoc(VARIABLE_NAME_JAVADOC)
+            .addMethod(valueAccessor)
+            .addType(inputRecord)
+            .addType(outputRecord)
+            .addType(inOutRecord)
+            .build()
+        return buildTypeFile(typesPackage, "VariableName", sealedInterface, language)
     }
 
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {

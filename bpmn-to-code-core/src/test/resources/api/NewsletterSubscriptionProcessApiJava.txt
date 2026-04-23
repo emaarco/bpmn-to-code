@@ -107,45 +107,34 @@ public final class NewsletterSubscriptionProcessApi {
 
   /**
    * Process variables grouped by the BPMN element that declares them.
-   * When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.
+   * Direction is encoded in each variable's wrapper type: {@code VariableName.Input}, {@code VariableName.Output}, or {@code VariableName.InOut} when the variable is both read and written by the same element.
+   * Consumer APIs that take a specific subtype (for example, a method accepting {@code VariableName.Output}) get compile-time direction enforcement.
    */
   public static final class Variables {
     public static final class ActivitySendConfirmationMail {
-      public static final class Inputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final VariableName.Input SUBSCRIPTION_ID = new VariableName.Input("subscriptionId");
 
-        public static final VariableName TEST_VARIABLE = new VariableName("testVariable");
-      }
+      public static final VariableName.Input TEST_VARIABLE = new VariableName.Input("testVariable");
     }
 
     public static final class ActivitySendWelcomeMail {
-      public static final class Inputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
-      }
+      public static final VariableName.Input SUBSCRIPTION_ID = new VariableName.Input("subscriptionId");
     }
 
     public static final class CallActivityAbortRegistration {
-      public static final class Inputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
-      }
+      public static final VariableName.Input SUBSCRIPTION_ID = new VariableName.Input("subscriptionId");
     }
 
     public static final class EndEventRegistrationCompleted {
-      public static final class Outputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
-      }
+      public static final VariableName.Output SUBSCRIPTION_ID = new VariableName.Output("subscriptionId");
     }
 
     public static final class StartEventRequestReceived {
-      public static final class Outputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
-      }
+      public static final VariableName.Output SUBSCRIPTION_ID = new VariableName.Output("subscriptionId");
     }
 
     public static final class StartEventSubmitRegistrationForm {
-      public static final class Outputs {
-        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
-      }
+      public static final VariableName.Output SUBSCRIPTION_ID = new VariableName.Output("subscriptionId");
     }
   }
 

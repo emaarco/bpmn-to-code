@@ -18,7 +18,6 @@ import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -318,28 +317,34 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
                 .addKdoc(
                     "Process variables grouped by the BPMN element that declares them.\n" +
-                        "When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list."
+                        "Direction is encoded in each variable's wrapper type: `VariableName.Input`, `VariableName.Output`, or `VariableName.InOut` when the variable is both read and written by the same element.\n" +
+                        "Consumer APIs that take a specific subtype (e.g. `fun setOutput(v: VariableName.Output)`) get compile-time direction enforcement."
                 )
-            modelApi.model.flowNodes
+            val nodesWithVariables = modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }
-                .forEach { node ->
-                    val objectName = (node.getRawName()).toCamelCase()
-                    val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                    val byDirection = node.variables.groupBy { it.direction }
-                    val inputs = byDirection[VariableDirection.INPUT].orEmpty().sortedBy { it.getRawName() }
-                    val outputs = byDirection[VariableDirection.OUTPUT].orEmpty().sortedBy { it.getRawName() }
-                    if (inputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionObject("Inputs", inputs, variableNameClass))
-                    if (outputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionObject("Outputs", outputs, variableNameClass))
-                    variablesBuilder.addType(nodeVarsBuilder.build())
+            for (node in nodesWithVariables) {
+                val objectName = node.getRawName().toCamelCase()
+                val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
+                val variablesByName = node.variables.groupBy { it.getRawName() }
+                val sortedNames = variablesByName.keys.sorted()
+                for (rawName in sortedNames) {
+                    val group = variablesByName.getValue(rawName)
+                    val directions = group.map { it.direction }.toSet()
+                    val subtype = VariableNameSubtype.chooseFor(directions)
+                    nodeVarsBuilder.addProperty(createDirectionalAttribute(group.first(), subtype, variableNameClass))
                 }
+                variablesBuilder.addType(nodeVarsBuilder.build())
+            }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun buildDirectionObject(name: String, variables: List<VariableDefinition>, wrapperClass: ClassName): TypeSpec {
-            val objectBuilder = TypeSpec.objectBuilder(name)
-            variables.forEach { objectBuilder.addProperty(createTypedAttribute(it, wrapperClass)) }
-            return objectBuilder.build()
+        private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): PropertySpec {
+            val cleanValue = variable.getValue().escapeDollarInterpolation()
+            val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
+            return PropertySpec.builder(variable.getName(), subtypeClass)
+                .initializer("%T(\"$cleanValue\")", subtypeClass)
+                .build()
         }
     }
 
