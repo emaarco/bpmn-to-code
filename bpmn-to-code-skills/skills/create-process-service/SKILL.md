@@ -191,7 +191,7 @@ Once complete, locate and read the generated `*ProcessApi.kt` (or `.java`) file 
 - **ProcessApi class/object name** (e.g. `NewsletterSubscriptionProcessApi`)
 - **`PROCESS_ID`** constant value → derive `{{processId}}` and `{{ProcessName}}`
 - **`PROCESS_ENGINE`** constant → confirm it matches the selected engine
-- **All `TaskTypes` entries** → drive worker/delegate generation (name + value)
+- **All `ServiceTasks` entries** → drive worker/delegate generation (name + value)
 - **`Variables` structure** — Variables contains **only** per-element nested objects; there are
   no top-level flat constants. Each nested object is named in PascalCase from the BPMN element ID
   and holds the variables scoped to that specific flow node:
@@ -239,7 +239,7 @@ actual values collected and derived during the preceding steps.
 For `{{taskTypesTable}}`, generate one Markdown table row per TaskType:
 
 ```
-| `{{ProcessApiClass}}.TaskTypes.{{TASK_CONST}}` | `{{taskTypeValue}}` |
+| `{{ProcessApiClass}}.ServiceTasks.{{TASK_CONST}}` | `{{taskTypeValue}}` |
 ```
 
 Include or omit conditional blocks (`<!-- Include ... -->`) according to engine and approach.

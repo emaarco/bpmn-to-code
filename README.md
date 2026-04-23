@@ -25,7 +25,7 @@ bpmn-to-code reads your BPMN files and generates typed constants from them. Ever
 fun send() { ... }
 
 // After — generated from the BPMN model
-@JobWorker(type = NewsletterSubscriptionProcessApi.TaskTypes.NEWSLETTER_SEND_CONFIRMATION_MAIL)
+@JobWorker(type = NewsletterSubscriptionProcessApi.ServiceTasks.NEWSLETTER_SEND_CONFIRMATION_MAIL)
 fun send() { ... }
 ```
 

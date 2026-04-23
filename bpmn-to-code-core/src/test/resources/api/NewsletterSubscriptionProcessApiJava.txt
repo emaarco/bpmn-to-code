@@ -57,7 +57,7 @@ public final class NewsletterSubscriptionProcessApi {
     public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
   }
 
-  public static final class TaskTypes {
+  public static final class ServiceTasks {
     public static final String NEWSLETTER_SEND_CONFIRMATION_MAIL = "#{newsletterSendConfirmationMail}";
 
     public static final String NEWSLETTER_SEND_WELCOME_MAIL = "${newsletterSendWelcomeMail}";

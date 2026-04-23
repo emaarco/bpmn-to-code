@@ -22,7 +22,7 @@ Service tasks are detected via one of these `operaton:` attributes:
 </bpmn:serviceTask>
 ```
 
-The attribute value becomes the entry in the generated `TaskTypes` object.
+The attribute value becomes the entry in the generated `ServiceTasks` object.
 
 ## Variable Extraction
 

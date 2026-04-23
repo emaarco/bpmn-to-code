@@ -32,7 +32,7 @@ Replace hardcoded BPMN string literals in user code with references to the gener
 
 For each generated API file, extract a lookup table of string values mapped to their fully qualified API references:
 
-- **Kotlin `object`**: Parse `const val NAME: String = "value"` lines within the top-level object and each nested `object` (Elements, Messages, TaskTypes, Timers, Errors, Signals, Variables, CallActivities).
+- **Kotlin `object`**: Parse `const val NAME: String = "value"` lines within the top-level object and each nested `object` (Elements, Messages, ServiceTasks, Timers, Errors, Signals, Variables, CallActivities).
 - **Java `final class`**: Parse `public static final String NAME = "value";` lines within the top-level class and each nested `static final class`.
 - Record the fully qualified reference path. For example, a constant `PROCESS_ID` with value `"newsletterSubscription"` in `NewsletterSubscriptionProcessApiV1` becomes:
   - `NewsletterSubscriptionProcessApiV1.PROCESS_ID`

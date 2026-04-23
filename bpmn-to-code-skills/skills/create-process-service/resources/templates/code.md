@@ -69,7 +69,7 @@ private val log = KotlinLogging.logger {}
 @Component
 class {{TaskName}}Worker(private val useCase: {{TaskName}}UseCase) {
 
-    @ProcessEngineWorker(topic = {{ProcessApiClass}}.TaskTypes.{{TASK_CONST}})
+    @ProcessEngineWorker(topic = {{ProcessApiClass}}.ServiceTasks.{{TASK_CONST}})
     fun {{methodName}}(
         // @Variable(name = {{ProcessApiClass}}.Variables.{{ElementName}}.VARIABLE_NAME) variableName: String,
     ) {

@@ -57,7 +57,7 @@ public final class SendNewsletterProcessApi {
     public static final String MESSAGE_MAIL_REJECTED_AGAIN = "Message_MailRejectedAgain";
   }
 
-  public static final class TaskTypes {
+  public static final class ServiceTasks {
     public static final String NEWSLETTER_ANALYZE_SEND_ERROR = "newsletter.analyzeSendError";
 
     public static final String NEWSLETTER_LOAD_SUBSCRIBERS = "newsletter.loadSubscribers";
