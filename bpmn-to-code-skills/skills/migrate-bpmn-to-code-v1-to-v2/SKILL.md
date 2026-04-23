@@ -26,6 +26,7 @@ Update user source code that references the v1.1.0 generated Process API to use 
 | `ProcessApi.Timers.BpmnTimer` (nested type) | `import {pkg}.types.BpmnTimer` (standalone) |
 | `ProcessApi.Errors.BpmnError` (nested type) | `import {pkg}.types.BpmnError` (standalone) |
 | `ProcessApi.Variables.VAR_NAME` | `ProcessApi.Variables.ElementName.VAR_NAME` (manual) |
+| `useVersioning = true/false` (Gradle / Maven plugin config) | removed — delete the line |
 
 ## Instructions
 
@@ -47,7 +48,18 @@ Update user source code that references the v1.1.0 generated Process API to use 
 3. Scan `**/*.kt` and/or `**/*.java` files depending on what exists.
 4. Exclude generated API files and test directories (`src/test/`) unless the user requests test migration.
 
-### Step 3 – Scan for v1 patterns
+### Step 3 – Scan for removed plugin parameters in build files
+
+Search for `useVersioning` in build configuration files:
+
+- Gradle: `build.gradle.kts` and `build.gradle` — look for `useVersioning` inside any `bpmnToCode { }` or plugin configuration block
+- Maven: `pom.xml` — look for `<useVersioning>` inside the bpmn-to-code plugin `<configuration>` block
+
+The parameter was removed entirely. The fix is to delete the line — no replacement is needed.
+
+If any occurrences are found, include them in the migration plan (Step 5) and apply the deletion in Step 6.
+
+### Step 4 – Scan for v1 patterns in source code
 
 Search the scoped files for the following patterns and record file path, line number, and full line for each match:
 
@@ -69,7 +81,7 @@ Search the scoped files for the following patterns and record file path, line nu
 - Pattern: `ProcessApi\.Variables\.[A-Z_]+` where `[A-Z_]+` is not a sub-object name
 - These may now be nested under an element object. Flag each occurrence for manual review; do not propose an automatic replacement.
 
-### Step 4 – Present the migration plan
+### Step 5 – Present the migration plan
 
 Group findings by file and present a summary:
 
@@ -97,22 +109,23 @@ If nothing is found, report that no v1 API patterns were detected.
 
 Ask: *"Apply these replacements? (yes / skip [file-or-line] / cancel)"*
 
-- **yes** — proceed to Step 5
+- **yes** — proceed to Step 6
 - **skip** — remove the specified entries, show updated plan, ask again
 - **cancel** — stop without changes
 
-### Step 5 – Apply replacements
+### Step 6 – Apply replacements
 
 For each approved change:
 
-1. **TaskTypes → ServiceTasks**: Use Edit to replace `.TaskTypes.` with `.ServiceTasks.` on the matched line.
-2. **Nested type references**: Replace the qualified type path with the simple class name, then add the import after the last existing `import` line in the file.
+1. **useVersioning in build files**: Delete the entire line containing `useVersioning` from `build.gradle.kts`, `build.gradle`, or `pom.xml`.
+2. **TaskTypes → ServiceTasks**: Use Edit to replace `.TaskTypes.` with `.ServiceTasks.` on the matched line.
+3. **Nested type references**: Replace the qualified type path with the simple class name, then add the import after the last existing `import` line in the file.
    - **Kotlin**: `import {pkg}.types.BpmnTimer` / `import {pkg}.types.BpmnError`
    - **Java**: `import {pkg}.types.BpmnTimer;` / `import {pkg}.types.BpmnError;`
    - Skip if the import already exists.
-3. Process files one at a time, top-to-bottom by line number.
+4. Process files one at a time, top-to-bottom by line number.
 
-### Step 6 – Report
+### Step 7 – Report
 
 1. Summarize all changes made (replacements per file).
 2. List any items flagged for manual review with a brief explanation.
