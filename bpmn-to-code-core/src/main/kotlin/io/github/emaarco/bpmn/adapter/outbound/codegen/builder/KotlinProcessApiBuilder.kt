@@ -18,7 +18,6 @@ import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -321,48 +320,33 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
                         "Direction is encoded in each variable's wrapper type: `VariableName.Input`, `VariableName.Output`, or `VariableName.InOut` when the variable is both read and written by the same element.\n" +
                         "Consumer APIs that take a specific subtype (e.g. `fun setOutput(v: VariableName.Output)`) get compile-time direction enforcement."
                 )
-            modelApi.model.flowNodes
+            val nodesWithVariables = modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }
-                .forEach { node ->
-                    val objectName = (node.getRawName()).toCamelCase()
-                    val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                    collapseByDirection(node.variables)
-                        .sortedBy { (rawName, _) -> rawName }
-                        .forEach { (_, entry) ->
-                            nodeVarsBuilder.addProperty(createDirectionalAttribute(entry, variableNameClass))
-                        }
-                    variablesBuilder.addType(nodeVarsBuilder.build())
+            for (node in nodesWithVariables) {
+                val objectName = node.getRawName().toCamelCase()
+                val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
+                val variablesByName = node.variables.groupBy { it.getRawName() }
+                val sortedNames = variablesByName.keys.sorted()
+                for (rawName in sortedNames) {
+                    val group = variablesByName.getValue(rawName)
+                    val directions = group.map { it.direction }.toSet()
+                    val subtype = VariableNameSubtype.chooseFor(directions)
+                    nodeVarsBuilder.addProperty(createDirectionalAttribute(group.first(), subtype, variableNameClass))
                 }
+                variablesBuilder.addType(nodeVarsBuilder.build())
+            }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun collapseByDirection(variables: List<VariableDefinition>): List<Pair<String, CollapsedVariable>> {
-            val byName = variables.groupBy { it.getRawName() }
-            return byName.entries.map { (rawName, group) ->
-                val directions = group.map { it.direction }.toSet()
-                val subtype = when {
-                    directions.containsAll(setOf(VariableDirection.INPUT, VariableDirection.OUTPUT)) -> "InOut"
-                    directions.contains(VariableDirection.INPUT) -> "Input"
-                    else -> "Output"
-                }
-                rawName to CollapsedVariable(group.first(), subtype)
-            }
-        }
-
-        private fun createDirectionalAttribute(entry: CollapsedVariable, wrapperClass: ClassName): PropertySpec {
-            val cleanValue = entry.definition.getValue().escapeDollarInterpolation()
-            val subtypeClass = wrapperClass.nestedClass(entry.subtype)
-            return PropertySpec.builder(entry.definition.getName(), subtypeClass)
+        private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): PropertySpec {
+            val cleanValue = variable.getValue().escapeDollarInterpolation()
+            val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
+            return PropertySpec.builder(variable.getName(), subtypeClass)
                 .initializer("%T(\"$cleanValue\")", subtypeClass)
                 .build()
         }
     }
-
-    private data class CollapsedVariable(
-        val definition: VariableDefinition,
-        val subtype: String,
-    )
 
     private class ErrorsWriter : ObjectWriter<TypeSpec.Builder> {
 
