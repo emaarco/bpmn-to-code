@@ -7,12 +7,10 @@ import kotlin.collections.List
 /**
  * Per-element graph metadata capturing an element's neighbours in the process flow.
  *
- * @param previousElements Ids of the immediately preceding flow nodes. These are element ids,
- *     not sequence-flow ids — use `Flows` for edge data.
- * @param followingElements Ids of the immediately following flow nodes. These are element ids,
- *     not sequence-flow ids.
- * @param parentId Id of the containing subprocess element, or null if the element is top-level.
- * @param attachedToRef For boundary events: id of the host element; null for all other types.
+ * @param previousElements Element ids of preceding flow nodes — not sequence-flow ids (see `Flows`).
+ * @param followingElements Element ids of following flow nodes — not sequence-flow ids (see `Flows`).
+ * @param parentId Id of the containing subprocess, or null if top-level.
+ * @param attachedToRef For boundary events: id of the host element; null otherwise.
  */
 data class BpmnRelations(
   val name: String? = null,

@@ -151,12 +151,10 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
             .addModifiers(KModifier.DATA)
             .addKdoc(
                 "Per-element graph metadata capturing an element's neighbours in the process flow.\n\n" +
-                    "@param previousElements Ids of the immediately preceding flow nodes. These are element ids,\n" +
-                    "    not sequence-flow ids — use `Flows` for edge data.\n" +
-                    "@param followingElements Ids of the immediately following flow nodes. These are element ids,\n" +
-                    "    not sequence-flow ids.\n" +
-                    "@param parentId Id of the containing subprocess element, or null if the element is top-level.\n" +
-                    "@param attachedToRef For boundary events: id of the host element; null for all other types.\n"
+                    "@param previousElements Element ids of preceding flow nodes — not sequence-flow ids (see `Flows`).\n" +
+                    "@param followingElements Element ids of following flow nodes — not sequence-flow ids (see `Flows`).\n" +
+                    "@param parentId Id of the containing subprocess, or null if top-level.\n" +
+                    "@param attachedToRef For boundary events: id of the host element; null otherwise.\n"
             )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
