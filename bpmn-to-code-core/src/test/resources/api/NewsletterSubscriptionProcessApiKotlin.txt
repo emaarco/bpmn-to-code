@@ -113,29 +113,41 @@ object NewsletterSubscriptionProcessApi {
 
   object Variables {
     object ActivitySendConfirmationMail {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Inputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
 
-      val TEST_VARIABLE: VariableName = VariableName("testVariable")
+        val TEST_VARIABLE: VariableName = VariableName("testVariable")
+      }
     }
 
     object ActivitySendWelcomeMail {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Inputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
 
     object CallActivityAbortRegistration {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Inputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
 
     object EndEventRegistrationCompleted {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Outputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
 
     object StartEventRequestReceived {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Outputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
 
     object StartEventSubmitRegistrationForm {
-      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      object Outputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
   }
 

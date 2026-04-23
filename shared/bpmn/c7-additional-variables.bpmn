@@ -5,7 +5,7 @@
     <bpmn:startEvent id="StartEvent_OrderReceived" name="Order received">
       <bpmn:extensionElements>
         <camunda:properties>
-          <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+          <camunda:property name="additionalOutputVariables" value="orderId, customerEmail, amount" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1</bpmn:outgoing>
@@ -15,9 +15,11 @@
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="orderId">${orderId}</camunda:inputParameter>
+          <camunda:outputParameter name="orderId">${orderId}</camunda:outputParameter>
         </camunda:inputOutput>
         <camunda:properties>
-          <camunda:property name="additionalVariables" value="orderId, shipmentId" />
+          <camunda:property name="additionalInputVariables" value="orderId" />
+          <camunda:property name="additionalOutputVariables" value="shipmentId" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1</bpmn:incoming>

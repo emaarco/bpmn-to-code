@@ -36,7 +36,7 @@ Variables are extracted from `camunda:inputOutput`:
 The `name` attribute of each parameter becomes a variable.
 
 ::: warning Message Start Events
-`camunda:inputOutput` is **not supported** on message start events in Camunda 7. Use extension properties with `additionalVariables` instead (see below).
+`camunda:inputOutput` is **not supported** on message start events in Camunda 7. Use extension properties with `additionalInputVariables` / `additionalOutputVariables` instead (see below).
 :::
 
 ### Call Activity Mappings
@@ -64,18 +64,19 @@ Multi-instance variables come from attributes on the `multiInstanceLoopCharacter
     camunda:elementVariable="subscriber" />
 ```
 
-**Extracted variables:** `subscribers` (from collection expression), `subscriber` (element variable)
+**Extracted variables:** `subscribers` → Input (from `collection` expression), `subscriber` → Output (from `elementVariable`)
 
-### Additional Variables (Extension Properties)
+### Additional Input / Output Variables (Extension Properties)
 
-For elements where I/O mappings aren't supported (like message start events), you can declare variables via `camunda:properties`:
+For elements where I/O mappings aren't supported (like message start events), declare variables via `camunda:properties`. Two directional property names are recognised:
 
 ```xml
 <bpmn:extensionElements>
   <camunda:properties>
-    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+    <camunda:property name="additionalInputVariables" value="orderId, customerEmail" />
+    <camunda:property name="additionalOutputVariables" value="processingResult" />
   </camunda:properties>
 </bpmn:extensionElements>
 ```
 
-The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.
+Each comma-separated value becomes a variable — values under `additionalInputVariables` land in the element's `Inputs` sub-object, values under `additionalOutputVariables` in `Outputs`. Works on any BPMN element. The legacy undirected `additionalVariables` property is no longer extracted — split your values into the two directional properties above.

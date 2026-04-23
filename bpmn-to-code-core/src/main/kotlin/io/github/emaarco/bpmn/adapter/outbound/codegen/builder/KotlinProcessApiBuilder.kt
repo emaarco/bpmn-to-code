@@ -17,6 +17,8 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -306,11 +308,20 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
                 .forEach { node ->
                     val objectName = (node.getRawName()).toCamelCase()
                     val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                    val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addProperty(createTypedAttribute(it, variableNameClass)) }
+                    val byDirection = node.variables.groupBy { it.direction }
+                    val inputs = byDirection[VariableDirection.INPUT].orEmpty().sortedBy { it.getRawName() }
+                    val outputs = byDirection[VariableDirection.OUTPUT].orEmpty().sortedBy { it.getRawName() }
+                    if (inputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionObject("Inputs", inputs, variableNameClass))
+                    if (outputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionObject("Outputs", outputs, variableNameClass))
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
+        }
+
+        private fun buildDirectionObject(name: String, variables: List<VariableDefinition>, wrapperClass: ClassName): TypeSpec {
+            val objectBuilder = TypeSpec.objectBuilder(name)
+            variables.forEach { objectBuilder.addProperty(createTypedAttribute(it, wrapperClass)) }
+            return objectBuilder.build()
         }
     }
 

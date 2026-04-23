@@ -9,6 +9,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -272,8 +273,8 @@ class CollisionDetectionServiceTest {
         val model = testBpmnModel(
             processId = "TestProcess",
             flowNodes = listOf(
-                FlowNodeDefinition(id = "node1", variables = listOf(VariableDefinition(name = "userId"))),
-                FlowNodeDefinition(id = "node2", variables = listOf(VariableDefinition(name = "user_id"))),
+                FlowNodeDefinition(id = "node1", variables = listOf(VariableDefinition(name = "userId", direction = VariableDirection.INPUT))),
+                FlowNodeDefinition(id = "node2", variables = listOf(VariableDefinition(name = "user_id", direction = VariableDirection.INPUT))),
             ),
         )
 

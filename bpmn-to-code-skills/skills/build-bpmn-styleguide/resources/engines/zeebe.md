@@ -67,7 +67,7 @@ Variables are scoped per activity and mapped via:
 - `<zeebe:ioMapping>` with `<zeebe:input source="..." target="..."/>` and `<zeebe:output source="..." target="..."/>`
 - `<zeebe:loopCharacteristics>` for multi-instance, with `inputElement`, `inputCollection`, `outputElement`, `outputCollection`
 
-No `camunda:properties` / `additionalVariables` mechanism.
+No `camunda:properties` / `additionalInputVariables` / `additionalOutputVariables` mechanism.
 
 ## Messages
 

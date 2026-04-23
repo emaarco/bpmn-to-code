@@ -42,7 +42,7 @@ Variables are extracted from `operaton:inputOutput`:
 The `name` attribute of each parameter becomes a variable.
 
 ::: warning Message Start Events
-`operaton:inputOutput` is **not supported** on message start events. Use extension properties with `additionalVariables` instead (see below).
+`operaton:inputOutput` is **not supported** on message start events. Use extension properties with `additionalInputVariables` / `additionalOutputVariables` instead (see below).
 :::
 
 ### Call Activity Mappings
@@ -70,18 +70,19 @@ Multi-instance variables come from attributes on the `multiInstanceLoopCharacter
     operaton:elementVariable="subscriber" />
 ```
 
-**Extracted variables:** `subscribers` (from collection expression), `subscriber` (element variable)
+**Extracted variables:** `subscribers` → Input (from `collection` expression), `subscriber` → Output (from `elementVariable`)
 
-### Additional Variables (Extension Properties)
+### Additional Input / Output Variables (Extension Properties)
 
-For elements where I/O mappings aren't supported (like message start events), you can declare variables via `operaton:properties`:
+For elements where I/O mappings aren't supported (like message start events), declare variables via `operaton:properties`. Two directional property names are recognised:
 
 ```xml
 <bpmn:extensionElements>
   <operaton:properties>
-    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+    <operaton:property name="additionalInputVariables" value="orderId, customerEmail" />
+    <operaton:property name="additionalOutputVariables" value="processingResult" />
   </operaton:properties>
 </bpmn:extensionElements>
 ```
 
-The comma-separated list is parsed and each value becomes a variable. This works on any BPMN element.
+Each comma-separated value becomes a variable — values under `additionalInputVariables` land in the element's `Inputs` sub-object, values under `additionalOutputVariables` in `Outputs`. Works on any BPMN element. The legacy undirected `additionalVariables` property is no longer extracted — split your values into the two directional properties above.

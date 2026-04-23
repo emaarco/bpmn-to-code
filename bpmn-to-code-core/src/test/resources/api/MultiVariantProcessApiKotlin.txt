@@ -93,9 +93,11 @@ object SendNewsletterProcessApi {
 
   object Variables {
     object ServiceTaskLoadSubscribers {
-      val AUTHOR: VariableName = VariableName("author")
+      object Outputs {
+        val AUTHOR: VariableName = VariableName("author")
 
-      val SUBSCRIBERS: VariableName = VariableName("subscribers")
+        val SUBSCRIBERS: VariableName = VariableName("subscribers")
+      }
     }
   }
 

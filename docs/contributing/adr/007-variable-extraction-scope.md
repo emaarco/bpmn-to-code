@@ -69,10 +69,14 @@ The scope of "explicit definitions" has expanded since the initial decision. All
 - **Camunda 7** (`Camunda7ModelExtractor.extractVariables()`):
   - `camunda:inputOutput` → `inputParameter`/`outputParameter` (I/O mappings)
   - `camunda:in`/`camunda:out` on call activities (call activity mappings)
-  - `camunda:properties` with `name="additionalVariables"` (extension properties, for elements like message start events that don't support I/O mappings)
+  - `camunda:properties` with `name="additionalInputVariables"` / `name="additionalOutputVariables"` (directional extension properties, for elements like message start events that don't support I/O mappings)
   - `multiInstanceLoopCharacteristics` `camunda:collection` expression and `camunda:elementVariable` attribute
 - **Zeebe** (`ZeebeModelExtractor.extractVariables()`):
   - `zeebe:ioMapping` → `input`/`output` elements
-  - `zeebe:loopCharacteristics` `inputCollection`/`outputElement` attributes
+  - `zeebe:loopCharacteristics` `inputElement`/`inputCollection`/`outputElement`/`outputCollection` attributes
 - **Operaton** (`OperatonModelExtractor.extractVariables()`): same as Camunda 7 using the `operaton:` namespace
 - Expression parsing is not performed
+
+## Subsequent decision (issue #290)
+
+Direction is propagated from the BPMN source into the generated API: the `Variables.<Element>` object is split into `Inputs` / `Outputs` sub-objects. To keep every extracted variable unambiguously directional, the legacy undirected `additionalVariables` extension property was **removed** from the extraction rules and replaced by two directional variants — `additionalInputVariables` and `additionalOutputVariables`. See [ADR 015](./015-directional-variable-extraction.md).

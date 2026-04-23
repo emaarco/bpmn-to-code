@@ -8,6 +8,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL_VALUE_KEY
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 
 internal fun buildSubscribeNewsletterFlowNodes(
     confirmationMailImpl: String,
@@ -19,7 +20,7 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "CallActivity_AbortRegistration",
         elementType = BpmnElementType.CALL_ACTIVITY,
         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
-        variables = listOf(VariableDefinition("subscriptionId")),
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
         previousElements = listOf("Timer_After3Days"),
         followingElements = listOf("CompensationEndEvent_RegistrationAborted"),
     ),
@@ -36,7 +37,7 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "Activity_SendConfirmationMail",
         elementType = BpmnElementType.SERVICE_TASK,
         properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Activity_SendConfirmationMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to confirmationMailImpl))),
-        variables = listOf(VariableDefinition("subscriptionId")) + extraVariables,
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)) + extraVariables,
         parentId = "SubProcess_Confirmation",
         previousElements = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
         followingElements = listOf("Activity_ConfirmRegistration"),
@@ -45,7 +46,7 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "Activity_SendWelcomeMail",
         elementType = BpmnElementType.SERVICE_TASK,
         properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("Activity_SendWelcomeMail", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to welcomeMailImpl))),
-        variables = listOf(VariableDefinition("subscriptionId")),
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
         previousElements = listOf("SubProcess_Confirmation"),
         followingElements = listOf("EndEvent_RegistrationCompleted"),
     ),
@@ -67,7 +68,7 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "EndEvent_RegistrationCompleted",
         elementType = BpmnElementType.END_EVENT,
         properties = FlowNodeProperties.ServiceTask(ServiceTaskDefinition("EndEvent_RegistrationCompleted", engineSpecificProperties = mapOf(IMPL_VALUE_KEY to registrationCompletedImpl))),
-        variables = listOf(VariableDefinition("subscriptionId")),
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
         previousElements = listOf("Activity_SendWelcomeMail"),
     ),
     FlowNodeDefinition(
@@ -98,14 +99,14 @@ internal fun buildSubscribeNewsletterFlowNodes(
     FlowNodeDefinition(
         id = "StartEvent_RequestReceived",
         elementType = BpmnElementType.START_EVENT,
-        variables = listOf(VariableDefinition("subscriptionId")),
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
         parentId = "SubProcess_Confirmation",
         followingElements = listOf("Activity_SendConfirmationMail"),
     ),
     FlowNodeDefinition(
         id = "StartEvent_SubmitRegistrationForm",
         elementType = BpmnElementType.START_EVENT,
-        variables = listOf(VariableDefinition("subscriptionId")),
+        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
         followingElements = listOf("serviceTask_incrementSubscriptionCounter"),
     ),
     FlowNodeDefinition(

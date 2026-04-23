@@ -27,6 +27,7 @@ import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
@@ -36,6 +37,7 @@ import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
 import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
+import org.camunda.bpm.model.xml.instance.DomElement
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 import java.io.InputStream
 
@@ -206,27 +208,46 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
             val propertiesExtensions = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTIES)
             val additionalVars = extractAdditionalVariables(propertiesExtensions)
             val allVars = (ioVars + multiInstanceVars + callActivityMappingVars + additionalVars)
-                .map { it.removeExpressionSyntax() }
-            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+                .map { (name, direction) -> name.removeExpressionSyntax() to direction }
+            val distinctVars = allVars.distinct().map { (name, direction) -> VariableDefinition(name, direction) }
             nodeId to distinctVars
         }
     }
 
     private fun extractInputAndOutputVariables(
         extensions: List<ModelElementInstance>
-    ): List<String> {
+    ): List<Pair<String, VariableDirection>> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }
-        val ioElements = allChildElements.withElementName(*CamundaModelConstants.inputOutputParameters.toTypedArray())
-        val variableNames = ioElements.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }
-        return variableNames.filterNot { it.isNullOrBlank() }
+        val inputs = allChildElements
+            .withElementName(BpmnModelConstants.CAMUNDA_ELEMENT_INPUT_PARAMETER)
+            .mapNotNull { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }
+            .filter { it.isNotBlank() }
+            .map { it to VariableDirection.INPUT }
+        val outputs = allChildElements
+            .withElementName(BpmnModelConstants.CAMUNDA_ELEMENT_OUTPUT_PARAMETER)
+            .mapNotNull { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME) }
+            .filter { it.isNotBlank() }
+            .map { it to VariableDirection.OUTPUT }
+        return inputs + outputs
     }
 
     private fun extractAdditionalVariables(
         extensions: List<ModelElementInstance>
-    ): List<String> {
+    ): List<Pair<String, VariableDirection>> {
         val allChildElements = extensions.flatMap { it.domElement.childElements }
         val propertyElements = allChildElements.withElementName(BpmnModelConstants.CAMUNDA_ELEMENT_PROPERTY)
-        val filter = BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME to CamundaModelConstants.ADDITIONAL_VARIABLES_PROPERTY_NAME
+        val inputs = readAdditionalVariableValues(propertyElements, CamundaModelConstants.ADDITIONAL_INPUT_VARIABLES_PROPERTY_NAME)
+            .map { it to VariableDirection.INPUT }
+        val outputs = readAdditionalVariableValues(propertyElements, CamundaModelConstants.ADDITIONAL_OUTPUT_VARIABLES_PROPERTY_NAME)
+            .map { it to VariableDirection.OUTPUT }
+        return inputs + outputs
+    }
+
+    private fun readAdditionalVariableValues(
+        propertyElements: List<DomElement>,
+        propertyName: String,
+    ): List<String> {
+        val filter = BpmnModelConstants.CAMUNDA_ATTRIBUTE_NAME to propertyName
         val matchingProperties = propertyElements.withAttribute(filter)
         val rawValues = matchingProperties.map { it.getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_VALUE) }
         return rawValues.flatMap { it?.split(",") ?: emptyList() }.map { it.trim() }.filter { it.isNotBlank() }
@@ -234,23 +255,24 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun extractCallActivityMappingVariables(
         extensions: List<ModelElementInstance>
-    ): List<String> {
+    ): List<Pair<String, VariableDirection>> {
         val inElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
         val outElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
         val sourceVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE)
         val sourceExprVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE_EXPRESSION)
         val targetVars = outElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TARGET)
-        return sourceVars + sourceExprVars + targetVars
+        val inputs = (sourceVars + sourceExprVars).map { it to VariableDirection.INPUT }
+        val outputs = targetVars.map { it to VariableDirection.OUTPUT }
+        return inputs + outputs
     }
 
     private fun extractMultiInstanceVariables(
         nodes: Collection<FlowNode>
-    ): List<String> {
+    ): List<Pair<String, VariableDirection>> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
-        val elementVariables = loops.mapNotNull { it.camundaElementVariable }
-        val collectionVariables = loops.mapNotNull { it.camundaCollection }
-        val allVariables = elementVariables + collectionVariables
-        return allVariables
+        val collectionVariables = loops.mapNotNull { it.camundaCollection }.map { it to VariableDirection.INPUT }
+        val elementVariables = loops.mapNotNull { it.camundaElementVariable }.map { it to VariableDirection.INPUT }
+        return collectionVariables + elementVariables
     }
 
 }

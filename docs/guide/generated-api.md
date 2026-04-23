@@ -18,7 +18,7 @@ The generated Process API is an `object` (Kotlin) or `class` (Java) with nested 
 | `Errors` | Error definitions with name and code (`BpmnError`) |
 | `Compensations` | Compensation event IDs |
 | `Signals` | Signal names from signal events |
-| `Variables` | All extracted process variables, with per-element sub-objects |
+| `Variables` | Per-element variables, split into `Inputs` / `Outputs` sub-objects by direction |
 | `Flows` | Sequence flows with `sourceRef`, `targetRef`, `conditionExpression`, `isDefault` |
 | `Relations` | Per-element topology: `incoming`, `outgoing`, `parentId`, `attachedToRef`, `attachedElements` |
 
@@ -41,6 +41,7 @@ import de.emaarco.example.types.BpmnError
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
 import de.emaarco.example.types.BpmnTimer
+import de.emaarco.example.types.VariableName
 
 object NewsletterSubscriptionProcessApi {
   const val PROCESS_ID: String = "newsletterSubscription"
@@ -91,14 +92,16 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Variables {
-    const val SUBSCRIPTION_ID: String = "subscriptionId"
-
     object ActivitySendConfirmationMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      object Inputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
 
-    object ActivitySendWelcomeMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+    object StartEventSubmitRegistrationForm {
+      object Outputs {
+        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      }
     }
   }
 
@@ -186,30 +189,38 @@ data class BpmnRelations(
 
 This is useful for traversing process topology in tests, validations, or analysis tools.
 
-## Per-Element Variables
+## Per-Element Variables with Direction
 
-The top-level `Variables` object contains all variables across the process. Nested sub-objects group variables by the element they were extracted from:
+Every variable is associated with the element that declares it **and** with the direction in which it flows. The `Variables.<Element>` object splits its constants into nested `Inputs` / `Outputs` sub-objects so consumers can tell whether a variable is read by the element or written by it:
 
 ```kotlin
 object Variables {
-    const val SUBSCRIPTION_ID: String = "subscriptionId"  // appears in any element
-
     object ActivitySendConfirmationMail {
-        const val SUBSCRIPTION_ID: String = "subscriptionId"  // from this element's I/O mapping
+        object Inputs {
+            val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+        }
+    }
+
+    object StartEventSubmitRegistrationForm {
+        object Outputs {
+            val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+        }
     }
 }
 ```
 
+A sub-object is only emitted when it contains at least one variable — one-sided splits (`Inputs` only or `Outputs` only) are legal. An element without any directional variables is omitted from `Variables` entirely.
+
 ## Variable Extraction
 
-Variables are extracted from different sources depending on the engine. See the engine-specific pages for details:
+Variables are extracted from direction-aware BPMN sources. See the engine-specific pages for details:
 
-- [Zeebe](/engines/zeebe) — variables from `zeebe:ioMapping` and `zeebe:loopCharacteristics`
-- [Camunda 7](/engines/camunda7) — variables from `camunda:inputOutput`, `camunda:in`/`camunda:out`, `camunda:properties`, and multi-instance attributes
+- [Zeebe](/engines/zeebe) — `zeebe:input`/`zeebe:output` inside `zeebe:ioMapping`, plus `inputElement`/`inputCollection`/`outputElement`/`outputCollection` on `zeebe:loopCharacteristics`
+- [Camunda 7](/engines/camunda7) — `camunda:inputParameter`/`camunda:outputParameter`, `camunda:in`/`camunda:out`, multi-instance `camunda:collection`/`camunda:elementVariable`, and the `additionalInputVariables` / `additionalOutputVariables` extension properties
 - [Operaton](/engines/operaton) — same patterns as Camunda 7, using the `operaton:` namespace
 
 ::: info
-bpmn-to-code **only extracts variables from explicit BPMN definitions** — I/O mappings, call activity in/out mappings, multi-instance attributes, and `additionalVariables` extension properties. Variables only referenced in expressions (sequence flows, gateway conditions, script tasks) are intentionally ignored. This is by design — the BPMN model should be the single source of truth for its variable contract.
+bpmn-to-code **only extracts variables from explicit BPMN definitions**. Variables only referenced in expressions (sequence flows, gateway conditions, script tasks) are intentionally ignored. This is by design — the BPMN model should be the single source of truth for its variable contract.
 :::
 
 ## Model Merging

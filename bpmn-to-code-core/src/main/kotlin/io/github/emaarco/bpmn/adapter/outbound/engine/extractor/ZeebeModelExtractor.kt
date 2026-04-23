@@ -24,6 +24,7 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.CallActivity
@@ -153,27 +154,31 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         return flowNodes.associate { node ->
             val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val ioMappings = node.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING)
-            val ioVars = extractInputAndOutputVariables(ioMappings)
+            val inputs = extractIoVariables(ioMappings, ZeebeModelConstants.ELEMENT_INPUT, VariableDirection.INPUT)
+            val outputs = extractIoVariables(ioMappings, ZeebeModelConstants.ELEMENT_OUTPUT, VariableDirection.OUTPUT)
             val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
-            val allVars = ioVars + multiInstanceVars
-            val distinctVars = allVars.distinct().map { VariableDefinition(it) }
+            val allVars = inputs + outputs + multiInstanceVars
+            val distinctVars = allVars.distinct().map { (name, direction) -> VariableDefinition(name, direction) }
             nodeId to distinctVars
         }
     }
 
-    private fun extractInputAndOutputVariables(
-        extensions: List<ModelElementInstance>
-    ): List<String> {
-        val allowedDefinitions = listOf(ZeebeModelConstants.ELEMENT_INPUT, ZeebeModelConstants.ELEMENT_OUTPUT)
+    private fun extractIoVariables(
+        extensions: List<ModelElementInstance>,
+        elementName: String,
+        direction: VariableDirection,
+    ): List<Pair<String, VariableDirection>> {
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
-        val eitherInputOrOutput = allElementsInContainer.filter { allowedDefinitions.contains(it.localName) }
-        val variableNames = eitherInputOrOutput.map { it.getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET) }
-        return variableNames.filterNot { it.isNullOrBlank() }
+        val matching = allElementsInContainer.filter { it.localName == elementName }
+        return matching
+            .mapNotNull { it.getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET) }
+            .filter { it.isNotBlank() }
+            .map { it to direction }
     }
 
     private fun extractMultiInstanceVariables(
         nodes: Collection<FlowNode>
-    ): List<String> {
+    ): List<Pair<String, VariableDirection>> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
         val allExtensions = loops.flatMap { it.findExtensionElements() }
         val loopCharacteristics = allExtensions.filterByType(ZeebeModelConstants.ELEMENT_LOOP_CHARACTERISTICS)
@@ -181,8 +186,9 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val inputCollections = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_INPUT_COLLECTION)
         val outputElements = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_ELEMENT)
         val outputCollections = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_COLLECTION)
-        val allLoopVariables = inputElements + inputCollections + outputElements + outputCollections
-        return allLoopVariables.map { it.removePrefix("=") }
+        val inputs = (inputElements + inputCollections).map { it.removePrefix("=") to VariableDirection.INPUT }
+        val outputs = (outputElements + outputCollections).map { it.removePrefix("=") to VariableDirection.OUTPUT }
+        return inputs + outputs
     }
 
 }

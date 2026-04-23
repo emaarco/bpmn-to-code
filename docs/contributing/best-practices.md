@@ -79,7 +79,7 @@ Supported sources by engine:
 | I/O mappings (`inputOutput`) | ✅ | ✅ |
 | Multi-instance attributes | ✅ | ✅ |
 | Call activity in/out mappings | ✅ | — |
-| `additionalVariables` extension properties | ✅ | — |
+| `additionalInputVariables` / `additionalOutputVariables` extension properties | ✅ | — |
 
 See the engine pages for details: [Camunda 7](/engines/camunda7) · [Operaton](/engines/operaton) · [Zeebe](/engines/zeebe)
 
@@ -93,25 +93,27 @@ See the engine pages for details: [Camunda 7](/engines/camunda7) · [Operaton](/
 
 ### When I/O Mappings Aren't Available
 
-Some elements don't support I/O mappings — for example, **message start events** in Camunda 7 and Operaton. For these cases, use `additionalVariables` extension properties to declare variables explicitly:
+Some elements don't support I/O mappings — for example, **message start events** in Camunda 7 and Operaton. For these cases, use the directional `additionalInputVariables` / `additionalOutputVariables` extension properties to declare variables explicitly:
 
 ```xml
 <!-- Camunda 7 -->
 <bpmn:extensionElements>
   <camunda:properties>
-    <camunda:property name="additionalVariables" value="orderId, customerEmail, amount" />
+    <camunda:property name="additionalInputVariables" value="orderId, customerEmail" />
+    <camunda:property name="additionalOutputVariables" value="processingResult" />
   </camunda:properties>
 </bpmn:extensionElements>
 
 <!-- Operaton -->
 <bpmn:extensionElements>
   <operaton:properties>
-    <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+    <operaton:property name="additionalInputVariables" value="orderId, customerEmail" />
+    <operaton:property name="additionalOutputVariables" value="processingResult" />
   </operaton:properties>
 </bpmn:extensionElements>
 ```
 
-This works on any BPMN element. See [Camunda 7](/engines/camunda7#additional-variables-extension-properties) and [Operaton](/engines/operaton#additional-variables-extension-properties) engine pages for full details.
+Values land in the element's `Inputs` / `Outputs` sub-object accordingly. Works on any BPMN element. See [Camunda 7](/engines/camunda7#additional-input-output-variables-extension-properties) and [Operaton](/engines/operaton#additional-input-output-variables-extension-properties) engine pages for full details.
 
 ## Multi-Environment Modeling
 
@@ -156,7 +158,7 @@ If process variants are significantly different, consider:
 
 **Key Takeaways:**
 1. Name elements descriptively and consistently using prefix patterns
-2. Define all process variables explicitly using I/O mappings, call activity mappings, or `additionalVariables` where needed
+2. Define all process variables explicitly using I/O mappings, call activity mappings, or `additionalInputVariables` / `additionalOutputVariables` where needed
 3. Keep process variants aligned when using the same process ID
 5. Let your BPMN model be the single source of truth
 
