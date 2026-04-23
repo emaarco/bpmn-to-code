@@ -6,6 +6,7 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.testBpmnModelApi
 import io.github.emaarco.bpmn.domain.testSendNewsletterBpmnModel
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
@@ -35,7 +36,7 @@ class JavaProcessApiBuilderTest {
                     confirmationMailImpl = "#{newsletterSendConfirmationMail}",
                     welcomeMailImpl = "\${newsletterSendWelcomeMail}",
                     registrationCompletedImpl = "newsletter.registrationCompleted",
-                    extraVariables = listOf(VariableDefinition("testVariable")),
+                    extraVariables = listOf(VariableDefinition("testVariable", VariableDirection.INPUT)),
                 ),
             )
         )

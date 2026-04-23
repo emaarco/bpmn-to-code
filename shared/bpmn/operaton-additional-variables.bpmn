@@ -5,7 +5,7 @@
     <bpmn:startEvent id="StartEvent_OrderReceived" name="Order received">
       <bpmn:extensionElements>
         <operaton:properties>
-          <operaton:property name="additionalVariables" value="orderId, customerEmail, amount" />
+          <operaton:property name="additionalOutputVariables" value="orderId, customerEmail, amount" />
         </operaton:properties>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1</bpmn:outgoing>
@@ -17,7 +17,8 @@
           <operaton:inputParameter name="orderId">${orderId}</operaton:inputParameter>
         </operaton:inputOutput>
         <operaton:properties>
-          <operaton:property name="additionalVariables" value="orderId, shipmentId" />
+          <operaton:property name="additionalInputVariables" value="orderId" />
+          <operaton:property name="additionalOutputVariables" value="shipmentId" />
         </operaton:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1</bpmn:incoming>

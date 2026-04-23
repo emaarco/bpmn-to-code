@@ -14,6 +14,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -48,7 +49,7 @@ class ZeebeModelExtractorTest {
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted")),
                     FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.RECEIVE_TASK,
@@ -60,14 +61,14 @@ class ZeebeModelExtractorTest {
                     FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
                         displayName = "Send confirmation mail",
                         properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[0]),
-                        variables = listOf(VariableDefinition("testVariable"), VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("testVariable", VariableDirection.INPUT), VariableDefinition("subscriptionId", VariableDirection.INPUT)),
                         parentId = "SubProcess_Confirmation",
                         previousElements = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
                         followingElements = listOf("Activity_ConfirmRegistration")),
                     FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
                         displayName = "Send Welcome-Mail",
                         properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[1]),
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
                         previousElements = listOf("SubProcess_Confirmation"),
                         followingElements = listOf("EndEvent_RegistrationCompleted")),
                     FlowNodeDefinition("CompensationEndEvent_RegistrationAborted", BpmnElementType.END_EVENT,
@@ -78,11 +79,11 @@ class ZeebeModelExtractorTest {
                         attachedToRef = "serviceTask_incrementSubscriptionCounter"),
                     FlowNodeDefinition("CompensationTask_DecrementSubscriptionCounter", BpmnElementType.TASK,
                         displayName = "Decrement subscription counter",
-                        variables = listOf(VariableDefinition("subscriptionId"))),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT))),
                     FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
                         displayName = "Registration completed",
                         properties = FlowNodeProperties.ServiceTask(zeebeServiceTasks[2]),
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
                         previousElements = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT,
                         displayName = "Registration not possible",
@@ -94,7 +95,7 @@ class ZeebeModelExtractorTest {
                     FlowNodeDefinition("ErrorEvent_InvalidMail", BpmnElementType.BOUNDARY_EVENT,
                         displayName = "Invalid Mail",
                         attachedToRef = "SubProcess_Confirmation",
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
                         followingElements = listOf("EndEvent_RegistrationNotPossible")),
                     FlowNodeDefinition("serviceTask_incrementSubscriptionCounter", BpmnElementType.SERVICE_TASK,
                         displayName = "Increment subscription counter",
@@ -104,12 +105,12 @@ class ZeebeModelExtractorTest {
                         followingElements = listOf("SubProcess_Confirmation")),
                     FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
                         displayName = "Subscription requested",
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
                         parentId = "SubProcess_Confirmation",
                         followingElements = listOf("Activity_SendConfirmationMail")),
                     FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
                         displayName = "Submit newsletter form",
-                        variables = listOf(VariableDefinition("subscriptionId")),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
                         followingElements = listOf("serviceTask_incrementSubscriptionCounter")),
                     FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS,
                         displayName = "Subscription Confirmation",
@@ -175,13 +176,15 @@ class ZeebeModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
-            VariableDefinition("test"),
-            VariableDefinition("authors"),
-            VariableDefinition("author"),
-            VariableDefinition("subscribers"),
-            VariableDefinition("subscriber"),
-            VariableDefinition("results"),
-            VariableDefinition("result")
+            VariableDefinition("test", VariableDirection.INPUT),
+            VariableDefinition("authors", VariableDirection.INPUT),
+            VariableDefinition("author", VariableDirection.INPUT),
+            VariableDefinition("author", VariableDirection.OUTPUT),
+            VariableDefinition("subscribers", VariableDirection.INPUT),
+            VariableDefinition("subscribers", VariableDirection.OUTPUT),
+            VariableDefinition("subscriber", VariableDirection.INPUT),
+            VariableDefinition("results", VariableDirection.OUTPUT),
+            VariableDefinition("result", VariableDirection.OUTPUT),
         )
     }
 

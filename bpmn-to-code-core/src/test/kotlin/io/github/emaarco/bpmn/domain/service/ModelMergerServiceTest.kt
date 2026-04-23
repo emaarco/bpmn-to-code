@@ -13,6 +13,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.testBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -100,8 +101,8 @@ class ModelMergerServiceTest {
         val model = testBpmnModel(
             processId = "test-process",
             flowNodes = listOf(
-                FlowNodeDefinition(id = "z-node", variables = listOf(VariableDefinition("alphaVar"))),
-                FlowNodeDefinition(id = "a-node", variables = listOf(VariableDefinition("zetaVar"))),
+                FlowNodeDefinition(id = "z-node", variables = listOf(VariableDefinition("alphaVar", VariableDirection.INPUT))),
+                FlowNodeDefinition(id = "a-node", variables = listOf(VariableDefinition("zetaVar", VariableDirection.INPUT))),
                 FlowNodeDefinition(id = "m-node"),
             ),
             escalations = listOf(

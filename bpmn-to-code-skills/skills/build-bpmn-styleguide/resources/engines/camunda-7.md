@@ -97,7 +97,7 @@ Captured by the extractor:
 - `camunda:inputParameter` / `camunda:outputParameter` on activities
 - `camunda:in` / `camunda:out` on call activities
 - `camunda:elementVariable` + `camunda:collection` on multi-instance activities
-- `camunda:properties` with a property named `additionalVariables` (whitespace-separated list) for variables touched outside the BPMN XML
+- `camunda:properties` with directional properties `additionalInputVariables` / `additionalOutputVariables` (comma-separated lists) for variables touched outside the BPMN XML
 
 ## Messages, Signals, Errors, Escalations
 

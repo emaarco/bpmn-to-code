@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
 
 data class VariableDefinition(
     private val name: String,
+    val direction: VariableDirection,
 ) : VariableMapping<String> {
     override fun getName() = name.toUpperSnakeCase()
     override fun getValue() = name

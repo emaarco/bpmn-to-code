@@ -85,9 +85,11 @@ public final class SendNewsletterProcessApi {
 
   public static final class Variables {
     public static final class ServiceTaskLoadSubscribers {
-      public static final VariableName AUTHOR = new VariableName("author");
+      public static final class Outputs {
+        public static final VariableName AUTHOR = new VariableName("author");
 
-      public static final VariableName SUBSCRIBERS = new VariableName("subscribers");
+        public static final VariableName SUBSCRIBERS = new VariableName("subscribers");
+      }
     }
   }
 

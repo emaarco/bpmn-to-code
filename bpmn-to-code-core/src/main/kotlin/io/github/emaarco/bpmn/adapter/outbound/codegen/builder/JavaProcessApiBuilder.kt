@@ -15,6 +15,8 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import javax.lang.model.element.Modifier.FINAL
@@ -312,11 +314,20 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
                 .forEach { node ->
                     val className = node.getRawName().toCamelCase()
                     val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
-                    val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addField(createTypedAttribute(it, variableNameClass)) }
+                    val byDirection = node.variables.groupBy { it.direction }
+                    val inputs = byDirection[VariableDirection.INPUT].orEmpty().sortedBy { it.getRawName() }
+                    val outputs = byDirection[VariableDirection.OUTPUT].orEmpty().sortedBy { it.getRawName() }
+                    if (inputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Inputs", inputs, variableNameClass))
+                    if (outputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Outputs", outputs, variableNameClass))
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
+        }
+
+        private fun buildDirectionClass(name: String, variables: List<VariableDefinition>, wrapperClass: ClassName): TypeSpec {
+            val classBuilder = TypeSpec.classBuilder(name).addModifiers(PUBLIC, STATIC, FINAL)
+            variables.forEach { classBuilder.addField(createTypedAttribute(it, wrapperClass)) }
+            return classBuilder.build()
         }
     }
 

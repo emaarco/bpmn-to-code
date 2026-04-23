@@ -98,29 +98,41 @@ public final class NewsletterSubscriptionProcessApi {
 
   public static final class Variables {
     public static final class ActivitySendConfirmationMail {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Inputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
 
-      public static final VariableName TEST_VARIABLE = new VariableName("testVariable");
+        public static final VariableName TEST_VARIABLE = new VariableName("testVariable");
+      }
     }
 
     public static final class ActivitySendWelcomeMail {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Inputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      }
     }
 
     public static final class CallActivityAbortRegistration {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Inputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      }
     }
 
     public static final class EndEventRegistrationCompleted {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Outputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      }
     }
 
     public static final class StartEventRequestReceived {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Outputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      }
     }
 
     public static final class StartEventSubmitRegistrationForm {
-      public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      public static final class Outputs {
+        public static final VariableName SUBSCRIPTION_ID = new VariableName("subscriptionId");
+      }
     }
   }
 
