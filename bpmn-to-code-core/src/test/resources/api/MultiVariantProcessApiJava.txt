@@ -6,58 +6,65 @@ import de.emaarco.example.types.BpmnEscalation;
 import de.emaarco.example.types.BpmnFlow;
 import de.emaarco.example.types.BpmnRelations;
 import de.emaarco.example.types.BpmnTimer;
+import de.emaarco.example.types.ElementId;
+import de.emaarco.example.types.MessageName;
+import de.emaarco.example.types.ProcessId;
+import de.emaarco.example.types.VariableName;
 import java.lang.String;
 import java.util.List;
 
 public final class SendNewsletterProcessApi {
-  public static final String PROCESS_ID = "sendNewsletter";
+  public static final ProcessId PROCESS_ID = new ProcessId("sendNewsletter");
 
   public static final BpmnEngine PROCESS_ENGINE = BpmnEngine.ZEEBE;
 
   public static final class Elements {
-    public static final String START_EVENT_EDITION_CREATED = "startEvent_editionCreated";
+    public static final ElementId START_EVENT_EDITION_CREATED = new ElementId("startEvent_editionCreated");
 
-    public static final String SERVICE_TASK_LOAD_SUBSCRIBERS = "serviceTask_loadSubscribers";
+    public static final ElementId SERVICE_TASK_LOAD_SUBSCRIBERS = new ElementId("serviceTask_loadSubscribers");
 
-    public static final String GATEWAY_HAS_SUBSCRIBERS = "gateway_hasSubscribers";
+    public static final ElementId GATEWAY_HAS_SUBSCRIBERS = new ElementId("gateway_hasSubscribers");
 
-    public static final String SERVICE_TASK_SEND_TO_SUBSCRIBER = "serviceTask_sendToSubscriber";
+    public static final ElementId SERVICE_TASK_SEND_TO_SUBSCRIBER = new ElementId("serviceTask_sendToSubscriber");
 
-    public static final String SERVICE_TASK_NOTIFY_AUTHOR = "serviceTask_notifyAuthor";
+    public static final ElementId SERVICE_TASK_NOTIFY_AUTHOR = new ElementId("serviceTask_notifyAuthor");
 
-    public static final String END_EVENT_EDITION_SENT = "endEvent_editionSent";
+    public static final ElementId END_EVENT_EDITION_SENT = new ElementId("endEvent_editionSent");
 
-    public static final String END_EVENT_NO_SUBSCRIBERS = "endEvent_noSubscribers";
+    public static final ElementId END_EVENT_NO_SUBSCRIBERS = new ElementId("endEvent_noSubscribers");
 
-    public static final String EVENT_SUB_PROCESS_ERROR_HANDLING = "eventSubProcess_errorHandling";
+    public static final ElementId EVENT_SUB_PROCESS_ERROR_HANDLING = new ElementId("eventSubProcess_errorHandling");
 
-    public static final String EVENT_MAIL_REJECTED = "event_mailRejected";
+    public static final ElementId EVENT_MAIL_REJECTED = new ElementId("event_mailRejected");
 
-    public static final String SERVICE_TASK_ANALYZE_ERROR = "serviceTask_analyzeError";
+    public static final ElementId SERVICE_TASK_ANALYZE_ERROR = new ElementId("serviceTask_analyzeError");
 
-    public static final String GATEWAY_CAN_SEND_AGAIN = "gateway_canSendAgain";
+    public static final ElementId GATEWAY_CAN_SEND_AGAIN = new ElementId("gateway_canSendAgain");
 
-    public static final String SERVICE_TASK_SEND_MAIL_AGAIN = "serviceTask_sendMailAgain";
+    public static final ElementId SERVICE_TASK_SEND_MAIL_AGAIN = new ElementId("serviceTask_sendMailAgain");
 
-    public static final String EVENT_GATEWAY_AFTER_SENDING_AGAIN = "eventGateway_afterSendingAgain";
+    public static final ElementId EVENT_GATEWAY_AFTER_SENDING_AGAIN = new ElementId("eventGateway_afterSendingAgain");
 
-    public static final String TIMER_NO_REJECTION_FOR_ONE_DAY = "timer_noRejectionForOneDay";
+    public static final ElementId TIMER_NO_REJECTION_FOR_ONE_DAY = new ElementId("timer_noRejectionForOneDay");
 
-    public static final String ESCALATION_END_EVENT_NOFITY_SUPPORT = "escalationEndEvent_nofitySupport";
+    public static final ElementId ESCALATION_END_EVENT_NOFITY_SUPPORT = new ElementId("escalationEndEvent_nofitySupport");
 
-    public static final String EVENT_MAIL_REJECTED_AGAIN = "event_mailRejectedAgain";
+    public static final ElementId EVENT_MAIL_REJECTED_AGAIN = new ElementId("event_mailRejectedAgain");
 
-    public static final String ESCALATION_END_EVENT_NOFITY_SUPPORT_AFTER_REPEATED_ERROR = "escalationEndEvent_nofitySupportAfterRepeatedError";
+    public static final ElementId ESCALATION_END_EVENT_NOFITY_SUPPORT_AFTER_REPEATED_ERROR = new ElementId("escalationEndEvent_nofitySupportAfterRepeatedError");
 
-    public static final String END_EVENT_ISSUE_RESOLVED = "endEvent_issueResolved";
+    public static final ElementId END_EVENT_ISSUE_RESOLVED = new ElementId("endEvent_issueResolved");
   }
 
   public static final class Messages {
-    public static final String MESSAGE_MAIL_REJECTED = "Message_MailRejected";
+    public static final MessageName MESSAGE_MAIL_REJECTED = new MessageName("Message_MailRejected");
 
-    public static final String MESSAGE_MAIL_REJECTED_AGAIN = "Message_MailRejectedAgain";
+    public static final MessageName MESSAGE_MAIL_REJECTED_AGAIN = new MessageName("Message_MailRejectedAgain");
   }
 
+  /**
+   * Task identifiers used as {@code @JobWorker(type = ...)} annotation arguments. Stays {@code public static final String} because Java annotation arguments must be compile-time constants, which excludes record instances.
+   */
   public static final class ServiceTasks {
     public static final String NEWSLETTER_ANALYZE_SEND_ERROR = "newsletter.analyzeSendError";
 
@@ -78,9 +85,9 @@ public final class SendNewsletterProcessApi {
 
   public static final class Variables {
     public static final class ServiceTaskLoadSubscribers {
-      public static final String AUTHOR = "author";
+      public static final VariableName AUTHOR = new VariableName("author");
 
-      public static final String SUBSCRIBERS = "subscribers";
+      public static final VariableName SUBSCRIBERS = new VariableName("subscribers");
     }
   }
 

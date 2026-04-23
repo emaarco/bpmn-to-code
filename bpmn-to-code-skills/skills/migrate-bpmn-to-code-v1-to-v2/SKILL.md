@@ -27,6 +27,26 @@ Update user source code that references the v1.1.0 generated Process API to use 
 | `ProcessApi.Errors.BpmnError` (nested type) | `import {pkg}.types.BpmnError` (standalone) |
 | `ProcessApi.Variables.VAR_NAME` | `ProcessApi.Variables.ElementName.VAR_NAME` (manual) |
 | `useVersioning = true/false` (Gradle / Maven plugin config) | removed — delete the line |
+| `const val PROCESS_ID: String` + `Elements/Messages/Variables/Signals/Compensations/CallActivities.X: String` | typed wrappers: `ProcessId`, `ElementId`, `MessageName`, `VariableName`, `SignalName` (Kotlin `@JvmInline value class` / Java `record`) |
+
+### Typed leaf constants
+
+In v2.0.0 every leaf identifier except `ServiceTasks.*` and `PROCESS_ENGINE` is wrapped in a type-safe class:
+
+- `PROCESS_ID` → `ProcessId`
+- `Elements.*`, `Compensations.*` → `ElementId`
+- `CallActivities.*` → `ProcessId`
+- `Messages.*` → `MessageName`
+- `Signals.*` → `SignalName`
+- `Variables.*.*` → `VariableName`
+
+`ServiceTasks.*` and `PROCESS_ENGINE` stay as `const val String` because Kotlin/Java annotation arguments must be compile-time constants.
+
+Consumers now have two options at each call site:
+1. **Unwrap**: append `.value` (Kotlin) or `.value()` (Java) to pass the underlying `String`.
+2. **Retype**: update the consumer API signature to accept the wrapper (e.g. `engineApi.sendMessage(name: MessageName)`).
+
+Call sites that previously used these constants in annotation arguments (other than `ServiceTasks`) **cannot be trivially migrated** — Kotlin value-class instances and Java records are not compile-time constants.
 
 ## Instructions
 
@@ -80,6 +100,23 @@ Search the scoped files for the following patterns and record file path, line nu
 **D. Variables flat references (flag only — do not auto-fix)**
 - Pattern: `ProcessApi\.Variables\.[A-Z_]+` where `[A-Z_]+` is not a sub-object name
 - These may now be nested under an element object. Flag each occurrence for manual review; do not propose an automatic replacement.
+
+**E. Typed leaf constants used where a String is expected (flag only)**
+
+In v2.0.0 leaf constants under `PROCESS_ID`, `Elements`, `CallActivities`, `Messages`, `Compensations`, `Signals`, and `Variables` are wrapper types, not `String`. Any call site that previously passed them as `String` must either unwrap (`.value` / `.value()`) or accept the wrapper type.
+
+The skill cannot reliably auto-fix this because it depends on the downstream signature. Flag each occurrence for manual review.
+
+- Patterns to search (examples — adapt to the detected `ProcessApi` class name):
+  - `ProcessApi\.PROCESS_ID`
+  - `ProcessApi\.Elements\.[A-Z_]+` (excluding sub-object name qualifiers)
+  - `ProcessApi\.CallActivities\.[A-Z_]+`
+  - `ProcessApi\.Messages\.[A-Z_]+`
+  - `ProcessApi\.Signals\.[A-Z_]+`
+  - `ProcessApi\.Compensations\.[A-Z_]+`
+  - `ProcessApi\.Variables\.[A-Z][a-zA-Z0-9]*\.[A-Z_]+`
+- Skip matches where `.value` (Kotlin) or `.value()` (Java) already follows the constant — those are already unwrapped. In practice: if the matched span is immediately followed by `.value` or `.value()`, the call site is migrated and no action is needed.
+- If the match appears inside a Kotlin/Java annotation argument (e.g. `@JobWorker(type = ...)`, `@MessageCorrelationKey(...)`), flag as **BLOCKED** — annotation arguments cannot reference value-class / record instances, so the consumer needs a different approach (e.g. keep a separate `const val String` constant).
 
 ### Step 5 – Present the migration plan
 

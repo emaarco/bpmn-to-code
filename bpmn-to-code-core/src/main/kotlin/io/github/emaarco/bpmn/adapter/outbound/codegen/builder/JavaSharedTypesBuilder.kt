@@ -13,8 +13,9 @@ import javax.lang.model.element.Modifier.FINAL
 import javax.lang.model.element.Modifier.PUBLIC
 
 /**
- * Generates the 6 shared BPMN classes (BpmnEngine, BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations)
- * as standalone Java files in the `{packagePath}.types` sub-package.
+ * Generates shared BPMN types as standalone Java files in the `{packagePath}.types` sub-package:
+ * enum `BpmnEngine`, classes (BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations),
+ * and records wrapping leaf identifiers (ProcessId, ElementId, MessageName, VariableName, SignalName).
  * These are identical for every process in the same package — generated once and deduplicated upstream.
  */
 class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder() {
@@ -28,6 +29,11 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
             buildBpmnEscalationFile(typesPackage, language),
             buildBpmnFlowFile(typesPackage, language),
             buildBpmnRelationsFile(typesPackage, language),
+            buildValueRecordFile(typesPackage, "ProcessId", language),
+            buildValueRecordFile(typesPackage, "ElementId", language),
+            buildValueRecordFile(typesPackage, "MessageName", language),
+            buildValueRecordFile(typesPackage, "VariableName", language),
+            buildValueRecordFile(typesPackage, "SignalName", language),
         )
     }
 
@@ -38,6 +44,17 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
             .addEnumConstant("OPERATON")
             .build()
         return buildTypeFile(typesPackage, "BpmnEngine", typeSpec, language)
+    }
+
+    private fun buildValueRecordFile(typesPackage: String, recordName: String, language: OutputLanguage): GeneratedApiFile {
+        val recordConstructor = MethodSpec.constructorBuilder()
+            .addParameter(String::class.java, "value")
+            .build()
+        val typeSpec = TypeSpec.recordBuilder(recordName)
+            .addModifiers(PUBLIC)
+            .recordConstructor(recordConstructor)
+            .build()
+        return buildTypeFile(typesPackage, recordName, typeSpec, language)
     }
 
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {

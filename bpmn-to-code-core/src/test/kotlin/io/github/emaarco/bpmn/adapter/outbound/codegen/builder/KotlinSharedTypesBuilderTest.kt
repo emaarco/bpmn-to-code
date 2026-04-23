@@ -20,16 +20,26 @@ class KotlinSharedTypesBuilderTest {
     private val underTest = KotlinSharedTypesBuilder()
 
     @Test
-    fun `buildTypeFiles generates all 5 shared type files`() {
+    fun `buildTypeFiles generates all shared type files`() {
 
         // when: we build the shared type files
         val results = underTest.buildTypeFiles("de.emaarco.example", OutputLanguage.KOTLIN)
 
-        // then: exactly 6 files in the types sub-package
-        assertThat(results).hasSize(6)
+        // then: all expected files are emitted in the types sub-package
+        assertThat(results).hasSize(11)
         assertThat(results.map { it.packagePath }).allMatch { it == "de.emaarco.example.types" }
         assertThat(results.map { it.fileName }).containsExactlyInAnyOrder(
-            "BpmnEngine.kt", "BpmnTimer.kt", "BpmnError.kt", "BpmnEscalation.kt", "BpmnFlow.kt", "BpmnRelations.kt"
+            "BpmnEngine.kt",
+            "BpmnTimer.kt",
+            "BpmnError.kt",
+            "BpmnEscalation.kt",
+            "BpmnFlow.kt",
+            "BpmnRelations.kt",
+            "ProcessId.kt",
+            "ElementId.kt",
+            "MessageName.kt",
+            "VariableName.kt",
+            "SignalName.kt",
         )
 
         // and: each file matches its expected fixture

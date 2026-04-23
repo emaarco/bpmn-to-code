@@ -70,14 +70,17 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         )
     }
 
-    private class ProcessIdWriter : ObjectWriter<TypeSpec.Builder> {
+    private inner class ProcessIdWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.PROCESS_ID
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val idPropertyBuilder = PropertySpec.builder("PROCESS_ID", String::class).addModifiers(KModifier.CONST)
-            val idProperty = idPropertyBuilder.initializer("\"${modelApi.model.processId}\"").build()
+            val processIdClass = ClassName("${modelApi.packagePath}.types", "ProcessId")
+            val cleanValue = modelApi.model.processId.escapeDollarInterpolation()
+            val idProperty = PropertySpec.builder("PROCESS_ID", processIdClass)
+                .initializer("ProcessId(\"$cleanValue\")")
+                .build()
             builder.addProperty(idProperty)
         }
     }
@@ -102,8 +105,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
-            modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addProperty(createAttribute(flowNode)) }
+            modelApi.model.flowNodes.forEach { flowNode ->
+                elementsBuilder.addProperty(createTypedAttribute(flowNode, elementIdClass))
+            }
             builder.addType(elementsBuilder.build())
         }
     }
@@ -227,8 +233,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val processIdClass = ClassName("${modelApi.packagePath}.types", "ProcessId")
             val callActivitiesBuilder = TypeSpec.objectBuilder("CallActivities")
-            modelApi.model.callActivities.forEach { callActivity -> callActivitiesBuilder.addProperty(createAttribute(callActivity)) }
+            modelApi.model.callActivities.forEach { callActivity ->
+                callActivitiesBuilder.addProperty(createTypedAttribute(callActivity, processIdClass))
+            }
             builder.addType(callActivitiesBuilder.build())
         }
     }
@@ -239,12 +248,20 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val messageNameClass = ClassName("${modelApi.packagePath}.types", "MessageName")
             val messagesBuilder = TypeSpec.objectBuilder("Messages")
-            modelApi.model.messages.forEach { message -> messagesBuilder.addProperty(createAttribute(message)) }
+            modelApi.model.messages.forEach { message ->
+                messagesBuilder.addProperty(createTypedAttribute(message, messageNameClass))
+            }
             builder.addType(messagesBuilder.build())
         }
     }
 
+    /**
+     * `ServiceTasks` intentionally emits `const val String` rather than a typed wrapper.
+     * Its primary call site is `@JobWorker(type = ServiceTasks.X)` — Kotlin annotation arguments
+     * require compile-time constants, which rules out `@JvmInline value class` instances.
+     */
     private inner class ServiceTasksWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SERVICE_TASKS
@@ -252,6 +269,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.objectBuilder("ServiceTasks")
+                .addKdoc(
+                    "Task identifiers used as `@JobWorker(type = ...)` annotation arguments. Stays `const val String` " +
+                        "because Kotlin annotation arguments must be compile-time constants, which excludes " +
+                        "`@JvmInline value class` instances."
+                )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
                 .forEach { task -> tasksBuilder.addProperty(createAttribute(task)) }
@@ -265,8 +287,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val signalNameClass = ClassName("${modelApi.packagePath}.types", "SignalName")
             val signalsBuilder = TypeSpec.objectBuilder("Signals")
-            modelApi.model.signals.forEach { signal -> signalsBuilder.addProperty(createAttribute(signal)) }
+            modelApi.model.signals.forEach { signal ->
+                signalsBuilder.addProperty(createTypedAttribute(signal, signalNameClass))
+            }
             builder.addType(signalsBuilder.build())
         }
     }
@@ -277,6 +302,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val variableNameClass = ClassName("${modelApi.packagePath}.types", "VariableName")
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
@@ -285,7 +311,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
                     val objectName = (node.getRawName()).toCamelCase()
                     val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
                     val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addProperty(createAttribute(it)) }
+                    sortedVariables.forEach { nodeVarsBuilder.addProperty(createTypedAttribute(it, variableNameClass)) }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
@@ -334,9 +360,10 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
             val compensationsBuilder = TypeSpec.objectBuilder("Compensations")
             modelApi.model.compensations.forEach { compensation ->
-                compensationsBuilder.addProperty(createAttribute(compensation))
+                compensationsBuilder.addProperty(createTypedAttribute(compensation, elementIdClass))
             }
             builder.addType(compensationsBuilder.build())
         }
@@ -366,6 +393,13 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         return PropertySpec.builder(variable.getName(), String::class)
             .addModifiers(KModifier.CONST)
             .initializer("\"$cleanValue\"")
+            .build()
+    }
+
+    private fun createTypedAttribute(variable: VariableMapping<String>, wrapperClass: ClassName): PropertySpec {
+        val cleanValue = variable.getValue().escapeDollarInterpolation()
+        return PropertySpec.builder(variable.getName(), wrapperClass)
+            .initializer("${wrapperClass.simpleName}(\"$cleanValue\")")
             .build()
     }
 

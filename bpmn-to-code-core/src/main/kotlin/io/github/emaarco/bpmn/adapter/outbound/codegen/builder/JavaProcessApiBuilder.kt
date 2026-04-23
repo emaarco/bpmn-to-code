@@ -72,8 +72,9 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val fieldBuilder = FieldSpec.builder(String::class.java, "PROCESS_ID").addModifiers(PUBLIC, FINAL, STATIC)
-            builder.addField(fieldBuilder.initializer("\$S", modelApi.model.processId).build())
+            val processIdClass = ClassName.get("${modelApi.packagePath}.types", "ProcessId")
+            val fieldBuilder = FieldSpec.builder(processIdClass, "PROCESS_ID").addModifiers(PUBLIC, FINAL, STATIC)
+            builder.addField(fieldBuilder.initializer("new \$T(\$S)", processIdClass, modelApi.model.processId).build())
         }
     }
 
@@ -97,8 +98,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val elementIdClass = ClassName.get("${modelApi.packagePath}.types", "ElementId")
             val elementsBuilder = TypeSpec.classBuilder("Elements").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.flowNodes.forEach { flowNode -> elementsBuilder.addField(createAttribute(flowNode)) }
+            modelApi.model.flowNodes.forEach { flowNode ->
+                elementsBuilder.addField(createTypedAttribute(flowNode, elementIdClass))
+            }
             builder.addType(elementsBuilder.build())
         }
     }
@@ -232,8 +236,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val processIdClass = ClassName.get("${modelApi.packagePath}.types", "ProcessId")
             val callActivitiesBuilder = TypeSpec.classBuilder("CallActivities").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.callActivities.forEach { callActivity -> callActivitiesBuilder.addField(createAttribute(callActivity)) }
+            modelApi.model.callActivities.forEach { callActivity ->
+                callActivitiesBuilder.addField(createTypedAttribute(callActivity, processIdClass))
+            }
             builder.addType(callActivitiesBuilder.build())
         }
     }
@@ -244,12 +251,20 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val messageNameClass = ClassName.get("${modelApi.packagePath}.types", "MessageName")
             val messagesBuilder = TypeSpec.classBuilder("Messages").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.messages.forEach { message -> messagesBuilder.addField(createAttribute(message)) }
+            modelApi.model.messages.forEach { message ->
+                messagesBuilder.addField(createTypedAttribute(message, messageNameClass))
+            }
             builder.addType(messagesBuilder.build())
         }
     }
 
+    /**
+     * `ServiceTasks` intentionally emits `public static final String` rather than a typed wrapper.
+     * Its primary call site is `@JobWorker(type = ServiceTasks.X)` — Java annotation arguments
+     * require compile-time constants, which rules out record instances.
+     */
     private inner class ServiceTasksWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SERVICE_TASKS
@@ -257,6 +272,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.classBuilder("ServiceTasks").addModifiers(PUBLIC, STATIC, FINAL)
+                .addJavadoc(
+                    "Task identifiers used as {@code @JobWorker(type = ...)} annotation arguments. Stays " +
+                        "{@code public static final String} because Java annotation arguments must be " +
+                        "compile-time constants, which excludes record instances."
+                )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
                 .forEach { task -> tasksBuilder.addField(createAttribute(task)) }
@@ -270,8 +290,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val signalNameClass = ClassName.get("${modelApi.packagePath}.types", "SignalName")
             val signalsBuilder = TypeSpec.classBuilder("Signals").addModifiers(PUBLIC, STATIC, FINAL)
-            modelApi.model.signals.forEach { signal -> signalsBuilder.addField(createAttribute(signal)) }
+            modelApi.model.signals.forEach { signal ->
+                signalsBuilder.addField(createTypedAttribute(signal, signalNameClass))
+            }
             builder.addType(signalsBuilder.build())
         }
     }
@@ -282,6 +305,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val variableNameClass = ClassName.get("${modelApi.packagePath}.types", "VariableName")
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
@@ -290,7 +314,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
                     val className = node.getRawName().toCamelCase()
                     val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
                     val sortedVariables = node.variables.sortedBy { it.getRawName() }
-                    sortedVariables.forEach { nodeVarsBuilder.addField(createAttribute(it)) }
+                    sortedVariables.forEach { nodeVarsBuilder.addField(createTypedAttribute(it, variableNameClass)) }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
@@ -339,9 +363,10 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
+            val elementIdClass = ClassName.get("${modelApi.packagePath}.types", "ElementId")
             val compensationsBuilder = TypeSpec.classBuilder("Compensations").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.compensations.forEach { compensation ->
-                compensationsBuilder.addField(createAttribute(compensation))
+                compensationsBuilder.addField(createTypedAttribute(compensation, elementIdClass))
             }
             builder.addType(compensationsBuilder.build())
         }
@@ -369,6 +394,13 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         return FieldSpec.builder(String::class.java, variable.getName())
             .addModifiers(PUBLIC, STATIC, FINAL)
             .initializer("\$S", variable.getValue())
+            .build()
+    }
+
+    private fun createTypedAttribute(variable: VariableMapping<String>, wrapperClass: ClassName): FieldSpec {
+        return FieldSpec.builder(wrapperClass, variable.getName())
+            .addModifiers(PUBLIC, STATIC, FINAL)
+            .initializer("new \$T(\$S)", wrapperClass, variable.getValue())
             .build()
     }
 }

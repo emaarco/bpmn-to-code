@@ -1,6 +1,8 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -15,8 +17,10 @@ import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 
 /**
- * Generates the 6 shared BPMN data classes (BpmnEngine, BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations)
- * as standalone Kotlin files in the `{packagePath}.types` sub-package.
+ * Generates shared BPMN types as standalone Kotlin files in the `{packagePath}.types` sub-package:
+ * enum `BpmnEngine`, data classes (BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations),
+ * and `@JvmInline` value classes wrapping leaf identifiers (ProcessId, ElementId, MessageName,
+ * VariableName, SignalName).
  * These are identical for every process in the same package — generated once and deduplicated upstream.
  */
 class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder() {
@@ -30,6 +34,11 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
             buildBpmnEscalationFile(typesPackage, language),
             buildBpmnFlowFile(typesPackage, language),
             buildBpmnRelationsFile(typesPackage, language),
+            buildValueClassFile(typesPackage, "ProcessId", language),
+            buildValueClassFile(typesPackage, "ElementId", language),
+            buildValueClassFile(typesPackage, "MessageName", language),
+            buildValueClassFile(typesPackage, "VariableName", language),
+            buildValueClassFile(typesPackage, "SignalName", language),
         )
     }
 
@@ -40,6 +49,21 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
             .addEnumConstant("OPERATON")
             .build()
         return buildTypeFile(typesPackage, "BpmnEngine", typeSpec, language)
+    }
+
+    private fun buildValueClassFile(typesPackage: String, className: String, language: OutputLanguage): GeneratedApiFile {
+        val jvmInline = ClassName("kotlin.jvm", "JvmInline")
+        val typeSpec = TypeSpec.classBuilder(className)
+            .addModifiers(KModifier.VALUE)
+            .addAnnotation(AnnotationSpec.builder(jvmInline).build())
+            .primaryConstructor(
+                FunSpec.constructorBuilder()
+                    .addParameter("value", STRING)
+                    .build()
+            )
+            .addProperty(PropertySpec.builder("value", STRING).initializer("value").build())
+            .build()
+        return buildTypeFile(typesPackage, className, typeSpec, language)
     }
 
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
