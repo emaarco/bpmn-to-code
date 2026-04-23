@@ -15,7 +15,6 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 import javax.lang.model.element.Modifier.FINAL
@@ -327,24 +326,19 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             for (node in nodesWithVariables) {
                 val className = node.getRawName().toCamelCase()
                 val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
-                val variablesByName = node.variables.groupBy { it.getRawName() }
-                val sortedNames = variablesByName.keys.sorted()
-                for (rawName in sortedNames) {
-                    val group = variablesByName.getValue(rawName)
-                    val directions = group.map { it.direction }.toSet()
-                    val subtype = VariableNameSubtype.chooseFor(directions)
-                    nodeVarsBuilder.addField(createDirectionalAttribute(group.first(), subtype, variableNameClass))
+                for (typed in groupVariablesByName(node)) {
+                    nodeVarsBuilder.addField(createDirectionalAttribute(typed, variableNameClass))
                 }
                 variablesBuilder.addType(nodeVarsBuilder.build())
             }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): FieldSpec {
-            val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
-            return FieldSpec.builder(subtypeClass, variable.getName())
+        private fun createDirectionalAttribute(typed: TypedVariable, wrapperClass: ClassName): FieldSpec {
+            val subtypeClass = wrapperClass.nestedClass(typed.subtype.simpleName)
+            return FieldSpec.builder(subtypeClass, typed.definition.getName())
                 .addModifiers(PUBLIC, STATIC, FINAL)
-                .initializer("new \$T(\$S)", subtypeClass, variable.getValue())
+                .initializer("new \$T(\$S)", subtypeClass, typed.definition.getValue())
                 .build()
         }
     }

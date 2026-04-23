@@ -17,7 +17,6 @@ import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
 import io.github.emaarco.bpmn.domain.shared.ApiObjectType
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
-import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
@@ -326,23 +325,18 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             for (node in nodesWithVariables) {
                 val objectName = node.getRawName().toCamelCase()
                 val nodeVarsBuilder = TypeSpec.objectBuilder(objectName)
-                val variablesByName = node.variables.groupBy { it.getRawName() }
-                val sortedNames = variablesByName.keys.sorted()
-                for (rawName in sortedNames) {
-                    val group = variablesByName.getValue(rawName)
-                    val directions = group.map { it.direction }.toSet()
-                    val subtype = VariableNameSubtype.chooseFor(directions)
-                    nodeVarsBuilder.addProperty(createDirectionalAttribute(group.first(), subtype, variableNameClass))
+                for (typed in groupVariablesByName(node)) {
+                    nodeVarsBuilder.addProperty(createDirectionalAttribute(typed, variableNameClass))
                 }
                 variablesBuilder.addType(nodeVarsBuilder.build())
             }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): PropertySpec {
-            val cleanValue = variable.getValue().escapeDollarInterpolation()
-            val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
-            return PropertySpec.builder(variable.getName(), subtypeClass)
+        private fun createDirectionalAttribute(typed: TypedVariable, wrapperClass: ClassName): PropertySpec {
+            val cleanValue = typed.definition.getValue().escapeDollarInterpolation()
+            val subtypeClass = wrapperClass.nestedClass(typed.subtype.simpleName)
+            return PropertySpec.builder(typed.definition.getName(), subtypeClass)
                 .initializer("%T(\"$cleanValue\")", subtypeClass)
                 .build()
         }

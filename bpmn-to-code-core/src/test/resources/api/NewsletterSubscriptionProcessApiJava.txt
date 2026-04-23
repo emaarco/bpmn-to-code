@@ -111,6 +111,10 @@ public final class NewsletterSubscriptionProcessApi {
    * Consumer APIs that take a specific subtype (for example, a method accepting {@code VariableName.Output}) get compile-time direction enforcement.
    */
   public static final class Variables {
+    public static final class ActivityConfirmRegistration {
+      public static final VariableName.InOut REGISTRATION_STATUS = new VariableName.InOut("registrationStatus");
+    }
+
     public static final class ActivitySendConfirmationMail {
       public static final VariableName.Input SUBSCRIPTION_ID = new VariableName.Input("subscriptionId");
 

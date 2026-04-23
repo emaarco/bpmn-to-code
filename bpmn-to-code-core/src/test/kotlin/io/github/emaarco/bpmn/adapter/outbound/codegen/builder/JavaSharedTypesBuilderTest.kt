@@ -48,6 +48,16 @@ class JavaSharedTypesBuilderTest {
             assertThat(typeFile.content).isEqualToIgnoringWhitespace(File(fixtureResource.toURI()).readText())
             assertJavaSyntaxValid(typeFile.fileName, typeFile.content)
         }
+
+        // and: the sealed VariableName declares exactly the subtypes named by VariableNameSubtype
+        val variableNameFile = results.first { it.fileName == "VariableName.java" }
+        val declaredSubtypes = Regex("""record (\w+)\(""")
+            .findAll(variableNameFile.content)
+            .map { it.groupValues[1] }
+            .toList()
+        assertThat(declaredSubtypes).containsExactlyInAnyOrderElementsOf(
+            VariableNameSubtype.entries.map { it.simpleName }
+        )
     }
 
     private fun assertJavaSyntaxValid(fileName: String, source: String) {

@@ -58,6 +58,16 @@ class KotlinSharedTypesBuilderTest {
 
         val flowFile = results.first { it.fileName == "BpmnFlow.kt" }
         assertThat(flowFile.content).contains("default flow")
+
+        // and: the sealed VariableName declares exactly the subtypes named by VariableNameSubtype
+        val variableNameFile = results.first { it.fileName == "VariableName.kt" }
+        val declaredSubtypes = Regex("""value class (\w+)\(""")
+            .findAll(variableNameFile.content)
+            .map { it.groupValues[1] }
+            .toList()
+        assertThat(declaredSubtypes).containsExactlyInAnyOrderElementsOf(
+            VariableNameSubtype.entries.map { it.simpleName }
+        )
     }
 
     companion object {

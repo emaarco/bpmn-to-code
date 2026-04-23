@@ -126,6 +126,10 @@ object NewsletterSubscriptionProcessApi {
    * Consumer APIs that take a specific subtype (e.g. `fun setOutput(v: VariableName.Output)`) get compile-time direction enforcement.
    */
   object Variables {
+    object ActivityConfirmRegistration {
+      val REGISTRATION_STATUS: VariableName.InOut = VariableName.InOut("registrationStatus")
+    }
+
     object ActivitySendConfirmationMail {
       val SUBSCRIPTION_ID: VariableName.Input = VariableName.Input("subscriptionId")
 

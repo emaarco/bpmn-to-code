@@ -28,6 +28,10 @@ internal fun buildSubscribeNewsletterFlowNodes(
         id = "Activity_ConfirmRegistration",
         displayName = "Confirm registration",
         elementType = BpmnElementType.RECEIVE_TASK,
+        variables = listOf(
+            VariableDefinition("registrationStatus", VariableDirection.INPUT),
+            VariableDefinition("registrationStatus", VariableDirection.OUTPUT),
+        ),
         attachedElements = listOf("Timer_EveryDay"),
         parentId = "SubProcess_Confirmation",
         previousElements = listOf("Activity_SendConfirmationMail"),
