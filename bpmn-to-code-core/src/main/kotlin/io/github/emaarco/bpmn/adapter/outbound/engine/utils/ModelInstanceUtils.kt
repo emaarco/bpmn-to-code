@@ -60,7 +60,7 @@ object ModelInstanceUtils {
         val flowNodes = this.getModelElementsByType(FlowNode::class.java)
         return flowNodes.map {
             val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)
+            val name = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)?.normalizeWhitespace()
             val elementType = it.resolveElementType()
             val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
             val parentId = (it.parentElement as? SubProcess)?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
@@ -85,7 +85,7 @@ object ModelInstanceUtils {
             val id = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val sourceRef = flow.source?.id ?: return@mapNotNull null
             val targetRef = flow.target?.id ?: return@mapNotNull null
-            val flowName = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)?.takeIf { it.isNotBlank() }
+            val flowName = flow.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_NAME)?.normalizeWhitespace()?.takeIf { it.isNotBlank() }
             val condition = flow.conditionExpression?.textContent?.takeIf { it.isNotBlank() }
             SequenceFlowDefinition(
                 id = id,
@@ -165,6 +165,8 @@ object ModelInstanceUtils {
             null
         }
     }
+
+    private fun String.normalizeWhitespace(): String = this.replace(Regex("\\s+"), " ").trim()
 
     private fun FlowNode.resolveElementType(): BpmnElementType {
         return if (this is SubProcess && this.triggeredByEvent()) {
