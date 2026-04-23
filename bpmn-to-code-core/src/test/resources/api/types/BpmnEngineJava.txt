@@ -3,6 +3,8 @@ package de.emaarco.example.types;
 
 public enum BpmnEngine {
   ZEEBE,
+
   CAMUNDA_7,
+
   OPERATON
 }

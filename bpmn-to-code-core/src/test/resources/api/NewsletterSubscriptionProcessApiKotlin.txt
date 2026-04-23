@@ -122,45 +122,34 @@ object NewsletterSubscriptionProcessApi {
 
   /**
    * Process variables grouped by the BPMN element that declares them.
-   * When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list.
+   * Direction is encoded in each variable's wrapper type: `VariableName.Input`, `VariableName.Output`, or `VariableName.InOut` when the variable is both read and written by the same element.
+   * Consumer APIs that take a specific subtype (e.g. `fun setOutput(v: VariableName.Output)`) get compile-time direction enforcement.
    */
   object Variables {
     object ActivitySendConfirmationMail {
-      object Inputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
+      val SUBSCRIPTION_ID: VariableName.Input = VariableName.Input("subscriptionId")
 
-        val TEST_VARIABLE: VariableName = VariableName("testVariable")
-      }
+      val TEST_VARIABLE: VariableName.Input = VariableName.Input("testVariable")
     }
 
     object ActivitySendWelcomeMail {
-      object Inputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
-      }
+      val SUBSCRIPTION_ID: VariableName.Input = VariableName.Input("subscriptionId")
     }
 
     object CallActivityAbortRegistration {
-      object Inputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
-      }
+      val SUBSCRIPTION_ID: VariableName.Input = VariableName.Input("subscriptionId")
     }
 
     object EndEventRegistrationCompleted {
-      object Outputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
-      }
+      val SUBSCRIPTION_ID: VariableName.Output = VariableName.Output("subscriptionId")
     }
 
     object StartEventRequestReceived {
-      object Outputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
-      }
+      val SUBSCRIPTION_ID: VariableName.Output = VariableName.Output("subscriptionId")
     }
 
     object StartEventSubmitRegistrationForm {
-      object Outputs {
-        val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
-      }
+      val SUBSCRIPTION_ID: VariableName.Output = VariableName.Output("subscriptionId")
     }
   }
 

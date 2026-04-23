@@ -16,6 +16,12 @@ import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 
+private const val VARIABLE_NAME_KDOC: String =
+    "Name of a process variable declared by a BPMN element.\n\n" +
+        "Direction is encoded in the subtype so consumer APIs can enforce it at compile time\n" +
+        "(e.g. `fun setOutput(v: VariableName.Output, value: Any)`).\n" +
+        "`toString()` returns the underlying string, so `.value` is optional in string contexts."
+
 /**
  * Generates shared BPMN types as standalone Kotlin files in the `{packagePath}.types` sub-package:
  * enum `BpmnEngine`, data classes (BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations),
@@ -37,7 +43,7 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
             buildValueClassFile(typesPackage, "ProcessId", language),
             buildValueClassFile(typesPackage, "ElementId", language),
             buildValueClassFile(typesPackage, "MessageName", language),
-            buildValueClassFile(typesPackage, "VariableName", language),
+            buildVariableNameFile(typesPackage, language),
             buildValueClassFile(typesPackage, "SignalName", language),
         )
     }
@@ -52,8 +58,13 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     }
 
     private fun buildValueClassFile(typesPackage: String, className: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = buildValueClassSpec(className)
+        return buildTypeFile(typesPackage, className, typeSpec, language)
+    }
+
+    private fun buildValueClassSpec(className: String): TypeSpec {
         val jvmInline = ClassName("kotlin.jvm", "JvmInline")
-        val typeSpec = TypeSpec.classBuilder(className)
+        return TypeSpec.classBuilder(className)
             .addModifiers(KModifier.VALUE)
             .addAnnotation(AnnotationSpec.builder(jvmInline).build())
             .primaryConstructor(
@@ -62,8 +73,67 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
                     .build()
             )
             .addProperty(PropertySpec.builder("value", STRING).initializer("value").build())
+            .addFunction(toStringReturningValue())
             .build()
-        return buildTypeFile(typesPackage, className, typeSpec, language)
+    }
+
+    private fun toStringReturningValue(): FunSpec {
+        return FunSpec.builder("toString")
+            .addModifiers(KModifier.OVERRIDE)
+            .returns(STRING)
+            .addStatement("return value")
+            .build()
+    }
+
+    private fun buildVariableNameFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val jvmInline = ClassName("kotlin.jvm", "JvmInline")
+        val variableName = ClassName(typesPackage, "VariableName")
+
+        fun directionSubtype(subName: String, kdoc: String): TypeSpec {
+            return TypeSpec.classBuilder(subName)
+                .addModifiers(KModifier.VALUE)
+                .addAnnotation(AnnotationSpec.builder(jvmInline).build())
+                .addSuperinterface(variableName)
+                .addKdoc(kdoc)
+                .primaryConstructor(
+                    FunSpec.constructorBuilder()
+                        .addParameter("value", STRING)
+                        .build()
+                )
+                .addProperty(
+                    PropertySpec.builder("value", STRING)
+                        .addModifiers(KModifier.OVERRIDE)
+                        .initializer("value")
+                        .build()
+                )
+                .addFunction(toStringReturningValue())
+                .build()
+        }
+
+        val sealedInterface = TypeSpec.interfaceBuilder("VariableName")
+            .addModifiers(KModifier.SEALED)
+            .addKdoc(VARIABLE_NAME_KDOC)
+            .addProperty(PropertySpec.builder("value", STRING).build())
+            .addType(
+                directionSubtype(
+                    "Input",
+                    "A variable read by the declaring element (BPMN input mapping).",
+                )
+            )
+            .addType(
+                directionSubtype(
+                    "Output",
+                    "A variable written by the declaring element (BPMN output mapping).",
+                )
+            )
+            .addType(
+                directionSubtype(
+                    "InOut",
+                    "A variable read AND written by the declaring element.",
+                )
+            )
+            .build()
+        return buildTypeFile(typesPackage, "VariableName", sealedInterface, language)
     }
 
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {

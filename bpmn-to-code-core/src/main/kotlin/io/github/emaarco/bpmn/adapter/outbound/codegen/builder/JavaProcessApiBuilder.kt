@@ -319,7 +319,8 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc(
                     "Process variables grouped by the BPMN element that declares them.\n" +
-                        "When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.\n"
+                        "Direction is encoded in each variable's wrapper type: {@code VariableName.Input}, {@code VariableName.Output}, or {@code VariableName.InOut} when the variable is both read and written by the same element.\n" +
+                        "Consumer APIs that take a specific subtype (for example, a method accepting {@code VariableName.Output}) get compile-time direction enforcement.\n"
                 )
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
@@ -327,22 +328,42 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
                 .forEach { node ->
                     val className = node.getRawName().toCamelCase()
                     val nodeVarsBuilder = TypeSpec.classBuilder(className).addModifiers(PUBLIC, STATIC, FINAL)
-                    val byDirection = node.variables.groupBy { it.direction }
-                    val inputs = byDirection[VariableDirection.INPUT].orEmpty().sortedBy { it.getRawName() }
-                    val outputs = byDirection[VariableDirection.OUTPUT].orEmpty().sortedBy { it.getRawName() }
-                    if (inputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Inputs", inputs, variableNameClass))
-                    if (outputs.isNotEmpty()) nodeVarsBuilder.addType(buildDirectionClass("Outputs", outputs, variableNameClass))
+                    collapseByDirection(node.variables)
+                        .sortedBy { (rawName, _) -> rawName }
+                        .forEach { (_, entry) ->
+                            nodeVarsBuilder.addField(createDirectionalAttribute(entry, variableNameClass))
+                        }
                     variablesBuilder.addType(nodeVarsBuilder.build())
                 }
             builder.addType(variablesBuilder.build())
         }
 
-        private fun buildDirectionClass(name: String, variables: List<VariableDefinition>, wrapperClass: ClassName): TypeSpec {
-            val classBuilder = TypeSpec.classBuilder(name).addModifiers(PUBLIC, STATIC, FINAL)
-            variables.forEach { classBuilder.addField(createTypedAttribute(it, wrapperClass)) }
-            return classBuilder.build()
+        private fun collapseByDirection(variables: List<VariableDefinition>): List<Pair<String, CollapsedVariable>> {
+            val byName = variables.groupBy { it.getRawName() }
+            return byName.entries.map { (rawName, group) ->
+                val directions = group.map { it.direction }.toSet()
+                val subtype = when {
+                    directions.containsAll(setOf(VariableDirection.INPUT, VariableDirection.OUTPUT)) -> "InOut"
+                    directions.contains(VariableDirection.INPUT) -> "Input"
+                    else -> "Output"
+                }
+                rawName to CollapsedVariable(group.first(), subtype)
+            }
+        }
+
+        private fun createDirectionalAttribute(entry: CollapsedVariable, wrapperClass: ClassName): FieldSpec {
+            val subtypeClass = wrapperClass.nestedClass(entry.subtype)
+            return FieldSpec.builder(subtypeClass, entry.definition.getName())
+                .addModifiers(PUBLIC, STATIC, FINAL)
+                .initializer("new \$T(\$S)", subtypeClass, entry.definition.getValue())
+                .build()
         }
     }
+
+    private data class CollapsedVariable(
+        val definition: VariableDefinition,
+        val subtype: String,
+    )
 
     private class ErrorsWriter : ObjectWriter<TypeSpec.Builder> {
 

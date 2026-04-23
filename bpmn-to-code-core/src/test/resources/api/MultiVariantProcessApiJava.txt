@@ -94,15 +94,14 @@ public final class SendNewsletterProcessApi {
 
   /**
    * Process variables grouped by the BPMN element that declares them.
-   * When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.
+   * Direction is encoded in each variable's wrapper type: {@code VariableName.Input}, {@code VariableName.Output}, or {@code VariableName.InOut} when the variable is both read and written by the same element.
+   * Consumer APIs that take a specific subtype (for example, a method accepting {@code VariableName.Output}) get compile-time direction enforcement.
    */
   public static final class Variables {
     public static final class ServiceTaskLoadSubscribers {
-      public static final class Outputs {
-        public static final VariableName AUTHOR = new VariableName("author");
+      public static final VariableName.Output AUTHOR = new VariableName.Output("author");
 
-        public static final VariableName SUBSCRIBERS = new VariableName("subscribers");
-      }
+      public static final VariableName.Output SUBSCRIBERS = new VariableName.Output("subscribers");
     }
   }
 

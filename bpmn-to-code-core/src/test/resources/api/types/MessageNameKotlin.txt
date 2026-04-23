@@ -7,4 +7,6 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class MessageName(
   val `value`: String,
-)
+) {
+  override fun toString(): String = value
+}
