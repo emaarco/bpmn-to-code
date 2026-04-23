@@ -9,169 +9,169 @@ import java.lang.String;
 import java.util.List;
 
 public final class NewsletterSubscriptionProcessApi {
-public static final String PROCESS_ID = "newsletterSubscription";
+  public static final String PROCESS_ID = "newsletterSubscription";
 
-public static final String PROCESS_ENGINE = "ZEEBE";
+  public static final String PROCESS_ENGINE = "ZEEBE";
 
-public static final class Elements {
-  public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "CallActivity_AbortRegistration";
+  public static final class Elements {
+    public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "CallActivity_AbortRegistration";
 
-  public static final String ACTIVITY_CONFIRM_REGISTRATION = "Activity_ConfirmRegistration";
+    public static final String ACTIVITY_CONFIRM_REGISTRATION = "Activity_ConfirmRegistration";
 
-  public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "Activity_SendConfirmationMail";
+    public static final String ACTIVITY_SEND_CONFIRMATION_MAIL = "Activity_SendConfirmationMail";
 
-  public static final String ACTIVITY_SEND_WELCOME_MAIL = "Activity_SendWelcomeMail";
+    public static final String ACTIVITY_SEND_WELCOME_MAIL = "Activity_SendWelcomeMail";
 
-  public static final String COMPENSATION_END_EVENT_REGISTRATION_ABORTED = "CompensationEndEvent_RegistrationAborted";
+    public static final String COMPENSATION_END_EVENT_REGISTRATION_ABORTED = "CompensationEndEvent_RegistrationAborted";
 
-  public static final String COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = "CompensationEvent_OnSubscriptionCounter";
+    public static final String COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = "CompensationEvent_OnSubscriptionCounter";
 
-  public static final String COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER = "CompensationTask_DecrementSubscriptionCounter";
+    public static final String COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER = "CompensationTask_DecrementSubscriptionCounter";
 
-  public static final String END_EVENT_REGISTRATION_COMPLETED = "EndEvent_RegistrationCompleted";
+    public static final String END_EVENT_REGISTRATION_COMPLETED = "EndEvent_RegistrationCompleted";
 
-  public static final String END_EVENT_REGISTRATION_NOT_POSSIBLE = "EndEvent_RegistrationNotPossible";
+    public static final String END_EVENT_REGISTRATION_NOT_POSSIBLE = "EndEvent_RegistrationNotPossible";
 
-  public static final String END_EVENT_SUBSCRIPTION_CONFIRMED = "EndEvent_SubscriptionConfirmed";
+    public static final String END_EVENT_SUBSCRIPTION_CONFIRMED = "EndEvent_SubscriptionConfirmed";
 
-  public static final String ERROR_EVENT_INVALID_MAIL = "ErrorEvent_InvalidMail";
+    public static final String ERROR_EVENT_INVALID_MAIL = "ErrorEvent_InvalidMail";
 
-  public static final String SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER = "serviceTask_incrementSubscriptionCounter";
+    public static final String SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER = "serviceTask_incrementSubscriptionCounter";
 
-  public static final String START_EVENT_REQUEST_RECEIVED = "StartEvent_RequestReceived";
+    public static final String START_EVENT_REQUEST_RECEIVED = "StartEvent_RequestReceived";
 
-  public static final String START_EVENT_SUBMIT_REGISTRATION_FORM = "StartEvent_SubmitRegistrationForm";
+    public static final String START_EVENT_SUBMIT_REGISTRATION_FORM = "StartEvent_SubmitRegistrationForm";
 
-  public static final String SUB_PROCESS_CONFIRMATION = "SubProcess_Confirmation";
+    public static final String SUB_PROCESS_CONFIRMATION = "SubProcess_Confirmation";
 
-  public static final String TIMER_AFTER_3_DAYS = "Timer_After3Days";
+    public static final String TIMER_AFTER_3_DAYS = "Timer_After3Days";
 
-  public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
-}
-
-public static final class CallActivities {
-  public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "abort-registration";
-}
-
-public static final class Messages {
-  public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
-}
-
-public static final class ServiceTasks {
-  public static final String NEWSLETTER_SEND_CONFIRMATION_MAIL = "#{newsletterSendConfirmationMail}";
-
-  public static final String NEWSLETTER_SEND_WELCOME_MAIL = "${newsletterSendWelcomeMail}";
-
-  public static final String COUNTER_CLASS = "counterClass";
-
-  public static final String NEWSLETTER_REGISTRATION_COMPLETED = "newsletter.registrationCompleted";
-}
-
-public static final class Timers {
-  public static final BpmnTimer TIMER_AFTER_3_DAYS = new BpmnTimer("Duration", "${testVariable}");
-
-  public static final BpmnTimer TIMER_EVERY_DAY = new BpmnTimer("Duration", "PT1M");
-}
-
-public static final class Errors {
-  public static final BpmnError ERROR_INVALID_MAIL = new BpmnError("Error_InvalidMail", "500");
-}
-
-public static final class Compensations {
-  public static final String COMPENSATION_END_EVENT_REGISTRATION_ABORTED = "CompensationEndEvent_RegistrationAborted";
-
-  public static final String COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = "CompensationEvent_OnSubscriptionCounter";
-}
-
-public static final class Signals {
-  public static final String SIGNAL_REGISTRATION_NOT_POSSIBLE = "Signal_RegistrationNotPossible";
-}
-
-public static final class Variables {
-  public static final class ActivitySendConfirmationMail {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
-
-    public static final String TEST_VARIABLE = "testVariable";
+    public static final String TIMER_EVERY_DAY = "Timer_EveryDay";
   }
 
-  public static final class ActivitySendWelcomeMail {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
+  public static final class CallActivities {
+    public static final String CALL_ACTIVITY_ABORT_REGISTRATION = "abort-registration";
   }
 
-  public static final class CallActivityAbortRegistration {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
+  public static final class Messages {
+    public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
   }
 
-  public static final class EndEventRegistrationCompleted {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
+  public static final class ServiceTasks {
+    public static final String NEWSLETTER_SEND_CONFIRMATION_MAIL = "#{newsletterSendConfirmationMail}";
+
+    public static final String NEWSLETTER_SEND_WELCOME_MAIL = "${newsletterSendWelcomeMail}";
+
+    public static final String COUNTER_CLASS = "counterClass";
+
+    public static final String NEWSLETTER_REGISTRATION_COMPLETED = "newsletter.registrationCompleted";
   }
 
-  public static final class StartEventRequestReceived {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
+  public static final class Timers {
+    public static final BpmnTimer TIMER_AFTER_3_DAYS = new BpmnTimer("Duration", "${testVariable}");
+
+    public static final BpmnTimer TIMER_EVERY_DAY = new BpmnTimer("Duration", "PT1M");
   }
 
-  public static final class StartEventSubmitRegistrationForm {
-    public static final String SUBSCRIPTION_ID = "subscriptionId";
+  public static final class Errors {
+    public static final BpmnError ERROR_INVALID_MAIL = new BpmnError("Error_InvalidMail", "500");
   }
-}
 
-public static final class Flows {
-  public static final BpmnFlow FLOW_05_I_3_X_1_Y = new BpmnFlow("Flow_05i3x1y", null, "StartEvent_RequestReceived", "Activity_SendConfirmationMail", null, false);
+  public static final class Compensations {
+    public static final String COMPENSATION_END_EVENT_REGISTRATION_ABORTED = "CompensationEndEvent_RegistrationAborted";
 
-  public static final BpmnFlow FLOW_09_CUVZP = new BpmnFlow("Flow_09cuvzp", null, "SubProcess_Confirmation", "Activity_SendWelcomeMail", null, false);
+    public static final String COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = "CompensationEvent_OnSubscriptionCounter";
+  }
 
-  public static final BpmnFlow FLOW_0_I_2_CTUV = new BpmnFlow("Flow_0i2ctuv", null, "ErrorEvent_InvalidMail", "EndEvent_RegistrationNotPossible", null, false);
+  public static final class Signals {
+    public static final String SIGNAL_REGISTRATION_NOT_POSSIBLE = "Signal_RegistrationNotPossible";
+  }
 
-  public static final BpmnFlow FLOW_0_X_4_EWVB = new BpmnFlow("Flow_0x4ewvb", null, "Timer_EveryDay", "Activity_SendConfirmationMail", null, false);
+  public static final class Variables {
+    public static final class ActivitySendConfirmationMail {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
 
-  public static final BpmnFlow FLOW_0_ZDMT_0_T = new BpmnFlow("Flow_0zdmt0t", null, "serviceTask_incrementSubscriptionCounter", "SubProcess_Confirmation", null, false);
+      public static final String TEST_VARIABLE = "testVariable";
+    }
 
-  public static final BpmnFlow FLOW_1_BCKM_43 = new BpmnFlow("Flow_1bckm43", null, "Activity_SendConfirmationMail", "Activity_ConfirmRegistration", null, false);
+    public static final class ActivitySendWelcomeMail {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
 
-  public static final BpmnFlow FLOW_1_BSB_8_NO = new BpmnFlow("Flow_1bsb8no", null, "CallActivity_AbortRegistration", "CompensationEndEvent_RegistrationAborted", null, false);
+    public static final class CallActivityAbortRegistration {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
 
-  public static final BpmnFlow FLOW_1_CPWE_57 = new BpmnFlow("Flow_1cpwe57", null, "Activity_ConfirmRegistration", "EndEvent_SubscriptionConfirmed", null, false);
+    public static final class EndEventRegistrationCompleted {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
 
-  public static final BpmnFlow FLOW_1_CSFYYZ = new BpmnFlow("Flow_1csfyyz", null, "StartEvent_SubmitRegistrationForm", "serviceTask_incrementSubscriptionCounter", null, false);
+    public static final class StartEventRequestReceived {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
 
-  public static final BpmnFlow FLOW_1_I_7_HJID = new BpmnFlow("Flow_1i7hjid", null, "Activity_SendWelcomeMail", "EndEvent_RegistrationCompleted", null, false);
+    public static final class StartEventSubmitRegistrationForm {
+      public static final String SUBSCRIPTION_ID = "subscriptionId";
+    }
+  }
 
-  public static final BpmnFlow FLOW_1_L_1_LJ_4_M = new BpmnFlow("Flow_1l1lj4m", null, "Timer_After3Days", "CallActivity_AbortRegistration", null, false);
-}
+  public static final class Flows {
+    public static final BpmnFlow FLOW_05_I_3_X_1_Y = new BpmnFlow("Flow_05i3x1y", null, "StartEvent_RequestReceived", "Activity_SendConfirmationMail", null, false);
 
-public static final class Relations {
-  public static final BpmnRelations ACTIVITY_CONFIRM_REGISTRATION = new BpmnRelations("Confirm registration", List.of("Activity_SendConfirmationMail"), List.of("EndEvent_SubscriptionConfirmed"), "SubProcess_Confirmation", null, List.of("Timer_EveryDay"));
+    public static final BpmnFlow FLOW_09_CUVZP = new BpmnFlow("Flow_09cuvzp", null, "SubProcess_Confirmation", "Activity_SendWelcomeMail", null, false);
 
-  public static final BpmnRelations ACTIVITY_SEND_CONFIRMATION_MAIL = new BpmnRelations(null, List.of("StartEvent_RequestReceived", "Timer_EveryDay"), List.of("Activity_ConfirmRegistration"), "SubProcess_Confirmation", null, List.of());
+    public static final BpmnFlow FLOW_0_I_2_CTUV = new BpmnFlow("Flow_0i2ctuv", null, "ErrorEvent_InvalidMail", "EndEvent_RegistrationNotPossible", null, false);
 
-  public static final BpmnRelations ACTIVITY_SEND_WELCOME_MAIL = new BpmnRelations(null, List.of("SubProcess_Confirmation"), List.of("EndEvent_RegistrationCompleted"), null, null, List.of());
+    public static final BpmnFlow FLOW_0_X_4_EWVB = new BpmnFlow("Flow_0x4ewvb", null, "Timer_EveryDay", "Activity_SendConfirmationMail", null, false);
 
-  public static final BpmnRelations CALL_ACTIVITY_ABORT_REGISTRATION = new BpmnRelations(null, List.of("Timer_After3Days"), List.of("CompensationEndEvent_RegistrationAborted"), null, null, List.of());
+    public static final BpmnFlow FLOW_0_ZDMT_0_T = new BpmnFlow("Flow_0zdmt0t", null, "serviceTask_incrementSubscriptionCounter", "SubProcess_Confirmation", null, false);
 
-  public static final BpmnRelations COMPENSATION_END_EVENT_REGISTRATION_ABORTED = new BpmnRelations(null, List.of("CallActivity_AbortRegistration"), List.of(), null, null, List.of());
+    public static final BpmnFlow FLOW_1_BCKM_43 = new BpmnFlow("Flow_1bckm43", null, "Activity_SendConfirmationMail", "Activity_ConfirmRegistration", null, false);
 
-  public static final BpmnRelations COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of(), List.of(), null, "serviceTask_incrementSubscriptionCounter", List.of());
+    public static final BpmnFlow FLOW_1_BSB_8_NO = new BpmnFlow("Flow_1bsb8no", null, "CallActivity_AbortRegistration", "CompensationEndEvent_RegistrationAborted", null, false);
 
-  public static final BpmnRelations COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of(), List.of(), null, null, List.of());
+    public static final BpmnFlow FLOW_1_CPWE_57 = new BpmnFlow("Flow_1cpwe57", null, "Activity_ConfirmRegistration", "EndEvent_SubscriptionConfirmed", null, false);
 
-  public static final BpmnRelations END_EVENT_REGISTRATION_COMPLETED = new BpmnRelations(null, List.of("Activity_SendWelcomeMail"), List.of(), null, null, List.of());
+    public static final BpmnFlow FLOW_1_CSFYYZ = new BpmnFlow("Flow_1csfyyz", null, "StartEvent_SubmitRegistrationForm", "serviceTask_incrementSubscriptionCounter", null, false);
 
-  public static final BpmnRelations END_EVENT_REGISTRATION_NOT_POSSIBLE = new BpmnRelations(null, List.of("ErrorEvent_InvalidMail"), List.of(), null, null, List.of());
+    public static final BpmnFlow FLOW_1_I_7_HJID = new BpmnFlow("Flow_1i7hjid", null, "Activity_SendWelcomeMail", "EndEvent_RegistrationCompleted", null, false);
 
-  public static final BpmnRelations END_EVENT_SUBSCRIPTION_CONFIRMED = new BpmnRelations(null, List.of("Activity_ConfirmRegistration"), List.of(), "SubProcess_Confirmation", null, List.of());
+    public static final BpmnFlow FLOW_1_L_1_LJ_4_M = new BpmnFlow("Flow_1l1lj4m", null, "Timer_After3Days", "CallActivity_AbortRegistration", null, false);
+  }
 
-  public static final BpmnRelations ERROR_EVENT_INVALID_MAIL = new BpmnRelations(null, List.of(), List.of("EndEvent_RegistrationNotPossible"), null, "SubProcess_Confirmation", List.of());
+  public static final class Relations {
+    public static final BpmnRelations ACTIVITY_CONFIRM_REGISTRATION = new BpmnRelations("Confirm registration", List.of("Activity_SendConfirmationMail"), List.of("EndEvent_SubscriptionConfirmed"), "SubProcess_Confirmation", null, List.of("Timer_EveryDay"));
 
-  public static final BpmnRelations START_EVENT_REQUEST_RECEIVED = new BpmnRelations(null, List.of(), List.of("Activity_SendConfirmationMail"), "SubProcess_Confirmation", null, List.of());
+    public static final BpmnRelations ACTIVITY_SEND_CONFIRMATION_MAIL = new BpmnRelations(null, List.of("StartEvent_RequestReceived", "Timer_EveryDay"), List.of("Activity_ConfirmRegistration"), "SubProcess_Confirmation", null, List.of());
 
-  public static final BpmnRelations START_EVENT_SUBMIT_REGISTRATION_FORM = new BpmnRelations(null, List.of(), List.of("serviceTask_incrementSubscriptionCounter"), null, null, List.of());
+    public static final BpmnRelations ACTIVITY_SEND_WELCOME_MAIL = new BpmnRelations(null, List.of("SubProcess_Confirmation"), List.of("EndEvent_RegistrationCompleted"), null, null, List.of());
 
-  public static final BpmnRelations SUB_PROCESS_CONFIRMATION = new BpmnRelations(null, List.of("serviceTask_incrementSubscriptionCounter"), List.of("Activity_SendWelcomeMail"), null, null, List.of("ErrorEvent_InvalidMail", "Timer_After3Days"));
+    public static final BpmnRelations CALL_ACTIVITY_ABORT_REGISTRATION = new BpmnRelations(null, List.of("Timer_After3Days"), List.of("CompensationEndEvent_RegistrationAborted"), null, null, List.of());
 
-  public static final BpmnRelations TIMER_AFTER_3_DAYS = new BpmnRelations(null, List.of(), List.of("CallActivity_AbortRegistration"), null, "SubProcess_Confirmation", List.of());
+    public static final BpmnRelations COMPENSATION_END_EVENT_REGISTRATION_ABORTED = new BpmnRelations(null, List.of("CallActivity_AbortRegistration"), List.of(), null, null, List.of());
 
-  public static final BpmnRelations TIMER_EVERY_DAY = new BpmnRelations(null, List.of(), List.of("Activity_SendConfirmationMail"), "SubProcess_Confirmation", "Activity_ConfirmRegistration", List.of());
+    public static final BpmnRelations COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of(), List.of(), null, "serviceTask_incrementSubscriptionCounter", List.of());
 
-  public static final BpmnRelations SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of("StartEvent_SubmitRegistrationForm"), List.of("SubProcess_Confirmation"), null, null, List.of("CompensationEvent_OnSubscriptionCounter"));
-}
+    public static final BpmnRelations COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of(), List.of(), null, null, List.of());
+
+    public static final BpmnRelations END_EVENT_REGISTRATION_COMPLETED = new BpmnRelations(null, List.of("Activity_SendWelcomeMail"), List.of(), null, null, List.of());
+
+    public static final BpmnRelations END_EVENT_REGISTRATION_NOT_POSSIBLE = new BpmnRelations(null, List.of("ErrorEvent_InvalidMail"), List.of(), null, null, List.of());
+
+    public static final BpmnRelations END_EVENT_SUBSCRIPTION_CONFIRMED = new BpmnRelations(null, List.of("Activity_ConfirmRegistration"), List.of(), "SubProcess_Confirmation", null, List.of());
+
+    public static final BpmnRelations ERROR_EVENT_INVALID_MAIL = new BpmnRelations(null, List.of(), List.of("EndEvent_RegistrationNotPossible"), null, "SubProcess_Confirmation", List.of());
+
+    public static final BpmnRelations START_EVENT_REQUEST_RECEIVED = new BpmnRelations(null, List.of(), List.of("Activity_SendConfirmationMail"), "SubProcess_Confirmation", null, List.of());
+
+    public static final BpmnRelations START_EVENT_SUBMIT_REGISTRATION_FORM = new BpmnRelations(null, List.of(), List.of("serviceTask_incrementSubscriptionCounter"), null, null, List.of());
+
+    public static final BpmnRelations SUB_PROCESS_CONFIRMATION = new BpmnRelations(null, List.of("serviceTask_incrementSubscriptionCounter"), List.of("Activity_SendWelcomeMail"), null, null, List.of("ErrorEvent_InvalidMail", "Timer_After3Days"));
+
+    public static final BpmnRelations TIMER_AFTER_3_DAYS = new BpmnRelations(null, List.of(), List.of("CallActivity_AbortRegistration"), null, "SubProcess_Confirmation", List.of());
+
+    public static final BpmnRelations TIMER_EVERY_DAY = new BpmnRelations(null, List.of(), List.of("Activity_SendConfirmationMail"), "SubProcess_Confirmation", "Activity_ConfirmRegistration", List.of());
+
+    public static final BpmnRelations SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER = new BpmnRelations(null, List.of("StartEvent_SubmitRegistrationForm"), List.of("SubProcess_Confirmation"), null, null, List.of("CompensationEvent_OnSubscriptionCounter"));
+  }
 }

@@ -113,24 +113,10 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
     private fun buildBpmnRelationsFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val listClass = ClassName.get("java.util", "List")
         val listType = ParameterizedTypeName.get(listClass, ClassName.get("java.lang", "String"))
-        val previousElementsJavadoc = "IDs of BPMN elements (not sequence flows) that directly precede this element. " +
-            "Use {@code Flows} to traverse the connecting sequence flows."
-        val followingElementsJavadoc = "IDs of BPMN elements (not sequence flows) that directly follow this element. " +
-            "Use {@code Flows} to traverse the connecting sequence flows."
         val typeSpec = TypeSpec.classBuilder("BpmnRelations").addModifiers(PUBLIC)
             .addField(FieldSpec.builder(String::class.java, "name").addModifiers(PUBLIC, FINAL).build())
-            .addField(
-                FieldSpec.builder(listType, "previousElements")
-                    .addModifiers(PUBLIC, FINAL)
-                    .addJavadoc(previousElementsJavadoc)
-                    .build()
-            )
-            .addField(
-                FieldSpec.builder(listType, "followingElements")
-                    .addModifiers(PUBLIC, FINAL)
-                    .addJavadoc(followingElementsJavadoc)
-                    .build()
-            )
+            .addField(FieldSpec.builder(listType, "previousElements").addModifiers(PUBLIC, FINAL).build())
+            .addField(FieldSpec.builder(listType, "followingElements").addModifiers(PUBLIC, FINAL).build())
             .addField(FieldSpec.builder(String::class.java, "parentId").addModifiers(PUBLIC, FINAL).build())
             .addField(FieldSpec.builder(String::class.java, "attachedToRef").addModifiers(PUBLIC, FINAL).build())
             .addField(FieldSpec.builder(listType, "attachedElements").addModifiers(PUBLIC, FINAL).build())

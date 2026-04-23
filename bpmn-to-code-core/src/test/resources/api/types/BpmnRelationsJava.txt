@@ -7,14 +7,8 @@ import java.util.List;
 public class BpmnRelations {
   public final String name;
 
-  /**
-   * IDs of BPMN elements (not sequence flows) that directly precede this element. Use {@code Flows} to traverse the connecting sequence flows.
-   */
   public final List<String> previousElements;
 
-  /**
-   * IDs of BPMN elements (not sequence flows) that directly follow this element. Use {@code Flows} to traverse the connecting sequence flows.
-   */
   public final List<String> followingElements;
 
   public final String parentId;

@@ -104,10 +104,6 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnRelationsFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val listType = LIST.parameterizedBy(STRING)
         val nullableString = STRING.copy(nullable = true)
-        val previousElementsKdoc = "IDs of BPMN elements (not sequence flows) that directly precede this element. " +
-            "Use `Flows` to traverse the connecting sequence flows."
-        val followingElementsKdoc = "IDs of BPMN elements (not sequence flows) that directly follow this element. " +
-            "Use `Flows` to traverse the connecting sequence flows."
         val typeSpec = TypeSpec.classBuilder("BpmnRelations")
             .addModifiers(KModifier.DATA)
             .primaryConstructor(
@@ -121,18 +117,8 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
                     .build()
             )
             .addProperty(PropertySpec.builder("name", nullableString).initializer("name").build())
-            .addProperty(
-                PropertySpec.builder("previousElements", listType)
-                    .initializer("previousElements")
-                    .addKdoc(previousElementsKdoc)
-                    .build()
-            )
-            .addProperty(
-                PropertySpec.builder("followingElements", listType)
-                    .initializer("followingElements")
-                    .addKdoc(followingElementsKdoc)
-                    .build()
-            )
+            .addProperty(PropertySpec.builder("previousElements", listType).initializer("previousElements").build())
+            .addProperty(PropertySpec.builder("followingElements", listType).initializer("followingElements").build())
             .addProperty(PropertySpec.builder("parentId", nullableString).initializer("parentId").build())
             .addProperty(PropertySpec.builder("attachedToRef", nullableString).initializer("attachedToRef").build())
             .addProperty(PropertySpec.builder("attachedElements", listType).initializer("attachedElements").build())

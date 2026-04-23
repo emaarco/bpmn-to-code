@@ -27,8 +27,6 @@ Update user source code that references the v1.1.0 generated Process API to use 
 | `ProcessApi.Errors.BpmnError` (nested type) | `import {pkg}.types.BpmnError` (standalone) |
 | `ProcessApi.Variables.VAR_NAME` | `ProcessApi.Variables.ElementName.VAR_NAME` (manual) |
 | `useVersioning = true/false` (Gradle / Maven plugin config) | removed — delete the line |
-| `ProcessApi.Relations.X.incoming` | `ProcessApi.Relations.X.previousElements` |
-| `ProcessApi.Relations.X.outgoing` | `ProcessApi.Relations.X.followingElements` |
 
 ## Instructions
 
@@ -83,13 +81,6 @@ Search the scoped files for the following patterns and record file path, line nu
 - Pattern: `ProcessApi\.Variables\.[A-Z_]+` where `[A-Z_]+` is not a sub-object name
 - These may now be nested under an element object. Flag each occurrence for manual review; do not propose an automatic replacement.
 
-**E. BpmnRelations field renames**
-- Pattern: `\.Relations\.\w+\.incoming` — replacement: same prefix with `.previousElements`
-- Pattern: `\.Relations\.\w+\.outgoing` — replacement: same prefix with `.followingElements`
-- Also match bare `.incoming` / `.outgoing` on variables typed as `BpmnRelations`
-- Example: `ProcessApi.Relations.ACTIVITY_X.incoming` → `ProcessApi.Relations.ACTIVITY_X.previousElements`
-- Note: the new `name` fields on `BpmnFlow` / `BpmnRelations` are additive (default `null`) and need no migration.
-
 ### Step 5 – Present the migration plan
 
 Group findings by file and present a summary:
@@ -132,8 +123,7 @@ For each approved change:
    - **Kotlin**: `import {pkg}.types.BpmnTimer` / `import {pkg}.types.BpmnError`
    - **Java**: `import {pkg}.types.BpmnTimer;` / `import {pkg}.types.BpmnError;`
    - Skip if the import already exists.
-4. **BpmnRelations field renames**: Replace `.incoming` with `.previousElements` and `.outgoing` with `.followingElements` on the matched line. Limit to accesses where the receiver is a `BpmnRelations` instance (e.g. `ProcessApi.Relations.FOO.incoming`).
-5. Process files one at a time, top-to-bottom by line number.
+4. Process files one at a time, top-to-bottom by line number.
 
 ### Step 7 – Report
 
