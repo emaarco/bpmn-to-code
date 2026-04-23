@@ -14,7 +14,7 @@ Service tasks are detected via the `zeebe:taskDefinition` extension element:
 </bpmn:serviceTask>
 ```
 
-The `type` attribute becomes the value in the generated `TaskTypes` object.
+The `type` attribute becomes the value in the generated `ServiceTasks` object.
 
 ## Variable Extraction
 
