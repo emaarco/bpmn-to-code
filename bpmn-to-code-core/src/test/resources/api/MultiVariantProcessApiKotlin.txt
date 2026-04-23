@@ -8,60 +8,70 @@ import de.emaarco.example.types.BpmnEscalation
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
 import de.emaarco.example.types.BpmnTimer
+import de.emaarco.example.types.ElementId
+import de.emaarco.example.types.MessageName
+import de.emaarco.example.types.ProcessId
+import de.emaarco.example.types.VariableName
 import kotlin.String
 import kotlin.Suppress
 
 object SendNewsletterProcessApi {
-  const val PROCESS_ID: String = "sendNewsletter"
+  val PROCESS_ID: ProcessId = ProcessId("sendNewsletter")
 
   val PROCESS_ENGINE: BpmnEngine = BpmnEngine.ZEEBE
 
   object Elements {
-    const val START_EVENT_EDITION_CREATED: String = "startEvent_editionCreated"
+    val START_EVENT_EDITION_CREATED: ElementId = ElementId("startEvent_editionCreated")
 
-    const val SERVICE_TASK_LOAD_SUBSCRIBERS: String = "serviceTask_loadSubscribers"
+    val SERVICE_TASK_LOAD_SUBSCRIBERS: ElementId = ElementId("serviceTask_loadSubscribers")
 
-    const val GATEWAY_HAS_SUBSCRIBERS: String = "gateway_hasSubscribers"
+    val GATEWAY_HAS_SUBSCRIBERS: ElementId = ElementId("gateway_hasSubscribers")
 
-    const val SERVICE_TASK_SEND_TO_SUBSCRIBER: String = "serviceTask_sendToSubscriber"
+    val SERVICE_TASK_SEND_TO_SUBSCRIBER: ElementId =
+        ElementId("serviceTask_sendToSubscriber")
 
-    const val SERVICE_TASK_NOTIFY_AUTHOR: String = "serviceTask_notifyAuthor"
+    val SERVICE_TASK_NOTIFY_AUTHOR: ElementId = ElementId("serviceTask_notifyAuthor")
 
-    const val END_EVENT_EDITION_SENT: String = "endEvent_editionSent"
+    val END_EVENT_EDITION_SENT: ElementId = ElementId("endEvent_editionSent")
 
-    const val END_EVENT_NO_SUBSCRIBERS: String = "endEvent_noSubscribers"
+    val END_EVENT_NO_SUBSCRIBERS: ElementId = ElementId("endEvent_noSubscribers")
 
-    const val EVENT_SUB_PROCESS_ERROR_HANDLING: String = "eventSubProcess_errorHandling"
+    val EVENT_SUB_PROCESS_ERROR_HANDLING: ElementId =
+        ElementId("eventSubProcess_errorHandling")
 
-    const val EVENT_MAIL_REJECTED: String = "event_mailRejected"
+    val EVENT_MAIL_REJECTED: ElementId = ElementId("event_mailRejected")
 
-    const val SERVICE_TASK_ANALYZE_ERROR: String = "serviceTask_analyzeError"
+    val SERVICE_TASK_ANALYZE_ERROR: ElementId = ElementId("serviceTask_analyzeError")
 
-    const val GATEWAY_CAN_SEND_AGAIN: String = "gateway_canSendAgain"
+    val GATEWAY_CAN_SEND_AGAIN: ElementId = ElementId("gateway_canSendAgain")
 
-    const val SERVICE_TASK_SEND_MAIL_AGAIN: String = "serviceTask_sendMailAgain"
+    val SERVICE_TASK_SEND_MAIL_AGAIN: ElementId = ElementId("serviceTask_sendMailAgain")
 
-    const val EVENT_GATEWAY_AFTER_SENDING_AGAIN: String = "eventGateway_afterSendingAgain"
+    val EVENT_GATEWAY_AFTER_SENDING_AGAIN: ElementId =
+        ElementId("eventGateway_afterSendingAgain")
 
-    const val TIMER_NO_REJECTION_FOR_ONE_DAY: String = "timer_noRejectionForOneDay"
+    val TIMER_NO_REJECTION_FOR_ONE_DAY: ElementId = ElementId("timer_noRejectionForOneDay")
 
-    const val ESCALATION_END_EVENT_NOFITY_SUPPORT: String =
-        "escalationEndEvent_nofitySupport"
+    val ESCALATION_END_EVENT_NOFITY_SUPPORT: ElementId =
+        ElementId("escalationEndEvent_nofitySupport")
 
-    const val EVENT_MAIL_REJECTED_AGAIN: String = "event_mailRejectedAgain"
+    val EVENT_MAIL_REJECTED_AGAIN: ElementId = ElementId("event_mailRejectedAgain")
 
-    const val ESCALATION_END_EVENT_NOFITY_SUPPORT_AFTER_REPEATED_ERROR: String =
-        "escalationEndEvent_nofitySupportAfterRepeatedError"
+    val ESCALATION_END_EVENT_NOFITY_SUPPORT_AFTER_REPEATED_ERROR: ElementId =
+        ElementId("escalationEndEvent_nofitySupportAfterRepeatedError")
 
-    const val END_EVENT_ISSUE_RESOLVED: String = "endEvent_issueResolved"
+    val END_EVENT_ISSUE_RESOLVED: ElementId = ElementId("endEvent_issueResolved")
   }
 
   object Messages {
-    const val MESSAGE_MAIL_REJECTED: String = "Message_MailRejected"
+    val MESSAGE_MAIL_REJECTED: MessageName = MessageName("Message_MailRejected")
 
-    const val MESSAGE_MAIL_REJECTED_AGAIN: String = "Message_MailRejectedAgain"
+    val MESSAGE_MAIL_REJECTED_AGAIN: MessageName = MessageName("Message_MailRejectedAgain")
   }
 
+  /**
+   * Task identifiers used as `@JobWorker(type = ...)` annotation arguments. Stays `const val String` because Kotlin annotation arguments must be compile-time constants, which excludes `@JvmInline value class` instances.
+   */
   object ServiceTasks {
     const val NEWSLETTER_ANALYZE_SEND_ERROR: String = "newsletter.analyzeSendError"
 
@@ -83,9 +93,9 @@ object SendNewsletterProcessApi {
 
   object Variables {
     object ServiceTaskLoadSubscribers {
-      const val AUTHOR: String = "author"
+      val AUTHOR: VariableName = VariableName("author")
 
-      const val SUBSCRIBERS: String = "subscribers"
+      val SUBSCRIBERS: VariableName = VariableName("subscribers")
     }
   }
 

@@ -8,64 +8,76 @@ import de.emaarco.example.types.BpmnError
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
 import de.emaarco.example.types.BpmnTimer
+import de.emaarco.example.types.ElementId
+import de.emaarco.example.types.MessageName
+import de.emaarco.example.types.ProcessId
+import de.emaarco.example.types.SignalName
+import de.emaarco.example.types.VariableName
 import kotlin.String
 import kotlin.Suppress
 
 object NewsletterSubscriptionProcessApi {
-  const val PROCESS_ID: String = "newsletterSubscription"
+  val PROCESS_ID: ProcessId = ProcessId("newsletterSubscription")
 
   val PROCESS_ENGINE: BpmnEngine = BpmnEngine.ZEEBE
 
   object Elements {
-    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"
+    val CALL_ACTIVITY_ABORT_REGISTRATION: ElementId =
+        ElementId("CallActivity_AbortRegistration")
 
-    const val ACTIVITY_CONFIRM_REGISTRATION: String = "Activity_ConfirmRegistration"
+    val ACTIVITY_CONFIRM_REGISTRATION: ElementId = ElementId("Activity_ConfirmRegistration")
 
-    const val ACTIVITY_SEND_CONFIRMATION_MAIL: String = "Activity_SendConfirmationMail"
+    val ACTIVITY_SEND_CONFIRMATION_MAIL: ElementId =
+        ElementId("Activity_SendConfirmationMail")
 
-    const val ACTIVITY_SEND_WELCOME_MAIL: String = "Activity_SendWelcomeMail"
+    val ACTIVITY_SEND_WELCOME_MAIL: ElementId = ElementId("Activity_SendWelcomeMail")
 
-    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String =
-        "CompensationEndEvent_RegistrationAborted"
+    val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: ElementId =
+        ElementId("CompensationEndEvent_RegistrationAborted")
 
-    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String =
-        "CompensationEvent_OnSubscriptionCounter"
+    val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: ElementId =
+        ElementId("CompensationEvent_OnSubscriptionCounter")
 
-    const val COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER: String =
-        "CompensationTask_DecrementSubscriptionCounter"
+    val COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER: ElementId =
+        ElementId("CompensationTask_DecrementSubscriptionCounter")
 
-    const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
+    val END_EVENT_REGISTRATION_COMPLETED: ElementId =
+        ElementId("EndEvent_RegistrationCompleted")
 
-    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String =
-        "EndEvent_RegistrationNotPossible"
+    val END_EVENT_REGISTRATION_NOT_POSSIBLE: ElementId =
+        ElementId("EndEvent_RegistrationNotPossible")
 
-    const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
+    val END_EVENT_SUBSCRIPTION_CONFIRMED: ElementId =
+        ElementId("EndEvent_SubscriptionConfirmed")
 
-    const val ERROR_EVENT_INVALID_MAIL: String = "ErrorEvent_InvalidMail"
+    val ERROR_EVENT_INVALID_MAIL: ElementId = ElementId("ErrorEvent_InvalidMail")
 
-    const val SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER: String =
-        "serviceTask_incrementSubscriptionCounter"
+    val SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER: ElementId =
+        ElementId("serviceTask_incrementSubscriptionCounter")
 
-    const val START_EVENT_REQUEST_RECEIVED: String = "StartEvent_RequestReceived"
+    val START_EVENT_REQUEST_RECEIVED: ElementId = ElementId("StartEvent_RequestReceived")
 
-    const val START_EVENT_SUBMIT_REGISTRATION_FORM: String =
-        "StartEvent_SubmitRegistrationForm"
+    val START_EVENT_SUBMIT_REGISTRATION_FORM: ElementId =
+        ElementId("StartEvent_SubmitRegistrationForm")
 
-    const val SUB_PROCESS_CONFIRMATION: String = "SubProcess_Confirmation"
+    val SUB_PROCESS_CONFIRMATION: ElementId = ElementId("SubProcess_Confirmation")
 
-    const val TIMER_AFTER_3_DAYS: String = "Timer_After3Days"
+    val TIMER_AFTER_3_DAYS: ElementId = ElementId("Timer_After3Days")
 
-    const val TIMER_EVERY_DAY: String = "Timer_EveryDay"
+    val TIMER_EVERY_DAY: ElementId = ElementId("Timer_EveryDay")
   }
 
   object CallActivities {
-    const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "abort-registration"
+    val CALL_ACTIVITY_ABORT_REGISTRATION: ProcessId = ProcessId("abort-registration")
   }
 
   object Messages {
-    const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
+    val MESSAGE_FORM_SUBMITTED: MessageName = MessageName("Message_FormSubmitted")
   }
 
+  /**
+   * Task identifiers used as `@JobWorker(type = ...)` annotation arguments. Stays `const val String` because Kotlin annotation arguments must be compile-time constants, which excludes `@JvmInline value class` instances.
+   */
   object ServiceTasks {
     const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
 
@@ -87,42 +99,43 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Compensations {
-    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String =
-        "CompensationEndEvent_RegistrationAborted"
+    val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: ElementId =
+        ElementId("CompensationEndEvent_RegistrationAborted")
 
-    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String =
-        "CompensationEvent_OnSubscriptionCounter"
+    val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: ElementId =
+        ElementId("CompensationEvent_OnSubscriptionCounter")
   }
 
   object Signals {
-    const val SIGNAL_REGISTRATION_NOT_POSSIBLE: String = "Signal_RegistrationNotPossible"
+    val SIGNAL_REGISTRATION_NOT_POSSIBLE: SignalName =
+        SignalName("Signal_RegistrationNotPossible")
   }
 
   object Variables {
     object ActivitySendConfirmationMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
 
-      const val TEST_VARIABLE: String = "testVariable"
+      val TEST_VARIABLE: VariableName = VariableName("testVariable")
     }
 
     object ActivitySendWelcomeMail {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
     }
 
     object CallActivityAbortRegistration {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
     }
 
     object EndEventRegistrationCompleted {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
     }
 
     object StartEventRequestReceived {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
     }
 
     object StartEventSubmitRegistrationForm {
-      const val SUBSCRIPTION_ID: String = "subscriptionId"
+      val SUBSCRIPTION_ID: VariableName = VariableName("subscriptionId")
     }
   }
 
