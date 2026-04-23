@@ -64,16 +64,16 @@ object ModelInstanceUtils {
             val elementType = it.resolveElementType()
             val attachedToRef = if (it is BoundaryEvent) it.attachedTo?.id else null
             val parentId = (it.parentElement as? SubProcess)?.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val incoming = it.incoming.mapNotNull { flow -> flow.source?.id }
-            val outgoing = it.outgoing.mapNotNull { flow -> flow.target?.id }
+            val previousElements = it.incoming.mapNotNull { flow -> flow.source?.id }
+            val followingElements = it.outgoing.mapNotNull { flow -> flow.target?.id }
             FlowNodeDefinition(
                 id = id,
                 displayName = name,
                 elementType = elementType,
                 attachedToRef = attachedToRef,
                 parentId = parentId,
-                incoming = incoming,
-                outgoing = outgoing,
+                previousElements = previousElements,
+                followingElements = followingElements,
             )
         }
     }

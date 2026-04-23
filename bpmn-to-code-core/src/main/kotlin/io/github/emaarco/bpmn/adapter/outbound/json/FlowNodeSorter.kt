@@ -29,7 +29,7 @@ object FlowNodeSorter {
             if (node.elementType == BpmnElementType.SUB_PROCESS) {
                 val children = childrenByParent[node.id] ?: emptyList()
                 val childStarts = children
-                    .filter { it.elementType == BpmnElementType.START_EVENT && it.attachedToRef == null && it.incoming.isEmpty() }
+                    .filter { it.elementType == BpmnElementType.START_EVENT && it.attachedToRef == null && it.previousElements.isEmpty() }
                     .sortedBy { it.id ?: "" }
                 childStarts.forEach { visit(it) }
                 children.filter { it.id !in visited && it.attachedToRef == null }
@@ -42,7 +42,7 @@ object FlowNodeSorter {
                 if (boundary.id !in visited) {
                     visited.add(boundary.id)
                     result.add(boundary)
-                    boundary.outgoing
+                    boundary.followingElements
                         .mapNotNull { nodeById[it] }
                         .filter { it.id !in visited }
                         .sortedBy { it.id ?: "" }
@@ -50,7 +50,7 @@ object FlowNodeSorter {
                 }
             }
 
-            node.outgoing
+            node.followingElements
                 .mapNotNull { nodeById[it] }
                 .filter { it.id !in visited && it.attachedToRef == null }
                 .sortedBy { it.id ?: "" }
@@ -58,7 +58,7 @@ object FlowNodeSorter {
         }
 
         val topLevel = nodes.filter { it.parentId == null && it.attachedToRef == null }
-        topLevel.filter { it.elementType == BpmnElementType.START_EVENT && it.incoming.isEmpty() }
+        topLevel.filter { it.elementType == BpmnElementType.START_EVENT && it.previousElements.isEmpty() }
             .sortedBy { it.id ?: "" }
             .forEach { visit(it) }
         topLevel.filter { it.id !in visited }

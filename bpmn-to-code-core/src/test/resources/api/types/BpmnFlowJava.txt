@@ -6,6 +6,8 @@ import java.lang.String;
 public class BpmnFlow {
   public final String id;
 
+  public final String name;
+
   public final String sourceRef;
 
   public final String targetRef;
@@ -14,9 +16,10 @@ public class BpmnFlow {
 
   public final boolean isDefault;
 
-  public BpmnFlow(String id, String sourceRef, String targetRef, String condition,
+  public BpmnFlow(String id, String name, String sourceRef, String targetRef, String condition,
       boolean isDefault) {
     this.id = id;
+    this.name = name;
     this.sourceRef = sourceRef;
     this.targetRef = targetRef;
     this.condition = condition;

@@ -156,17 +156,20 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         val bpmnFlowClass = ClassName.get("${packagePath}.types", "BpmnFlow")
         val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
         sequenceFlows.forEach { flow ->
-            val initCode = buildFlowInitializer(bpmnFlowClass, flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
+            val initCode = buildFlowInitializer(bpmnFlowClass, flow.id ?: "", flow.flowName, flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
             val fieldBuilder = FieldSpec.builder(bpmnFlowClass, flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
             flowsBuilder.addField(fieldBuilder.initializer(initCode).build())
         }
         return flowsBuilder.build()
     }
 
-    private fun buildFlowInitializer(bpmnFlowClass: ClassName, id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
+    private fun buildFlowInitializer(bpmnFlowClass: ClassName, id: String, name: String?, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
+        val nameBlock = if (name != null) CodeBlock.of("\$S", name) else CodeBlock.of("null")
         val conditionBlock = if (condition != null) CodeBlock.of("\$S", condition) else CodeBlock.of("null")
         return CodeBlock.builder()
-            .add("new \$T(\$S, \$S, \$S, ", bpmnFlowClass, id, sourceRef, targetRef)
+            .add("new \$T(\$S, ", bpmnFlowClass, id)
+            .add(nameBlock)
+            .add(", \$S, \$S, ", sourceRef, targetRef)
             .add(conditionBlock)
             .add(", \$L)", isDefault)
             .build()
@@ -187,13 +190,16 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     }
 
     private fun buildRelationsInitializer(bpmnRelationsClass: ClassName, node: FlowNodeDefinition): CodeBlock {
+        val nameBlock = if (node.displayName != null) CodeBlock.of("\$S", node.displayName) else CodeBlock.of("null")
         val parentIdBlock = if (node.parentId != null) CodeBlock.of("\$S", node.parentId) else CodeBlock.of("null")
         val attachedToRefBlock = if (node.attachedToRef != null) CodeBlock.of("\$S", node.attachedToRef) else CodeBlock.of("null")
         return CodeBlock.builder()
             .add("new \$T(", bpmnRelationsClass)
-            .add(javaListLiteral(node.incoming))
+            .add(nameBlock)
             .add(", ")
-            .add(javaListLiteral(node.outgoing))
+            .add(javaListLiteral(node.previousElements))
+            .add(", ")
+            .add(javaListLiteral(node.followingElements))
             .add(", ")
             .add(parentIdBlock)
             .add(", ")

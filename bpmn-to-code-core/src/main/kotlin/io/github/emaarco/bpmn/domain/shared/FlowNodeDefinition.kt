@@ -11,8 +11,8 @@ data class FlowNodeDefinition(
     val attachedToRef: String? = null,
     val attachedElements: List<String> = emptyList(),
     val parentId: String? = null,
-    val incoming: List<String> = emptyList(),
-    val outgoing: List<String> = emptyList(),
+    val previousElements: List<String> = emptyList(),
+    val followingElements: List<String> = emptyList(),
     val engineSpecificProperties: Map<String, Any?> = emptyMap(),
 ) : VariableMapping<String> {
     override fun getName() = id?.toUpperSnakeCase() ?: ""

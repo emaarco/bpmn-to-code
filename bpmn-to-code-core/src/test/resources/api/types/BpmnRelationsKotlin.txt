@@ -5,8 +5,15 @@ import kotlin.String
 import kotlin.collections.List
 
 data class BpmnRelations(
-  val incoming: List<String>,
-  val outgoing: List<String>,
+  val name: String? = null,
+  /**
+   * IDs of BPMN elements (not sequence flows) that directly precede this element. Use `Flows` to traverse the connecting sequence flows.
+   */
+  val previousElements: List<String>,
+  /**
+   * IDs of BPMN elements (not sequence flows) that directly follow this element. Use `Flows` to traverse the connecting sequence flows.
+   */
+  val followingElements: List<String>,
   val parentId: String?,
   val attachedToRef: String?,
   val attachedElements: List<String>,

@@ -245,13 +245,13 @@ class ModelMergerServiceTest {
         val deModel = testBpmnModel(
             processId = "order-process",
             variantName = "prodDe",
-            flowNodes = listOf(sharedNode, FlowNodeDefinition(id = "Task_DE", incoming = listOf("Gateway_Route"))),
+            flowNodes = listOf(sharedNode, FlowNodeDefinition(id = "Task_DE", previousElements = listOf("Gateway_Route"))),
             sequenceFlows = listOf(flowDeOnly),
         )
         val atModel = testBpmnModel(
             processId = "order-process",
             variantName = "prodAt",
-            flowNodes = listOf(sharedNode, FlowNodeDefinition(id = "Task_AT", incoming = listOf("Gateway_Route"))),
+            flowNodes = listOf(sharedNode, FlowNodeDefinition(id = "Task_AT", previousElements = listOf("Gateway_Route"))),
             sequenceFlows = listOf(flowAtOnly),
         )
 
