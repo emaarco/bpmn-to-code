@@ -5,7 +5,7 @@
             "id": "StartEvent_SubmitRegistrationForm",
             "displayName": "Submit newsletter form",
             "elementType": "START_EVENT",
-            "outgoing": [
+            "followingElements": [
                 "serviceTask_incrementSubscriptionCounter"
             ],
             "variables": [
@@ -19,10 +19,10 @@
             "attachedElements": [
                 "CompensationEvent_OnSubscriptionCounter"
             ],
-            "incoming": [
+            "previousElements": [
                 "StartEvent_SubmitRegistrationForm"
             ],
-            "outgoing": [
+            "followingElements": [
                 "SubProcess_Confirmation"
             ],
             "properties": {
@@ -44,10 +44,10 @@
                 "ErrorEvent_InvalidMail",
                 "Timer_After3Days"
             ],
-            "incoming": [
+            "previousElements": [
                 "serviceTask_incrementSubscriptionCounter"
             ],
-            "outgoing": [
+            "followingElements": [
                 "Activity_SendWelcomeMail"
             ]
         },
@@ -56,7 +56,7 @@
             "displayName": "Subscription requested",
             "elementType": "START_EVENT",
             "parentId": "SubProcess_Confirmation",
-            "outgoing": [
+            "followingElements": [
                 "Activity_SendConfirmationMail"
             ],
             "variables": [
@@ -68,11 +68,11 @@
             "displayName": "Send confirmation mail",
             "elementType": "SERVICE_TASK",
             "parentId": "SubProcess_Confirmation",
-            "incoming": [
+            "previousElements": [
                 "StartEvent_RequestReceived",
                 "Timer_EveryDay"
             ],
-            "outgoing": [
+            "followingElements": [
                 "Activity_ConfirmRegistration"
             ],
             "variables": [
@@ -91,10 +91,10 @@
             "attachedElements": [
                 "Timer_EveryDay"
             ],
-            "incoming": [
+            "previousElements": [
                 "Activity_SendConfirmationMail"
             ],
-            "outgoing": [
+            "followingElements": [
                 "EndEvent_SubscriptionConfirmed"
             ]
         },
@@ -104,7 +104,7 @@
             "elementType": "BOUNDARY_EVENT",
             "parentId": "SubProcess_Confirmation",
             "attachedToRef": "Activity_ConfirmRegistration",
-            "outgoing": [
+            "followingElements": [
                 "Activity_SendConfirmationMail"
             ],
             "properties": {
@@ -118,7 +118,7 @@
             "displayName": "Subscription confirmed",
             "elementType": "END_EVENT",
             "parentId": "SubProcess_Confirmation",
-            "incoming": [
+            "previousElements": [
                 "Activity_ConfirmRegistration"
             ]
         },
@@ -127,7 +127,7 @@
             "displayName": "Invalid Mail",
             "elementType": "BOUNDARY_EVENT",
             "attachedToRef": "SubProcess_Confirmation",
-            "outgoing": [
+            "followingElements": [
                 "EndEvent_RegistrationNotPossible"
             ]
         },
@@ -135,7 +135,7 @@
             "id": "EndEvent_RegistrationNotPossible",
             "displayName": "Registration not possible",
             "elementType": "END_EVENT",
-            "incoming": [
+            "previousElements": [
                 "ErrorEvent_InvalidMail"
             ]
         },
@@ -144,7 +144,7 @@
             "displayName": "After 3 days",
             "elementType": "BOUNDARY_EVENT",
             "attachedToRef": "SubProcess_Confirmation",
-            "outgoing": [
+            "followingElements": [
                 "CallActivity_AbortRegistration"
             ],
             "properties": {
@@ -157,10 +157,10 @@
             "id": "CallActivity_AbortRegistration",
             "displayName": "Abort registration",
             "elementType": "CALL_ACTIVITY",
-            "incoming": [
+            "previousElements": [
                 "Timer_After3Days"
             ],
-            "outgoing": [
+            "followingElements": [
                 "CompensationEndEvent_RegistrationAborted"
             ],
             "variables": [
@@ -175,7 +175,7 @@
             "id": "CompensationEndEvent_RegistrationAborted",
             "displayName": "Registration aborted",
             "elementType": "END_EVENT",
-            "incoming": [
+            "previousElements": [
                 "CallActivity_AbortRegistration"
             ]
         },
@@ -183,10 +183,10 @@
             "id": "Activity_SendWelcomeMail",
             "displayName": "Send Welcome-Mail",
             "elementType": "SERVICE_TASK",
-            "incoming": [
+            "previousElements": [
                 "SubProcess_Confirmation"
             ],
-            "outgoing": [
+            "followingElements": [
                 "EndEvent_RegistrationCompleted"
             ],
             "variables": [
@@ -206,7 +206,7 @@
             "id": "EndEvent_RegistrationCompleted",
             "displayName": "Registration completed",
             "elementType": "END_EVENT",
-            "incoming": [
+            "previousElements": [
                 "Activity_SendWelcomeMail"
             ],
             "variables": [

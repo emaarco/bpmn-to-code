@@ -164,17 +164,18 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         val bpmnFlowClass = ClassName("${packagePath}.types", "BpmnFlow")
         val flowsBuilder = TypeSpec.objectBuilder("Flows")
         sequenceFlows.forEach { flow ->
-            val initStr = buildFlowInitializer(flow.id ?: "", flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
+            val initStr = buildFlowInitializer(flow.id ?: "", flow.flowName, flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
             flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), bpmnFlowClass).initializer(initStr).build())
         }
         return flowsBuilder.build()
     }
 
-    private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
+    private fun buildFlowInitializer(id: String, name: String?, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
         return CodeBlock.builder().apply {
             add("BpmnFlow(\n")
             indent()
             add("id = %S,\n", id)
+            if (name != null) add("name = %S,\n", name)
             add("sourceRef = %S,\n", sourceRef)
             add("targetRef = %S,\n", targetRef)
             if (condition != null) add("condition = \"${condition.escapeDollarInterpolation()}\",\n")
@@ -201,8 +202,9 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         return CodeBlock.builder().apply {
             add("BpmnRelations(\n")
             indent()
-            add("incoming = %L,\n", listLiteral(node.incoming))
-            add("outgoing = %L,\n", listLiteral(node.outgoing))
+            if (node.displayName != null) add("name = %S,\n", node.displayName)
+            add("previousElements = %L,\n", listLiteral(node.previousElements))
+            add("followingElements = %L,\n", listLiteral(node.followingElements))
             add("parentId = %L,\n", nullableStringLiteral(node.parentId))
             add("attachedToRef = %L,\n", nullableStringLiteral(node.attachedToRef))
             add("attachedElements = %L,\n", listLiteral(node.attachedElements))

@@ -106,6 +106,7 @@ object SendNewsletterProcessApi {
 
         val FLOW_1_JOGUT_0: BpmnFlow = BpmnFlow(
               id = "Flow_1jogut0",
+              name = "Yes",
               sourceRef = "gateway_hasSubscribers",
               targetRef = "serviceTask_sendToSubscriber",
               isDefault = true,
@@ -113,6 +114,7 @@ object SendNewsletterProcessApi {
 
         val FLOW_1_GSZ_7_WD: BpmnFlow = BpmnFlow(
               id = "Flow_1gsz7wd",
+              name = "No",
               sourceRef = "gateway_hasSubscribers",
               targetRef = "endEvent_noSubscribers",
               condition = "\${subscribers.size() > 0}",
@@ -144,6 +146,7 @@ object SendNewsletterProcessApi {
 
         val FLOW_1_IZUCOF: BpmnFlow = BpmnFlow(
               id = "Flow_1izucof",
+              name = "Yes",
               sourceRef = "gateway_canSendAgain",
               targetRef = "serviceTask_sendMailAgain",
               isDefault = true,
@@ -151,6 +154,7 @@ object SendNewsletterProcessApi {
 
         val FLOW_18_NF_2_JH: BpmnFlow = BpmnFlow(
               id = "Flow_18nf2jh",
+              name = "No",
               sourceRef = "gateway_canSendAgain",
               targetRef = "escalationEndEvent_nofitySupport",
               condition = "\${canBeResolved == false}",
@@ -189,32 +193,32 @@ object SendNewsletterProcessApi {
 
       object Relations {
         val END_EVENT_EDITION_SENT: BpmnRelations = BpmnRelations(
-              incoming = listOf("serviceTask_notifyAuthor"),
-              outgoing = emptyList(),
+              previousElements = listOf("serviceTask_notifyAuthor"),
+              followingElements = emptyList(),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val END_EVENT_ISSUE_RESOLVED: BpmnRelations = BpmnRelations(
-              incoming = listOf("timer_noRejectionForOneDay"),
-              outgoing = emptyList(),
+              previousElements = listOf("timer_noRejectionForOneDay"),
+              followingElements = emptyList(),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val END_EVENT_NO_SUBSCRIBERS: BpmnRelations = BpmnRelations(
-              incoming = listOf("gateway_hasSubscribers"),
-              outgoing = emptyList(),
+              previousElements = listOf("gateway_hasSubscribers"),
+              followingElements = emptyList(),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val ESCALATION_END_EVENT_NOFITY_SUPPORT: BpmnRelations = BpmnRelations(
-              incoming = listOf("gateway_canSendAgain"),
-              outgoing = emptyList(),
+              previousElements = listOf("gateway_canSendAgain"),
+              followingElements = emptyList(),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
@@ -222,112 +226,112 @@ object SendNewsletterProcessApi {
 
         val ESCALATION_END_EVENT_NOFITY_SUPPORT_AFTER_REPEATED_ERROR: BpmnRelations =
             BpmnRelations(
-              incoming = listOf("event_mailRejectedAgain"),
-              outgoing = emptyList(),
+              previousElements = listOf("event_mailRejectedAgain"),
+              followingElements = emptyList(),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val EVENT_GATEWAY_AFTER_SENDING_AGAIN: BpmnRelations = BpmnRelations(
-              incoming = listOf("serviceTask_sendMailAgain"),
-              outgoing = listOf("timer_noRejectionForOneDay", "event_mailRejectedAgain"),
+              previousElements = listOf("serviceTask_sendMailAgain"),
+              followingElements = listOf("timer_noRejectionForOneDay", "event_mailRejectedAgain"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val EVENT_SUB_PROCESS_ERROR_HANDLING: BpmnRelations = BpmnRelations(
-              incoming = emptyList(),
-              outgoing = emptyList(),
+              previousElements = emptyList(),
+              followingElements = emptyList(),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val EVENT_MAIL_REJECTED: BpmnRelations = BpmnRelations(
-              incoming = emptyList(),
-              outgoing = listOf("serviceTask_analyzeError"),
+              previousElements = emptyList(),
+              followingElements = listOf("serviceTask_analyzeError"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val EVENT_MAIL_REJECTED_AGAIN: BpmnRelations = BpmnRelations(
-              incoming = listOf("eventGateway_afterSendingAgain"),
-              outgoing = listOf("escalationEndEvent_nofitySupportAfterRepeatedError"),
+              previousElements = listOf("eventGateway_afterSendingAgain"),
+              followingElements = listOf("escalationEndEvent_nofitySupportAfterRepeatedError"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val GATEWAY_CAN_SEND_AGAIN: BpmnRelations = BpmnRelations(
-              incoming = listOf("serviceTask_analyzeError"),
-              outgoing = listOf("serviceTask_sendMailAgain", "escalationEndEvent_nofitySupport"),
+              previousElements = listOf("serviceTask_analyzeError"),
+              followingElements = listOf("serviceTask_sendMailAgain", "escalationEndEvent_nofitySupport"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val GATEWAY_HAS_SUBSCRIBERS: BpmnRelations = BpmnRelations(
-              incoming = listOf("serviceTask_loadSubscribers"),
-              outgoing = listOf("serviceTask_sendToSubscriber", "endEvent_noSubscribers"),
+              previousElements = listOf("serviceTask_loadSubscribers"),
+              followingElements = listOf("serviceTask_sendToSubscriber", "endEvent_noSubscribers"),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val SERVICE_TASK_ANALYZE_ERROR: BpmnRelations = BpmnRelations(
-              incoming = listOf("event_mailRejected"),
-              outgoing = listOf("gateway_canSendAgain"),
+              previousElements = listOf("event_mailRejected"),
+              followingElements = listOf("gateway_canSendAgain"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val SERVICE_TASK_LOAD_SUBSCRIBERS: BpmnRelations = BpmnRelations(
-              incoming = listOf("startEvent_editionCreated"),
-              outgoing = listOf("gateway_hasSubscribers"),
+              previousElements = listOf("startEvent_editionCreated"),
+              followingElements = listOf("gateway_hasSubscribers"),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val SERVICE_TASK_NOTIFY_AUTHOR: BpmnRelations = BpmnRelations(
-              incoming = listOf("serviceTask_sendToSubscriber"),
-              outgoing = listOf("endEvent_editionSent"),
+              previousElements = listOf("serviceTask_sendToSubscriber"),
+              followingElements = listOf("endEvent_editionSent"),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val SERVICE_TASK_SEND_MAIL_AGAIN: BpmnRelations = BpmnRelations(
-              incoming = listOf("gateway_canSendAgain"),
-              outgoing = listOf("eventGateway_afterSendingAgain"),
+              previousElements = listOf("gateway_canSendAgain"),
+              followingElements = listOf("eventGateway_afterSendingAgain"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val SERVICE_TASK_SEND_TO_SUBSCRIBER: BpmnRelations = BpmnRelations(
-              incoming = listOf("gateway_hasSubscribers"),
-              outgoing = listOf("serviceTask_notifyAuthor"),
+              previousElements = listOf("gateway_hasSubscribers"),
+              followingElements = listOf("serviceTask_notifyAuthor"),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val START_EVENT_EDITION_CREATED: BpmnRelations = BpmnRelations(
-              incoming = emptyList(),
-              outgoing = listOf("serviceTask_loadSubscribers"),
+              previousElements = emptyList(),
+              followingElements = listOf("serviceTask_loadSubscribers"),
               parentId = null,
               attachedToRef = null,
               attachedElements = emptyList(),
             )
 
         val TIMER_NO_REJECTION_FOR_ONE_DAY: BpmnRelations = BpmnRelations(
-              incoming = listOf("eventGateway_afterSendingAgain"),
-              outgoing = listOf("endEvent_issueResolved"),
+              previousElements = listOf("eventGateway_afterSendingAgain"),
+              followingElements = listOf("endEvent_issueResolved"),
               parentId = "eventSubProcess_errorHandling",
               attachedToRef = null,
               attachedElements = emptyList(),

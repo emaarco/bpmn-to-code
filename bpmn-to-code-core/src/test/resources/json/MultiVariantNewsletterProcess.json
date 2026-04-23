@@ -26,17 +26,17 @@
                 {
                     "id": "startEvent_editionCreated",
                     "elementType": "START_EVENT",
-                    "outgoing": [
+                    "followingElements": [
                         "serviceTask_loadSubscribers"
                     ]
                 },
                 {
                     "id": "serviceTask_loadSubscribers",
                     "elementType": "SERVICE_TASK",
-                    "incoming": [
+                    "previousElements": [
                         "startEvent_editionCreated"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "gateway_hasSubscribers"
                     ],
                     "variables": [
@@ -51,10 +51,10 @@
                 {
                     "id": "gateway_hasSubscribers",
                     "elementType": "EXCLUSIVE_GATEWAY",
-                    "incoming": [
+                    "previousElements": [
                         "serviceTask_loadSubscribers"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "serviceTask_sendToSubscriber",
                         "endEvent_noSubscribers"
                     ]
@@ -62,17 +62,17 @@
                 {
                     "id": "endEvent_noSubscribers",
                     "elementType": "END_EVENT",
-                    "incoming": [
+                    "previousElements": [
                         "gateway_hasSubscribers"
                     ]
                 },
                 {
                     "id": "serviceTask_sendToSubscriber",
                     "elementType": "SERVICE_TASK",
-                    "incoming": [
+                    "previousElements": [
                         "gateway_hasSubscribers"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "serviceTask_notifyAuthor"
                     ],
                     "properties": {
@@ -83,10 +83,10 @@
                 {
                     "id": "serviceTask_notifyAuthor",
                     "elementType": "SERVICE_TASK",
-                    "incoming": [
+                    "previousElements": [
                         "serviceTask_sendToSubscriber"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "endEvent_editionSent"
                     ],
                     "properties": {
@@ -97,7 +97,7 @@
                 {
                     "id": "endEvent_editionSent",
                     "elementType": "END_EVENT",
-                    "incoming": [
+                    "previousElements": [
                         "serviceTask_notifyAuthor"
                     ]
                 },
@@ -109,7 +109,7 @@
                     "id": "event_mailRejected",
                     "elementType": "START_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "outgoing": [
+                    "followingElements": [
                         "serviceTask_analyzeError"
                     ]
                 },
@@ -117,10 +117,10 @@
                     "id": "serviceTask_analyzeError",
                     "elementType": "SERVICE_TASK",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "event_mailRejected"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "gateway_canSendAgain"
                     ],
                     "properties": {
@@ -132,10 +132,10 @@
                     "id": "gateway_canSendAgain",
                     "elementType": "EXCLUSIVE_GATEWAY",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "serviceTask_analyzeError"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "serviceTask_sendMailAgain",
                         "escalationEndEvent_nofitySupport"
                     ]
@@ -144,7 +144,7 @@
                     "id": "escalationEndEvent_nofitySupport",
                     "elementType": "END_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "gateway_canSendAgain"
                     ]
                 },
@@ -152,10 +152,10 @@
                     "id": "serviceTask_sendMailAgain",
                     "elementType": "SERVICE_TASK",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "gateway_canSendAgain"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "eventGateway_afterSendingAgain"
                     ],
                     "properties": {
@@ -167,10 +167,10 @@
                     "id": "eventGateway_afterSendingAgain",
                     "elementType": "EVENT_BASED_GATEWAY",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "serviceTask_sendMailAgain"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "timer_noRejectionForOneDay",
                         "event_mailRejectedAgain"
                     ]
@@ -179,10 +179,10 @@
                     "id": "event_mailRejectedAgain",
                     "elementType": "INTERMEDIATE_CATCH_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "eventGateway_afterSendingAgain"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "escalationEndEvent_nofitySupportAfterRepeatedError"
                     ]
                 },
@@ -190,7 +190,7 @@
                     "id": "escalationEndEvent_nofitySupportAfterRepeatedError",
                     "elementType": "END_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "event_mailRejectedAgain"
                     ]
                 },
@@ -198,10 +198,10 @@
                     "id": "timer_noRejectionForOneDay",
                     "elementType": "INTERMEDIATE_CATCH_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "eventGateway_afterSendingAgain"
                     ],
-                    "outgoing": [
+                    "followingElements": [
                         "endEvent_issueResolved"
                     ],
                     "properties": {
@@ -214,7 +214,7 @@
                     "id": "endEvent_issueResolved",
                     "elementType": "END_EVENT",
                     "parentId": "eventSubProcess_errorHandling",
-                    "incoming": [
+                    "previousElements": [
                         "timer_noRejectionForOneDay"
                     ]
                 }

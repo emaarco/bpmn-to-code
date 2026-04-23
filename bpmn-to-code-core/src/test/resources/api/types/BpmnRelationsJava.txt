@@ -5,9 +5,11 @@ import java.lang.String;
 import java.util.List;
 
 public class BpmnRelations {
-  public final List<String> incoming;
+  public final String name;
 
-  public final List<String> outgoing;
+  public final List<String> previousElements;
+
+  public final List<String> followingElements;
 
   public final String parentId;
 
@@ -15,10 +17,11 @@ public class BpmnRelations {
 
   public final List<String> attachedElements;
 
-  public BpmnRelations(List<String> incoming, List<String> outgoing, String parentId,
-      String attachedToRef, List<String> attachedElements) {
-    this.incoming = incoming;
-    this.outgoing = outgoing;
+  public BpmnRelations(String name, List<String> previousElements, List<String> followingElements,
+      String parentId, String attachedToRef, List<String> attachedElements) {
+    this.name = name;
+    this.previousElements = previousElements;
+    this.followingElements = followingElements;
     this.parentId = parentId;
     this.attachedToRef = attachedToRef;
     this.attachedElements = attachedElements;

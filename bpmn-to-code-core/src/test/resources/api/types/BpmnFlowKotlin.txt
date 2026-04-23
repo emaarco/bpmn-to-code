@@ -6,6 +6,7 @@ import kotlin.String
 
 data class BpmnFlow(
   val id: String,
+  val name: String? = null,
   val sourceRef: String,
   val targetRef: String,
   val condition: String? = null,
