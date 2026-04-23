@@ -122,7 +122,7 @@ class ZeebeModelExtractorTest {
                         attachedToRef = "SubProcess_Confirmation",
                         followingElements = listOf("CallActivity_AbortRegistration")),
                     FlowNodeDefinition("Timer_EveryDay", BpmnElementType.BOUNDARY_EVENT,
-                        displayName = "Every\nday",
+                        displayName = "Every day",
                         properties = FlowNodeProperties.Timer(TimerDefinition("Timer_EveryDay", "Duration", "PT1M")),
                         attachedToRef = "Activity_ConfirmRegistration",
                         parentId = "SubProcess_Confirmation",
