@@ -3,6 +3,9 @@ package de.emaarco.example.types
 
 import kotlin.String
 
+/**
+ * A BPMN escalation definition referenced by escalation catch events and escalation end events.
+ */
 data class BpmnEscalation(
   val name: String,
   val code: String,

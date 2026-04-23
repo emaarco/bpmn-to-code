@@ -3,6 +3,9 @@ package de.emaarco.example.types
 
 import kotlin.String
 
+/**
+ * A BPMN error definition referenced by error catch events and error end events.
+ */
 data class BpmnError(
   val name: String,
   val code: String,

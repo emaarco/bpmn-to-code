@@ -69,6 +69,7 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnTimer")
             .addModifiers(KModifier.DATA)
+            .addKdoc("A BPMN timer definition. `type` is one of `Duration`, `Date`, or `Cycle`.")
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("type", STRING)
@@ -84,6 +85,7 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnErrorFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnError")
             .addModifiers(KModifier.DATA)
+            .addKdoc("A BPMN error definition referenced by error catch events and error end events.")
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("name", STRING)
@@ -99,6 +101,7 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnEscalationFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnEscalation")
             .addModifiers(KModifier.DATA)
+            .addKdoc("A BPMN escalation definition referenced by escalation catch events and escalation end events.")
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("name", STRING)
@@ -115,6 +118,12 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
         val nullableString = STRING.copy(nullable = true)
         val typeSpec = TypeSpec.classBuilder("BpmnFlow")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "A BPMN sequence flow connecting two elements in the process graph.\n\n" +
+                    "@param name Label of the flow as shown in the BPMN diagram; null when unlabelled.\n" +
+                    "@param condition Condition expression evaluated at runtime; null for unconditional flows.\n" +
+                    "@param isDefault True when this is the default flow of an exclusive or inclusive gateway.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("id", STRING)
@@ -140,6 +149,15 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
         val nullableString = STRING.copy(nullable = true)
         val typeSpec = TypeSpec.classBuilder("BpmnRelations")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "Per-element graph metadata capturing an element's neighbours in the process flow.\n\n" +
+                    "@param previousElements Ids of the immediately preceding flow nodes. These are element ids,\n" +
+                    "    not sequence-flow ids — use `Flows` for edge data.\n" +
+                    "@param followingElements Ids of the immediately following flow nodes. These are element ids,\n" +
+                    "    not sequence-flow ids.\n" +
+                    "@param parentId Id of the containing subprocess element, or null if the element is top-level.\n" +
+                    "@param attachedToRef For boundary events: id of the host element; null for all other types.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter(ParameterSpec.builder("name", nullableString).defaultValue("null").build())

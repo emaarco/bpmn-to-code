@@ -20,6 +20,9 @@ object SendNewsletterProcessApi {
 
   val PROCESS_ENGINE: BpmnEngine = BpmnEngine.ZEEBE
 
+  /**
+   * BPMN element ids as declared in the source model. Typically used in process-level tests (e.g. `startProcessAt(Elements.X)`) and by tooling. Worker runtime code rarely needs these.
+   */
   object Elements {
     val START_EVENT_EDITION_CREATED: ElementId = ElementId("startEvent_editionCreated")
 
@@ -63,6 +66,9 @@ object SendNewsletterProcessApi {
     val END_EVENT_ISSUE_RESOLVED: ElementId = ElementId("endEvent_issueResolved")
   }
 
+  /**
+   * BPMN message names used to correlate messages to running process instances.
+   */
   object Messages {
     val MESSAGE_MAIL_REJECTED: MessageName = MessageName("Message_MailRejected")
 
@@ -70,7 +76,7 @@ object SendNewsletterProcessApi {
   }
 
   /**
-   * Task identifiers used as `@JobWorker(type = ...)` annotation arguments. Stays `const val String` because Kotlin annotation arguments must be compile-time constants, which excludes `@JvmInline value class` instances.
+   * Engine task types. Kept as `const val String` because they are used in `@JobWorker(type = ...)` annotations, which cannot accept value-class arguments. This is why their shape differs from other constants in this API.
    */
   object ServiceTasks {
     const val NEWSLETTER_ANALYZE_SEND_ERROR: String = "newsletter.analyzeSendError"
@@ -91,6 +97,9 @@ object SendNewsletterProcessApi {
         BpmnEscalation("escalation_notifySupport", "200")
   }
 
+  /**
+   * Process variables grouped by the BPMN element that declares them. When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list.
+   */
   object Variables {
     object ServiceTaskLoadSubscribers {
       object Outputs {
@@ -103,6 +112,9 @@ object SendNewsletterProcessApi {
 
   object Variants {
     object Send {
+      /**
+       * Sequence flows between BPMN elements. Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape. Worker code typically does not need these.
+       */
       object Flows {
         val FLOW_0_BIANZ_5: BpmnFlow = BpmnFlow(
               id = "Flow_0bianz5",
@@ -203,6 +215,9 @@ object SendNewsletterProcessApi {
             )
       }
 
+      /**
+       * Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments). Intended for tooling and tests, not worker runtime code.
+       */
       object Relations {
         val END_EVENT_EDITION_SENT: BpmnRelations = BpmnRelations(
               previousElements = listOf("serviceTask_notifyAuthor"),

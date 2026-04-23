@@ -51,6 +51,13 @@ class KotlinSharedTypesBuilderTest {
             assertThat(typeFile.content).isEqualToIgnoringWhitespace(File(fixtureResource.toURI()).readText())
             assertKotlinSyntaxValid(typeFile.content)
         }
+
+        // and: key KDoc blocks are present in the relevant type files
+        val relationsFile = results.first { it.fileName == "BpmnRelations.kt" }
+        assertThat(relationsFile.content).contains("not sequence-flow ids")
+
+        val flowFile = results.first { it.fileName == "BpmnFlow.kt" }
+        assertThat(flowFile.content).contains("default flow")
     }
 
     companion object {

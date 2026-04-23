@@ -4,6 +4,16 @@ package de.emaarco.example.types
 import kotlin.String
 import kotlin.collections.List
 
+/**
+ * Per-element graph metadata capturing an element's neighbours in the process flow.
+ *
+ * @param previousElements Ids of the immediately preceding flow nodes. These are element ids,
+ *     not sequence-flow ids — use `Flows` for edge data.
+ * @param followingElements Ids of the immediately following flow nodes. These are element ids,
+ *     not sequence-flow ids.
+ * @param parentId Id of the containing subprocess element, or null if the element is top-level.
+ * @param attachedToRef For boundary events: id of the host element; null for all other types.
+ */
 data class BpmnRelations(
   val name: String? = null,
   val previousElements: List<String>,
