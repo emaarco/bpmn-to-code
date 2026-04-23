@@ -18,6 +18,11 @@ public final class SendNewsletterProcessApi {
 
   public static final BpmnEngine PROCESS_ENGINE = BpmnEngine.ZEEBE;
 
+  /**
+   * BPMN element ids as declared in the source model.
+   * Typically used in process-level tests or when searching for tasks.
+   * Worker runtime code rarely needs these.
+   */
   public static final class Elements {
     public static final ElementId START_EVENT_EDITION_CREATED = new ElementId("startEvent_editionCreated");
 
@@ -56,6 +61,9 @@ public final class SendNewsletterProcessApi {
     public static final ElementId END_EVENT_ISSUE_RESOLVED = new ElementId("endEvent_issueResolved");
   }
 
+  /**
+   * BPMN message names used to correlate messages to running process instances.
+   */
   public static final class Messages {
     public static final MessageName MESSAGE_MAIL_REJECTED = new MessageName("Message_MailRejected");
 
@@ -63,7 +71,8 @@ public final class SendNewsletterProcessApi {
   }
 
   /**
-   * Task identifiers used as {@code @JobWorker(type = ...)} annotation arguments. Stays {@code public static final String} because Java annotation arguments must be compile-time constants, which excludes record instances.
+   * Job worker task types used in {@code @JobWorker(type = ServiceTasks.X)} annotations.
+   * Kept as {@code public static final String} because annotation arguments must be compile-time constants.
    */
   public static final class ServiceTasks {
     public static final String NEWSLETTER_ANALYZE_SEND_ERROR = "newsletter.analyzeSendError";
@@ -83,6 +92,10 @@ public final class SendNewsletterProcessApi {
     public static final BpmnEscalation ESCALATION_NOTIFY_SUPPORT = new BpmnEscalation("escalation_notifySupport", "200");
   }
 
+  /**
+   * Process variables grouped by the BPMN element that declares them.
+   * When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.
+   */
   public static final class Variables {
     public static final class ServiceTaskLoadSubscribers {
       public static final class Outputs {
@@ -95,6 +108,11 @@ public final class SendNewsletterProcessApi {
 
   public static final class Variants {
     public static final class Send {
+      /**
+       * Sequence flows between BPMN elements.
+       * Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape.
+       * Worker code typically does not need these.
+       */
       public static final class Flows {
         public static final BpmnFlow FLOW_0_BIANZ_5 = new BpmnFlow("Flow_0bianz5", null, "startEvent_editionCreated", "serviceTask_loadSubscribers", null, false);
 
@@ -127,6 +145,10 @@ public final class SendNewsletterProcessApi {
         public static final BpmnFlow FLOW_0338_XZF = new BpmnFlow("Flow_0338xzf", null, "timer_noRejectionForOneDay", "endEvent_issueResolved", null, false);
       }
 
+      /**
+       * Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).
+       * Intended for tooling and tests, not worker runtime code.
+       */
       public static final class Relations {
         public static final BpmnRelations END_EVENT_EDITION_SENT = new BpmnRelations(null, List.of("serviceTask_notifyAuthor"), List.of(), null, null, List.of());
 

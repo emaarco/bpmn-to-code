@@ -23,7 +23,7 @@ object NewsletterSubscriptionProcessApi {
 
   /**
    * BPMN element ids as declared in the source model.
-   * Typically used in process-level tests (e.g. `startProcessAt(Elements.X)`) and by tooling.
+   * Typically used in process-level tests or when searching for tasks.
    * Worker runtime code rarely needs these.
    */
   object Elements {
@@ -84,9 +84,8 @@ object NewsletterSubscriptionProcessApi {
   }
 
   /**
-   * Engine task types.
-   * Kept as `const val String` because they are used in `@JobWorker(type = ...)` annotations, which cannot accept value-class arguments.
-   * This is why their shape differs from other constants in this API.
+   * Job worker task types used in `@JobWorker(type = ServiceTasks.X)` annotations.
+   * Kept as `const val String` because annotation arguments must be compile-time constants.
    */
   object ServiceTasks {
     const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"

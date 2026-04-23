@@ -107,7 +107,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
                 .addKdoc(
                     "BPMN element ids as declared in the source model.\n" +
-                        "Typically used in process-level tests (e.g. `startProcessAt(Elements.X)`) and by tooling.\n" +
+                        "Typically used in process-level tests or when searching for tasks.\n" +
                         "Worker runtime code rarely needs these."
                 )
             modelApi.model.flowNodes.forEach { flowNode ->
@@ -283,9 +283,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.objectBuilder("ServiceTasks")
                 .addKdoc(
-                    "Engine task types.\n" +
-                        "Kept as `const val String` because they are used in `@JobWorker(type = ...)` annotations, which cannot accept value-class arguments.\n" +
-                        "This is why their shape differs from other constants in this API."
+                    "Job worker task types used in `@JobWorker(type = ServiceTasks.X)` annotations.\n" +
+                        "Kept as `const val String` because annotation arguments must be compile-time constants."
                 )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }

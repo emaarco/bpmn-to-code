@@ -19,6 +19,11 @@ public final class NewsletterSubscriptionProcessApi {
 
   public static final BpmnEngine PROCESS_ENGINE = BpmnEngine.ZEEBE;
 
+  /**
+   * BPMN element ids as declared in the source model.
+   * Typically used in process-level tests or when searching for tasks.
+   * Worker runtime code rarely needs these.
+   */
   public static final class Elements {
     public static final ElementId CALL_ACTIVITY_ABORT_REGISTRATION = new ElementId("CallActivity_AbortRegistration");
 
@@ -59,12 +64,16 @@ public final class NewsletterSubscriptionProcessApi {
     public static final ProcessId CALL_ACTIVITY_ABORT_REGISTRATION = new ProcessId("abort-registration");
   }
 
+  /**
+   * BPMN message names used to correlate messages to running process instances.
+   */
   public static final class Messages {
     public static final MessageName MESSAGE_FORM_SUBMITTED = new MessageName("Message_FormSubmitted");
   }
 
   /**
-   * Task identifiers used as {@code @JobWorker(type = ...)} annotation arguments. Stays {@code public static final String} because Java annotation arguments must be compile-time constants, which excludes record instances.
+   * Job worker task types used in {@code @JobWorker(type = ServiceTasks.X)} annotations.
+   * Kept as {@code public static final String} because annotation arguments must be compile-time constants.
    */
   public static final class ServiceTasks {
     public static final String NEWSLETTER_SEND_CONFIRMATION_MAIL = "#{newsletterSendConfirmationMail}";
@@ -96,6 +105,10 @@ public final class NewsletterSubscriptionProcessApi {
     public static final SignalName SIGNAL_REGISTRATION_NOT_POSSIBLE = new SignalName("Signal_RegistrationNotPossible");
   }
 
+  /**
+   * Process variables grouped by the BPMN element that declares them.
+   * When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.
+   */
   public static final class Variables {
     public static final class ActivitySendConfirmationMail {
       public static final class Inputs {
@@ -136,6 +149,11 @@ public final class NewsletterSubscriptionProcessApi {
     }
   }
 
+  /**
+   * Sequence flows between BPMN elements.
+   * Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape.
+   * Worker code typically does not need these.
+   */
   public static final class Flows {
     public static final BpmnFlow FLOW_05_I_3_X_1_Y = new BpmnFlow("Flow_05i3x1y", null, "StartEvent_RequestReceived", "Activity_SendConfirmationMail", null, false);
 
@@ -160,6 +178,10 @@ public final class NewsletterSubscriptionProcessApi {
     public static final BpmnFlow FLOW_1_L_1_LJ_4_M = new BpmnFlow("Flow_1l1lj4m", null, "Timer_After3Days", "CallActivity_AbortRegistration", null, false);
   }
 
+  /**
+   * Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).
+   * Intended for tooling and tests, not worker runtime code.
+   */
   public static final class Relations {
     public static final BpmnRelations ACTIVITY_CONFIRM_REGISTRATION = new BpmnRelations("Confirm registration", List.of("Activity_SendConfirmationMail"), List.of("EndEvent_SubscriptionConfirmed"), "SubProcess_Confirmation", null, List.of("Timer_EveryDay"));
 

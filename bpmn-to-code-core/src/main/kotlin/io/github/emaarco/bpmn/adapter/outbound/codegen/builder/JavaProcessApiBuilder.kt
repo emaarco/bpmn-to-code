@@ -101,6 +101,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val elementIdClass = ClassName.get("${modelApi.packagePath}.types", "ElementId")
             val elementsBuilder = TypeSpec.classBuilder("Elements").addModifiers(PUBLIC, STATIC, FINAL)
+                .addJavadoc(
+                    "BPMN element ids as declared in the source model.\n" +
+                        "Typically used in process-level tests or when searching for tasks.\n" +
+                        "Worker runtime code rarely needs these.\n"
+                )
             modelApi.model.flowNodes.forEach { flowNode ->
                 elementsBuilder.addField(createTypedAttribute(flowNode, elementIdClass))
             }
@@ -163,6 +168,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     private fun buildFlowsClass(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
         val bpmnFlowClass = ClassName.get("${packagePath}.types", "BpmnFlow")
         val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
+            .addJavadoc(
+                "Sequence flows between BPMN elements.\n" +
+                    "Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape.\n" +
+                    "Worker code typically does not need these.\n"
+            )
         sequenceFlows.forEach { flow ->
             val initCode = buildFlowInitializer(bpmnFlowClass, flow.id ?: "", flow.flowName, flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
             val fieldBuilder = FieldSpec.builder(bpmnFlowClass, flow.getName()).addModifiers(PUBLIC, STATIC, FINAL)
@@ -186,6 +196,10 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     private fun buildRelationsClass(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
         val bpmnRelationsClass = ClassName.get("${packagePath}.types", "BpmnRelations")
         val relationsBuilder = TypeSpec.classBuilder("Relations").addModifiers(PUBLIC, STATIC, FINAL)
+            .addJavadoc(
+                "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).\n" +
+                    "Intended for tooling and tests, not worker runtime code.\n"
+            )
         flowNodes
             .filter { it.id != null }
             .sortedBy { it.getRawName() }
@@ -254,6 +268,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val messageNameClass = ClassName.get("${modelApi.packagePath}.types", "MessageName")
             val messagesBuilder = TypeSpec.classBuilder("Messages").addModifiers(PUBLIC, STATIC, FINAL)
+                .addJavadoc("BPMN message names used to correlate messages to running process instances.\n")
             modelApi.model.messages.forEach { message ->
                 messagesBuilder.addField(createTypedAttribute(message, messageNameClass))
             }
@@ -261,11 +276,6 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         }
     }
 
-    /**
-     * `ServiceTasks` intentionally emits `public static final String` rather than a typed wrapper.
-     * Its primary call site is `@JobWorker(type = ServiceTasks.X)` — Java annotation arguments
-     * require compile-time constants, which rules out record instances.
-     */
     private inner class ServiceTasksWriter : ObjectWriter<TypeSpec.Builder> {
 
         override val objectType = ApiObjectType.SERVICE_TASKS
@@ -274,9 +284,8 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.classBuilder("ServiceTasks").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc(
-                    "Task identifiers used as {@code @JobWorker(type = ...)} annotation arguments. Stays " +
-                        "{@code public static final String} because Java annotation arguments must be " +
-                        "compile-time constants, which excludes record instances."
+                    "Job worker task types used in {@code @JobWorker(type = ServiceTasks.X)} annotations.\n" +
+                        "Kept as {@code public static final String} because annotation arguments must be compile-time constants.\n"
                 )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
@@ -308,6 +317,10 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val variableNameClass = ClassName.get("${modelApi.packagePath}.types", "VariableName")
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
+                .addJavadoc(
+                    "Process variables grouped by the BPMN element that declares them.\n" +
+                        "When the element has explicit IO mappings, variables are further split into {@code Inputs} and {@code Outputs}; otherwise they appear as a flat list.\n"
+                )
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }

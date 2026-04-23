@@ -58,7 +58,7 @@ class KotlinProcessApiBuilderTest {
 
         // and: key KDoc blocks disambiguate the nested objects
         assertThat(result.content).contains("process-level tests")
-        assertThat(result.content).contains("@JobWorker(type = ...)")
+        assertThat(result.content).contains("@JobWorker(type = ServiceTasks.X)")
         assertThat(result.content).contains("Worker code typically does not need these")
         assertThat(result.content).contains("tooling and tests, not worker runtime code")
     }
