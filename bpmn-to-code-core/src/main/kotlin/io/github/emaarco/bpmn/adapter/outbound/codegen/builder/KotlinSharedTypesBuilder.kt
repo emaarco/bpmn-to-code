@@ -69,6 +69,11 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnTimer")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "A BPMN timer definition.\n\n" +
+                    "@param type One of `Duration`, `Date`, or `Cycle`.\n" +
+                    "@param timerValue The timer expression (ISO 8601 duration, date, or cycle).\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("type", STRING)
@@ -84,6 +89,11 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnErrorFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnError")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "A BPMN error definition referenced by error catch events and error end events.\n\n" +
+                    "@param name The error name as declared in the BPMN model.\n" +
+                    "@param code The error code used to match catch events at runtime.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("name", STRING)
@@ -99,6 +109,11 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnEscalationFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnEscalation")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "A BPMN escalation definition referenced by escalation catch events and escalation end events.\n\n" +
+                    "@param name The escalation name as declared in the BPMN model.\n" +
+                    "@param code The escalation code used to match catch events at runtime.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("name", STRING)
@@ -115,6 +130,15 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
         val nullableString = STRING.copy(nullable = true)
         val typeSpec = TypeSpec.classBuilder("BpmnFlow")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "A BPMN sequence flow connecting two elements in the process graph.\n\n" +
+                    "@param id The sequence flow id as declared in the BPMN model.\n" +
+                    "@param name Label of the flow as shown in the BPMN diagram; null when unlabelled.\n" +
+                    "@param sourceRef Element id of the flow's source node.\n" +
+                    "@param targetRef Element id of the flow's target node.\n" +
+                    "@param condition Condition expression evaluated at runtime; null for unconditional flows.\n" +
+                    "@param isDefault True when this is the default flow of an exclusive or inclusive gateway.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("id", STRING)
@@ -140,6 +164,15 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
         val nullableString = STRING.copy(nullable = true)
         val typeSpec = TypeSpec.classBuilder("BpmnRelations")
             .addModifiers(KModifier.DATA)
+            .addKdoc(
+                "Per-element graph metadata capturing an element's neighbours in the process flow.\n\n" +
+                    "@param name Display name of the element, if set in the BPMN model.\n" +
+                    "@param previousElements Element ids of preceding flow nodes — not sequence-flow ids (see `Flows`).\n" +
+                    "@param followingElements Element ids of following flow nodes — not sequence-flow ids (see `Flows`).\n" +
+                    "@param parentId Id of the containing subprocess, or null if top-level.\n" +
+                    "@param attachedToRef For boundary events: id of the host element; null otherwise.\n" +
+                    "@param attachedElements Ids of boundary events attached to this element; empty when none.\n"
+            )
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter(ParameterSpec.builder("name", nullableString).defaultValue("null").build())

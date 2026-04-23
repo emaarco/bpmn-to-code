@@ -105,6 +105,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
+                .addKdoc(
+                    "BPMN element ids as declared in the source model.\n" +
+                        "Typically used in process-level tests or when searching for tasks.\n" +
+                        "Worker runtime code rarely needs these."
+                )
             modelApi.model.flowNodes.forEach { flowNode ->
                 elementsBuilder.addProperty(createTypedAttribute(flowNode, elementIdClass))
             }
@@ -167,6 +172,11 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     private fun buildFlowsObject(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
         val bpmnFlowClass = ClassName("${packagePath}.types", "BpmnFlow")
         val flowsBuilder = TypeSpec.objectBuilder("Flows")
+            .addKdoc(
+                "Sequence flows between BPMN elements.\n" +
+                    "Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape.\n" +
+                    "Worker code typically does not need these."
+            )
         sequenceFlows.forEach { flow ->
             val initStr = buildFlowInitializer(flow.id ?: "", flow.flowName, flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
             flowsBuilder.addProperty(PropertySpec.builder(flow.getName(), bpmnFlowClass).initializer(initStr).build())
@@ -192,6 +202,10 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     private fun buildRelationsObject(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
         val bpmnRelationsClass = ClassName("${packagePath}.types", "BpmnRelations")
         val relationsBuilder = TypeSpec.objectBuilder("Relations")
+            .addKdoc(
+                "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).\n" +
+                    "Intended for tooling and tests, not worker runtime code."
+            )
         flowNodes
             .filter { it.id != null }
             .sortedBy { it.getRawName() }
@@ -248,6 +262,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val messageNameClass = ClassName("${modelApi.packagePath}.types", "MessageName")
             val messagesBuilder = TypeSpec.objectBuilder("Messages")
+                .addKdoc("BPMN message names used to correlate messages to running process instances.")
             modelApi.model.messages.forEach { message ->
                 messagesBuilder.addProperty(createTypedAttribute(message, messageNameClass))
             }
@@ -268,9 +283,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.objectBuilder("ServiceTasks")
                 .addKdoc(
-                    "Task identifiers used as `@JobWorker(type = ...)` annotation arguments. Stays `const val String` " +
-                        "because Kotlin annotation arguments must be compile-time constants, which excludes " +
-                        "`@JvmInline value class` instances."
+                    "Job worker task types used in `@JobWorker(type = ServiceTasks.X)` annotations.\n" +
+                        "Kept as `const val String` because annotation arguments must be compile-time constants."
                 )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
@@ -302,6 +316,10 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val variableNameClass = ClassName("${modelApi.packagePath}.types", "VariableName")
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
+                .addKdoc(
+                    "Process variables grouped by the BPMN element that declares them.\n" +
+                        "When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list."
+                )
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }
                 .sortedBy { it.getRawName() }
