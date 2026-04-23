@@ -17,11 +17,16 @@ sourceSets {
 }
 
 dependencies {
-    implementation(project(":bpmn-to-code-core"))
+    compileOnly(project(":bpmn-to-code-core"))
     api(libs.assertj)
     compileOnly(libs.junit)
+    testImplementation(project(":bpmn-to-code-core"))
     testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junitPlatformLauncher)
+}
+
+tasks.jar {
+    from(project(":bpmn-to-code-core").sourceSets.main.get().output)
 }
 
 tasks.named<Test>("test") {
