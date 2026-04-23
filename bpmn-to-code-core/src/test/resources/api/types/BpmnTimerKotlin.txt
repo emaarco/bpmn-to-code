@@ -4,7 +4,8 @@ package de.emaarco.example.types
 import kotlin.String
 
 /**
- * A BPMN timer definition. `type` is one of `Duration`, `Date`, or `Cycle`.
+ * A BPMN timer definition.
+ * `type` is one of `Duration`, `Date`, or `Cycle`.
  */
 data class BpmnTimer(
   val type: String,

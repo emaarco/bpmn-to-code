@@ -106,8 +106,9 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
                 .addKdoc(
-                    "BPMN element ids as declared in the source model. Typically used in process-level tests " +
-                        "(e.g. `startProcessAt(Elements.X)`) and by tooling. Worker runtime code rarely needs these."
+                    "BPMN element ids as declared in the source model.\n" +
+                        "Typically used in process-level tests (e.g. `startProcessAt(Elements.X)`) and by tooling.\n" +
+                        "Worker runtime code rarely needs these."
                 )
             modelApi.model.flowNodes.forEach { flowNode ->
                 elementsBuilder.addProperty(createTypedAttribute(flowNode, elementIdClass))
@@ -172,8 +173,9 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         val bpmnFlowClass = ClassName("${packagePath}.types", "BpmnFlow")
         val flowsBuilder = TypeSpec.objectBuilder("Flows")
             .addKdoc(
-                "Sequence flows between BPMN elements. Mainly useful for process-model tooling, tests, and " +
-                    "AI-agent consumers reasoning about the process shape. Worker code typically does not need these."
+                "Sequence flows between BPMN elements.\n" +
+                    "Mainly useful for process-model tooling, tests, and AI-agent consumers reasoning about the process shape.\n" +
+                    "Worker code typically does not need these."
             )
         sequenceFlows.forEach { flow ->
             val initStr = buildFlowInitializer(flow.id ?: "", flow.flowName, flow.sourceRef, flow.targetRef, flow.conditionExpression, flow.isDefault)
@@ -201,7 +203,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         val bpmnRelationsClass = ClassName("${packagePath}.types", "BpmnRelations")
         val relationsBuilder = TypeSpec.objectBuilder("Relations")
             .addKdoc(
-                "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments). " +
+                "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).\n" +
                     "Intended for tooling and tests, not worker runtime code."
             )
         flowNodes
@@ -281,9 +283,9 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val tasksBuilder = TypeSpec.objectBuilder("ServiceTasks")
                 .addKdoc(
-                    "Engine task types. Kept as `const val String` because they are used in `@JobWorker(type = ...)` " +
-                        "annotations, which cannot accept value-class arguments. This is why their shape differs " +
-                        "from other constants in this API."
+                    "Engine task types.\n" +
+                        "Kept as `const val String` because they are used in `@JobWorker(type = ...)` annotations, which cannot accept value-class arguments.\n" +
+                        "This is why their shape differs from other constants in this API."
                 )
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
@@ -316,9 +318,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             val variableNameClass = ClassName("${modelApi.packagePath}.types", "VariableName")
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
                 .addKdoc(
-                    "Process variables grouped by the BPMN element that declares them. When the element has " +
-                        "explicit IO mappings, variables are further split into `Inputs` and `Outputs`; " +
-                        "otherwise they appear as a flat list."
+                    "Process variables grouped by the BPMN element that declares them.\n" +
+                        "When the element has explicit IO mappings, variables are further split into `Inputs` and `Outputs`; otherwise they appear as a flat list."
                 )
             modelApi.model.flowNodes
                 .filter { it.variables.isNotEmpty() }

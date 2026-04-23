@@ -69,7 +69,7 @@ class KotlinSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilde
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
         val typeSpec = TypeSpec.classBuilder("BpmnTimer")
             .addModifiers(KModifier.DATA)
-            .addKdoc("A BPMN timer definition. `type` is one of `Duration`, `Date`, or `Cycle`.")
+            .addKdoc("A BPMN timer definition.\n`type` is one of `Duration`, `Date`, or `Cycle`.")
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("type", STRING)
