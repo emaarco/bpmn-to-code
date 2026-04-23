@@ -36,7 +36,7 @@ tasks.named<Test>("test") {
 mavenPublishing {
 
     publishToMavenCentral()
-    signAllPublications()
+    if (project.hasProperty("signArtifacts")) signAllPublications()
     coordinates("io.github.emaarco", "bpmn-to-code-testing", version.toString())
 
     pom {
