@@ -271,7 +271,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
     ): List<Pair<String, VariableDirection>> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
         val collectionVariables = loops.mapNotNull { it.camundaCollection }.map { it to VariableDirection.INPUT }
-        val elementVariables = loops.mapNotNull { it.camundaElementVariable }.map { it to VariableDirection.OUTPUT }
+        val elementVariables = loops.mapNotNull { it.camundaElementVariable }.map { it to VariableDirection.INPUT }
         return collectionVariables + elementVariables
     }
 

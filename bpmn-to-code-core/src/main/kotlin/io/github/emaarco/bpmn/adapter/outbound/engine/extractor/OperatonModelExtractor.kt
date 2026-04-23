@@ -293,7 +293,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             .map { it to VariableDirection.INPUT }
         val elementVariables = loops
             .extractVariablesFromLoops(BpmnModelConstants.CAMUNDA_ATTRIBUTE_ELEMENT_VARIABLE)
-            .map { it to VariableDirection.OUTPUT }
+            .map { it to VariableDirection.INPUT }
         return collectionVariables + elementVariables
     }
 

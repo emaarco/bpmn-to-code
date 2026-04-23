@@ -189,16 +189,29 @@ class OperatonModelExtractorTest {
     }
 
     @Test
+    fun `extract preserves direction when the same variable name is both input and output on one element`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-additional-variables.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.inputStream())
+        val activity = bpmnModel.flowNodes.single { it.id == "Activity_ProcessOrder" }
+        assertThat(activity.variables).contains(
+            VariableDefinition("orderId", VariableDirection.INPUT),
+            VariableDefinition("orderId", VariableDirection.OUTPUT),
+        )
+    }
+
+    @Test
     fun `extract returns multi-instance variables`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/operaton-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.inputStream())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
             VariableDefinition("authors", VariableDirection.INPUT),
+            VariableDefinition("author", VariableDirection.INPUT),
+            VariableDefinition("author", VariableDirection.OUTPUT),
             VariableDefinition("subscribers", VariableDirection.INPUT),
             VariableDefinition("subscribers", VariableDirection.OUTPUT),
-            VariableDefinition("subscriber", VariableDirection.OUTPUT),
-            VariableDefinition("author", VariableDirection.OUTPUT),
+            VariableDefinition("subscriber", VariableDirection.INPUT),
         )
     }
 

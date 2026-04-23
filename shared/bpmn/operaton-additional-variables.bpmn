@@ -15,6 +15,7 @@
       <bpmn:extensionElements>
         <operaton:inputOutput>
           <operaton:inputParameter name="orderId">${orderId}</operaton:inputParameter>
+          <operaton:outputParameter name="orderId">${orderId}</operaton:outputParameter>
         </operaton:inputOutput>
         <operaton:properties>
           <operaton:property name="additionalInputVariables" value="orderId" />
