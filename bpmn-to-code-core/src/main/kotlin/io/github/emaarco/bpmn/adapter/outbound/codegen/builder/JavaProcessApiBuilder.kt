@@ -4,7 +4,6 @@ import com.palantir.javapoet.ClassName
 import com.palantir.javapoet.CodeBlock
 import com.palantir.javapoet.FieldSpec
 import com.palantir.javapoet.JavaFile
-import com.palantir.javapoet.ParameterizedTypeName
 import com.palantir.javapoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter

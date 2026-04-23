@@ -1,15 +1,11 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 
 import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.LIST
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.TypeSpec
 import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
 import io.github.emaarco.bpmn.adapter.outbound.codegen.writer.ObjectWriter
