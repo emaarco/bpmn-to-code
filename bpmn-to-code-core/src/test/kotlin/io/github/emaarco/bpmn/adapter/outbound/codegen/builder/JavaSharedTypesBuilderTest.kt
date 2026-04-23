@@ -17,16 +17,16 @@ class JavaSharedTypesBuilderTest {
     private val underTest = JavaSharedTypesBuilder()
 
     @Test
-    fun `buildTypeFiles generates all 5 shared type files`() {
+    fun `buildTypeFiles generates all 6 shared type files`() {
 
         // when: we build the shared type files
         val results = underTest.buildTypeFiles("de.emaarco.example", OutputLanguage.JAVA)
 
-        // then: exactly 5 files in the types sub-package
-        assertThat(results).hasSize(5)
+        // then: exactly 6 files in the types sub-package
+        assertThat(results).hasSize(6)
         assertThat(results.map { it.packagePath }).allMatch { it == "de.emaarco.example.types" }
         assertThat(results.map { it.fileName }).containsExactlyInAnyOrder(
-            "BpmnTimer.java", "BpmnError.java", "BpmnEscalation.java", "BpmnFlow.java", "BpmnRelations.java"
+            "BpmnEngine.java", "BpmnTimer.java", "BpmnError.java", "BpmnEscalation.java", "BpmnFlow.java", "BpmnRelations.java"
         )
 
         // and: each file matches its expected fixture

@@ -13,7 +13,7 @@ import javax.lang.model.element.Modifier.FINAL
 import javax.lang.model.element.Modifier.PUBLIC
 
 /**
- * Generates the 5 shared BPMN classes (BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations)
+ * Generates the 6 shared BPMN classes (BpmnEngine, BpmnTimer, BpmnError, BpmnEscalation, BpmnFlow, BpmnRelations)
  * as standalone Java files in the `{packagePath}.types` sub-package.
  * These are identical for every process in the same package — generated once and deduplicated upstream.
  */
@@ -22,12 +22,22 @@ class JavaSharedTypesBuilder : CodeGenerationAdapter.AbstractSharedTypesBuilder(
     override fun buildTypeFiles(packagePath: String, language: OutputLanguage): List<GeneratedApiFile> {
         val typesPackage = "$packagePath.types"
         return listOf(
+            buildBpmnEngineFile(typesPackage, language),
             buildBpmnTimerFile(typesPackage, language),
             buildBpmnErrorFile(typesPackage, language),
             buildBpmnEscalationFile(typesPackage, language),
             buildBpmnFlowFile(typesPackage, language),
             buildBpmnRelationsFile(typesPackage, language),
         )
+    }
+
+    private fun buildBpmnEngineFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
+        val typeSpec = TypeSpec.enumBuilder("BpmnEngine").addModifiers(PUBLIC)
+            .addEnumConstant("ZEEBE")
+            .addEnumConstant("CAMUNDA_7")
+            .addEnumConstant("OPERATON")
+            .build()
+        return buildTypeFile(typesPackage, "BpmnEngine", typeSpec, language)
     }
 
     private fun buildBpmnTimerFile(typesPackage: String, language: OutputLanguage): GeneratedApiFile {
