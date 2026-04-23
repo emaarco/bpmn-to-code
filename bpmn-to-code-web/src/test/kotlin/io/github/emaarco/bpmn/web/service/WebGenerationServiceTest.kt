@@ -121,6 +121,35 @@ class WebGenerationServiceTest {
         assertThat(response.files).describedAs("Should generate at least one API file").isNotEmpty()
     }
 
+    @Test
+    fun `should generate Kotlin API from sample BPMN file`() {
+
+        // given: the same sample BPMN that the web app serves via 'Try with Newsletter Sample'
+        val request = GenerateRequest(
+            files = listOf(
+                GenerateRequest.BpmnFileData(
+                    fileName = "c8-newsletter.bpmn",
+                    content = loadBpmnBase64("samples/c8-newsletter.bpmn"),
+                )
+            ),
+            config = GenerateRequest.GenerationConfig(
+                outputLanguage = OutputLanguage.KOTLIN,
+                processEngine = ProcessEngine.ZEEBE,
+            )
+        )
+
+        // when: generating the API
+        val response = underTest.generate(request)
+
+        // then: generation succeeds
+        assertThat(response.success).describedAs("Generation should succeed but got: ${response.error}").isTrue()
+        assertThat(response.files).isNotEmpty()
+        assertThat(response.error).isNull()
+        val generatedFile = response.files.first()
+        assertThat(generatedFile.fileName).endsWith(".kt")
+        assertThat(generatedFile.content).contains("newsletterSubscription")
+    }
+
     private fun loadBpmnBase64(resourcePath: String): String {
         val bytes = javaClass.classLoader.getResourceAsStream(resourcePath)!!.readBytes()
         return Base64.getEncoder().encodeToString(bytes)
