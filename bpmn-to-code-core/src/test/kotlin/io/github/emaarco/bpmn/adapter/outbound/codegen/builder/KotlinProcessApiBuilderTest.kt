@@ -52,7 +52,7 @@ class KotlinProcessApiBuilderTest {
         assertThat(result.packagePath).isEqualTo("de.emaarco.example")
 
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/NewsletterSubscriptionProcessApiKotlin.txt")).toURI())
-        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertThat(result.content).isEqualTo(expectedFile.readText())
         assertKotlinSyntaxValid(result.content)
     }
 
@@ -79,7 +79,7 @@ class KotlinProcessApiBuilderTest {
 
         // then: output contains Variants section instead of flat Flows/Relations
         val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiKotlin.txt")).toURI())
-        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertThat(result.content).isEqualTo(expectedFile.readText())
         assertKotlinSyntaxValid(result.content)
     }
 

@@ -35,7 +35,8 @@ object NewsletterSubscriptionProcessApi {
 
     const val END_EVENT_REGISTRATION_COMPLETED: String = "EndEvent_RegistrationCompleted"
 
-    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String = "EndEvent_RegistrationNotPossible"
+    const val END_EVENT_REGISTRATION_NOT_POSSIBLE: String =
+        "EndEvent_RegistrationNotPossible"
 
     const val END_EVENT_SUBSCRIPTION_CONFIRMED: String = "EndEvent_SubscriptionConfirmed"
 
@@ -85,9 +86,11 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Compensations {
-    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String = "CompensationEndEvent_RegistrationAborted"
+    const val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: String =
+        "CompensationEndEvent_RegistrationAborted"
 
-    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String = "CompensationEvent_OnSubscriptionCounter"
+    const val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: String =
+        "CompensationEvent_OnSubscriptionCounter"
   }
 
   object Signals {
@@ -124,207 +127,207 @@ object NewsletterSubscriptionProcessApi {
 
   object Flows {
     val FLOW_05_I_3_X_1_Y: BpmnFlow = BpmnFlow(
-            id = "Flow_05i3x1y",
-            sourceRef = "StartEvent_RequestReceived",
-            targetRef = "Activity_SendConfirmationMail",
+          id = "Flow_05i3x1y",
+          sourceRef = "StartEvent_RequestReceived",
+          targetRef = "Activity_SendConfirmationMail",
         )
 
     val FLOW_09_CUVZP: BpmnFlow = BpmnFlow(
-            id = "Flow_09cuvzp",
-            sourceRef = "SubProcess_Confirmation",
-            targetRef = "Activity_SendWelcomeMail",
+          id = "Flow_09cuvzp",
+          sourceRef = "SubProcess_Confirmation",
+          targetRef = "Activity_SendWelcomeMail",
         )
 
     val FLOW_0_I_2_CTUV: BpmnFlow = BpmnFlow(
-            id = "Flow_0i2ctuv",
-            sourceRef = "ErrorEvent_InvalidMail",
-            targetRef = "EndEvent_RegistrationNotPossible",
+          id = "Flow_0i2ctuv",
+          sourceRef = "ErrorEvent_InvalidMail",
+          targetRef = "EndEvent_RegistrationNotPossible",
         )
 
     val FLOW_0_X_4_EWVB: BpmnFlow = BpmnFlow(
-            id = "Flow_0x4ewvb",
-            sourceRef = "Timer_EveryDay",
-            targetRef = "Activity_SendConfirmationMail",
+          id = "Flow_0x4ewvb",
+          sourceRef = "Timer_EveryDay",
+          targetRef = "Activity_SendConfirmationMail",
         )
 
     val FLOW_0_ZDMT_0_T: BpmnFlow = BpmnFlow(
-            id = "Flow_0zdmt0t",
-            sourceRef = "serviceTask_incrementSubscriptionCounter",
-            targetRef = "SubProcess_Confirmation",
+          id = "Flow_0zdmt0t",
+          sourceRef = "serviceTask_incrementSubscriptionCounter",
+          targetRef = "SubProcess_Confirmation",
         )
 
     val FLOW_1_BCKM_43: BpmnFlow = BpmnFlow(
-            id = "Flow_1bckm43",
-            sourceRef = "Activity_SendConfirmationMail",
-            targetRef = "Activity_ConfirmRegistration",
+          id = "Flow_1bckm43",
+          sourceRef = "Activity_SendConfirmationMail",
+          targetRef = "Activity_ConfirmRegistration",
         )
 
     val FLOW_1_BSB_8_NO: BpmnFlow = BpmnFlow(
-            id = "Flow_1bsb8no",
-            sourceRef = "CallActivity_AbortRegistration",
-            targetRef = "CompensationEndEvent_RegistrationAborted",
+          id = "Flow_1bsb8no",
+          sourceRef = "CallActivity_AbortRegistration",
+          targetRef = "CompensationEndEvent_RegistrationAborted",
         )
 
     val FLOW_1_CPWE_57: BpmnFlow = BpmnFlow(
-            id = "Flow_1cpwe57",
-            sourceRef = "Activity_ConfirmRegistration",
-            targetRef = "EndEvent_SubscriptionConfirmed",
+          id = "Flow_1cpwe57",
+          sourceRef = "Activity_ConfirmRegistration",
+          targetRef = "EndEvent_SubscriptionConfirmed",
         )
 
     val FLOW_1_CSFYYZ: BpmnFlow = BpmnFlow(
-            id = "Flow_1csfyyz",
-            sourceRef = "StartEvent_SubmitRegistrationForm",
-            targetRef = "serviceTask_incrementSubscriptionCounter",
+          id = "Flow_1csfyyz",
+          sourceRef = "StartEvent_SubmitRegistrationForm",
+          targetRef = "serviceTask_incrementSubscriptionCounter",
         )
 
     val FLOW_1_I_7_HJID: BpmnFlow = BpmnFlow(
-            id = "Flow_1i7hjid",
-            sourceRef = "Activity_SendWelcomeMail",
-            targetRef = "EndEvent_RegistrationCompleted",
+          id = "Flow_1i7hjid",
+          sourceRef = "Activity_SendWelcomeMail",
+          targetRef = "EndEvent_RegistrationCompleted",
         )
 
     val FLOW_1_L_1_LJ_4_M: BpmnFlow = BpmnFlow(
-            id = "Flow_1l1lj4m",
-            sourceRef = "Timer_After3Days",
-            targetRef = "CallActivity_AbortRegistration",
+          id = "Flow_1l1lj4m",
+          sourceRef = "Timer_After3Days",
+          targetRef = "CallActivity_AbortRegistration",
         )
   }
 
   object Relations {
     val ACTIVITY_CONFIRM_REGISTRATION: BpmnRelations = BpmnRelations(
-            incoming = listOf("Activity_SendConfirmationMail"),
-            outgoing = listOf("EndEvent_SubscriptionConfirmed"),
-            parentId = "SubProcess_Confirmation",
-            attachedToRef = null,
-            attachedElements = listOf("Timer_EveryDay"),
+          incoming = listOf("Activity_SendConfirmationMail"),
+          outgoing = listOf("EndEvent_SubscriptionConfirmed"),
+          parentId = "SubProcess_Confirmation",
+          attachedToRef = null,
+          attachedElements = listOf("Timer_EveryDay"),
         )
 
     val ACTIVITY_SEND_CONFIRMATION_MAIL: BpmnRelations = BpmnRelations(
-            incoming = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
-            outgoing = listOf("Activity_ConfirmRegistration"),
-            parentId = "SubProcess_Confirmation",
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
+          outgoing = listOf("Activity_ConfirmRegistration"),
+          parentId = "SubProcess_Confirmation",
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val ACTIVITY_SEND_WELCOME_MAIL: BpmnRelations = BpmnRelations(
-            incoming = listOf("SubProcess_Confirmation"),
-            outgoing = listOf("EndEvent_RegistrationCompleted"),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("SubProcess_Confirmation"),
+          outgoing = listOf("EndEvent_RegistrationCompleted"),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val CALL_ACTIVITY_ABORT_REGISTRATION: BpmnRelations = BpmnRelations(
-            incoming = listOf("Timer_After3Days"),
-            outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("Timer_After3Days"),
+          outgoing = listOf("CompensationEndEvent_RegistrationAborted"),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val COMPENSATION_END_EVENT_REGISTRATION_ABORTED: BpmnRelations = BpmnRelations(
-            incoming = listOf("CallActivity_AbortRegistration"),
-            outgoing = emptyList(),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("CallActivity_AbortRegistration"),
+          outgoing = emptyList(),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val COMPENSATION_EVENT_ON_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = emptyList(),
-            parentId = null,
-            attachedToRef = "serviceTask_incrementSubscriptionCounter",
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = emptyList(),
+          parentId = null,
+          attachedToRef = "serviceTask_incrementSubscriptionCounter",
+          attachedElements = emptyList(),
         )
 
     val COMPENSATION_TASK_DECREMENT_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = emptyList(),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = emptyList(),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val END_EVENT_REGISTRATION_COMPLETED: BpmnRelations = BpmnRelations(
-            incoming = listOf("Activity_SendWelcomeMail"),
-            outgoing = emptyList(),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("Activity_SendWelcomeMail"),
+          outgoing = emptyList(),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val END_EVENT_REGISTRATION_NOT_POSSIBLE: BpmnRelations = BpmnRelations(
-            incoming = listOf("ErrorEvent_InvalidMail"),
-            outgoing = emptyList(),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("ErrorEvent_InvalidMail"),
+          outgoing = emptyList(),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val END_EVENT_SUBSCRIPTION_CONFIRMED: BpmnRelations = BpmnRelations(
-            incoming = listOf("Activity_ConfirmRegistration"),
-            outgoing = emptyList(),
-            parentId = "SubProcess_Confirmation",
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = listOf("Activity_ConfirmRegistration"),
+          outgoing = emptyList(),
+          parentId = "SubProcess_Confirmation",
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val ERROR_EVENT_INVALID_MAIL: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = listOf("EndEvent_RegistrationNotPossible"),
-            parentId = null,
-            attachedToRef = "SubProcess_Confirmation",
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = listOf("EndEvent_RegistrationNotPossible"),
+          parentId = null,
+          attachedToRef = "SubProcess_Confirmation",
+          attachedElements = emptyList(),
         )
 
     val START_EVENT_REQUEST_RECEIVED: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = listOf("Activity_SendConfirmationMail"),
-            parentId = "SubProcess_Confirmation",
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = listOf("Activity_SendConfirmationMail"),
+          parentId = "SubProcess_Confirmation",
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val START_EVENT_SUBMIT_REGISTRATION_FORM: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = listOf("serviceTask_incrementSubscriptionCounter"),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = listOf("serviceTask_incrementSubscriptionCounter"),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = emptyList(),
         )
 
     val SUB_PROCESS_CONFIRMATION: BpmnRelations = BpmnRelations(
-            incoming = listOf("serviceTask_incrementSubscriptionCounter"),
-            outgoing = listOf("Activity_SendWelcomeMail"),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
+          incoming = listOf("serviceTask_incrementSubscriptionCounter"),
+          outgoing = listOf("Activity_SendWelcomeMail"),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = listOf("ErrorEvent_InvalidMail", "Timer_After3Days"),
         )
 
     val TIMER_AFTER_3_DAYS: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = listOf("CallActivity_AbortRegistration"),
-            parentId = null,
-            attachedToRef = "SubProcess_Confirmation",
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = listOf("CallActivity_AbortRegistration"),
+          parentId = null,
+          attachedToRef = "SubProcess_Confirmation",
+          attachedElements = emptyList(),
         )
 
     val TIMER_EVERY_DAY: BpmnRelations = BpmnRelations(
-            incoming = emptyList(),
-            outgoing = listOf("Activity_SendConfirmationMail"),
-            parentId = "SubProcess_Confirmation",
-            attachedToRef = "Activity_ConfirmRegistration",
-            attachedElements = emptyList(),
+          incoming = emptyList(),
+          outgoing = listOf("Activity_SendConfirmationMail"),
+          parentId = "SubProcess_Confirmation",
+          attachedToRef = "Activity_ConfirmRegistration",
+          attachedElements = emptyList(),
         )
 
     val SERVICE_TASK_INCREMENT_SUBSCRIPTION_COUNTER: BpmnRelations = BpmnRelations(
-            incoming = listOf("StartEvent_SubmitRegistrationForm"),
-            outgoing = listOf("SubProcess_Confirmation"),
-            parentId = null,
-            attachedToRef = null,
-            attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
+          incoming = listOf("StartEvent_SubmitRegistrationForm"),
+          outgoing = listOf("SubProcess_Confirmation"),
+          parentId = null,
+          attachedToRef = null,
+          attachedElements = listOf("CompensationEvent_OnSubscriptionCounter"),
         )
   }
 }

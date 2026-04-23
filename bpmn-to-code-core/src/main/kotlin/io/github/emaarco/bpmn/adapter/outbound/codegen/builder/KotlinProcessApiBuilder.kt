@@ -3,6 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.codegen.builder
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.LIST
@@ -167,16 +168,18 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         return flowsBuilder.build()
     }
 
-    private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): String {
-        return buildString {
-            append("BpmnFlow(\n")
-            append("    id = \"$id\",\n")
-            append("    sourceRef = \"$sourceRef\",\n")
-            append("    targetRef = \"$targetRef\",\n")
-            if (condition != null) append("    condition = \"${condition.escapeDollarInterpolation()}\",\n")
-            if (isDefault) append("    isDefault = true,\n")
-            append(")")
-        }
+    private fun buildFlowInitializer(id: String, sourceRef: String, targetRef: String, condition: String?, isDefault: Boolean): CodeBlock {
+        return CodeBlock.builder().apply {
+            add("BpmnFlow(\n")
+            indent()
+            add("id = %S,\n", id)
+            add("sourceRef = %S,\n", sourceRef)
+            add("targetRef = %S,\n", targetRef)
+            if (condition != null) add("condition = \"${condition.escapeDollarInterpolation()}\",\n")
+            if (isDefault) add("isDefault = true,\n")
+            unindent()
+            add(")")
+        }.build()
     }
 
     private fun buildRelationsObject(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
@@ -192,16 +195,18 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         return relationsBuilder.build()
     }
 
-    private fun buildRelationsInitializer(node: FlowNodeDefinition): String {
-        return buildString {
-            append("BpmnRelations(\n")
-            append("    incoming = ${listLiteral(node.incoming)},\n")
-            append("    outgoing = ${listLiteral(node.outgoing)},\n")
-            append("    parentId = ${nullableStringLiteral(node.parentId)},\n")
-            append("    attachedToRef = ${nullableStringLiteral(node.attachedToRef)},\n")
-            append("    attachedElements = ${listLiteral(node.attachedElements)},\n")
-            append(")")
-        }
+    private fun buildRelationsInitializer(node: FlowNodeDefinition): CodeBlock {
+        return CodeBlock.builder().apply {
+            add("BpmnRelations(\n")
+            indent()
+            add("incoming = %L,\n", listLiteral(node.incoming))
+            add("outgoing = %L,\n", listLiteral(node.outgoing))
+            add("parentId = %L,\n", nullableStringLiteral(node.parentId))
+            add("attachedToRef = %L,\n", nullableStringLiteral(node.attachedToRef))
+            add("attachedElements = %L,\n", listLiteral(node.attachedElements))
+            unindent()
+            add(")")
+        }.build()
     }
 
     private fun listLiteral(items: List<String>): String {
