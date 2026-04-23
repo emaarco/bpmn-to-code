@@ -13,7 +13,7 @@ The generated Process API is an `object` (Kotlin) or `class` (Java) with nested 
 | `Elements` | All flow node IDs (tasks, events, gateways, subprocesses) |
 | `CallActivities` | Called process IDs for call activity elements |
 | `Messages` | Message names from message events and receive tasks |
-| `TaskTypes` | Worker types / topics / delegate expressions from service tasks |
+| `ServiceTasks` | Worker types / topics / delegate expressions from service tasks |
 | `Timers` | Timer configurations with type and value (`BpmnTimer`) |
 | `Errors` | Error definitions with name and code (`BpmnError`) |
 | `Compensations` | Compensation event IDs |
@@ -66,7 +66,7 @@ object NewsletterSubscriptionProcessApi {
     const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
   }
 
-  object TaskTypes {
+  object ServiceTasks {
     const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
     const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
     const val NEWSLETTER_REGISTRATION_COMPLETED: String = "newsletter.registrationCompleted"
@@ -146,7 +146,7 @@ public class NewsletterSubscriptionProcessApi {
         public static final String MESSAGE_FORM_SUBMITTED = "Message_FormSubmitted";
     }
 
-    // ... same structure for TaskTypes, Timers, Errors, Compensations, Signals, Variables, Flows, Relations
+    // ... same structure for ServiceTasks, Timers, Errors, Compensations, Signals, Variables, Flows, Relations
 }
 ```
 

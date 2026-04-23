@@ -154,7 +154,7 @@ export const generateCompare = {
     `<span class="cline">  .messageName(<span class="tok-t">Messages</span>.MESSAGE_FORM_SUBMITTED)</span>`,
     `<span class="cline">  .send()</span>`,
     `<span class="cline blank"> </span>`,
-    `<span class="cline"><span class="tok-a">@JobWorker</span>(type = <span class="tok-t">TaskTypes</span>.NEWSLETTER_SEND_CONFIRMATION_MAIL)</span>`,
+    `<span class="cline"><span class="tok-a">@JobWorker</span>(type = <span class="tok-t">ServiceTasks</span>.NEWSLETTER_SEND_CONFIRMATION_MAIL)</span>`,
     `<span class="cline"><span class="tok-k">fun</span> sendConfirmationMail() { <span class="tok-c">/* ... */</span> }</span>`,
   ].join(''),
 }

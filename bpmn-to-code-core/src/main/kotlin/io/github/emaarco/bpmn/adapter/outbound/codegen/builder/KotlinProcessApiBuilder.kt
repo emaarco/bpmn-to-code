@@ -247,7 +247,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.serviceTasks.any { it.getRawName().isNotEmpty() }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val tasksBuilder = TypeSpec.objectBuilder("TaskTypes")
+            val tasksBuilder = TypeSpec.objectBuilder("ServiceTasks")
             modelApi.model.serviceTasks
                 .filter { it.getRawName().isNotEmpty() }
                 .forEach { task -> tasksBuilder.addProperty(createAttribute(task)) }

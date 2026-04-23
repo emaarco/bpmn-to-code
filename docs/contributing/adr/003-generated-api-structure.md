@@ -17,7 +17,7 @@ object ProcessApi {
 
     object Elements { /* flow nodes */ }
     object Messages { /* message definitions */ }
-    object TaskTypes { /* service task types */ }
+    object ServiceTasks { /* service task types */ }
     object Timers { /* timer definitions */ }
     object Errors { /* error definitions */ }
     object Signals { /* signal definitions */ }

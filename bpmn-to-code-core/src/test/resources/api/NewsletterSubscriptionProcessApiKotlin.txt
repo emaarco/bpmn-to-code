@@ -64,7 +64,7 @@ object NewsletterSubscriptionProcessApi {
     const val MESSAGE_FORM_SUBMITTED: String = "Message_FormSubmitted"
   }
 
-  object TaskTypes {
+  object ServiceTasks {
     const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
 
     const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"

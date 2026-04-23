@@ -48,7 +48,7 @@ Compare `docs/guide/generated-api.md` against:
 - `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/codegen/`
 
 Verify:
-- All sections listed (Elements, CallActivities, Messages, TaskTypes, Timers, Errors, Signals, Variables) actually get generated
+- All sections listed (Elements, CallActivities, Messages, ServiceTasks, Timers, Errors, Signals, Variables) actually get generated
 - The example code matches what the generators would produce
 - No generated sections are missing from the docs
 

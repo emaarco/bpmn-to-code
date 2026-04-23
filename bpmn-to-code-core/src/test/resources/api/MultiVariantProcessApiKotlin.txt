@@ -61,7 +61,7 @@ object SendNewsletterProcessApi {
     const val MESSAGE_MAIL_REJECTED_AGAIN: String = "Message_MailRejectedAgain"
   }
 
-  object TaskTypes {
+  object ServiceTasks {
     const val NEWSLETTER_ANALYZE_SEND_ERROR: String = "newsletter.analyzeSendError"
 
     const val NEWSLETTER_LOAD_SUBSCRIBERS: String = "newsletter.loadSubscribers"
