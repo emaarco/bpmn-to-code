@@ -3,6 +3,7 @@
 
 package de.emaarco.example
 
+import de.emaarco.example.types.BpmnEngine
 import de.emaarco.example.types.BpmnError
 import de.emaarco.example.types.BpmnFlow
 import de.emaarco.example.types.BpmnRelations
@@ -13,7 +14,7 @@ import kotlin.Suppress
 object NewsletterSubscriptionProcessApi {
   const val PROCESS_ID: String = "newsletterSubscription"
 
-  const val PROCESS_ENGINE: String = "ZEEBE"
+  val PROCESS_ENGINE: BpmnEngine = BpmnEngine.ZEEBE
 
   object Elements {
     const val CALL_ACTIVITY_ABORT_REGISTRATION: String = "CallActivity_AbortRegistration"

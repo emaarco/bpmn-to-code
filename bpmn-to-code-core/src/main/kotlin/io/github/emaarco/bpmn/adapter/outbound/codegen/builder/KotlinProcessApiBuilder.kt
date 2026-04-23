@@ -88,8 +88,10 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val enginePropertyBuilder = PropertySpec.builder("PROCESS_ENGINE", String::class).addModifiers(KModifier.CONST)
-            val engineProperty = enginePropertyBuilder.initializer("\"${modelApi.engine.name}\"").build()
+            val bpmnEngineClass = ClassName("${modelApi.packagePath}.types", "BpmnEngine")
+            val engineProperty = PropertySpec.builder("PROCESS_ENGINE", bpmnEngineClass)
+                .initializer("%T.%L", bpmnEngineClass, modelApi.engine.name)
+                .build()
             builder.addProperty(engineProperty)
         }
     }

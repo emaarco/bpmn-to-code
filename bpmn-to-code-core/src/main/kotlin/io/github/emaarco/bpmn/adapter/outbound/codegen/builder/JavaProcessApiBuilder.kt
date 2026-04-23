@@ -83,8 +83,11 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val fieldBuilder = FieldSpec.builder(String::class.java, "PROCESS_ENGINE").addModifiers(PUBLIC, FINAL, STATIC)
-            builder.addField(fieldBuilder.initializer("\$S", modelApi.engine.name).build())
+            val bpmnEngineClass = ClassName.get("${modelApi.packagePath}.types", "BpmnEngine")
+            val fieldBuilder = FieldSpec.builder(bpmnEngineClass, "PROCESS_ENGINE")
+                .addModifiers(PUBLIC, FINAL, STATIC)
+                .initializer("\$T.\$L", bpmnEngineClass, modelApi.engine.name)
+            builder.addField(fieldBuilder.build())
         }
     }
 
