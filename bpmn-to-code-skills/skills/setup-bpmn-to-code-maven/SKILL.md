@@ -44,6 +44,17 @@ Check [Maven Central](https://central.sonatype.com/artifact/io.github.emaarco/bp
 
 Prepare the following changes to `pom.xml`. Use the example at `examples/maven-example/pom.xml` as the canonical reference.
 
+Add the runtime dependency inside `<dependencies>` (it provides `ProcessId`, `ElementId`, `MessageName`,
+`SignalName`, `VariableName`, and the BPMN metadata types the generated code references):
+
+```xml
+<dependency>
+    <groupId>io.github.emaarco</groupId>
+    <artifactId>bpmn-to-code-runtime</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
+
 Add the plugin block inside `<build><plugins>`:
 
 ```xml

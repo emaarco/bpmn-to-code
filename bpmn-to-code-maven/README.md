@@ -10,10 +10,21 @@ and ensure consistency between your BPMN model and your code.
 
 ## ✨ How to Use
 
-Add the following plugin configuration to your project's pom.xml within the <build> section.
-This configuration instructs the plugin on where to locate your BPMN files,
-where to output the generated API files, and how to format the output
-(e.g., language, package, and process engine).
+Add the `bpmn-to-code-runtime` dependency (it ships the shared types — `ProcessId`, `ElementId`, `MessageName`,
+`SignalName`, `VariableName`, and the BPMN metadata records — that the generated code references):
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>io.github.emaarco</groupId>
+        <artifactId>bpmn-to-code-runtime</artifactId>
+        <version>2.0.0</version>
+    </dependency>
+</dependencies>
+```
+
+Then add the plugin configuration within the `<build>` section. It tells the plugin where to locate your
+BPMN files, where to output the generated API files, and how to format the output (language, package, engine).
 
 ```xml
 

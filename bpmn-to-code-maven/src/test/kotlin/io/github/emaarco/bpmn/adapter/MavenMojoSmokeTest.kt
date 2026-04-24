@@ -37,16 +37,14 @@ class MavenMojoSmokeTest {
         // when: executing the mojo
         mojo.execute()
 
-        // then: the expected output files are generated
+        // then: only ProcessApi files are generated (shared types ship via runtime artifact)
         val packageDir = File(outputDir, "io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
         val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
-        val modelFiles = generatedFiles.filter { it.isFile }
-        assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
-        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
-        assertThat(requireNotNull(typesDir.listFiles())).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.isFile).isTrue() }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
     }
 
     private fun setField(obj: Any, name: String, value: Any) {

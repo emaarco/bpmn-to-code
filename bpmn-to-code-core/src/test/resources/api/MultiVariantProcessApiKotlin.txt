@@ -3,15 +3,15 @@
 
 package de.emaarco.example
 
-import de.emaarco.example.types.BpmnEngine
-import de.emaarco.example.types.BpmnEscalation
-import de.emaarco.example.types.BpmnFlow
-import de.emaarco.example.types.BpmnRelations
-import de.emaarco.example.types.BpmnTimer
-import de.emaarco.example.types.ElementId
-import de.emaarco.example.types.MessageName
-import de.emaarco.example.types.ProcessId
-import de.emaarco.example.types.VariableName
+import io.github.emaarco.bpmn.runtime.BpmnEngine
+import io.github.emaarco.bpmn.runtime.BpmnEscalation
+import io.github.emaarco.bpmn.runtime.BpmnFlow
+import io.github.emaarco.bpmn.runtime.BpmnRelations
+import io.github.emaarco.bpmn.runtime.BpmnTimer
+import io.github.emaarco.bpmn.runtime.ElementId
+import io.github.emaarco.bpmn.runtime.MessageName
+import io.github.emaarco.bpmn.runtime.ProcessId
+import io.github.emaarco.bpmn.runtime.VariableName
 import kotlin.String
 import kotlin.Suppress
 

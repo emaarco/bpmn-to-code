@@ -8,7 +8,9 @@ import io.github.emaarco.bpmn.web.model.GenerateRequest
 import io.github.emaarco.bpmn.web.model.GenerateResponse
 import java.util.*
 
-class WebGenerationService {
+class WebGenerationService(
+    private val librarySourceProvider: LibrarySourceProvider = LibrarySourceProvider(),
+) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -21,7 +23,12 @@ class WebGenerationService {
             val bpmnInputs = request.files.map { this.buildCommand(it) }
             val generatedApiFiles = this.executePlugin(request.config, bpmnInputs)
             val generatedFiles = generatedApiFiles.map { mapToResponse(it) }
-            return GenerateResponse(success = true, files = generatedFiles)
+            return GenerateResponse(
+                success = true,
+                files = generatedFiles,
+                libraryFiles = librarySourceProvider.libraryFiles(),
+                runtimeDependency = librarySourceProvider.runtimeDependency(),
+            )
         } catch (e: BpmnValidationException) {
             logger.error(e) { "BPMN validation failed during generation" }
             return GenerateResponse.fromValidationException(e)

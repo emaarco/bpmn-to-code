@@ -63,7 +63,7 @@ Document decisions that:
 - [ADR 007: Variable Extraction Scope](007-variable-extraction-scope.md) - Explicit variable definitions only
 - [ADR 011: Variable Name Collision Detection](011-variable-name-collision-detection.md) - Handling duplicate variable names
 - [ADR 012: JSON Export](012-json-export.md) - Structured JSON representation of process models
-- [ADR 014: Shared BPMN Types](014-shared-bpmn-types.md) - Common type definitions across engines
+- [ADR 014: Shared BPMN Types](014-shared-bpmn-types.md) - Published `bpmn-to-code-runtime` artifact for shared types across modules
 - [ADR 015: Directional Variable Extraction](015-directional-variable-extraction.md) - Split `Variables.<Element>` into `Inputs` / `Outputs`
 
 ### Web Module

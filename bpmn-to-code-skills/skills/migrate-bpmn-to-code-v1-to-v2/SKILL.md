@@ -24,12 +24,12 @@ Update user source code that references the v1.1.0 generated Process API to use 
 | v1.1.0 | v2.0.0 |
 |--------|--------|
 | `ProcessApi.TaskTypes.FOO` | `ProcessApi.ServiceTasks.FOO` |
-| `ProcessApi.Timers.BpmnTimer` (nested type) | `import {pkg}.types.BpmnTimer` (standalone) |
-| `ProcessApi.Errors.BpmnError` (nested type) | `import {pkg}.types.BpmnError` (standalone) |
+| `ProcessApi.Timers.BpmnTimer` (nested type) | `import io.github.emaarco.bpmn.runtime.BpmnTimer` (standalone) |
+| `ProcessApi.Errors.BpmnError` (nested type) | `import io.github.emaarco.bpmn.runtime.BpmnError` (standalone) |
 | `ProcessApi.Variables.VAR_NAME` | `ProcessApi.Variables.ElementName.VAR_NAME` (manual — look up the element in the regenerated API; direction is now carried by the wrapper type, not the path) |
 | `<camunda:property name="additionalVariables" value="a,b"/>` (BPMN) | `<camunda:property name="additionalInputVariables" .../>` and/or `<camunda:property name="additionalOutputVariables" .../>` (manual BPMN edit — skill flags occurrences, cannot rewrite) |
 | `useVersioning = true/false` (Gradle / Maven plugin config) | removed — delete the line |
-| `const val PROCESS_ID: String` + `Elements/Messages/Variables/Signals/Compensations/CallActivities.X: String` | typed wrappers: `ProcessId`, `ElementId`, `MessageName`, `VariableName`, `SignalName` (Kotlin `@JvmInline value class` / Java `record`) |
+| `const val PROCESS_ID: String` + `Elements/Messages/Variables/Signals/Compensations/CallActivities.X: String` | typed wrappers: `ProcessId`, `ElementId`, `MessageName`, `VariableName`, `SignalName` (Kotlin `data class`, imported from `io.github.emaarco.bpmn.runtime.*` — shipped by the `bpmn-to-code-runtime` artifact) |
 
 ### Typed leaf constants
 
@@ -94,12 +94,12 @@ Search the scoped files for the following patterns and record file path, line nu
 
 **B. Nested BpmnTimer type usage**
 - Pattern: `\w+ProcessApi\.Timers\.BpmnTimer` or `\.Timers\.BpmnTimer` used as a type reference (in variable declarations, function parameters, return types)
-- Replacement: use `BpmnTimer` directly and add import `import {pkg}.types.BpmnTimer`
+- Replacement: use `BpmnTimer` directly and add import `import io.github.emaarco.bpmn.runtime.BpmnTimer`
 - Example: `val t: NewsletterSubscriptionProcessApi.Timers.BpmnTimer` → `val t: BpmnTimer`
 
 **C. Nested BpmnError type usage**
 - Pattern: `\w+ProcessApi\.Errors\.BpmnError` or `\.Errors\.BpmnError` used as a type reference
-- Replacement: use `BpmnError` directly and add import `import {pkg}.types.BpmnError`
+- Replacement: use `BpmnError` directly and add import `import io.github.emaarco.bpmn.runtime.BpmnError`
 
 **D. Variables flat references (flag only — do not auto-fix)**
 - Pattern: `ProcessApi\.Variables\.[A-Z_]+` where `[A-Z_]+` is not a sub-object name
@@ -150,7 +150,7 @@ Group findings by file and present a summary:
 | 28   | .Timers.BpmnTimer (type ref) | → BpmnTimer + import |
 
 **Imports to add:**
-- `MyWorker.kt` → `import de.emaarco.example.types.BpmnTimer`
+- `MyWorker.kt` → `import io.github.emaarco.bpmn.runtime.BpmnTimer`
 
 ### ⚠️ Manual review required
 | File | Line | Pattern | Reason |
@@ -175,8 +175,8 @@ For each approved change:
 1. **useVersioning in build files**: Delete the entire line containing `useVersioning` from `build.gradle.kts`, `build.gradle`, or `pom.xml`.
 2. **TaskTypes → ServiceTasks**: Use Edit to replace `.TaskTypes.` with `.ServiceTasks.` on the matched line.
 3. **Nested type references**: Replace the qualified type path with the simple class name, then add the import after the last existing `import` line in the file.
-   - **Kotlin**: `import {pkg}.types.BpmnTimer` / `import {pkg}.types.BpmnError`
-   - **Java**: `import {pkg}.types.BpmnTimer;` / `import {pkg}.types.BpmnError;`
+   - **Kotlin**: `import io.github.emaarco.bpmn.runtime.BpmnTimer` / `import io.github.emaarco.bpmn.runtime.BpmnError`
+   - **Java**: `import io.github.emaarco.bpmn.runtime.BpmnTimer;` / `import io.github.emaarco.bpmn.runtime.BpmnError;`
    - Skip if the import already exists.
 4. **Legacy `Inputs` / `Outputs` paths (Pattern E)**: drop the `.Inputs.` / `.Outputs.` segment while preserving the element and leaf names. Example: `Variables.StartEventX.Inputs.FOO` → `Variables.StartEventX.FOO`.
 5. Process files one at a time, top-to-bottom by line number.

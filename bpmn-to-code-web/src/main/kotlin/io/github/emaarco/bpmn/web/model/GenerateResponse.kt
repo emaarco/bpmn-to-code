@@ -9,6 +9,8 @@ import kotlinx.serialization.Transient
 data class GenerateResponse(
     val success: Boolean,
     val files: List<GeneratedFile>,
+    val libraryFiles: List<GeneratedFile> = emptyList(),
+    val runtimeDependency: RuntimeDependency? = null,
     val error: String? = null,
     @Transient val statusCode: HttpStatusCode = HttpStatusCode.OK,
 ) {
@@ -18,6 +20,15 @@ data class GenerateResponse(
         val fileName: String,
         val content: String,
         val processId: String
+    )
+
+    @Serializable
+    data class RuntimeDependency(
+        val group: String,
+        val artifact: String,
+        val version: String,
+        val gradleSnippet: String,
+        val mavenSnippet: String,
     )
 
     companion object {

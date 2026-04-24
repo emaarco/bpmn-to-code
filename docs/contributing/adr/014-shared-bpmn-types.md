@@ -1,10 +1,10 @@
-# ADR 014: Shared BPMN Types in Standalone Files
+# ADR 014: Shared BPMN Types via `bpmn-to-code-runtime` Artifact
 
 ## Status
 Accepted
 
 ## Context
-In 1.x, data classes used in the generated Process API (`BpmnTimer`, `BpmnError`) were emitted as nested classes inside the generated file:
+v1 emitted BPMN data types (`BpmnTimer`, `BpmnError`) as nested classes inside each generated Process API file:
 
 ```kotlin
 object NewsletterSubscriptionProcessApi {
@@ -16,51 +16,40 @@ object NewsletterSubscriptionProcessApi {
 }
 ```
 
-Two new sections introduced in 2.0 — `Flows` and `Relations` — require `BpmnFlow` and `BpmnRelations` types. `BpmnEscalation` was also added alongside `BpmnError`.
+v2 adds more shared types — `BpmnEscalation`, `BpmnFlow`, `BpmnRelations`, plus the typed identifier wrappers `ProcessId`, `ElementId`, `MessageName`, `SignalName`, and the sealed `VariableName` with `Input`/`Output`/`InOut` subtypes. Keeping these nested or re-generating them per module hits two problems:
 
-Keeping these as nested classes raised two problems:
+1. **Type identity across modules.** A common library in a multi-module project wants to expose wrappers like `fun startProcess(id: ProcessId)`. If every service module generates its own `ProcessId`, the common module has nothing to reference. Forcing every service into one `packagePath` creates split-package / duplicate-class conflicts and defeats module ownership.
 
-1. **Type identity across files** — if a project has multiple BPMN processes, each generated file would define its own `BpmnTimer`. Code working with multiple processes would need to import from a specific process API, or hit type-mismatch errors when passing a `BpmnTimer` from one process API to a function expecting one from another.
-
-2. **Duplication** — the `BpmnFlow` data class definition (with four fields) would be duplicated in every generated file, inflating the output and complicating IDE navigation.
+2. **Duplication.** A 5+ field `BpmnRelations` data class re-generated in every consuming file bloats output and clutters IDE navigation.
 
 ## Decision
-Extract `BpmnTimer`, `BpmnError`, `BpmnEscalation`, `BpmnFlow`, and `BpmnRelations` into standalone files in a `types/` subfolder under the configured `packagePath`:
+Extract the shared types into a **published artifact**, `io.github.emaarco:bpmn-to-code-runtime`. The generator emits Process API files that `import io.github.emaarco.bpmn.runtime.*`; the runtime types are hand-written Kotlin in a dedicated module.
 
-```
-{packagePath}/
-  types/
-    BpmnTimer.kt
-    BpmnError.kt
-    BpmnEscalation.kt
-    BpmnFlow.kt
-    BpmnRelations.kt
-  NewsletterSubscriptionProcessApi.kt
-  OrderProcessApi.kt
-```
+Artifact contents:
+- Identifier wrappers: `ProcessId`, `ElementId`, `MessageName`, `SignalName`
+- Variable wrapper: sealed interface `VariableName` + nested `Input` / `Output` / `InOut`
+- Metadata records: `BpmnTimer`, `BpmnError`, `BpmnEscalation`, `BpmnFlow`, `BpmnRelations`
+- Engine enum: `BpmnEngine`
 
-Each generated process API file imports from `{packagePath}.types`.
+The Gradle plugin automatically adds `implementation("io.github.emaarco:bpmn-to-code-runtime:$pluginVersion")` to any project it's applied to (when the `java` plugin is present), matching the pattern of `org.jetbrains.kotlin.jvm` adding `kotlin-stdlib`. Maven users add the `<dependency>` manually — documented in the Maven plugin README.
 
-This is a **breaking change** for any code that referenced the nested types:
+### Data class, not value class
 
-```kotlin
-// 1.x — nested
-val timer: NewsletterSubscriptionProcessApi.Timers.BpmnTimer = ...
+The runtime publishes identifier wrappers as Kotlin `data class`, not `@JvmInline value class`. Value classes are JVM-name-mangled on Kotlin method parameters (`fun startProcess(id: ProcessId)` compiles to `startProcess-<hash>(String)`), and `-` is not a legal Java identifier character. That makes Kotlin methods with value-class parameters unreachable from Java, which breaks the multi-module story whenever common or a service is Java-authored. A `data class` compiles to a regular JVM class and preserves type safety across both languages. The per-call boxing cost is one `String` wrapper — negligible against I/O-bound engine calls.
 
-// 2.0 — standalone
-import com.example.process.types.BpmnTimer
-val timer: BpmnTimer = ...
-```
+### Web playground
 
-The values and field names are unchanged; only the import path changes.
+The web module bundles the runtime's Kotlin sources as classpath resources and serves them back in `GenerateResponse.libraryFiles`, so users can preview the shared types alongside their generated Process API. The ZIP download is lean by default (ProcessApi files + a `README.md` with the dep snippet), with an opt-in checkbox to include the runtime sources for a self-contained bundle that compiles without the dep. No forked generator behaviour — the web generator and the plugin emit identical output.
 
 ## Consequences
 
 ### Positive
-- `BpmnTimer`, `BpmnFlow`, etc. are shared types across all generated process APIs in a project — no type-mismatch errors when working with multiple processes
-- The type definitions are generated once per project, not once per process
-- Cleaner IDE navigation — types appear as top-level classes, not nested inside a specific process API
+- One `ProcessId` class on the classpath across all consuming modules. Common libraries can write typed wrappers that compile everywhere.
+- Kotlin and Java interop both work fully. The runtime supports mixed codebases.
+- The generator simplifies: shared-type builders are gone; Process API builders reference constant `ClassName`s instead of deriving them from `packagePath`.
+- The runtime source is hand-written and unit-testable like any library.
 
 ### Negative
-- **Breaking change** — code referencing the old nested type paths must update imports
-- Two output locations to manage: the `types/` folder and the process API files
+- Users must have the runtime on their classpath. Gradle handles this automatically; Maven users add one `<dependency>`.
+- Identifier wrappers are no longer `@JvmInline value class` — a one-allocation cost per instance. Not observable in practice.
+- The shared-type API surface is now a published contract; evolving it means semver discipline on the runtime module.
