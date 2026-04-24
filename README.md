@@ -131,7 +131,7 @@ dependencies {
 | Engine | Value |
 |--------|-------|
 | Camunda 8 / Zeebe | `ZEEBE` |
-| Camunda 7 | `CAMUNDA_7` |
+| Camunda 7 / CIB7 | `CAMUNDA_7` |
 | Operaton | `OPERATON` |
 
 ## Get It
