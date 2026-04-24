@@ -13,6 +13,8 @@ Type-safe constants from your BPMN model — for your compiler, your tests, and 
 
 **Generate · Validate · Surface · Ship** — a type-safe BPMN toolkit for JVM projects.
 
+![bpmn-to-code preview](docs/public/preview.gif)
+
 ## What It Does
 
 ### Generate — Type-Safe APIs
