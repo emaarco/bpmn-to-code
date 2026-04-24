@@ -22,13 +22,15 @@ import javax.lang.model.element.Modifier.FINAL
 import javax.lang.model.element.Modifier.PUBLIC
 import javax.lang.model.element.Modifier.STATIC
 
-private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
-
 /**
  * Generates the type-safe API contract for a single BPMN process as a Java class file.
  * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the `bpmn-to-code-runtime` artifact.
  */
 class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
+
+    companion object {
+        private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
+    }
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),

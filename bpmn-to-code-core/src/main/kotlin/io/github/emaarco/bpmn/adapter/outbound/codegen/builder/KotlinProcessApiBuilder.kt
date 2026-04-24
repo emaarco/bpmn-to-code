@@ -21,13 +21,15 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
-private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
-
 /**
  * Generates the type-safe API contract for a single BPMN process as a Kotlin object file.
  * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the `bpmn-to-code-runtime` artifact.
  */
 class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
+
+    companion object {
+        private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
+    }
 
     private val objectWriters: Map<ApiObjectType, ObjectWriter<TypeSpec.Builder>> = mapOf(
         ApiObjectType.PROCESS_ID to ProcessIdWriter(),

@@ -29,6 +29,11 @@ jobs:
           cache: npm
           cache-dependency-path: docs/package-lock.json
 
+      - name: Enforce pinned npm dependencies
+        uses: miragon/pin-npm-dependencies@v1
+        with:
+          root-path: docs
+
       - name: Install Dependencies
         run: npm ci
         working-directory: docs

@@ -4,12 +4,15 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.Properties
 
-private const val RUNTIME_GROUP = "io.github.emaarco"
-private const val RUNTIME_ARTIFACT = "bpmn-to-code-runtime"
-private const val VERSION_RESOURCE = "bpmn-to-code-plugin.properties"
-
 @Suppress("unused")
 class BpmnModelGeneratorPlugin : Plugin<Project> {
+
+    companion object {
+        private const val RUNTIME_GROUP = "io.github.emaarco"
+        private const val RUNTIME_ARTIFACT = "bpmn-to-code-runtime"
+        private const val VERSION_RESOURCE = "bpmn-to-code-plugin.properties"
+    }
+
     override fun apply(project: Project) {
         project.tasks.register("generateBpmnModelApi", GenerateBpmnModelsTask::class.java) {
             it.group = "BPMN"
