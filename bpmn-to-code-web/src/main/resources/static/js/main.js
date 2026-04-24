@@ -64,6 +64,8 @@ function switchTab(tab) {
     document.getElementById('error-message').style.display = 'none';
     document.getElementById('results-content').innerHTML = '';
     state.generatedFiles = [];
+
+    document.querySelector('.include-sources-toggle').style.display = tab === 'json' ? 'none' : '';
 }
 
 function setupEventListeners() {
