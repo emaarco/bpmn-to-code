@@ -14,16 +14,14 @@ import org.junit.jupiter.api.Test
 class CodeGenerationAdapterTest {
 
     private val kotlinProcessBuilder = mockk<CodeGenerationAdapter.AbstractProcessApiBuilder<*>>(relaxed = true)
-    private val kotlinTypesBuilder = mockk<CodeGenerationAdapter.AbstractSharedTypesBuilder>(relaxed = true)
     private val underTest = CodeGenerationAdapter(
         processApiBuilders = mapOf(OutputLanguage.KOTLIN to kotlinProcessBuilder),
-        sharedTypesBuilders = mapOf(OutputLanguage.KOTLIN to kotlinTypesBuilder),
     )
 
     @Test
-    fun `generateCode delegates to builders and returns combined files`() {
+    fun `generateCode delegates to the process api builder and returns its file`() {
 
-        // given: a model API and stubbed builder responses
+        // given: a model API and a stubbed process builder response
         val modelApi = testBpmnModelApi()
         val processFile = GeneratedApiFile(
             fileName = "TestApi.kt",
@@ -31,23 +29,15 @@ class CodeGenerationAdapterTest {
             content = "content",
             language = OutputLanguage.KOTLIN,
         )
-        val typeFile = GeneratedApiFile(
-            fileName = "BpmnTimer.kt",
-            packagePath = "packagePath.types",
-            content = "content",
-            language = OutputLanguage.KOTLIN,
-        )
         every { kotlinProcessBuilder.buildApiFile(modelApi) } returns processFile
-        every { kotlinTypesBuilder.buildTypeFiles("packagePath", OutputLanguage.KOTLIN) } returns listOf(typeFile)
 
         // when: generating code for a Kotlin model
         val result = underTest.generateCode(modelApi)
 
-        // then: both builders are called and their files are combined
+        // then: the process builder is called and its file returned
         verify { kotlinProcessBuilder.buildApiFile(modelApi) }
-        verify { kotlinTypesBuilder.buildTypeFiles("packagePath", OutputLanguage.KOTLIN) }
-        assertThat(result).isEqualTo(listOf(processFile, typeFile))
-        confirmVerified(kotlinProcessBuilder, kotlinTypesBuilder)
+        assertThat(result).isEqualTo(listOf(processFile))
+        confirmVerified(kotlinProcessBuilder)
     }
 
     @Test

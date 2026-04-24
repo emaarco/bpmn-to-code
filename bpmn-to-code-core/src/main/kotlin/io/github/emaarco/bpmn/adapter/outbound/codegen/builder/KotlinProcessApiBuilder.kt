@@ -21,9 +21,11 @@ import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
 
+private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
+
 /**
  * Generates the type-safe API contract for a single BPMN process as a Kotlin object file.
- * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the sibling `types/` package via import.
+ * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the `bpmn-to-code-runtime` artifact.
  */
 class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
 
@@ -73,7 +75,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val processIdClass = ClassName("${modelApi.packagePath}.types", "ProcessId")
+            val processIdClass = ClassName(RUNTIME_PACKAGE, "ProcessId")
             val cleanValue = modelApi.model.processId.escapeDollarInterpolation()
             val idProperty = PropertySpec.builder("PROCESS_ID", processIdClass)
                 .initializer("ProcessId(\"$cleanValue\")")
@@ -88,7 +90,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnEngineClass = ClassName("${modelApi.packagePath}.types", "BpmnEngine")
+            val bpmnEngineClass = ClassName(RUNTIME_PACKAGE, "BpmnEngine")
             val engineProperty = PropertySpec.builder("PROCESS_ENGINE", bpmnEngineClass)
                 .initializer("%T.%L", bpmnEngineClass, modelApi.engine.name)
                 .build()
@@ -102,7 +104,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
+            val elementIdClass = ClassName(RUNTIME_PACKAGE, "ElementId")
             val elementsBuilder = TypeSpec.objectBuilder("Elements")
                 .addKdoc(
                     "BPMN element ids as declared in the source model.\n" +
@@ -169,7 +171,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     }
 
     private fun buildFlowsObject(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
-        val bpmnFlowClass = ClassName("${packagePath}.types", "BpmnFlow")
+        val bpmnFlowClass = ClassName(RUNTIME_PACKAGE, "BpmnFlow")
         val flowsBuilder = TypeSpec.objectBuilder("Flows")
             .addKdoc(
                 "Sequence flows between BPMN elements.\n" +
@@ -199,7 +201,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     }
 
     private fun buildRelationsObject(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
-        val bpmnRelationsClass = ClassName("${packagePath}.types", "BpmnRelations")
+        val bpmnRelationsClass = ClassName(RUNTIME_PACKAGE, "BpmnRelations")
         val relationsBuilder = TypeSpec.objectBuilder("Relations")
             .addKdoc(
                 "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).\n" +
@@ -244,7 +246,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val processIdClass = ClassName("${modelApi.packagePath}.types", "ProcessId")
+            val processIdClass = ClassName(RUNTIME_PACKAGE, "ProcessId")
             val callActivitiesBuilder = TypeSpec.objectBuilder("CallActivities")
             modelApi.model.callActivities.forEach { callActivity ->
                 callActivitiesBuilder.addProperty(createTypedAttribute(callActivity, processIdClass))
@@ -259,7 +261,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val messageNameClass = ClassName("${modelApi.packagePath}.types", "MessageName")
+            val messageNameClass = ClassName(RUNTIME_PACKAGE, "MessageName")
             val messagesBuilder = TypeSpec.objectBuilder("Messages")
                 .addKdoc("BPMN message names used to correlate messages to running process instances.")
             modelApi.model.messages.forEach { message ->
@@ -298,7 +300,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val signalNameClass = ClassName("${modelApi.packagePath}.types", "SignalName")
+            val signalNameClass = ClassName(RUNTIME_PACKAGE, "SignalName")
             val signalsBuilder = TypeSpec.objectBuilder("Signals")
             modelApi.model.signals.forEach { signal ->
                 signalsBuilder.addProperty(createTypedAttribute(signal, signalNameClass))
@@ -313,7 +315,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val variableNameClass = ClassName("${modelApi.packagePath}.types", "VariableName")
+            val variableNameClass = ClassName(RUNTIME_PACKAGE, "VariableName")
             val variablesBuilder = TypeSpec.objectBuilder("Variables")
                 .addKdoc(
                     "Process variables grouped by the BPMN element that declares them.\n" +
@@ -354,7 +356,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnErrorClass = ClassName("${modelApi.packagePath}.types", "BpmnError")
+            val bpmnErrorClass = ClassName(RUNTIME_PACKAGE, "BpmnError")
             val errorsBuilder = TypeSpec.objectBuilder("Errors")
             modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
@@ -372,7 +374,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnEscalationClass = ClassName("${modelApi.packagePath}.types", "BpmnEscalation")
+            val bpmnEscalationClass = ClassName(RUNTIME_PACKAGE, "BpmnEscalation")
             val escalationsBuilder = TypeSpec.objectBuilder("Escalations")
             modelApi.model.escalations.forEach {
                 val (escalationName, escalationCode) = it.getValue()
@@ -390,7 +392,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val elementIdClass = ClassName("${modelApi.packagePath}.types", "ElementId")
+            val elementIdClass = ClassName(RUNTIME_PACKAGE, "ElementId")
             val compensationsBuilder = TypeSpec.objectBuilder("Compensations")
             modelApi.model.compensations.forEach { compensation ->
                 compensationsBuilder.addProperty(createTypedAttribute(compensation, elementIdClass))
@@ -405,7 +407,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnTimerClass = ClassName("${modelApi.packagePath}.types", "BpmnTimer")
+            val bpmnTimerClass = ClassName(RUNTIME_PACKAGE, "BpmnTimer")
             val timersBuilder = TypeSpec.objectBuilder("Timers")
             modelApi.model.timers.forEach { timer ->
                 val (timerType, timerValue) = timer.getValue()

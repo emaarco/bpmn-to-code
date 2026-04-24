@@ -62,16 +62,52 @@ class GradlePluginDependencyResolutionSmokeTest {
             .withArguments("generateBpmnModelApi")
             .build()
 
-        // then: the task succeeds and generates Kotlin files
+        // then: the task succeeds and generates only ProcessApi Kotlin files (shared types ship via runtime artifact)
         assertThat(result.task(":generateBpmnModelApi")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         val packageDir = File(projectDir, "build/generated/io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
         val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
-        val modelFiles = generatedFiles.filter { it.isFile }
-        assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(".kt") }
-        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
-        assertThat(requireNotNull(typesDir.listFiles())).allSatisfy { file -> assertThat(file.name).endsWith(".kt") }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.isFile).isTrue() }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.name).endsWith("ProcessApi.kt") }
+    }
+
+    @Test
+    fun `applying the plugin adds bpmn-to-code-runtime to the implementation configuration`(@TempDir projectDir: File) {
+
+        // given: a Java project with the plugin resolved from mavenLocal
+        File(projectDir, "settings.gradle").writeText(
+            """
+            pluginManagement {
+                repositories {
+                    mavenLocal()
+                    gradlePluginPortal()
+                    mavenCentral()
+                }
+            }
+            """.trimIndent()
+        )
+        File(projectDir, "build.gradle").writeText(
+            """
+            plugins {
+                id 'java'
+                id 'io.github.emaarco.bpmn-to-code-gradle' version '$pluginVersion'
+            }
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+            """.trimIndent()
+        )
+
+        // when: inspecting the implementation dependencies
+        val result = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments("dependencies", "--configuration", "implementation")
+            .build()
+
+        // then: bpmn-to-code-runtime is on the implementation configuration
+        assertThat(result.output).contains("io.github.emaarco:bpmn-to-code-runtime:$pluginVersion")
     }
 
     @Test

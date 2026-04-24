@@ -48,6 +48,35 @@ sourceSets {
     }
 }
 
+val copyLibrarySources by tasks.registering(Copy::class) {
+    val runtimeProject = project(":bpmn-to-code-runtime")
+    from(runtimeProject.layout.projectDirectory.dir("src/main/kotlin/io/github/emaarco/bpmn/runtime"))
+    into(layout.buildDirectory.dir("generated/resources/library-sources/library-sources"))
+    include("*.kt")
+}
+
+val generateLibrarySourcesManifest by tasks.registering {
+    dependsOn(copyLibrarySources)
+    val outputDir = layout.buildDirectory.dir("generated/resources/library-sources/library-sources")
+    outputs.file(outputDir.map { it.file("manifest.txt") })
+    doLast {
+        val dir = outputDir.get().asFile
+        val names = dir.listFiles { f -> f.isFile && f.name.endsWith(".kt") }
+            ?.map { it.name }
+            ?.sorted()
+            ?: emptyList()
+        dir.resolve("manifest.txt").writeText(names.joinToString("\n") + "\n")
+    }
+}
+
+sourceSets.main {
+    resources.srcDir(layout.buildDirectory.dir("generated/resources/library-sources"))
+}
+
+tasks.named("processResources") {
+    dependsOn(generateLibrarySourcesManifest)
+}
+
 application {
     mainClass.set("io.github.emaarco.bpmn.web.ApplicationKt")
 }

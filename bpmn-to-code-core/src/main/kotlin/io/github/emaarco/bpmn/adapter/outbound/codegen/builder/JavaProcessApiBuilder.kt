@@ -22,9 +22,11 @@ import javax.lang.model.element.Modifier.FINAL
 import javax.lang.model.element.Modifier.PUBLIC
 import javax.lang.model.element.Modifier.STATIC
 
+private const val RUNTIME_PACKAGE = "io.github.emaarco.bpmn.runtime"
+
 /**
  * Generates the type-safe API contract for a single BPMN process as a Java class file.
- * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the sibling `types/` package via import.
+ * References shared BPMN types (BpmnTimer, BpmnError, etc.) from the `bpmn-to-code-runtime` artifact.
  */
 class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<TypeSpec.Builder>() {
 
@@ -72,7 +74,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val processIdClass = ClassName.get("${modelApi.packagePath}.types", "ProcessId")
+            val processIdClass = ClassName.get(RUNTIME_PACKAGE, "ProcessId")
             val fieldBuilder = FieldSpec.builder(processIdClass, "PROCESS_ID").addModifiers(PUBLIC, FINAL, STATIC)
             builder.addField(fieldBuilder.initializer("new \$T(\$S)", processIdClass, modelApi.model.processId).build())
         }
@@ -84,7 +86,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnEngineClass = ClassName.get("${modelApi.packagePath}.types", "BpmnEngine")
+            val bpmnEngineClass = ClassName.get(RUNTIME_PACKAGE, "BpmnEngine")
             val fieldBuilder = FieldSpec.builder(bpmnEngineClass, "PROCESS_ENGINE")
                 .addModifiers(PUBLIC, FINAL, STATIC)
                 .initializer("\$T.\$L", bpmnEngineClass, modelApi.engine.name)
@@ -98,7 +100,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = true
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val elementIdClass = ClassName.get("${modelApi.packagePath}.types", "ElementId")
+            val elementIdClass = ClassName.get(RUNTIME_PACKAGE, "ElementId")
             val elementsBuilder = TypeSpec.classBuilder("Elements").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc(
                     "BPMN element ids as declared in the source model.\n" +
@@ -165,7 +167,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     }
 
     private fun buildFlowsClass(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
-        val bpmnFlowClass = ClassName.get("${packagePath}.types", "BpmnFlow")
+        val bpmnFlowClass = ClassName.get(RUNTIME_PACKAGE, "BpmnFlow")
         val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
             .addJavadoc(
                 "Sequence flows between BPMN elements.\n" +
@@ -193,7 +195,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
     }
 
     private fun buildRelationsClass(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
-        val bpmnRelationsClass = ClassName.get("${packagePath}.types", "BpmnRelations")
+        val bpmnRelationsClass = ClassName.get(RUNTIME_PACKAGE, "BpmnRelations")
         val relationsBuilder = TypeSpec.classBuilder("Relations").addModifiers(PUBLIC, STATIC, FINAL)
             .addJavadoc(
                 "Per-element graph metadata (previousElements / followingElements / parentId / boundary attachments).\n" +
@@ -250,7 +252,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.callActivities.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val processIdClass = ClassName.get("${modelApi.packagePath}.types", "ProcessId")
+            val processIdClass = ClassName.get(RUNTIME_PACKAGE, "ProcessId")
             val callActivitiesBuilder = TypeSpec.classBuilder("CallActivities").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.callActivities.forEach { callActivity ->
                 callActivitiesBuilder.addField(createTypedAttribute(callActivity, processIdClass))
@@ -265,7 +267,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.messages.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val messageNameClass = ClassName.get("${modelApi.packagePath}.types", "MessageName")
+            val messageNameClass = ClassName.get(RUNTIME_PACKAGE, "MessageName")
             val messagesBuilder = TypeSpec.classBuilder("Messages").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc("BPMN message names used to correlate messages to running process instances.\n")
             modelApi.model.messages.forEach { message ->
@@ -299,7 +301,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.signals.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val signalNameClass = ClassName.get("${modelApi.packagePath}.types", "SignalName")
+            val signalNameClass = ClassName.get(RUNTIME_PACKAGE, "SignalName")
             val signalsBuilder = TypeSpec.classBuilder("Signals").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.signals.forEach { signal ->
                 signalsBuilder.addField(createTypedAttribute(signal, signalNameClass))
@@ -314,7 +316,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.variables.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val variableNameClass = ClassName.get("${modelApi.packagePath}.types", "VariableName")
+            val variableNameClass = ClassName.get(RUNTIME_PACKAGE, "VariableName")
             val variablesBuilder = TypeSpec.classBuilder("Variables").addModifiers(PUBLIC, STATIC, FINAL)
                 .addJavadoc(
                     "Process variables grouped by the BPMN element that declares them.\n" +
@@ -355,7 +357,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.errors.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnErrorClass = ClassName.get("${modelApi.packagePath}.types", "BpmnError")
+            val bpmnErrorClass = ClassName.get(RUNTIME_PACKAGE, "BpmnError")
             val errorsBuilder = TypeSpec.classBuilder("Errors").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.errors.forEach {
                 val (errorName, errorCode) = it.getValue()
@@ -373,7 +375,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.escalations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnEscalationClass = ClassName.get("${modelApi.packagePath}.types", "BpmnEscalation")
+            val bpmnEscalationClass = ClassName.get(RUNTIME_PACKAGE, "BpmnEscalation")
             val escalationsBuilder = TypeSpec.classBuilder("Escalations").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.escalations.forEach {
                 val (escalationName, escalationCode) = it.getValue()
@@ -391,7 +393,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model.compensations.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val elementIdClass = ClassName.get("${modelApi.packagePath}.types", "ElementId")
+            val elementIdClass = ClassName.get(RUNTIME_PACKAGE, "ElementId")
             val compensationsBuilder = TypeSpec.classBuilder("Compensations").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.compensations.forEach { compensation ->
                 compensationsBuilder.addField(createTypedAttribute(compensation, elementIdClass))
@@ -406,7 +408,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi): Boolean = modelApi.model.timers.isNotEmpty()
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val bpmnTimerClass = ClassName.get("${modelApi.packagePath}.types", "BpmnTimer")
+            val bpmnTimerClass = ClassName.get(RUNTIME_PACKAGE, "BpmnTimer")
             val timersBuilder = TypeSpec.classBuilder("Timers").addModifiers(PUBLIC, STATIC, FINAL)
             modelApi.model.timers.forEach {
                 val (timerType, timerValue) = it.getValue()

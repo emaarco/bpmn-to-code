@@ -123,9 +123,38 @@
         <!-- Step 3: Results -->
         <section class="card results-section" id="results-section" style="display: none;">
             <h2 data-step="STEP 03" id="results-heading">Generated Code</h2>
+            <div class="runtime-dep-card" id="runtime-dep-card" style="display: none;">
+                <div class="runtime-dep-header">
+                    <strong>Required dependency</strong>
+                    <span class="runtime-dep-hint">Generated code imports from <code>io.github.emaarco.bpmn.runtime</code> — add the <em>bpmn-to-code-runtime</em> artifact to your build.</span>
+                </div>
+                <div class="runtime-dep-tabs" role="tablist">
+                    <button type="button" class="runtime-dep-tab runtime-dep-tab-active" data-dep-tab="gradle">Gradle</button>
+                    <button type="button" class="runtime-dep-tab" data-dep-tab="maven">Maven</button>
+                </div>
+                <div class="runtime-dep-snippet-wrapper">
+                    <pre class="runtime-dep-snippet" id="runtime-dep-snippet"></pre>
+                    <button type="button" class="btn-copy" id="runtime-dep-copy-btn" title="Copy dependency">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+            </div>
             <div id="results-content"></div>
+            <details class="library-sources-panel" id="library-sources-panel" style="display: none;">
+                <summary>Library sources (bpmn-to-code-runtime)</summary>
+                <p class="library-sources-hint">Reference only — these files ship as part of the <code>bpmn-to-code-runtime</code> artifact.</p>
+                <div id="library-sources-content"></div>
+            </details>
             <div class="results-actions">
                 <button class="btn btn-secondary" id="reset-btn" type="button">Reset</button>
+                <div class="include-sources-toggle">
+                    <input type="checkbox" id="include-sources-checkbox">
+                    <label for="include-sources-checkbox">Include library sources in ZIP (self-contained — no dep needed)</label>
+                </div>
                 <button class="btn btn-primary" id="download-all-btn" type="button">Download .zip</button>
             </div>
         </section>

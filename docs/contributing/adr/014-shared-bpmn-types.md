@@ -1,7 +1,7 @@
 # ADR 014: Shared BPMN Types in Standalone Files
 
 ## Status
-Accepted
+Superseded by [ADR 016](./016-runtime-artifact-for-shared-types.md) — shared types now live in the published `bpmn-to-code-runtime` artifact instead of a per-project `{packagePath}/types/` folder.
 
 ## Context
 In 1.x, data classes used in the generated Process API (`BpmnTimer`, `BpmnError`) were emitted as nested classes inside the generated file:

@@ -19,6 +19,25 @@ sourceSets {
     }
 }
 
+val pluginVersionResourceDir = layout.buildDirectory.dir("generated/resources/plugin-version")
+
+val generatePluginVersionResource by tasks.registering {
+    val versionProvider = provider { version.toString() }
+    val outputDir = pluginVersionResourceDir
+    inputs.property("version", versionProvider)
+    outputs.dir(outputDir)
+    doLast {
+        outputDir.get().file("bpmn-to-code-plugin.properties").asFile.apply {
+            parentFile.mkdirs()
+            writeText("version=${versionProvider.get()}\n")
+        }
+    }
+}
+
+sourceSets.main {
+    resources.srcDir(generatePluginVersionResource)
+}
+
 dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
@@ -44,7 +63,9 @@ tasks.named<PluginUnderTestMetadata>("pluginUnderTestMetadata") {
 tasks.named<Test>("test") {
     useJUnitPlatform()
     dependsOn("publishToMavenLocal")
+    dependsOn(":bpmn-to-code-runtime:publishToMavenLocal")
     systemProperty("pluginVersion", version.toString())
+    systemProperty("kotlinVersion", libs.versions.kotlin.get())
 }
 
 publishing {

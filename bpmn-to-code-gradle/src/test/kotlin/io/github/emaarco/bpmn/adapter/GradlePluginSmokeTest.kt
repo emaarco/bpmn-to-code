@@ -52,16 +52,14 @@ class GradlePluginSmokeTest {
             .withArguments("generateBpmnModelApi")
             .build()
 
-        // then: the task succeeds and generates the expected files
+        // then: the task succeeds and generates only ProcessApi files (shared types ship via runtime artifact)
         assertThat(result.task(":generateBpmnModelApi")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         val packageDir = File(projectDir, "build/generated/io/github/emaarco/smoketest")
         assertThat(packageDir).isDirectory()
         val generatedFiles = requireNotNull(packageDir.listFiles())
         assertThat(generatedFiles).isNotEmpty()
         val expectedExt = if (language == "KOTLIN") ".kt" else ".java"
-        val modelFiles = generatedFiles.filter { it.isFile }
-        assertThat(modelFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
-        val typesDir = generatedFiles.first { it.isDirectory && it.name == "types" }
-        assertThat(requireNotNull(typesDir.listFiles())).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.isFile).isTrue() }
+        assertThat(generatedFiles).allSatisfy { file -> assertThat(file.name).endsWith(expectedExt) }
     }
 }

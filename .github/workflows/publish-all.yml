@@ -6,14 +6,18 @@ on:
     types: [published]
 
 jobs:
-  publish-gradle:
-    name: Publish to Gradle Plugin Portal
-    uses: ./.github/workflows/publish-to-gradle.yml
-    secrets: inherit
-
+  # Maven Central first — the Gradle plugin declares bpmn-to-code-runtime as an
+  # implementation dep in consuming projects, so the runtime artifact must be
+  # resolvable before the plugin is published to the Plugin Portal.
   publish-maven:
     name: Publish to Maven Central
     uses: ./.github/workflows/publish-to-maven.yml
+    secrets: inherit
+
+  publish-gradle:
+    name: Publish to Gradle Plugin Portal
+    needs: publish-maven
+    uses: ./.github/workflows/publish-to-gradle.yml
     secrets: inherit
 
   publish-docker:
