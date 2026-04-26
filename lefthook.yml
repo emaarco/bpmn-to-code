@@ -3,3 +3,6 @@ pre-push:
     coverage:
       glob: "*.{kt,kts}"
       run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification
+    detekt:
+      glob: "*.{kt,kts}"
+      run: ./gradlew detekt

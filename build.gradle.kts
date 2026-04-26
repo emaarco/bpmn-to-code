@@ -1,9 +1,11 @@
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.mavenPublish) apply false
+    alias(libs.plugins.detekt) apply false
 }
 
 allprojects {
@@ -13,7 +15,21 @@ allprojects {
     }
 }
 
+val detektFormattingDep = libs.detektFormatting
+
 subprojects {
+
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    configure<DetektExtension> {
+        config.setFrom("$rootDir/config/detekt/detekt.yml")
+        baseline = file("$projectDir/detekt-baseline.xml")
+        buildUponDefaultConfig = true
+    }
+
+    dependencies {
+        "detektPlugins"(detektFormattingDep)
+    }
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {

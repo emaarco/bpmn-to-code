@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>FinalNewline:LegalLinksConfig.kt$io.github.emaarco.bpmn.web.config.LegalLinksConfig.kt</ID>
+    <ID>ImportOrdering:Application.kt$import io.github.emaarco.bpmn.web.config.AppConfig import io.github.emaarco.bpmn.web.model.ConfigResponse import io.github.oshai.kotlinlogging.KotlinLogging import io.github.emaarco.bpmn.web.routes.generateJsonRoutes import io.github.emaarco.bpmn.web.routes.generateRoutes import io.github.emaarco.bpmn.web.service.WebGenerationService import io.github.emaarco.bpmn.web.service.WebJsonGenerationService import io.ktor.http.* import io.ktor.serialization.kotlinx.json.* import io.ktor.server.application.* import io.ktor.server.engine.* import io.ktor.server.http.content.* import io.ktor.server.netty.* import io.ktor.server.plugins.calllogging.* import io.ktor.server.plugins.contentnegotiation.* import io.ktor.server.plugins.cors.routing.* import io.ktor.server.plugins.statuspages.* import io.ktor.openapi.* import io.ktor.server.plugins.swagger.* import io.ktor.server.response.* import io.ktor.server.routing.* import io.ktor.server.routing.openapi.* import io.ktor.utils.io.ExperimentalKtorApi import kotlinx.serialization.json.Json</ID>
+    <ID>ImportOrdering:WebGenerationService.kt$import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiInMemoryPlugin import io.github.oshai.kotlinlogging.KotlinLogging import io.github.emaarco.bpmn.domain.GeneratedApiFile import io.github.emaarco.bpmn.domain.validation.BpmnValidationException import io.github.emaarco.bpmn.web.model.GenerateRequest import io.github.emaarco.bpmn.web.model.GenerateResponse import java.util.*</ID>
+    <ID>LongMethod:Application.kt$fun Application.configureApp( appConfig: AppConfig )</ID>
+    <ID>MaxLineLength:WebGenerationService.kt$WebGenerationService$logger.info { "Generating API for ${request.files.size} file(s) [${config.outputLanguage}, ${config.processEngine}]" }</ID>
+    <ID>MaximumLineLength:WebGenerationService.kt$WebGenerationService$ </ID>
+    <ID>NewLineAtEndOfFile:LegalLinksConfig.kt$io.github.emaarco.bpmn.web.config.LegalLinksConfig.kt</ID>
+    <ID>NoBlankLineBeforeRbrace:AppConfig.kt$AppConfig$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:Application.kt$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:GenerateJsonRoutes.kt$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:GenerateRoutes.kt$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:WebGenerationServiceTest.kt$WebGenerationServiceTest$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:WebJsonGenerationServiceTest.kt$WebJsonGenerationServiceTest$ </ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.http.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.openapi.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.serialization.kotlinx.json.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.application.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.engine.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.http.content.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.netty.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.plugins.calllogging.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.plugins.contentnegotiation.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.plugins.cors.routing.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.plugins.statuspages.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.plugins.swagger.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.response.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.routing.*</ID>
+    <ID>NoWildcardImports:Application.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>NoWildcardImports:GenerateJsonResponse.kt$import io.ktor.http.*</ID>
+    <ID>NoWildcardImports:GenerateJsonRoutes.kt$import io.ktor.http.*</ID>
+    <ID>NoWildcardImports:GenerateJsonRoutes.kt$import io.ktor.server.request.*</ID>
+    <ID>NoWildcardImports:GenerateJsonRoutes.kt$import io.ktor.server.response.*</ID>
+    <ID>NoWildcardImports:GenerateJsonRoutes.kt$import io.ktor.server.routing.*</ID>
+    <ID>NoWildcardImports:GenerateJsonRoutes.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>NoWildcardImports:GenerateResponse.kt$import io.ktor.http.*</ID>
+    <ID>NoWildcardImports:GenerateRoutes.kt$import io.ktor.http.*</ID>
+    <ID>NoWildcardImports:GenerateRoutes.kt$import io.ktor.server.request.*</ID>
+    <ID>NoWildcardImports:GenerateRoutes.kt$import io.ktor.server.response.*</ID>
+    <ID>NoWildcardImports:GenerateRoutes.kt$import io.ktor.server.routing.*</ID>
+    <ID>NoWildcardImports:GenerateRoutes.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>TooGenericExceptionCaught:WebGenerationService.kt$WebGenerationService$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:WebJsonGenerationService.kt$WebJsonGenerationService$e: Exception</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.http.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.openapi.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.serialization.kotlinx.json.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.application.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.engine.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.http.content.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.netty.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.plugins.calllogging.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.plugins.contentnegotiation.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.plugins.cors.routing.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.plugins.statuspages.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.plugins.swagger.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.response.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.routing.*</ID>
+    <ID>WildcardImport:Application.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>WildcardImport:GenerateJsonResponse.kt$import io.ktor.http.*</ID>
+    <ID>WildcardImport:GenerateJsonRoutes.kt$import io.ktor.http.*</ID>
+    <ID>WildcardImport:GenerateJsonRoutes.kt$import io.ktor.server.request.*</ID>
+    <ID>WildcardImport:GenerateJsonRoutes.kt$import io.ktor.server.response.*</ID>
+    <ID>WildcardImport:GenerateJsonRoutes.kt$import io.ktor.server.routing.*</ID>
+    <ID>WildcardImport:GenerateJsonRoutes.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>WildcardImport:GenerateResponse.kt$import io.ktor.http.*</ID>
+    <ID>WildcardImport:GenerateRoutes.kt$import io.ktor.http.*</ID>
+    <ID>WildcardImport:GenerateRoutes.kt$import io.ktor.server.request.*</ID>
+    <ID>WildcardImport:GenerateRoutes.kt$import io.ktor.server.response.*</ID>
+    <ID>WildcardImport:GenerateRoutes.kt$import io.ktor.server.routing.*</ID>
+    <ID>WildcardImport:GenerateRoutes.kt$import io.ktor.server.routing.openapi.*</ID>
+    <ID>Wrapping:Application.kt$;</ID>
+  </CurrentIssues>
+</SmellBaseline>

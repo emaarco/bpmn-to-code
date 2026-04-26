@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ImportOrdering:BpmnResourceLoader.kt$import io.github.emaarco.bpmn.domain.BpmnResource import java.net.URL import java.nio.file.FileSystems import java.nio.file.FileSystemNotFoundException import java.nio.file.Files import java.nio.file.Path import kotlin.io.path.extension import kotlin.io.path.name import kotlin.io.path.readBytes</ID>
+    <ID>ImportOrdering:BpmnValidationAssert.kt$import io.github.emaarco.bpmn.domain.validation.model.Severity import io.github.emaarco.bpmn.domain.validation.ValidationResult import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation import org.assertj.core.api.AbstractAssert</ID>
+    <ID>ImportOrdering:BpmnValidationAssertTest.kt$import io.github.emaarco.bpmn.domain.validation.model.Severity import io.github.emaarco.bpmn.domain.validation.ValidationResult import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation import org.assertj.core.api.Assertions.assertThat import org.assertj.core.api.Assertions.assertThatCode import org.assertj.core.api.Assertions.assertThatThrownBy import org.junit.jupiter.api.Nested import org.junit.jupiter.api.Test</ID>
+    <ID>ImportOrdering:BpmnValidator.kt$import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter import io.github.emaarco.bpmn.domain.BpmnModel import io.github.emaarco.bpmn.domain.BpmnResource import io.github.emaarco.bpmn.domain.service.ModelMergerService import io.github.emaarco.bpmn.domain.shared.ProcessEngine import io.github.emaarco.bpmn.domain.validation.BpmnValidationRule import io.github.emaarco.bpmn.domain.validation.model.Severity import io.github.emaarco.bpmn.domain.validation.model.ValidationContext import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase import io.github.emaarco.bpmn.domain.validation.ValidationResult import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation import java.nio.file.Path</ID>
+    <ID>NoEmptyFirstLineInMethodBlock:BpmnProcessArchitectureTest.kt$BpmnProcessArchitectureTest$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:BpmnResourceLoaderTest.kt$BpmnResourceLoaderTest$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:BpmnValidatorTest.kt$BpmnValidatorTest$ </ID>
+    <ID>NoMultipleSpaces:BpmnResourceLoader.kt$BpmnResourceLoader$ </ID>
+  </CurrentIssues>
+</SmellBaseline>
