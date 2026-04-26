@@ -24,8 +24,8 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.adapter.outbound.engine.SecureBpmnParser
 import io.github.emaarco.bpmn.domain.shared.VariableDirection
-import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
 import org.camunda.bpm.model.bpmn.instance.CallActivity
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -41,7 +41,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
     private val implValueKey = ServiceTaskDefinition.IMPL_VALUE_KEY
 
     override fun extract(inputStream: InputStream): BpmnModel {
-        val modelInstance = Bpmn.readModelFromStream(inputStream)
+        val modelInstance = SecureBpmnParser.readModelFromStream(inputStream)
         val processId = modelInstance.getProcessId()
         val variantName = modelInstance.extractVariantName()
         val allFlowNodes = modelInstance.findFlowNodes()
