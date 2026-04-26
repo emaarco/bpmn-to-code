@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
     application
+    jacoco
 }
 
 group = "io.github.emaarco"
@@ -83,6 +84,25 @@ application {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+private val coverageExclusions = listOf(
+    "**/routes/**",           // thin Ktor adapter layer — integration-tested separately
+    "**/web/Application*",    // application entry point / wiring
+    "**/web/config/**",       // pure configuration data classes
+    "**/model/ConfigResponse*",
+)
+
+tasks.jacocoTestReport {
+    classDirectories.setFrom(
+        files(classDirectories.files.map { fileTree(it) { exclude(coverageExclusions) } })
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    classDirectories.setFrom(
+        files(classDirectories.files.map { fileTree(it) { exclude(coverageExclusions) } })
+    )
 }
 
 tasks.named<ProcessResources>("processResources") {

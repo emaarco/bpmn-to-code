@@ -3,6 +3,7 @@ plugins {
     `maven-publish`
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradlePluginPublish)
+    jacoco
 }
 
 group = "io.github.emaarco"

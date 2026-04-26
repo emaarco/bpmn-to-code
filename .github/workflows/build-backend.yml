@@ -70,9 +70,9 @@ jobs:
       - name: Run Detekt
         run: ./gradlew detekt
 
-      # Step 6: Enforce per-class test coverage (≥ 80%)
+      # Step 6: Enforce per-class test coverage (≥ 75%) for modules with in-process tests
       - name: Check Coverage
-        run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification
+        run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification :bpmn-to-code-web:jacocoTestCoverageVerification :bpmn-to-code-testing:jacocoTestCoverageVerification :bpmn-to-code-runtime:jacocoTestCoverageVerification
 
       # Step 7: Post coverage summary as PR comment
       - name: Post Coverage Comment
@@ -80,24 +80,40 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          REPORT="bpmn-to-code-core/build/reports/jacoco/test/jacocoTestReport.xml"
-          [ -f "$REPORT" ] || exit 0
-          COVERAGE=$(python3 - <<'EOF'
-          import xml.etree.ElementTree as ET
-          root = ET.parse("bpmn-to-code-core/build/reports/jacoco/test/jacocoTestReport.xml").getroot()
-          line = next((c for c in root.findall("counter") if c.get("type") == "LINE"), None)
-          if line is None:
-              print("n/a")
-          else:
-              covered, missed = int(line.get("covered", 0)), int(line.get("missed", 0))
-              total = covered + missed
-              pct = round(covered * 100 / total, 1) if total > 0 else 0.0
-              print(f"{pct}% ({covered}/{total} lines)")
+          COVERAGE_TABLE=$(python3 - <<'EOF'
+          import xml.etree.ElementTree as ET, os
+          modules = [
+              "bpmn-to-code-core",
+              "bpmn-to-code-gradle",
+              "bpmn-to-code-maven",
+              "bpmn-to-code-web",
+              "bpmn-to-code-testing",
+              "bpmn-to-code-runtime",
+          ]
+          rows = []
+          for m in modules:
+              path = f"{m}/build/reports/jacoco/test/jacocoTestReport.xml"
+              if not os.path.exists(path):
+                  rows.append(f"| {m} | n/a |")
+                  continue
+              root = ET.parse(path).getroot()
+              line = next((c for c in root.findall("counter") if c.get("type") == "LINE"), None)
+              if line is None:
+                  rows.append(f"| {m} | n/a |")
+              else:
+                  covered = int(line.get("covered", 0))
+                  missed = int(line.get("missed", 0))
+                  total = covered + missed
+                  pct = round(covered * 100 / total, 1) if total > 0 else 0.0
+                  rows.append(f"| {m} | {pct}% ({covered}/{total} lines) |")
+          print("| Module | Line Coverage |\n|--------|---------------|\n" + "\n".join(rows))
           EOF
           )
           MARKER="<!-- bpmn-to-code-coverage -->"
           BODY="${MARKER}
-          **Coverage (bpmn-to-code-core):** ${COVERAGE}"
+          **Test Coverage**
+
+          ${COVERAGE_TABLE}"
           # Delete any existing coverage comment before posting a fresh one
           gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
             --jq '.[] | select(.body | contains("<!-- bpmn-to-code-coverage -->")) | .id' | \

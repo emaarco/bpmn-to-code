@@ -4,8 +4,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.io.FileOutputStream
+import java.net.URLClassLoader
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
 
 class BpmnResourceLoaderTest {
 
@@ -55,5 +59,43 @@ class BpmnResourceLoaderTest {
         assertThatThrownBy { BpmnResourceLoader.fromDirectory(file) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("Path is not a directory")
+    }
+
+    @Test
+    fun `fromClasspath loads single bpmn file by direct classpath path`() {
+        val resources = BpmnResourceLoader.fromClasspath("bpmn/valid-process.bpmn")
+        assertThat(resources).hasSize(1)
+        assertThat(resources.first().fileName).isEqualTo("valid-process.bpmn")
+    }
+
+    @Test
+    fun `fromClasspath loads bpmn files from jar archive`(@TempDir tempDir: Path) {
+
+        // given: a JAR containing a .bpmn file
+        val jarPath = tempDir.resolve("test-resources.jar")
+        JarOutputStream(FileOutputStream(jarPath.toFile())).use { jar ->
+            jar.putNextEntry(JarEntry("bpmn-in-jar/"))
+            jar.closeEntry()
+            jar.putNextEntry(JarEntry("bpmn-in-jar/process.bpmn"))
+            jar.write("<definitions/>".toByteArray())
+            jar.closeEntry()
+        }
+
+        // given: a class loader that sees the JAR on the classpath
+        val classLoader = URLClassLoader(
+            arrayOf(jarPath.toUri().toURL()),
+            Thread.currentThread().contextClassLoader,
+        )
+
+        // when: loading from the JAR-backed classpath path
+        val previous = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = classLoader
+        try {
+            val resources = BpmnResourceLoader.fromClasspath("bpmn-in-jar")
+            assertThat(resources).hasSize(1)
+            assertThat(resources.first().fileName).isEqualTo("process.bpmn")
+        } finally {
+            Thread.currentThread().contextClassLoader = previous
+        }
     }
 }

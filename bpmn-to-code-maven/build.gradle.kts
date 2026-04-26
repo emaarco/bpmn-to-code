@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.mavenPluginDevelopment)
     alias(libs.plugins.mavenPublish)
+    jacoco
 }
 
 group = "io.github.emaarco"
