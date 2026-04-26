@@ -32,10 +32,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run: ./gradlew :bpmn-to-code-web:dockerBuild
+        run: ./gradlew :bpmn-to-code-web:dockerBuild --no-configuration-cache
 
       - name: Push Docker Image
-        run: ./gradlew :bpmn-to-code-web:dockerPush
+        run: ./gradlew :bpmn-to-code-web:dockerPush --no-configuration-cache
 
       - name: Push Latest Tag
         run: docker push emaarco/bpmn-to-code-web:latest
