@@ -9,6 +9,9 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.InputStream
 import javax.xml.parsers.SAXParserFactory
 
+// Camunda's Bpmn.readModelFromStream does not disable external entity resolution, making it
+// vulnerable to XXE if attacker-controlled BPMN files reach the parser. This wrapper rejects
+// any file containing a DOCTYPE declaration before handing off to Camunda.
 internal object SecureBpmnParser {
 
     private val saxFactory = SAXParserFactory.newInstance().also { factory ->
