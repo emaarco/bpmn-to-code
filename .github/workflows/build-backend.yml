@@ -72,7 +72,7 @@ jobs:
 
       # Step 6: Post coverage summary as PR comment
       - name: Post Coverage Comment
-        if: github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
