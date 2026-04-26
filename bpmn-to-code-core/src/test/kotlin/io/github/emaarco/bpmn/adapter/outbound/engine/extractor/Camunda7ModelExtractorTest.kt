@@ -34,7 +34,7 @@ class Camunda7ModelExtractorTest {
         val file = File(resourceUrl.toURI())
 
         // when: extracting the model
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         // then: the model matches the expected structure
         val c7ServiceTasks = listOf(
@@ -163,7 +163,7 @@ class Camunda7ModelExtractorTest {
     fun `extract returns variantName from process-level extension properties`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variantName).isEqualTo("withApproval")
     }
 
@@ -171,7 +171,7 @@ class Camunda7ModelExtractorTest {
     fun `extract returns null variantName when not specified`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variantName).isNull()
     }
 
@@ -179,7 +179,7 @@ class Camunda7ModelExtractorTest {
     fun `extract returns additionalInputVariables and additionalOutputVariables from camunda properties`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-additional-variables.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
             VariableDefinition("orderId", VariableDirection.INPUT),
             VariableDefinition("orderId", VariableDirection.OUTPUT),
@@ -193,7 +193,7 @@ class Camunda7ModelExtractorTest {
     fun `extract preserves direction when the same variable name is both input and output on one element`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-additional-variables.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         val activity = bpmnModel.flowNodes.single { it.id == "Activity_ProcessOrder" }
         assertThat(activity.variables).contains(
             VariableDefinition("orderId", VariableDirection.INPUT),
@@ -205,7 +205,7 @@ class Camunda7ModelExtractorTest {
     fun `extract returns multi-instance variables`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
             VariableDefinition("test", VariableDirection.INPUT),
             VariableDefinition("authors", VariableDirection.INPUT),
@@ -221,7 +221,7 @@ class Camunda7ModelExtractorTest {
     fun `extract detects event subprocess type and extracts escalations`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         val eventSubProcess = bpmnModel.flowNodes.first { it.id == "eventSubProcess_errorHandling" }
         assertThat(eventSubProcess.elementType).isEqualTo(BpmnElementType.EVENT_SUB_PROCESS)
@@ -236,7 +236,7 @@ class Camunda7ModelExtractorTest {
     fun `extract marks default sequence flow correctly`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         val flowsById = bpmnModel.sequenceFlows.associateBy { it.id }
         assertThat(flowsById["Flow_1jogut0"]).isEqualTo(

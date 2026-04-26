@@ -23,7 +23,7 @@ class GenerateProcessJsonInMemoryService(
     ): List<GeneratedJsonFile> {
         val validationService = BpmnValidationService(command.validationConfig)
         val bpmnResources = command.bpmnContents.map {
-            BpmnResource(fileName = it.processName, content = it.bpmnXml.byteInputStream())
+            BpmnResource(fileName = it.processName, content = it.bpmnXml.encodeToByteArray())
         }
         val models = bpmnResources.map { bpmnExtractor.extract(it, command.engine) }
         validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)

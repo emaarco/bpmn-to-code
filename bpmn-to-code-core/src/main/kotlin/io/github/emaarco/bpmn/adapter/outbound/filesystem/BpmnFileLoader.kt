@@ -9,6 +9,7 @@ import java.nio.file.Path
 import java.nio.file.PathMatcher
 import kotlin.io.path.absolute
 import kotlin.io.path.name
+import kotlin.io.path.readBytes
 import kotlin.streams.toList
 
 class BpmnFileLoader : LoadBpmnFilesPort {
@@ -30,7 +31,7 @@ class BpmnFileLoader : LoadBpmnFilesPort {
         return files.map { file ->
             BpmnResource(
                 fileName = file.name,
-                content = file.toFile().inputStream(),
+                content = file.readBytes(),
             )
         }
     }

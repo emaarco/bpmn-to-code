@@ -39,15 +39,13 @@ import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.DomElement
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
-import java.io.InputStream
-
 class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
     private val implValueKey = ServiceTaskDefinition.IMPL_VALUE_KEY
 
-    override fun extract(inputStream: InputStream): BpmnModel {
-        val modelInstance = SecureBpmnParser.readModelFromStream(inputStream)
+    override fun extract(bytes: ByteArray): BpmnModel {
+        val modelInstance = SecureBpmnParser.readModelFromBytes(bytes)
         val processId = modelInstance.getProcessId()
         val variantName = modelInstance.extractVariantName()
         val allMessages = findMessages(modelInstance)

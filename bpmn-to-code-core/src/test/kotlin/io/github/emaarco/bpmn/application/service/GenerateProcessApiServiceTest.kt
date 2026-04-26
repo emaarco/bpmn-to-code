@@ -37,7 +37,7 @@ class GenerateProcessApiServiceTest {
         // given: a dummy BPMN resource and a command
         val dummyResource = BpmnResource(
             fileName = "dummy.bpmn",
-            content = "<bpmn></bpmn>".byteInputStream(),
+            content = "<bpmn></bpmn>".encodeToByteArray(),
         )
         val expectedGeneratedFile = GeneratedApiFile(
             fileName = "NewsletterSubscriptionProcessApi.kt",

@@ -33,7 +33,7 @@ class GenerateProcessJsonServiceTest {
     fun `generateProcessJson generates JSON and writes to disk`() {
 
         // given: a dummy BPMN resource and a command
-        val dummyResource = BpmnResource(fileName = "dummy.bpmn", content = "<bpmn></bpmn>".byteInputStream())
+        val dummyResource = BpmnResource(fileName = "dummy.bpmn", content = "<bpmn></bpmn>".encodeToByteArray())
         val expectedJsonFile = GeneratedJsonFile(fileName = "order.json", content = "{}")
         every { bpmnFileLoader.loadFrom("baseDir", "*.bpmn") } returns listOf(dummyResource)
         every { bpmnExtractor.extract(any(), any()) } returns dummyModel

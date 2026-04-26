@@ -6,7 +6,6 @@ import org.xml.sax.Attributes
 import org.xml.sax.SAXException
 import org.xml.sax.SAXParseException
 import org.xml.sax.helpers.DefaultHandler
-import java.io.InputStream
 import javax.xml.parsers.SAXParserFactory
 
 /**
@@ -20,8 +19,7 @@ internal object SecureBpmnParser {
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
     }
 
-    fun readModelFromStream(inputStream: InputStream): BpmnModelInstance {
-        val bytes = inputStream.readBytes()
+    fun readModelFromBytes(bytes: ByteArray): BpmnModelInstance {
         rejectDoctypeDeclaration(bytes)
         return Bpmn.readModelFromStream(bytes.inputStream())
     }

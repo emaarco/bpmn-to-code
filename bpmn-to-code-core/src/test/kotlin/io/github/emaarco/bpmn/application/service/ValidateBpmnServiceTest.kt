@@ -31,7 +31,7 @@ class ValidateBpmnServiceTest {
         engine = ProcessEngine.ZEEBE,
     )
 
-    private val dummyResource = BpmnResource(fileName = "dummy.bpmn", content = "<bpmn></bpmn>".byteInputStream())
+    private val dummyResource = BpmnResource(fileName = "dummy.bpmn", content = "<bpmn></bpmn>".encodeToByteArray())
 
     @Test
     fun `valid model returns empty result`() {
