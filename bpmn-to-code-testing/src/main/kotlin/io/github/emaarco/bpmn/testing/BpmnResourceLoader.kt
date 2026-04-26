@@ -63,12 +63,17 @@ internal object BpmnResourceLoader {
      */
     private fun loadFromJar(url: URL): List<BpmnResource> {
         val jarUri = url.toURI()
-        val fs = try {
-            FileSystems.getFileSystem(jarUri)
+        val subPath = url.path.substringAfter("!")
+        return try {
+            val existing = FileSystems.getFileSystem(jarUri)
+            loadFromPath(existing.getPath(subPath))
         } catch (_: FileSystemNotFoundException) {
-            FileSystems.newFileSystem(jarUri, emptyMap<String, Any>())
+            FileSystems.newFileSystem(jarUri, emptyMap<String, Any>()).use { fs ->
+                loadFromPath(fs.getPath(subPath)).map { resource ->
+                    BpmnResource(fileName = resource.fileName, content = resource.content.readBytes().inputStream())
+                }
+            }
         }
-        return loadFromPath(fs.getPath(url.path.substringAfter("!")))
     }
 
     private fun walkForBpmnFiles(directory: Path): List<BpmnResource> {
