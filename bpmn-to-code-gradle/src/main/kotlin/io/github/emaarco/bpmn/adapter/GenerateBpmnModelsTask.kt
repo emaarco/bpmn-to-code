@@ -33,15 +33,25 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        validate()
         val service = CreateProcessApiFilesystemPlugin()
         service.execute(
-            baseDir,
-            filePattern,
-            outputFolderPath,
-            packagePath,
-            outputLanguage,
-            processEngine,
+            baseDir = baseDir,
+            filePattern = filePattern,
+            outputFolderPath = outputFolderPath,
+            packagePath = packagePath,
+            outputLanguage = outputLanguage,
+            engine = processEngine,
         )
         logger.lifecycle("BPMN models generated successfully")
+    }
+
+    private fun validate() {
+        check(this::baseDir.isInitialized) { "baseDir must be configured in bpmnToCode { ... }" }
+        check(this::filePattern.isInitialized) { "filePattern must be configured in bpmnToCode { ... }" }
+        check(this::outputFolderPath.isInitialized) { "outputFolderPath must be configured in bpmnToCode { ... }" }
+        check(this::packagePath.isInitialized) { "packagePath must be configured in bpmnToCode { ... }" }
+        check(this::outputLanguage.isInitialized) { "outputLanguage must be configured in bpmnToCode { ... }" }
+        check(this::processEngine.isInitialized) { "processEngine must be configured in bpmnToCode { ... }" }
     }
 }

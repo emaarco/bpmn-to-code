@@ -34,13 +34,19 @@ abstract class ValidateBpmnModelsTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        validate()
         logger.warn("[EXPERIMENTAL] The 'validateBpmnModels' task is experimental and may change in future releases.")
         val plugin = ValidateBpmnFilesystemPlugin()
         val config = ValidationConfig(
             failOnWarning = failOnWarning,
             disabledRules = disabledRules,
         )
-        val result = plugin.execute(baseDir, filePattern, processEngine, config)
+        val result = plugin.execute(
+            baseDir = baseDir,
+            filePattern = filePattern,
+            engine = processEngine,
+            validationConfig = config,
+        )
 
         result.warnings.forEach { v ->
             logger.warn("[BPMN VALIDATION WARN] ${formatLocation(v)}: ${v.message} (rule: ${v.ruleId})")
@@ -55,6 +61,12 @@ abstract class ValidateBpmnModelsTask : DefaultTask() {
             )
         }
         logger.lifecycle("BPMN validation passed")
+    }
+
+    private fun validate() {
+        check(this::baseDir.isInitialized) { "baseDir must be configured in bpmnToCode { ... }" }
+        check(this::filePattern.isInitialized) { "filePattern must be configured in bpmnToCode { ... }" }
+        check(this::processEngine.isInitialized) { "processEngine must be configured in bpmnToCode { ... }" }
     }
 
     private fun formatLocation(v: ValidationViolation): String =

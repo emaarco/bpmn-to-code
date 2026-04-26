@@ -19,7 +19,8 @@ internal enum class VariableNameSubtype(val simpleName: String) {
             return when {
                 hasInput && hasOutput -> IN_OUT
                 hasInput -> INPUT
-                else -> OUTPUT
+                hasOutput -> OUTPUT
+                else -> error("Unexpected variable directions: $directions")
             }
         }
     }

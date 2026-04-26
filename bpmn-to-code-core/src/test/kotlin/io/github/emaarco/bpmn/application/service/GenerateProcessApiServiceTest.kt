@@ -43,7 +43,8 @@ class GenerateProcessApiServiceTest {
             fileName = "NewsletterSubscriptionProcessApi.kt",
             packagePath = "de.emaarco.example",
             content = "// generated code",
-            language = OutputLanguage.KOTLIN
+            language = OutputLanguage.KOTLIN,
+            processId = "newsletterSubscription",
         )
         every { bpmnFileLoader.loadFrom("baseDir", "*.bpmn") } returns listOf(dummyResource)
         every { bpmnService.extract(any(), any()) } returns dummyModel

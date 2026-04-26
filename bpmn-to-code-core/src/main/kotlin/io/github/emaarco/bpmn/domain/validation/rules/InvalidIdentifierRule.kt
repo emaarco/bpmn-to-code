@@ -24,6 +24,11 @@ class InvalidIdentifierRule : BpmnValidationRule {
         checkMappings(violations, model.processId, model.messages, "Message")
         checkMappings(violations, model.processId, model.signals, "Signal")
         checkMappings(violations, model.processId, model.errors, "Error")
+        checkMappings(violations, model.processId, model.escalations, "Escalation")
+        checkMappings(violations, model.processId, model.compensations, "Compensation")
+        checkMappings(violations, model.processId, model.callActivities, "CallActivity")
+        checkMappings(violations, model.processId, model.timers, "Timer")
+        checkMappings(violations, model.processId, model.variables, "Variable")
         return violations
     }
 
