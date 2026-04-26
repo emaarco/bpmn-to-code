@@ -6,7 +6,7 @@ import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.web.model.GenerateJsonRequest
 import io.github.emaarco.bpmn.web.model.GenerateJsonResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.*
+import java.util.Base64
 
 class WebJsonGenerationService {
 
@@ -28,7 +28,10 @@ class WebJsonGenerationService {
         } catch (e: BpmnValidationException) {
             logger.error(e) { "BPMN validation failed during JSON generation" }
             return GenerateJsonResponse.fromValidationException(e)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+            logger.error(e) { "Unexpected error during JSON generation" }
+            return GenerateJsonResponse.unknownError()
+        } catch (e: IllegalArgumentException) {
             logger.error(e) { "Unexpected error during JSON generation" }
             return GenerateJsonResponse.unknownError()
         }

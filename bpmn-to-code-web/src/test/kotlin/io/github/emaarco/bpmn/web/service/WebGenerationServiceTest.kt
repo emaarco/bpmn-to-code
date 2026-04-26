@@ -5,7 +5,7 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.web.model.GenerateRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Base64
 
 class WebGenerationServiceTest {
 

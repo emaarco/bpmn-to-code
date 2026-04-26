@@ -66,11 +66,15 @@ jobs:
       - name: Run Gradle Build
         run: ./gradlew build --warning-mode all
 
-      # Step 5: Enforce per-class test coverage (≥ 80%)
+      # Step 5: Run Detekt static analysis
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+      # Step 6: Enforce per-class test coverage (≥ 80%)
       - name: Check Coverage
         run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification
 
-      # Step 6: Post coverage summary as PR comment
+      # Step 7: Post coverage summary as PR comment
       - name: Post Coverage Comment
         if: always() && github.event_name == 'pull_request'
         env:

@@ -9,9 +9,8 @@ object BaseElementUtils {
         type: String,
     ): ModelElementInstance {
         val extensions = this.findExtensionElementsWithType(type)
-        return extensions.firstOrNull() ?: throw IllegalStateException(
-            "No extension element of type $type found for flow node ${this.id}"
-        )
+        return extensions.firstOrNull()
+            ?: error("No extension element of type $type found for flow node ${this.id}")
     }
 
     fun BaseElement.findExtensionElementsWithType(

@@ -33,6 +33,7 @@ import kotlinx.serialization.json.putJsonObject
  */
 private val plugin = CreateProcessApiInMemoryPlugin()
 
+@Suppress("LongMethod")
 fun Server.registerGenerateProcessApiTool() {
     addTool(
         name = TOOL_NAME,
@@ -105,7 +106,7 @@ fun Server.registerGenerateProcessApiTool() {
             errorResult("BPMN validation failed: ${e.message}")
         } catch (e: IllegalArgumentException) {
             errorResult("Invalid argument: ${e.message}")
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             errorResult("Generation failed: ${e.message}")
         }
     }

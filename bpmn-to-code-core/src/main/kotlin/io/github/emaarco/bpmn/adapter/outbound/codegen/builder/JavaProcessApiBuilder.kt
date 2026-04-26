@@ -125,7 +125,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val flowsClass = buildFlowsClass(modelApi.packagePath, modelApi.model.sequenceFlows)
+            val flowsClass = buildFlowsClass(modelApi.model.sequenceFlows)
             builder.addType(flowsClass)
         }
     }
@@ -138,7 +138,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         }
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val relationsClass = buildRelationsClass(modelApi.packagePath, modelApi.model.flowNodes)
+            val relationsClass = buildRelationsClass(modelApi.model.flowNodes)
             builder.addType(relationsClass)
         }
     }
@@ -152,24 +152,24 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             val model = modelApi.model as? MergedBpmnModel ?: return
             val variantsBuilder = TypeSpec.classBuilder("Variants").addModifiers(PUBLIC, STATIC, FINAL)
             model.variants.forEach { variant ->
-                val variantClass = buildVariantClass(modelApi.packagePath, variant)
+                val variantClass = buildVariantClass(variant)
                 variantsBuilder.addType(variantClass)
             }
             builder.addType(variantsBuilder.build())
         }
 
-        private fun buildVariantClass(packagePath: String, variant: VariantData): TypeSpec {
+        private fun buildVariantClass(variant: VariantData): TypeSpec {
             val variantName = variant.variantName.toCamelCase()
             val variantBuilder = TypeSpec.classBuilder(variantName).addModifiers(PUBLIC, STATIC, FINAL)
             if (variant.sequenceFlows.isNotEmpty()) {
-                variantBuilder.addType(buildFlowsClass(packagePath, variant.sequenceFlows))
-                variantBuilder.addType(buildRelationsClass(packagePath, variant.flowNodes))
+                variantBuilder.addType(buildFlowsClass(variant.sequenceFlows))
+                variantBuilder.addType(buildRelationsClass(variant.flowNodes))
             }
             return variantBuilder.build()
         }
     }
 
-    private fun buildFlowsClass(packagePath: String, sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
+    private fun buildFlowsClass(sequenceFlows: List<SequenceFlowDefinition>): TypeSpec {
         val bpmnFlowClass = ClassName.get(RUNTIME_PACKAGE, "BpmnFlow")
         val flowsBuilder = TypeSpec.classBuilder("Flows").addModifiers(PUBLIC, STATIC, FINAL)
             .addJavadoc(
@@ -197,7 +197,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             .build()
     }
 
-    private fun buildRelationsClass(packagePath: String, flowNodes: List<FlowNodeDefinition>): TypeSpec {
+    private fun buildRelationsClass(flowNodes: List<FlowNodeDefinition>): TypeSpec {
         val bpmnRelationsClass = ClassName.get(RUNTIME_PACKAGE, "BpmnRelations")
         val relationsBuilder = TypeSpec.classBuilder("Relations").addModifiers(PUBLIC, STATIC, FINAL)
             .addJavadoc(

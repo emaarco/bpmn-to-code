@@ -1,0 +1,91 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  active: true
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15
+  LongMethod:
+    active: true
+    threshold: 60
+    excludes: ['**/test/**']
+  LongParameterList:
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 8
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+  LargeClass:
+    active: true
+    threshold: 600
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+    thresholdInClasses: 15
+    thresholdInInterfaces: 10
+    thresholdInObjects: 15
+    thresholdInEnums: 10
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: true
+    exceptionNames:
+      - Error
+      - Exception
+      - RuntimeException
+      - Throwable
+  SwallowedException:
+    active: true
+  NotImplementedDeclaration:
+    active: true
+
+potential-bugs:
+  active: true
+  UnsafeCallOnNullableType:
+    active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  ExplicitGarbageCollectionCall:
+    active: true
+  IteratorHasNextCallsNextMethod:
+    active: true
+  IteratorNotThrowingNoSuchElementException:
+    active: true
+  UnreachableCode:
+    active: true
+  UselessPostfixExpression:
+    active: true
+
+style:
+  active: true
+  MaxLineLength:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
+  MagicNumber:
+    active: false
+  ReturnCount:
+    active: true
+    max: 4
+  UnusedImports:
+    active: true
+  UnusedPrivateMember:
+    active: true
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'io.ktor.*'
+  ForbiddenComment:
+    active: true
+    comments:
+      - reason: 'Unresolved issue'
+        value: 'FIXME:'
+      - reason: 'Do not ship'
+        value: 'STOPSHIP:'
+

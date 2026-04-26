@@ -6,7 +6,7 @@ import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.web.model.GenerateRequest
 import io.github.emaarco.bpmn.web.model.GenerateResponse
-import java.util.*
+import java.util.Base64
 
 class WebGenerationService(
     private val librarySourceProvider: LibrarySourceProvider = LibrarySourceProvider(),
@@ -32,7 +32,10 @@ class WebGenerationService(
         } catch (e: BpmnValidationException) {
             logger.error(e) { "BPMN validation failed during generation" }
             return GenerateResponse.fromValidationException(e)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+            logger.error(e) { "Unexpected error during generation" }
+            return GenerateResponse.unknownError()
+        } catch (e: IllegalArgumentException) {
             logger.error(e) { "Unexpected error during generation" }
             return GenerateResponse.unknownError()
         }

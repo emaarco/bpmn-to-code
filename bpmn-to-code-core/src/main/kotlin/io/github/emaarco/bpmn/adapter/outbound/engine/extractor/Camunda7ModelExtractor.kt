@@ -39,6 +39,7 @@ import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.DomElement
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
+@Suppress("TooManyFunctions")
 class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY

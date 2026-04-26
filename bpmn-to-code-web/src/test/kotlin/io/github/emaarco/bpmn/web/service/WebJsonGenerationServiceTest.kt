@@ -4,7 +4,7 @@ import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.web.model.GenerateJsonRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Base64
 
 class WebJsonGenerationServiceTest {
 

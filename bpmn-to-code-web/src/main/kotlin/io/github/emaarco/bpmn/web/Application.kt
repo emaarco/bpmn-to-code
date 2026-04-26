@@ -43,6 +43,7 @@ fun main() {
     )
 }
 
+@Suppress("LongMethod")
 fun Application.configureApp(
     appConfig: AppConfig
 ) {
