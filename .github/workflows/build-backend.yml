@@ -43,6 +43,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       # Step 1: Checkout code
@@ -67,3 +69,33 @@ jobs:
       # Step 5: Enforce per-class test coverage (≥ 80%)
       - name: Check Coverage
         run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification
+
+      # Step 6: Post coverage summary as PR comment
+      - name: Post Coverage Comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPORT="bpmn-to-code-core/build/reports/jacoco/test/jacocoTestReport.xml"
+          [ -f "$REPORT" ] || exit 0
+          COVERAGE=$(python3 - <<'EOF'
+          import xml.etree.ElementTree as ET
+          root = ET.parse("bpmn-to-code-core/build/reports/jacoco/test/jacocoTestReport.xml").getroot()
+          line = next((c for c in root.findall("counter") if c.get("type") == "LINE"), None)
+          if line is None:
+              print("n/a")
+          else:
+              covered, missed = int(line.get("covered", 0)), int(line.get("missed", 0))
+              total = covered + missed
+              pct = round(covered * 100 / total, 1) if total > 0 else 0.0
+              print(f"{pct}% ({covered}/{total} lines)")
+          EOF
+          )
+          MARKER="<!-- bpmn-to-code-coverage -->"
+          BODY="${MARKER}
+          **Coverage (bpmn-to-code-core):** ${COVERAGE}"
+          # Delete any existing coverage comment before posting a fresh one
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            --jq '.[] | select(.body | contains("<!-- bpmn-to-code-coverage -->")) | .id' | \
+            xargs -I{} gh api --method DELETE "repos/${{ github.repository }}/issues/comments/{}"
+          gh pr comment "${{ github.event.pull_request.number }}" --body "$BODY"
