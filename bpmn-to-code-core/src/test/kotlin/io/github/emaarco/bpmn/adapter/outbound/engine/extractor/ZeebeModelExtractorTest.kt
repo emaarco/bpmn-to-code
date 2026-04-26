@@ -32,7 +32,7 @@ class ZeebeModelExtractorTest {
         val file = File(resourceUrl.toURI())
 
         // when: extracting file to bpmn-model
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         // then: assert that the model has expected content
         assertThat(bpmnModel).isNotNull()
@@ -158,7 +158,7 @@ class ZeebeModelExtractorTest {
     fun `extract returns variantName from process-level extension properties`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variantName).isEqualTo("withApproval")
     }
 
@@ -166,7 +166,7 @@ class ZeebeModelExtractorTest {
     fun `extract returns null variantName when not specified`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variantName).isNull()
     }
 
@@ -174,7 +174,7 @@ class ZeebeModelExtractorTest {
     fun `extract returns multi-instance variables`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
             VariableDefinition("test", VariableDirection.INPUT),
             VariableDefinition("authors", VariableDirection.INPUT),
@@ -192,7 +192,7 @@ class ZeebeModelExtractorTest {
     fun `extract detects event subprocess type and extracts escalations`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         val eventSubProcess = bpmnModel.flowNodes.first { it.id == "eventSubProcess_errorHandling" }
         assertThat(eventSubProcess.elementType).isEqualTo(BpmnElementType.EVENT_SUB_PROCESS)
@@ -207,7 +207,7 @@ class ZeebeModelExtractorTest {
     fun `extract marks default sequence flow correctly`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-send-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
-        val bpmnModel = underTest.extract(file.inputStream())
+        val bpmnModel = underTest.extract(file.readBytes())
 
         val flowsById = bpmnModel.sequenceFlows.associateBy { it.id }
         assertThat(flowsById["Flow_1jogut0"]).isEqualTo(

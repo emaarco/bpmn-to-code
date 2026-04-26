@@ -39,8 +39,6 @@ import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.xml.ModelInstance
 import org.camunda.bpm.model.xml.instance.DomElement
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
-import java.io.InputStream
-
 class OperatonModelExtractor : EngineSpecificExtractor {
 
     private val implKindKey = ServiceTaskDefinition.IMPL_KIND_KEY
@@ -50,8 +48,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         private const val NAMESPACE = "http://operaton.org/schema/1.0/bpmn"
     }
 
-    override fun extract(inputStream: InputStream): BpmnModel {
-        val modelInstance = SecureBpmnParser.readModelFromStream(inputStream)
+    override fun extract(bytes: ByteArray): BpmnModel {
+        val modelInstance = SecureBpmnParser.readModelFromBytes(bytes)
         val processId = modelInstance.getProcessId()
         val variantName = modelInstance.extractVariantName()
         val messages = findMessages(modelInstance)

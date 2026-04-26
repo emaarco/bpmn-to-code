@@ -8,6 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.name
+import kotlin.io.path.readBytes
 
 /**
  * Loads `.bpmn` files from either the classpath or a filesystem directory.
@@ -46,7 +47,7 @@ internal object BpmnResourceLoader {
 
     private fun loadFromPath(path: Path): List<BpmnResource> {
         if (Files.isRegularFile(path) && path.extension == "bpmn") {
-            return listOf(BpmnResource(fileName = path.name, content = Files.newInputStream(path)))
+            return listOf(BpmnResource(fileName = path.name, content = path.readBytes()))
         }
         require(Files.isDirectory(path)) {
             "Classpath resource is not a directory or .bpmn file: $path"
@@ -69,9 +70,7 @@ internal object BpmnResourceLoader {
             loadFromPath(existing.getPath(subPath))
         } catch (_: FileSystemNotFoundException) {
             FileSystems.newFileSystem(jarUri, emptyMap<String, Any>()).use { fs ->
-                loadFromPath(fs.getPath(subPath)).map { resource ->
-                    BpmnResource(fileName = resource.fileName, content = resource.content.readBytes().inputStream())
-                }
+                loadFromPath(fs.getPath(subPath))
             }
         }
     }
@@ -79,7 +78,7 @@ internal object BpmnResourceLoader {
     private fun walkForBpmnFiles(directory: Path): List<BpmnResource> {
         return Files.walk(directory)
             .filter { it.extension == "bpmn" }
-            .map { BpmnResource(fileName = it.name, content = Files.newInputStream(it)) }
+            .map { BpmnResource(fileName = it.name, content = it.readBytes()) }
             .toList()
     }
 }

@@ -27,7 +27,7 @@ class ExtractBpmnAdapterTest {
         val tempFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
         val bpmnResource = BpmnResource(
             fileName = "dummy.bpmn",
-            content = tempFile.inputStream(),
+            content = tempFile.readBytes(),
         )
         every { extractor.extract(any()) } returns expectedModel
 
@@ -46,7 +46,7 @@ class ExtractBpmnAdapterTest {
         val tempFile = File.createTempFile("dummy", ".bpmn").apply { deleteOnExit() }
         val bpmnResource = BpmnResource(
             fileName = "dummy.bpmn",
-            content = tempFile.inputStream(),
+            content = tempFile.readBytes(),
         )
 
         // when / then: an exception is thrown
@@ -59,7 +59,7 @@ class ExtractBpmnAdapterTest {
 
         // given: an extractor that throws during parsing
         val tempFile = File.createTempFile("invalid", ".bpmn").apply { deleteOnExit() }
-        val bpmnResource = BpmnResource(fileName = "invalid.bpmn", content = tempFile.inputStream())
+        val bpmnResource = BpmnResource(fileName = "invalid.bpmn", content = tempFile.readBytes())
         every { extractor.extract(any()) } throws IllegalArgumentException("invalid BPMN content")
 
         // when / then: the exception is wrapped in a RuntimeException with file name in the message

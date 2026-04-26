@@ -49,7 +49,7 @@ class GenerateProcessApiInMemoryService(
     ) = command.bpmnContents.map {
         BpmnResource(
             fileName = it.processName,
-            content = it.bpmnXml.byteInputStream(),
+            content = it.bpmnXml.encodeToByteArray(),
         )
     }
 
