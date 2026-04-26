@@ -1,5 +1,6 @@
 package io.github.emaarco.bpmn.adapter
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.Properties
@@ -30,34 +31,26 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
     }
 
     private fun addRuntimeDependency(project: Project) {
-        val version = loadPluginVersion(project) ?: return
+        val version = loadPluginVersion()
         val coordinates = "$RUNTIME_GROUP:$RUNTIME_ARTIFACT:$version"
         project.plugins.withId("java") {
             project.dependencies.add("implementation", coordinates)
         }
     }
 
-    private fun loadPluginVersion(project: Project): String? {
+    private fun loadPluginVersion(): String {
         val stream = javaClass.classLoader.getResourceAsStream(VERSION_RESOURCE)
-        if (stream == null) {
-            project.logger.warn(
-                "[bpmn-to-code] Could not locate '$VERSION_RESOURCE' on the plugin classpath — " +
-                    "skipping auto-add of '$RUNTIME_GROUP:$RUNTIME_ARTIFACT'. " +
-                    "Add the dependency manually to ensure generated code compiles."
+            ?: throw GradleException(
+                "[bpmn-to-code] Could not locate '$VERSION_RESOURCE' on the plugin classpath. " +
+                    "This is a bug in the plugin distribution — please report it."
             )
-            return null
-        }
         val properties = stream.use {
             Properties().apply { load(it) }
         }
-        val version = properties.getProperty("version")?.takeIf { it.isNotBlank() }
-        if (version == null) {
-            project.logger.warn(
-                "[bpmn-to-code] '$VERSION_RESOURCE' is missing a non-blank 'version' entry — " +
-                    "skipping auto-add of '$RUNTIME_GROUP:$RUNTIME_ARTIFACT'. " +
-                    "Add the dependency manually to ensure generated code compiles."
+        return properties.getProperty("version")?.takeIf { it.isNotBlank() }
+            ?: throw GradleException(
+                "[bpmn-to-code] '$VERSION_RESOURCE' is missing a non-blank 'version' entry. " +
+                    "This is a bug in the plugin distribution — please report it."
             )
-        }
-        return version
     }
 }

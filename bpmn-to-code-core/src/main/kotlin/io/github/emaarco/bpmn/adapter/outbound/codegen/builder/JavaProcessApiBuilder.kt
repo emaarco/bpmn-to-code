@@ -148,7 +148,7 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
         override fun shouldWrite(modelApi: BpmnModelApi) = modelApi.model is MergedBpmnModel
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
-            val model = modelApi.model as MergedBpmnModel
+            val model = modelApi.model as? MergedBpmnModel ?: return
             val variantsBuilder = TypeSpec.classBuilder("Variants").addModifiers(PUBLIC, STATIC, FINAL)
             model.variants.forEach { variant ->
                 val variantClass = buildVariantClass(modelApi.packagePath, variant)
