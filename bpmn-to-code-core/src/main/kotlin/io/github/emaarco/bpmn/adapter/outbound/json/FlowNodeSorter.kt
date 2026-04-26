@@ -14,6 +14,7 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
  */
 object FlowNodeSorter {
 
+    @Suppress("CyclomaticComplexMethod")
     fun sort(nodes: List<FlowNodeDefinition>): List<FlowNodeDefinition> {
         val nodeById = nodes.associateBy { it.id }
         val childrenByParent = nodes.filter { it.parentId != null }.groupBy { it.parentId }

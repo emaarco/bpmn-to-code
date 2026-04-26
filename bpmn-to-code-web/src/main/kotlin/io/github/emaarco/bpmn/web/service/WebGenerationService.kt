@@ -6,7 +6,7 @@ import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.web.model.GenerateRequest
 import io.github.emaarco.bpmn.web.model.GenerateResponse
-import java.util.*
+import java.util.Base64
 
 class WebGenerationService(
     private val librarySourceProvider: LibrarySourceProvider = LibrarySourceProvider(),

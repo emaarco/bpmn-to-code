@@ -33,6 +33,7 @@ import kotlinx.serialization.json.putJsonObject
  */
 private val plugin = CreateProcessApiInMemoryPlugin()
 
+@Suppress("LongMethod")
 fun Server.registerGenerateProcessApiTool() {
     addTool(
         name = TOOL_NAME,

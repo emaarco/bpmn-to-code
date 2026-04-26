@@ -6,7 +6,7 @@ import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.github.emaarco.bpmn.web.model.GenerateJsonRequest
 import io.github.emaarco.bpmn.web.model.GenerateJsonResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.*
+import java.util.Base64
 
 class WebJsonGenerationService {
 

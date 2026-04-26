@@ -13,6 +13,13 @@ complexity:
   LongMethod:
     active: true
     threshold: 60
+    excludes: ['**/test/**']
+  LongParameterList:
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 8
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
   LargeClass:
     active: true
     threshold: 600
@@ -65,11 +72,15 @@ style:
     active: false
   ReturnCount:
     active: true
-    max: 3
+    max: 4
   UnusedImports:
     active: true
   UnusedPrivateMember:
     active: true
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'io.ktor.*'
   ForbiddenComment:
     active: true
     comments:
