@@ -38,6 +38,31 @@ class WebJsonGenerationServiceTest {
         assertThat(file.processId).isEqualTo("newsletterSubscription")
     }
 
+    @Test
+    fun `should return error response when base64 content is invalid`() {
+
+        // given: a request with invalid Base64 content
+        val request = GenerateJsonRequest(
+            files = listOf(
+                GenerateJsonRequest.BpmnFileData(
+                    fileName = "invalid.bpmn",
+                    content = "not-valid-base64!!!",
+                )
+            ),
+            config = GenerateJsonRequest.JsonGenerationConfig(
+                processEngine = ProcessEngine.ZEEBE,
+            )
+        )
+
+        // when: generating JSON
+        val response = underTest.generate(request)
+
+        // then: the response indicates failure with an error message
+        assertThat(response.success).isFalse()
+        assertThat(response.error).isNotNull()
+        assertThat(response.files).isEmpty()
+    }
+
     private fun loadSampleBase64(resourcePath: String): String {
         val bytes = requireNotNull(javaClass.classLoader.getResourceAsStream(resourcePath)) {
             "Could not find resource: $resourcePath"

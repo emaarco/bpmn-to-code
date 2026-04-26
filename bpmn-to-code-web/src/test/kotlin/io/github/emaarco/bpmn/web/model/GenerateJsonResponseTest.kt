@@ -7,11 +7,11 @@ import io.ktor.http.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class GenerateResponseTest {
+class GenerateJsonResponseTest {
 
     @Test
     fun `noFilesProvided should return proper error response`() {
-        val response = GenerateResponse.noFilesProvided()
+        val response = GenerateJsonResponse.noFilesProvided()
 
         assertThat(response.success).isFalse()
         assertThat(response.files).isEmpty()
@@ -20,7 +20,7 @@ class GenerateResponseTest {
 
     @Test
     fun `tooManyFiles should return proper error response`() {
-        val response = GenerateResponse.tooManyFiles()
+        val response = GenerateJsonResponse.tooManyFiles()
 
         assertThat(response.success).isFalse()
         assertThat(response.files).isEmpty()
@@ -29,7 +29,7 @@ class GenerateResponseTest {
 
     @Test
     fun `unknownError should return internal server error response`() {
-        val response = GenerateResponse.unknownError()
+        val response = GenerateJsonResponse.unknownError()
 
         assertThat(response.success).isFalse()
         assertThat(response.files).isEmpty()
@@ -48,7 +48,7 @@ class GenerateResponseTest {
         )
         val exception = BpmnValidationException(listOf(violation))
 
-        val response = GenerateResponse.fromValidationException(exception)
+        val response = GenerateJsonResponse.fromValidationException(exception)
 
         assertThat(response.success).isFalse()
         assertThat(response.files).isEmpty()
