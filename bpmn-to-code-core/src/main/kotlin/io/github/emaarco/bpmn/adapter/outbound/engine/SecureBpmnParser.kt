@@ -32,7 +32,7 @@ internal object SecureBpmnParser {
                     throw EarlyAbortException()
                 }
             })
-        } catch (e: EarlyAbortException) {
+        } catch (_: EarlyAbortException) {
             return // clean exit — no DOCTYPE found
         } catch (e: SAXParseException) {
             // disallow-doctype-decl throws SAXParseException when DOCTYPE is encountered

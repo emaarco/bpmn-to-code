@@ -48,7 +48,6 @@ kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "
 mcpKotlinSdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpKotlinSdk" }
 
 # Testing dependencies
-detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnit" }
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertJ" }

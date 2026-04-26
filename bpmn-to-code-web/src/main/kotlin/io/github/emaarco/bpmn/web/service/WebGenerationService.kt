@@ -32,7 +32,10 @@ class WebGenerationService(
         } catch (e: BpmnValidationException) {
             logger.error(e) { "BPMN validation failed during generation" }
             return GenerateResponse.fromValidationException(e)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+            logger.error(e) { "Unexpected error during generation" }
+            return GenerateResponse.unknownError()
+        } catch (e: IllegalArgumentException) {
             logger.error(e) { "Unexpected error during generation" }
             return GenerateResponse.unknownError()
         }

@@ -1,13 +1,5 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
-  <CurrentIssues>
-    <ID>MaxLineLength:GradlePluginSmokeTest.kt$GradlePluginSmokeTest$val srcDirBlock = if (isKotlin) "kotlin { srcDirs = ['build/generated'] }" else "java { srcDir 'build/generated' }"</ID>
-    <ID>MaxLineLength:MultiModuleRuntimeSharingSmokeTest.kt$MultiModuleRuntimeSharingSmokeTest$fun</ID>
-    <ID>MaximumLineLength:GradlePluginSmokeTest.kt$GradlePluginSmokeTest$ </ID>
-    <ID>MaximumLineLength:MultiModuleRuntimeSharingSmokeTest.kt$MultiModuleRuntimeSharingSmokeTest$ </ID>
-    <ID>NoEmptyFirstLineInMethodBlock:GradlePluginDependencyResolutionSmokeTest.kt$GradlePluginDependencyResolutionSmokeTest$ </ID>
-    <ID>NoEmptyFirstLineInMethodBlock:MultiModuleRuntimeSharingSmokeTest.kt$MultiModuleRuntimeSharingSmokeTest$ </ID>
-    <ID>ParameterListWrapping:MultiModuleRuntimeSharingSmokeTest.kt$MultiModuleRuntimeSharingSmokeTest$(@TempDir projectDir: File)</ID>
-  </CurrentIssues>
+  <CurrentIssues></CurrentIssues>
 </SmellBaseline>

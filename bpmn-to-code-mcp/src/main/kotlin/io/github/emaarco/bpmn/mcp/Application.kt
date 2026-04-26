@@ -2,7 +2,7 @@ package io.github.emaarco.bpmn.mcp
 
 import io.github.emaarco.bpmn.mcp.tools.registerGenerateProcessApiTool
 import io.github.oshai.kotlinlogging.KotlinLoggingConfiguration
-import io.ktor.utils.io.streams.*
+import io.ktor.utils.io.streams.asInput
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
 import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport

@@ -1,6 +1,17 @@
 package io.github.emaarco.bpmn.domain
 
-import io.github.emaarco.bpmn.domain.shared.*
+import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.ErrorDefinition
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
+import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
+import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
+import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
+import io.github.emaarco.bpmn.domain.shared.SignalDefinition
+import io.github.emaarco.bpmn.domain.shared.TimerDefinition
+import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 
 data class MergedBpmnModel(
     override val processId: String,

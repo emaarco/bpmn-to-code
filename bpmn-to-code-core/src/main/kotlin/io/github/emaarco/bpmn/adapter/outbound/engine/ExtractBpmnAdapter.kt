@@ -23,8 +23,13 @@ class ExtractBpmnAdapter(
         return try {
             logger.info { "Extracting model '${bpmnFile.fileName}' with extractor for '$engine'" }
             extractor.extract(content)
-        } catch (ex: Exception) {
-            throw RuntimeException(
+        } catch (ex: IllegalStateException) {
+            throw IllegalStateException(
+                "Failed to extract file: ${bpmnFile.fileName}. Please check its a valid file for $engine",
+                ex
+            )
+        } catch (ex: IllegalArgumentException) {
+            throw IllegalStateException(
                 "Failed to extract file: ${bpmnFile.fileName}. Please check its a valid file for $engine",
                 ex
             )
@@ -33,7 +38,7 @@ class ExtractBpmnAdapter(
 
     private fun getExtractor(engine: ProcessEngine): EngineSpecificExtractor {
         return extractors[engine]
-            ?: throw IllegalStateException("No extractor found for engine: $engine")
+            ?: error("No extractor found for engine: $engine")
     }
 
     companion object {

@@ -57,8 +57,12 @@ potential-bugs:
 
 style:
   active: true
+  MaxLineLength:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
   MagicNumber:
-    active: false  # too noisy for this codebase
+    active: false
   ReturnCount:
     active: true
     max: 3
@@ -74,16 +78,3 @@ style:
       - reason: 'Do not ship'
         value: 'STOPSHIP:'
 
-formatting:
-  active: true
-  android: false
-  autoCorrect: false
-  MaxLineLength:
-    active: true
-    maxLineLength: 140
-  NoWildcardImports:
-    active: true
-  TrailingCommaOnCallSite:
-    active: false
-  TrailingCommaOnDeclarationSite:
-    active: false

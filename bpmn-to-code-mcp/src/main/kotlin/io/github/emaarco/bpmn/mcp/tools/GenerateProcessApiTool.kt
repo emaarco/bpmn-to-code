@@ -105,7 +105,7 @@ fun Server.registerGenerateProcessApiTool() {
             errorResult("BPMN validation failed: ${e.message}")
         } catch (e: IllegalArgumentException) {
             errorResult("Invalid argument: ${e.message}")
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             errorResult("Generation failed: ${e.message}")
         }
     }

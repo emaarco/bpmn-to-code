@@ -15,8 +15,6 @@ allprojects {
     }
 }
 
-val detektFormattingDep = libs.detektFormatting
-
 subprojects {
 
     apply(plugin = "io.gitlab.arturbosch.detekt")
@@ -25,10 +23,6 @@ subprojects {
         config.setFrom("$rootDir/config/detekt/detekt.yml")
         baseline = file("$projectDir/detekt-baseline.xml")
         buildUponDefaultConfig = true
-    }
-
-    dependencies {
-        "detektPlugins"(detektFormattingDep)
     }
 
     tasks.withType<KotlinCompile>().configureEach {

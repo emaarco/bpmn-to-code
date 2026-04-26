@@ -28,7 +28,10 @@ class WebJsonGenerationService {
         } catch (e: BpmnValidationException) {
             logger.error(e) { "BPMN validation failed during JSON generation" }
             return GenerateJsonResponse.fromValidationException(e)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+            logger.error(e) { "Unexpected error during JSON generation" }
+            return GenerateJsonResponse.unknownError()
+        } catch (e: IllegalArgumentException) {
             logger.error(e) { "Unexpected error during JSON generation" }
             return GenerateJsonResponse.unknownError()
         }

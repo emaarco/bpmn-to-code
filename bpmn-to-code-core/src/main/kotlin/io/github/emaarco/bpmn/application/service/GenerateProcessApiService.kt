@@ -10,7 +10,6 @@ import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
 import io.github.emaarco.bpmn.domain.BpmnModelApi
-import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.service.ModelMergerService

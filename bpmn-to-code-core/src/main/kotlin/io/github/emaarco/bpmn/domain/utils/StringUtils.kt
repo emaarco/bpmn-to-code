@@ -1,9 +1,5 @@
 package io.github.emaarco.bpmn.domain.utils
 
-import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
-import io.github.emaarco.bpmn.domain.utils.StringUtils.toCamelCase
-import io.github.emaarco.bpmn.domain.utils.StringUtils.toUpperSnakeCase
-
 object StringUtils {
 
     /**

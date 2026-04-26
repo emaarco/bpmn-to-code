@@ -59,7 +59,6 @@ fun testBpmnModelApi(
 fun testSubscribeNewsletterBpmnModel(
     processId: String = "newsletterSubscription",
     variantName: String? = null,
-    testVariableForTimer: String = "$" + "{testVariable}",
     flowNodes: List<FlowNodeDefinition> = listOf(
         FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
             displayName = "Abort registration",

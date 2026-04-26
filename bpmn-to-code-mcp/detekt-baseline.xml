@@ -2,16 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
-    <ID>ArgumentListWrapping:GenerateProcessApiTool.kt$(PARAM_BPMN_XML, PARAM_PROCESS_NAME, PARAM_OUTPUT_LANGUAGE, PARAM_PROCESS_ENGINE, PARAM_PACKAGE_PATH)</ID>
     <ID>LongMethod:GenerateProcessApiTool.kt$fun Server.registerGenerateProcessApiTool()</ID>
-    <ID>MaxLineLength:GenerateProcessApiTool.kt$?:</ID>
-    <ID>MaxLineLength:GenerateProcessApiTool.kt$required = listOf(PARAM_BPMN_XML, PARAM_PROCESS_NAME, PARAM_OUTPUT_LANGUAGE, PARAM_PROCESS_ENGINE, PARAM_PACKAGE_PATH)</ID>
-    <ID>MaxLineLength:GenerateProcessApiToolSchema.kt$GenerateProcessApiToolSchema$const val DESC_PROCESS_NAME = "Process identifier used for naming generated classes (e.g. 'newsletter-subscription')"</ID>
-    <ID>MaximumLineLength:GenerateProcessApiTool.kt$ </ID>
-    <ID>MaximumLineLength:GenerateProcessApiToolSchema.kt$GenerateProcessApiToolSchema$ </ID>
-    <ID>NoEmptyFirstLineInMethodBlock:GenerateProcessApiToolTest.kt$GenerateProcessApiToolTest$ </ID>
-    <ID>NoWildcardImports:Application.kt$import io.ktor.utils.io.streams.*</ID>
-    <ID>TooGenericExceptionCaught:GenerateProcessApiTool.kt$e: Exception</ID>
-    <ID>WildcardImport:Application.kt$import io.ktor.utils.io.streams.*</ID>
   </CurrentIssues>
 </SmellBaseline>
