@@ -11,8 +11,6 @@ import javax.xml.parsers.SAXParserFactory
 
 internal object SecureBpmnParser {
 
-    // Using a SAXParser rather than a byte-string check: the parser is encoding-aware,
-    // so UTF-16 / non-UTF-8 files with DOCTYPE declarations are caught correctly.
     private val saxFactory = SAXParserFactory.newInstance().also { factory ->
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
     }
