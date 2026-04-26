@@ -6,6 +6,7 @@ import org.xml.sax.Attributes
 import org.xml.sax.SAXException
 import org.xml.sax.SAXParseException
 import org.xml.sax.helpers.DefaultHandler
+import java.io.InputStream
 import javax.xml.parsers.SAXParserFactory
 
 /**
@@ -20,13 +21,15 @@ internal object SecureBpmnParser {
     }
 
     fun readModelFromBytes(bytes: ByteArray): BpmnModelInstance {
-        rejectDoctypeDeclaration(bytes)
-        return Bpmn.readModelFromStream(bytes.inputStream())
+        val stream = bytes.inputStream()
+        rejectDoctypeDeclaration(stream)
+        stream.reset()
+        return Bpmn.readModelFromStream(stream)
     }
 
-    private fun rejectDoctypeDeclaration(bytes: ByteArray) {
+    private fun rejectDoctypeDeclaration(stream: InputStream) {
         try {
-            saxFactory.newSAXParser().parse(bytes.inputStream(), object : DefaultHandler() {
+            saxFactory.newSAXParser().parse(stream, object : DefaultHandler() {
                 override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
                     // Abort as soon as we reach the first element — no DOCTYPE was encountered
                     throw EarlyAbortException()

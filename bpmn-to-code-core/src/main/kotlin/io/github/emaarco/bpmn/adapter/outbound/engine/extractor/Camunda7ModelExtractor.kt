@@ -107,6 +107,7 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
         val flowNodes = modelInstance.getModelElementsByType(FlowNode::class.java)
         return flowNodes.associate { node ->
             val nodeId = node.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            // isCamundaAsync* throws for FlowNode subtypes that don't carry the Camunda extension attribute
             val asyncBefore = runCatching { node.isCamundaAsyncBefore }.getOrDefault(false)
             val asyncAfter = runCatching { node.isCamundaAsyncAfter }.getOrDefault(false)
             val exclusive = runCatching { node.isCamundaExclusive }.getOrDefault(true)
