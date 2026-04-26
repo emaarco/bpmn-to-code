@@ -67,7 +67,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             fileName = "$objectName.kt",
             packagePath = modelApi.packagePath,
             content = content,
-            language = modelApi.outputLanguage
+            language = modelApi.outputLanguage,
+            processId = modelApi.model.processId,
         )
     }
 

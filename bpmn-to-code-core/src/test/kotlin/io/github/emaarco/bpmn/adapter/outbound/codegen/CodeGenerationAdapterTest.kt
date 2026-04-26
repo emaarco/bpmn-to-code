@@ -28,6 +28,7 @@ class CodeGenerationAdapterTest {
             packagePath = "packagePath",
             content = "content",
             language = OutputLanguage.KOTLIN,
+            processId = "test",
         )
         every { kotlinProcessBuilder.buildApiFile(modelApi) } returns processFile
 

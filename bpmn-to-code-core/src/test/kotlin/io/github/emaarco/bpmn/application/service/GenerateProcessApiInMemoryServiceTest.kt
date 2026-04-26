@@ -36,7 +36,8 @@ class GenerateProcessApiInMemoryServiceTest {
             fileName = "TestProcessApi.kt",
             packagePath = "com.example",
             content = "// generated code",
-            language = OutputLanguage.KOTLIN
+            language = OutputLanguage.KOTLIN,
+            processId = "test",
         )
         every { bpmnService.extract(any(), any()) } returns dummyModel
         every { codeGenerator.generateCode(any()) } returns listOf(expectedGeneratedFile)

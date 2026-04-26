@@ -66,7 +66,8 @@ class JavaProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<Ty
             fileName = "${modelApi.fileName()}.java",
             packagePath = modelApi.packagePath,
             content = fileContent,
-            language = modelApi.outputLanguage
+            language = modelApi.outputLanguage,
+            processId = modelApi.model.processId,
         )
     }
 

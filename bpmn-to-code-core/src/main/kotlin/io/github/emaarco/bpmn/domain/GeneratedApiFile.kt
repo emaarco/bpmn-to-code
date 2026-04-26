@@ -7,4 +7,5 @@ data class GeneratedApiFile(
     val packagePath: String,
     val content: String,
     val language: OutputLanguage,
+    val processId: String,
 )

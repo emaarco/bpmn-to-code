@@ -19,19 +19,22 @@ class ProcessApiFileSaverTest {
             fileName = "OrderProcessApi.kt",
             packagePath = "com.example.order",
             content = "// order process api code",
-            language = OutputLanguage.KOTLIN
+            language = OutputLanguage.KOTLIN,
+            processId = "order",
         )
         val secondFile = GeneratedApiFile(
             fileName = "PaymentProcessApi.kt",
             packagePath = "com.example.payment",
             content = "// payment process api code",
-            language = OutputLanguage.KOTLIN
+            language = OutputLanguage.KOTLIN,
+            processId = "payment",
         )
         val thirdFile = GeneratedApiFile(
             fileName = "ShippingProcessApi.kt",
             packagePath = "com.example.order.shipping",
             content = "// shipping process api code",
-            language = OutputLanguage.KOTLIN
+            language = OutputLanguage.KOTLIN,
+            processId = "shipping",
         )
 
         // when: writeFiles is called

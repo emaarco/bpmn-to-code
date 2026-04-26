@@ -68,7 +68,8 @@ class CreateProcessApiInMemoryPluginTest {
         fileName = fileName,
         packagePath = "com.example.api",
         content = "// $fileName api code",
-        language = OutputLanguage.KOTLIN
+        language = OutputLanguage.KOTLIN,
+        processId = fileName,
     )
 
 }

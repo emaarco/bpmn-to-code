@@ -1,5 +1,8 @@
 package io.github.emaarco.bpmn.domain.validation.rules
 
+import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
+import io.github.emaarco.bpmn.domain.shared.CompensationType
+import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
@@ -42,6 +45,40 @@ class InvalidIdentifierRuleTest {
                     properties = FlowNodeProperties.Timer(TimerDefinition(id = "123-timer", type = "Duration", value = "PT1H")),
                 )
             )
+        )
+
+        // when: validating
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
+
+        // then: two WARN violations — one for FlowNode, one for Timer (same underlying id)
+        assertThat(violations).hasSize(2)
+        assertThat(violations).allMatch { it.severity == Severity.WARN }
+        assertThat(violations).allMatch { it.message.contains("invalid identifier") }
+    }
+
+    @Test
+    fun `reports warning for escalation producing invalid identifier`() {
+
+        // given: an escalation whose name starts with a digit
+        val model = testBpmnModel(
+            escalations = listOf(EscalationDefinition(id = "esc1", name = "123-escalation", code = "ESC"))
+        )
+
+        // when: validating
+        val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))
+
+        // then: a WARN violation mentioning "invalid identifier"
+        assertThat(violations).hasSize(1)
+        assertThat(violations[0].severity).isEqualTo(Severity.WARN)
+        assertThat(violations[0].message).contains("invalid identifier")
+    }
+
+    @Test
+    fun `reports warning for compensation producing invalid identifier`() {
+
+        // given: a compensation whose id starts with a digit
+        val model = testBpmnModel(
+            compensations = listOf(CompensationDefinition(id = "123-compensation", type = CompensationType.THROWING))
         )
 
         // when: validating

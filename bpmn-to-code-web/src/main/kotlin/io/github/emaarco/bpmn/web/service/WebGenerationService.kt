@@ -62,21 +62,6 @@ class WebGenerationService(
     ) = GenerateResponse.GeneratedFile(
         fileName = apiFile.fileName,
         content = apiFile.content,
-        processId = extractProcessIdFromFileName(apiFile.fileName)
+        processId = apiFile.processId,
     )
-
-    /**
-     * NewsletterSubscriptionProcessApi.kt -> newsletterSubscription
-     * Remove file extension and "ProcessApi" suffix
-     */
-    private fun extractProcessIdFromFileName(
-        fileName: String
-    ): String {
-        return fileName
-            .removeSuffix(".kt")
-            .removeSuffix(".java")
-            .replace(Regex("ProcessApiV\\d+$"), "ProcessApi")  // Handle versioned names
-            .removeSuffix("ProcessApi")
-            .replaceFirstChar { it.lowercase() }
-    }
 }

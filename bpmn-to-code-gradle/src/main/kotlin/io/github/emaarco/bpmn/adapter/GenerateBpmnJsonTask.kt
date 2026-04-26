@@ -26,6 +26,7 @@ abstract class GenerateBpmnJsonTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        validate()
         val plugin = CreateProcessJsonFilesystemPlugin()
         plugin.execute(
             baseDir = baseDir,
@@ -34,5 +35,12 @@ abstract class GenerateBpmnJsonTask : DefaultTask() {
             engine = processEngine,
         )
         logger.lifecycle("BPMN JSON files generated successfully")
+    }
+
+    private fun validate() {
+        check(this::baseDir.isInitialized) { "baseDir must be configured in bpmnToCode { ... }" }
+        check(this::filePattern.isInitialized) { "filePattern must be configured in bpmnToCode { ... }" }
+        check(this::outputFolderPath.isInitialized) { "outputFolderPath must be configured in bpmnToCode { ... }" }
+        check(this::processEngine.isInitialized) { "processEngine must be configured in bpmnToCode { ... }" }
     }
 }
