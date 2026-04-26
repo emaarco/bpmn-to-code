@@ -19,7 +19,6 @@ slf4j = "2.0.17"
 kotlinLogging = "8.0.01"
 konsist = "0.17.3"
 dokka = "2.0.0"
-owaspDependencyCheck = "12.1.1"
 
 [libraries]
 # Plugin dependencies
@@ -68,4 +67,3 @@ mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-dependencyCheck = { id = "org.owasp.dependencycheck", version.ref = "owaspDependencyCheck" }
