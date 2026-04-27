@@ -10,7 +10,7 @@ Add separate `<execution>` blocks with their own `<configuration>` to generate f
 <plugin>
     <groupId>io.github.emaarco</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <executions>
         <!-- Camunda 7 processes -->
         <execution>
@@ -80,7 +80,7 @@ bpmn-to-code processes all files matching the `filePattern` glob — it has no b
 <plugin>
     <groupId>io.github.emaarco</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <executions>
         <execution>
             <goals><goal>generate-bpmn-api</goal></goals>

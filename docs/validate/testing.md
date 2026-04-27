@@ -14,7 +14,7 @@ Add it to your test scope, write a test, and your CI will catch modeling issues 
 
 ```kotlin [Gradle]
 dependencies {
-    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.0")
+    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.1")
 }
 ```
 
@@ -22,7 +22,7 @@ dependencies {
 <dependency>
     <groupId>io.github.emaarco</groupId>
     <artifactId>bpmn-to-code-testing</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <scope>test</scope>
 </dependency>
 ```

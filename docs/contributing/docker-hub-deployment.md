@@ -32,7 +32,7 @@ cd /path/to/bpmn-to-code
 
 Edit `bpmn-to-code-web/build.gradle.kts`:
 ```kotlin
-version = "2.0.0"  // Increment version
+version = "2.0.1"  // Increment version
 ```
 
 Follow semantic versioning:
@@ -51,7 +51,7 @@ This task:
 1. Builds the fat JAR: `./gradlew :bpmn-to-code-web:buildFatJar`
 2. Runs `docker build` using `bpmn-to-code-web/Dockerfile`
 3. Tags image as:
-   - `emaarco/bpmn-to-code-web:VERSION` (e.g., `2.0.0`)
+   - `emaarco/bpmn-to-code-web:VERSION` (e.g., `2.0.1`)
    - `emaarco/bpmn-to-code-web:latest`
 
 **Platform Architecture:**
@@ -75,7 +75,7 @@ docker images | grep bpmn-to-code-web
 
 Expected output:
 ```
-emaarco/bpmn-to-code-web   2.0.0    abc123def456   ...
+emaarco/bpmn-to-code-web   2.0.1    abc123def456   ...
 emaarco/bpmn-to-code-web   latest    abc123def456   ...
 ```
 
@@ -103,14 +103,14 @@ docker run -p 8080:8080 --rm emaarco/bpmn-to-code-web:latest
 
 Create Git tag for the version:
 ```bash
-git tag -a v2.0.0 -m "Release version 2.0.0"
-git push origin v2.0.0
+git tag -a v2.0.1 -m "Release version 2.0.1"
+git push origin v2.0.1
 ```
 
 Create a GitHub release:
 1. Go to: https://github.com/emaarco/bpmn-to-code/releases
 2. Click "Draft a new release"
-3. Select tag `v2.0.0`
+3. Select tag `v2.0.1`
 4. Add release notes
 5. Publish release
 
@@ -127,7 +127,7 @@ This pushes both tags:
 
 **Manual push (alternative):**
 ```bash
-docker push emaarco/bpmn-to-code-web:2.0.0
+docker push emaarco/bpmn-to-code-web:2.0.1
 docker push emaarco/bpmn-to-code-web:latest
 ```
 
@@ -140,8 +140,8 @@ Check Docker Hub:
 
 Pull and test from Docker Hub:
 ```bash
-docker pull emaarco/bpmn-to-code-web:2.0.0
-docker run -p 8080:8080 emaarco/bpmn-to-code-web:2.0.0
+docker pull emaarco/bpmn-to-code-web:2.0.1
+docker run -p 8080:8080 emaarco/bpmn-to-code-web:2.0.1
 ```
 
 ## Gradle Tasks Reference

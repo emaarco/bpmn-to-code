@@ -82,7 +82,7 @@ Works with Claude Code out of the box.
 
 ```kotlin
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "2.0.0"
+    id("io.github.emaarco.bpmn-to-code-gradle") version "2.0.1"
 }
 
 tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
@@ -101,7 +101,7 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
 <plugin>
     <groupId>io.github.emaarco</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <executions>
         <execution>
             <goals><goal>generate-bpmn-api</goal></goals>
@@ -122,7 +122,7 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
 
 ```kotlin
 dependencies {
-    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.0")
+    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.1")
 }
 ```
 
