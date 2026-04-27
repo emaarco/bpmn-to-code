@@ -67,9 +67,6 @@ tasks.named<Test>("test") {
     dependsOn(":bpmn-to-code-runtime:publishToMavenLocal")
     systemProperty("pluginVersion", version.toString())
     systemProperty("kotlinVersion", libs.versions.kotlin.get())
-    val agentJar = configurations["jacocoAgent"].singleFile
-    val destFile = layout.buildDirectory.file("jacoco/test.exec").get().asFile
-    systemProperty("jacocoAgentArg", "-javaagent:${agentJar.absolutePath}=destfile=${destFile.absolutePath},append=true")
 }
 
 publishing {

@@ -69,7 +69,6 @@ class GradlePluginSmokeTest {
 
         // when: running the compile task (which depends on generateBpmnModelApi)
         val result = GradleRunner.create()
-            .withJacocoAgent(projectDir)
             .withProjectDir(projectDir)
             .withPluginClasspath()
             .withArguments(compileTask)
