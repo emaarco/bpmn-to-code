@@ -18,7 +18,7 @@ Add the `bpmn-to-code-runtime` dependency (it ships the shared types — `Proces
     <dependency>
         <groupId>io.github.emaarco</groupId>
         <artifactId>bpmn-to-code-runtime</artifactId>
-        <version>2.0.1</version>
+        <version>2.0.2</version>
     </dependency>
 </dependencies>
 ```
@@ -33,7 +33,7 @@ BPMN files, where to output the generated API files, and how to format the outpu
         <plugin>
             <groupId>io.github.emaarco</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>2.0.1</version>
+            <version>2.0.2</version>
             <executions>
                 <execution>
                     <goals>
