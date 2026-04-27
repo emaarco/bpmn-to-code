@@ -1,6 +1,7 @@
 package io.github.emaarco.bpmn.application.service
 
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
+import io.github.emaarco.bpmn.domain.BpmnFileResult
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
@@ -68,9 +69,7 @@ class GenerateProcessApiServiceTest {
         verify { codeGenerator.generateCode(expectedModelApi) }
         verify { fileSystemOutput.writeFiles(listOf(expectedGeneratedFile), "outputFolder") }
         confirmVerified(codeGenerator, bpmnFileLoader, fileSystemOutput)
-        assertThat(results).hasSize(1)
-        assertThat(results[0].processId).isEqualTo("newsletterSubscription")
-        assertThat(results[0].sourceFiles).containsExactly("dummy.bpmn")
+        assertThat(results).isEqualTo(listOf(BpmnFileResult(processId = "newsletterSubscription", sourceFiles = listOf("dummy.bpmn"))))
     }
 
     private val dummyModel = BpmnModel(
