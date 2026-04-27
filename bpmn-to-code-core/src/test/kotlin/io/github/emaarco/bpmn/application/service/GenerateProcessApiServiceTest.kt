@@ -15,6 +15,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class GenerateProcessApiServiceTest {
@@ -59,7 +60,7 @@ class GenerateProcessApiServiceTest {
         )
 
         // when: generateProcessApi is invoked
-        underTest.generateProcessApi(command)
+        val results = underTest.generateProcessApi(command)
 
         // then: the API code is generated and written to disk
         val expectedModelApi = getExpectedModelApi()
@@ -67,6 +68,9 @@ class GenerateProcessApiServiceTest {
         verify { codeGenerator.generateCode(expectedModelApi) }
         verify { fileSystemOutput.writeFiles(listOf(expectedGeneratedFile), "outputFolder") }
         confirmVerified(codeGenerator, bpmnFileLoader, fileSystemOutput)
+        assertThat(results).hasSize(1)
+        assertThat(results[0].processId).isEqualTo("newsletterSubscription")
+        assertThat(results[0].sourceFiles).containsExactly("dummy.bpmn")
     }
 
     private val dummyModel = BpmnModel(

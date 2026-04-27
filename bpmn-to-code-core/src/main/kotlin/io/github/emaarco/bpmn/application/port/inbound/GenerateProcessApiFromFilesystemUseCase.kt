@@ -1,11 +1,12 @@
 package io.github.emaarco.bpmn.application.port.inbound
 
+import io.github.emaarco.bpmn.domain.BpmnFileResult
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 
 interface GenerateProcessApiFromFilesystemUseCase {
-    fun generateProcessApi(command: Command)
+    fun generateProcessApi(command: Command): List<BpmnFileResult>
     data class Command(
         val baseDir: String,
         val filePattern: String,
