@@ -146,7 +146,7 @@ object SendNewsletterProcessApi {
               name = "No",
               sourceRef = "gateway_hasSubscribers",
               targetRef = "endEvent_noSubscribers",
-              condition = "\${subscribers.size() > 0}",
+              condition = "${'$'}{subscribers.size() > 0}",
             )
 
         val FLOW_1_RUAYVL: BpmnFlow = BpmnFlow(
@@ -186,7 +186,7 @@ object SendNewsletterProcessApi {
               name = "No",
               sourceRef = "gateway_canSendAgain",
               targetRef = "escalationEndEvent_nofitySupport",
-              condition = "\${canBeResolved == false}",
+              condition = "${'$'}{rejection.reason == \"PERMANENT\"}",
             )
 
         val FLOW_0_VYM_6_NU: BpmnFlow = BpmnFlow(
