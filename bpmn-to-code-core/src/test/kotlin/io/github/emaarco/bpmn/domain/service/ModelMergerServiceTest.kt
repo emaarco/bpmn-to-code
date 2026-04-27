@@ -282,6 +282,88 @@ class ModelMergerServiceTest {
     }
 
     @Test
+    fun `unions additionalInputVariables across variants on a shared flow node`() {
+
+        // given: two variants both define the same message start event with different additional input variables
+        val variantA = testBpmnModel(
+            processId = "order-process",
+            variantName = "variantA",
+            flowNodes = listOf(
+                FlowNodeDefinition(
+                    id = "MessageStart_1",
+                    variables = listOf(
+                        VariableDefinition("varA1", VariableDirection.INPUT),
+                        VariableDefinition("shared", VariableDirection.INPUT),
+                    ),
+                ),
+            ),
+        )
+        val variantB = testBpmnModel(
+            processId = "order-process",
+            variantName = "variantB",
+            flowNodes = listOf(
+                FlowNodeDefinition(
+                    id = "MessageStart_1",
+                    variables = listOf(
+                        VariableDefinition("varB1", VariableDirection.INPUT),
+                        VariableDefinition("shared", VariableDirection.INPUT),
+                    ),
+                ),
+            ),
+        )
+
+        // when: merging the two variants
+        val result = underTest.mergeModels(listOf(variantA, variantB))
+
+        // then: the merged top-level flow node carries the union of all variants' variables, deduplicated
+        val merged = result.first() as MergedBpmnModel
+        val mergedNode = merged.flowNodes.first { it.getRawName() == "MessageStart_1" }
+        assertThat(mergedNode.variables).containsExactlyInAnyOrder(
+            VariableDefinition("varA1", VariableDirection.INPUT),
+            VariableDefinition("varB1", VariableDirection.INPUT),
+            VariableDefinition("shared", VariableDirection.INPUT),
+        )
+
+        // and: each variant retains its own original variables on its variant-scoped flow nodes
+        val variantANode = merged.variants.first { it.variantName == "variantA" }.flowNodes
+            .first { it.getRawName() == "MessageStart_1" }
+        assertThat(variantANode.variables).containsExactly(
+            VariableDefinition("varA1", VariableDirection.INPUT),
+            VariableDefinition("shared", VariableDirection.INPUT),
+        )
+    }
+
+    @Test
+    fun `preserves variables on a flow node that exists only in one variant`() {
+
+        // given: a node that exists only in variantB
+        val variantA = testBpmnModel(
+            processId = "order-process",
+            variantName = "variantA",
+            flowNodes = listOf(FlowNodeDefinition(id = "Task_Shared")),
+        )
+        val variantB = testBpmnModel(
+            processId = "order-process",
+            variantName = "variantB",
+            flowNodes = listOf(
+                FlowNodeDefinition(id = "Task_Shared"),
+                FlowNodeDefinition(
+                    id = "Task_OnlyInB",
+                    variables = listOf(VariableDefinition("onlyInB", VariableDirection.OUTPUT)),
+                ),
+            ),
+        )
+
+        // when: merging
+        val result = underTest.mergeModels(listOf(variantA, variantB))
+
+        // then: variant-only node and its variables surface in the merged top-level flow nodes
+        val merged = result.first() as MergedBpmnModel
+        val onlyInB = merged.flowNodes.first { it.getRawName() == "Task_OnlyInB" }
+        assertThat(onlyInB.variables).containsExactly(VariableDefinition("onlyInB", VariableDirection.OUTPUT))
+    }
+
+    @Test
     fun `returns single model as BpmnModel`() {
 
         // given: a single model

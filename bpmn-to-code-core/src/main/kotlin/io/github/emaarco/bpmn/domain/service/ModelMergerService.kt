@@ -4,6 +4,7 @@ import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.MergedBpmnModel
 import io.github.emaarco.bpmn.domain.ProcessModel
 import io.github.emaarco.bpmn.domain.MergedBpmnModel.VariantData
+import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableMapping
 
 class ModelMergerService {
@@ -27,7 +28,7 @@ class ModelMergerService {
     private fun deduplicateSingleModel(model: BpmnModel): BpmnModel {
         val models = listOf(model)
         return model.copy(
-            flowNodes = mergeDistinctBy(models) { it.flowNodes },
+            flowNodes = mergeFlowNodes(models),
             messages = mergeDistinctBy(models) { it.messages },
             signals = mergeDistinctBy(models) { it.signals },
             errors = mergeDistinctBy(models) { it.errors },
@@ -44,7 +45,7 @@ class ModelMergerService {
         }
         return MergedBpmnModel(
             processId = processId,
-            flowNodes = mergeDistinctBy(models) { it.flowNodes },
+            flowNodes = mergeFlowNodes(models),
             messages = mergeDistinctBy(models) { it.messages },
             signals = mergeDistinctBy(models) { it.signals },
             errors = mergeDistinctBy(models) { it.errors },
@@ -58,6 +59,23 @@ class ModelMergerService {
                 )
             },
         )
+    }
+
+    /**
+     * Merges flow nodes across models by id, unioning additive list fields like `variables`
+     * and `attachedElements` so that variant-specific extension data (e.g. additionalInputVariables)
+     * is preserved instead of being dropped by simple deduplication.
+     */
+    private fun mergeFlowNodes(models: List<BpmnModel>): List<FlowNodeDefinition> {
+        return models.flatMap { it.flowNodes }
+            .filter { it.getRawName().isNotEmpty() }
+            .groupBy { it.getRawName() }
+            .map { (_, duplicates) ->
+                duplicates.first().copy(
+                    variables = duplicates.flatMap { it.variables }.distinct(),
+                    attachedElements = duplicates.flatMap { it.attachedElements }.distinct(),
+                )
+            }
     }
 
     private fun <T : VariableMapping<*>> mergeDistinctBy(
