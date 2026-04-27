@@ -35,7 +35,7 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
     fun execute() {
         validate()
         val service = CreateProcessApiFilesystemPlugin()
-        service.execute(
+        val results = service.execute(
             baseDir = baseDir,
             filePattern = filePattern,
             outputFolderPath = outputFolderPath,
@@ -43,7 +43,15 @@ abstract class GenerateBpmnModelsTask : DefaultTask() {
             outputLanguage = outputLanguage,
             engine = processEngine,
         )
-        logger.lifecycle("BPMN models generated successfully")
+        if (results.isEmpty()) {
+            logger.lifecycle("No BPMN models found")
+            return
+        }
+        results.forEach { result ->
+            val files = result.sourceFiles.joinToString(", ")
+            logger.lifecycle("  Generated: ${result.processId} (from $files)")
+        }
+        logger.lifecycle("BPMN models generated successfully (${results.size} models)")
     }
 
     private fun validate() {

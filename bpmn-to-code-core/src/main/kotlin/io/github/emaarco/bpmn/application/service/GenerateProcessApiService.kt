@@ -5,6 +5,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.BpmnFileLoader
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
+import io.github.emaarco.bpmn.domain.BpmnFileResult
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
@@ -24,7 +25,7 @@ class GenerateProcessApiService(
 
     private val modelMergerService = ModelMergerService()
 
-    override fun generateProcessApi(command: GenerateProcessApiFromFilesystemUseCase.Command) {
+    override fun generateProcessApi(command: GenerateProcessApiFromFilesystemUseCase.Command): List<BpmnFileResult> {
         val validationService = BpmnValidationService(command.validationConfig)
         val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
         val models = inputFiles.map { bpmnService.extract(it, command.engine) }
@@ -35,6 +36,14 @@ class GenerateProcessApiService(
             .flatMap { codeGenerator.generateCode(toBpmnModelApi(it, command)) }
             .distinctBy { it.packagePath to it.fileName }
         fileSystemOutput.writeFiles(generatedFiles, command.outputFolderPath)
+        val filesByProcessId = inputFiles.zip(models)
+            .groupBy({ (_, model) -> model.processId }, { (file, _) -> file.fileName })
+        return mergedModels.map { model ->
+            BpmnFileResult(
+                processId = model.processId,
+                sourceFiles = filesByProcessId[model.processId] ?: emptyList(),
+            )
+        }
     }
 
     private fun toBpmnModelApi(

@@ -1,9 +1,12 @@
 package io.github.emaarco.bpmn.adapter;
 
 import io.github.emaarco.bpmn.adapter.inbound.CreateProcessApiFilesystemPlugin;
+import io.github.emaarco.bpmn.domain.BpmnFileResult;
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage;
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine;
 import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -76,8 +79,16 @@ public class BpmnModelMojo extends AbstractMojo {
 		CreateProcessApiFilesystemPlugin plugin = new CreateProcessApiFilesystemPlugin();
 		OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
 		ProcessEngine engine = ProcessEngine.valueOf(processEngine);
-		plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, new ValidationConfig());
-		getLog().info("BPMN models generated successfully");
+		List<BpmnFileResult> results = plugin.execute(baseDir, filePattern, outputFolderPath, packagePath, language, engine, new ValidationConfig());
+		if (results.isEmpty()) {
+			getLog().info("No BPMN models found");
+			return;
+		}
+		for (BpmnFileResult result : results) {
+			String files = String.join(", ", result.getSourceFiles());
+			getLog().info("  Generated: " + result.getProcessId() + " (from " + files + ")");
+		}
+		getLog().info("BPMN models generated successfully (" + results.size() + " models)");
 	}
 	
 }
