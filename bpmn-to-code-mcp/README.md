@@ -40,7 +40,7 @@ The JAR is created at `bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-<version>-al
 
 **Test it manually:**
 ```bash
-java -jar bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-2.0.0-all.jar
+java -jar bpmn-to-code-mcp/build/libs/bpmn-to-code-mcp-2.0.1-all.jar
 ```
 
 ### Configuring Your MCP Client
@@ -54,7 +54,7 @@ Add to your `.claude/settings.json` (project-level) or `~/.claude/settings.json`
   "mcpServers": {
     "bpmn-to-code": {
       "command": "java",
-      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.0-all.jar"]
+      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.1-all.jar"]
     }
   }
 }
@@ -69,7 +69,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
   "mcpServers": {
     "bpmn-to-code": {
       "command": "java",
-      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.0-all.jar"]
+      "args": ["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.1-all.jar"]
     }
   }
 }
@@ -80,6 +80,6 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 Most MCP clients follow a similar pattern — point them at the JAR using stdio transport:
 
 - **Command:** `java`
-- **Args:** `["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.0-all.jar"]`
+- **Args:** `["-jar", "/absolute/path/to/bpmn-to-code-mcp-2.0.1-all.jar"]`
 
 Refer to your client's documentation for the exact configuration location.
