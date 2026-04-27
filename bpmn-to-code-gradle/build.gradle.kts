@@ -6,6 +6,8 @@ plugins {
     jacoco
 }
 
+val jacocoAgent: Configuration by configurations.creating
+
 group = "io.github.emaarco"
 version = property("projectVersion").toString()
 
@@ -51,6 +53,7 @@ dependencies {
     testImplementation(libs.bundles.testing)
     testImplementation(testFixtures(project(":bpmn-to-code-core")))
     testRuntimeOnly(libs.junitPlatformLauncher)
+    jacocoAgent("org.jacoco:org.jacoco.agent:${the<JacocoPluginExtension>().toolVersion}:runtime")
 }
 
 tasks.jar {
@@ -67,6 +70,9 @@ tasks.named<Test>("test") {
     dependsOn(":bpmn-to-code-runtime:publishToMavenLocal")
     systemProperty("pluginVersion", version.toString())
     systemProperty("kotlinVersion", libs.versions.kotlin.get())
+    val agentJar = jacocoAgent.singleFile
+    val destFile = layout.buildDirectory.file("jacoco/test.exec").get().asFile
+    systemProperty("jacocoAgentArg", "-javaagent:$agentJar=destfile=$destFile,append=true")
 }
 
 publishing {

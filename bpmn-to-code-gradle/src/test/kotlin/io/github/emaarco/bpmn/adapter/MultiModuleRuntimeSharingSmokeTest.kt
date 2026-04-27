@@ -76,6 +76,7 @@ class MultiModuleRuntimeSharingSmokeTest {
         writeServiceModule(serviceBDir, packagePath = "com.acme.service_b.bpmn", callerName = "UsesApiB")
 
         val result = GradleRunner.create()
+            .withJacocoAgent()
             .withProjectDir(projectDir)
             .withArguments("compileKotlin")
             .build()

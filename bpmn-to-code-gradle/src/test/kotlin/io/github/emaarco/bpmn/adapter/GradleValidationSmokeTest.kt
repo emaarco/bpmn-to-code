@@ -42,6 +42,7 @@ class GradleValidationSmokeTest {
 
         // when: running the validateBpmnModels task
         val result = GradleRunner.create()
+            .withJacocoAgent()
             .withProjectDir(projectDir)
             .withPluginClasspath()
             .withArguments("validateBpmnModels")

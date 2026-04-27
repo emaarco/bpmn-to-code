@@ -58,6 +58,7 @@ class GradlePluginDependencyResolutionSmokeTest {
 
         // when: running WITHOUT withPluginClasspath() so Gradle resolves from mavenLocal
         val result = GradleRunner.create()
+            .withJacocoAgent()
             .withProjectDir(projectDir)
             .withArguments("generateBpmnModelApi")
             .build()
@@ -102,6 +103,7 @@ class GradlePluginDependencyResolutionSmokeTest {
 
         // when: inspecting the implementation dependencies
         val result = GradleRunner.create()
+            .withJacocoAgent()
             .withProjectDir(projectDir)
             .withArguments("dependencies", "--configuration", "implementation")
             .build()
@@ -145,6 +147,7 @@ class GradlePluginDependencyResolutionSmokeTest {
 
         // when: running WITHOUT withPluginClasspath() so Gradle resolves from mavenLocal
         val result = GradleRunner.create()
+            .withJacocoAgent()
             .withProjectDir(projectDir)
             .withArguments("generateBpmnModelJson")
             .build()
