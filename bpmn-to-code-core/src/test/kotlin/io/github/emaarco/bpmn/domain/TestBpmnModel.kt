@@ -246,7 +246,7 @@ fun testSendNewsletterBpmnModel(
         SequenceFlowDefinition("Flow_0vtppnk", "event_mailRejected", "serviceTask_analyzeError"),
         SequenceFlowDefinition("Flow_13nmnag", "serviceTask_analyzeError", "gateway_canSendAgain"),
         SequenceFlowDefinition("Flow_1izucof", "gateway_canSendAgain", "serviceTask_sendMailAgain", flowName = "Yes", isDefault = true),
-        SequenceFlowDefinition("Flow_18nf2jh", "gateway_canSendAgain", "escalationEndEvent_nofitySupport", flowName = "No", conditionExpression = "\${canBeResolved == false}"),
+        SequenceFlowDefinition("Flow_18nf2jh", "gateway_canSendAgain", "escalationEndEvent_nofitySupport", flowName = "No", conditionExpression = "\${rejection.reason == \"PERMANENT\"}"),
         SequenceFlowDefinition("Flow_0vym6nu", "serviceTask_sendMailAgain", "eventGateway_afterSendingAgain"),
         SequenceFlowDefinition("Flow_0enjkoe", "eventGateway_afterSendingAgain", "timer_noRejectionForOneDay"),
         SequenceFlowDefinition("Flow_081cykl", "eventGateway_afterSendingAgain", "event_mailRejectedAgain"),

@@ -131,7 +131,7 @@ public final class SendNewsletterProcessApi {
 
         public static final BpmnFlow FLOW_1_IZUCOF = new BpmnFlow("Flow_1izucof", "Yes", "gateway_canSendAgain", "serviceTask_sendMailAgain", null, true);
 
-        public static final BpmnFlow FLOW_18_NF_2_JH = new BpmnFlow("Flow_18nf2jh", "No", "gateway_canSendAgain", "escalationEndEvent_nofitySupport", "${canBeResolved == false}", false);
+        public static final BpmnFlow FLOW_18_NF_2_JH = new BpmnFlow("Flow_18nf2jh", "No", "gateway_canSendAgain", "escalationEndEvent_nofitySupport", "${rejection.reason == \"PERMANENT\"}", false);
 
         public static final BpmnFlow FLOW_0_VYM_6_NU = new BpmnFlow("Flow_0vym6nu", null, "serviceTask_sendMailAgain", "eventGateway_afterSendingAgain", null, false);
 
