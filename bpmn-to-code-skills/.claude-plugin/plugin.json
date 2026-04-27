@@ -1,6 +1,6 @@
 {
   "name": "bpmn-to-code",
   "description": "AI skills for setting up and using the bpmn-to-code plugin (Gradle/Maven)",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": { "name": "emaarco" }
 }

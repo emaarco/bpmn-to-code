@@ -283,7 +283,7 @@
                     "sourceRef": "gateway_canSendAgain",
                     "targetRef": "escalationEndEvent_nofitySupport",
                     "name": "No",
-                    "conditionExpression": "${canBeResolved == false}",
+                    "conditionExpression": "${rejection.reason == \"PERMANENT\"}",
                     "isDefault": false
                 },
                 {
