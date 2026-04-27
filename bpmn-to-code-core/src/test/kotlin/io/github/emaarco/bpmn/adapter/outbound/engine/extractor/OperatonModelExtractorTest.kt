@@ -185,6 +185,8 @@ class OperatonModelExtractorTest {
             VariableDefinition("customerEmail", VariableDirection.OUTPUT),
             VariableDefinition("amount", VariableDirection.OUTPUT),
             VariableDefinition("shipmentId", VariableDirection.OUTPUT),
+            VariableDefinition("cancellationReason", VariableDirection.INPUT),
+            VariableDefinition("retryCount", VariableDirection.INPUT),
         )
     }
 
