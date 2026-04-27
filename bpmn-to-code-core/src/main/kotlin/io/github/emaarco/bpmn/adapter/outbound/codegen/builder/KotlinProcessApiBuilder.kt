@@ -196,7 +196,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             if (name != null) add("name = %S,\n", name)
             add("sourceRef = %S,\n", sourceRef)
             add("targetRef = %S,\n", targetRef)
-            if (condition != null) add("condition = %S,\n", condition)
+            if (condition != null) add("condition = \$\$\"%L\",\n", condition)
             if (isDefault) add("isDefault = true,\n")
             unindent()
             add(")")
