@@ -186,6 +186,8 @@ class Camunda7ModelExtractorTest {
             VariableDefinition("customerEmail", VariableDirection.OUTPUT),
             VariableDefinition("amount", VariableDirection.OUTPUT),
             VariableDefinition("shipmentId", VariableDirection.OUTPUT),
+            VariableDefinition("cancellationReason", VariableDirection.INPUT),
+            VariableDefinition("retryCount", VariableDirection.INPUT),
         )
     }
 
@@ -198,6 +200,18 @@ class Camunda7ModelExtractorTest {
         assertThat(activity.variables).contains(
             VariableDefinition("orderId", VariableDirection.INPUT),
             VariableDefinition("orderId", VariableDirection.OUTPUT),
+        )
+    }
+
+    @Test
+    fun `extract returns additionalInputVariables for non-interrupting message start event in event subprocess`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-additional-variables.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.readBytes())
+        val startEvent = bpmnModel.flowNodes.single { it.id == "StartEvent_OrderCancelled" }
+        assertThat(startEvent.variables).containsExactlyInAnyOrder(
+            VariableDefinition("cancellationReason", VariableDirection.INPUT),
+            VariableDefinition("retryCount", VariableDirection.INPUT),
         )
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.44.0">
   <bpmn:message id="Message_1" name="Message_OrderReceived" />
+  <bpmn:message id="Message_2" name="Message_OrderCancelled" />
   <bpmn:process id="orderProcess" isExecutable="true">
     <bpmn:startEvent id="StartEvent_OrderReceived" name="Order received">
       <bpmn:extensionElements>
@@ -30,6 +31,21 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_OrderReceived" targetRef="Activity_ProcessOrder" />
     <bpmn:sequenceFlow id="Flow_2" sourceRef="Activity_ProcessOrder" targetRef="EndEvent_OrderProcessed" />
+    <bpmn:subProcess id="EventSubProcess_OrderCancelled" name="Order cancelled" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_OrderCancelled" name="Order cancelled" isInterrupting="false">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="additionalInputVariables" value="cancellationReason, retryCount" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_3</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_2" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_Cancelled">
+        <bpmn:incoming>Flow_3</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_3" sourceRef="StartEvent_OrderCancelled" targetRef="EndEvent_Cancelled" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="orderProcess">
@@ -49,6 +65,19 @@
       <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
         <di:waypoint x="370" y="120" />
         <di:waypoint x="422" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EventSubProcess_OrderCancelled_di" bpmnElement="EventSubProcess_OrderCancelled" isExpanded="true">
+        <dc:Bounds x="160" y="220" width="350" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_OrderCancelled_di" bpmnElement="StartEvent_OrderCancelled">
+        <dc:Bounds x="200" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Cancelled_di" bpmnElement="EndEvent_Cancelled">
+        <dc:Bounds x="412" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="236" y="300" />
+        <di:waypoint x="412" y="300" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
