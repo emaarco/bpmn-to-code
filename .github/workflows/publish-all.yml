@@ -2,6 +2,11 @@ name: Publish All Artifacts
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
   release:
     types: [published]
 
@@ -13,14 +18,20 @@ jobs:
     name: Publish to Maven Central
     uses: ./.github/workflows/publish-to-maven.yml
     secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
 
   publish-gradle:
     name: Publish to Gradle Plugin Portal
     needs: publish-maven
     uses: ./.github/workflows/publish-to-gradle.yml
     secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
 
   publish-docker:
     name: Publish to Docker Hub
     uses: ./.github/workflows/publish-to-docker.yml
     secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
