@@ -2,7 +2,17 @@ name: Publish to Docker Hub
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
 
 jobs:
   publish:
@@ -26,6 +36,7 @@ jobs:
         run: ./gradlew build --warning-mode all
 
       - name: Log in to Docker Hub
+        if: inputs.dry_run != true
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -35,11 +46,13 @@ jobs:
         run: ./gradlew :bpmn-to-code-web:dockerBuild --no-configuration-cache
 
       - name: Push Docker Image
+        if: inputs.dry_run != true
         run: ./gradlew :bpmn-to-code-web:dockerPush --no-configuration-cache
 
       - name: Push Latest Tag
+        if: inputs.dry_run != true
         run: docker push emaarco/bpmn-to-code-web:latest
 
       - name: Log out from Docker Hub
-        if: always()
+        if: always() && inputs.dry_run != true
         run: docker logout

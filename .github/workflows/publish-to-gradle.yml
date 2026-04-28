@@ -2,7 +2,17 @@ name: Publish to Gradle Plugin Portal
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
 
 jobs:
   publish:
@@ -33,4 +43,5 @@ jobs:
         run: ./gradlew publishPlugins --validate-only
 
       - name: Publish Plugin
+        if: inputs.dry_run != true
         run: ./gradlew publishPlugins

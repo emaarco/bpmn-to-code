@@ -2,7 +2,17 @@ name: Publish to Maven Central
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
 
 jobs:
   publish:
@@ -33,4 +43,9 @@ jobs:
         run: ./gradlew build --warning-mode all
 
       - name: Publish to Maven Central
+        if: inputs.dry_run != true
         run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PsignArtifacts=true
+
+      - name: Publish to Maven Local (Dry Run)
+        if: inputs.dry_run == true
+        run: ./gradlew publishToMavenLocal --no-configuration-cache
