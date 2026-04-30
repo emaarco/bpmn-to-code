@@ -1,5 +1,8 @@
 pre-push:
   commands:
+    compile:
+      glob: "*.{kt,kts}"
+      run: ./gradlew compileKotlin
     coverage:
       glob: "*.{kt,kts}"
       run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification

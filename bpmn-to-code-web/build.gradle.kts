@@ -133,6 +133,16 @@ tasks.register<Exec>("dockerBuild") {
     workingDir = rootProject.projectDir
 
     doFirst {
+        // Remove old tags before building so they don't become <none>:<none> dangling images.
+        // isIgnoreExitValue = true is the Gradle equivalent of "|| true": if the image doesn't
+        // exist yet (first-ever build), docker rmi exits non-zero — we want to continue anyway.
+        val docker = findDocker()
+        listOf("$dockerImageName:$dockerImageTag", "$dockerImageName:latest").forEach { tag ->
+            ProcessBuilder(docker, "rmi", tag).inheritIO().start().waitFor()
+        }
+    }
+
+    doFirst {
         val docker = findDocker()
         println("Building Docker image: $dockerImageName:$dockerImageTag")
         println("Using docker: $docker")
