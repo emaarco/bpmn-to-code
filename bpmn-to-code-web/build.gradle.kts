@@ -138,7 +138,7 @@ tasks.register<Exec>("dockerBuild") {
         // exist yet (first-ever build), docker rmi exits non-zero — we want to continue anyway.
         val docker = findDocker()
         listOf("$dockerImageName:$dockerImageTag", "$dockerImageName:latest").forEach { tag ->
-            exec {
+            project.exec {
                 commandLine(docker, "rmi", tag)
                 isIgnoreExitValue = true
             }
