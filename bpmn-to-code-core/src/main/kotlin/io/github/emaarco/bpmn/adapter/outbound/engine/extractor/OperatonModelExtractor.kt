@@ -276,9 +276,8 @@ class OperatonModelExtractor : EngineSpecificExtractor {
         val inElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
         val outElements = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
         val sourceVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE)
-        val sourceExprVars = inElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE_EXPRESSION)
         val targetVars = outElements.extractAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TARGET)
-        val inputs = (sourceVars + sourceExprVars).map { it to VariableDirection.INPUT }
+        val inputs = sourceVars.map { it to VariableDirection.INPUT }
         val outputs = targetVars.map { it to VariableDirection.OUTPUT }
         return inputs + outputs
     }

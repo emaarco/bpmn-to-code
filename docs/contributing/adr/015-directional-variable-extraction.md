@@ -36,12 +36,14 @@ Direction mapping per source:
 
 | Source | Direction |
 |--------|-----------|
-| `<zeebe:input>`, `<camunda:inputParameter>`, `<camunda:in source="…">` or `sourceExpression="…">` | INPUT |
+| `<zeebe:input>`, `<camunda:inputParameter>`, `<camunda:in source="…">` | INPUT |
 | `<zeebe:output>`, `<camunda:outputParameter>`, `<camunda:out target="…">` | OUTPUT |
 | Multi-instance `inputElement` / `inputCollection` (Zeebe), `camunda:collection` / `camunda:elementVariable` (C7/Operaton) | INPUT |
 | Multi-instance `outputElement` / `outputCollection` (Zeebe) | OUTPUT |
 | `additionalInputVariables` property | INPUT |
 | `additionalOutputVariables` property | OUTPUT |
+
+`<camunda:in sourceExpression="…">` mappings are **not** extracted: the value is arbitrary Expression Language (e.g. `${execution.getVariable('foo') != true}`) rather than a variable name, so any name we tried to derive would be misleading. Pair such mappings with a plain `<camunda:in source="…">` if the underlying variable should appear in the generated API.
 
 ## Consequences
 

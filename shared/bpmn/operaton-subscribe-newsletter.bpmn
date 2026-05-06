@@ -109,7 +109,7 @@
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration" operaton:asyncBefore="true" operaton:asyncAfter="true" calledElement="abort-registration">
       <bpmn:extensionElements>
         <operaton:in source="subscriptionId" target="childSubscriptionId" />
-        <operaton:in sourceExpression="${reasonCode}" target="childReasonCode" />
+        <operaton:in sourceExpression="${execution.getVariable('reasonCode') != true}" target="childReasonCode" />
         <operaton:out source="childAbortResult" target="abortResult" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>

@@ -105,7 +105,7 @@
     <bpmn:callActivity id="CallActivity_AbortRegistration" name="Abort registration" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="abort-registration">
       <bpmn:extensionElements>
         <camunda:in source="subscriptionId" target="childSubscriptionId" />
-        <camunda:in sourceExpression="${reasonCode}" target="childReasonCode" />
+        <camunda:in sourceExpression="${execution.getVariable('reasonCode') != true}" target="childReasonCode" />
         <camunda:out source="childAbortResult" target="abortResult" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l1lj4m</bpmn:incoming>

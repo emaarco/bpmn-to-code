@@ -52,7 +52,7 @@ class OperatonModelExtractorTest {
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT), VariableDefinition("reasonCode", VariableDirection.INPUT), VariableDefinition("abortResult", VariableDirection.OUTPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT), VariableDefinition("abortResult", VariableDirection.OUTPUT)),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
