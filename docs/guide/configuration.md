@@ -32,6 +32,10 @@ Operaton is an open-source fork of Camunda 7. It uses the same patterns for I/O 
 | Kotlin | `KOTLIN` | `object` with `const val` properties |
 | Java | `JAVA` | `class` with `public static final` fields |
 
+::: info
+Currently, the Gradle plugin, Maven plugin, and Web app all emit the same set of languages. Future language support may differ per module — additional languages will likely appear in the Web app first.
+:::
+
 ## Examples
 
 ::: code-group

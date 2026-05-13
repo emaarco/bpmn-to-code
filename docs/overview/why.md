@@ -142,9 +142,11 @@ Thus, bpmn-to-code ships with [AI Skills](/skills/) that automate these workflow
 
 The generation engine is the same everywhere. Pick the format that fits your workflow.
 
-| Format | Best for | |
-|---|---|---|
-| **Gradle plugin** | JVM projects using Gradle | [Setup guide](/getting-started/gradle) |
-| **Maven plugin** | JVM projects using Maven | [Setup guide](/getting-started/maven) |
-| **Web app** | Trying it out, one-off generation, non-JVM projects | [Web app](/web/) |
-| **MCP server** | AI-assisted generation inside your editor | [MCP Server](/mcp/) |
+| Format | Best for | Languages | |
+|---|---|---|---|
+| **Gradle plugin** | JVM projects using Gradle | Java, Kotlin | [Setup guide](/getting-started/gradle) |
+| **Maven plugin** | JVM projects using Maven | Java, Kotlin | [Setup guide](/getting-started/maven) |
+| **Web app** | Trying it out, one-off generation, non-JVM projects | Java, Kotlin | [Web app](/web/) |
+| **MCP server** | AI-assisted generation inside your editor | Java, Kotlin | [MCP Server](/mcp/) |
+
+Output languages may diverge across formats in the future — the Web app is the natural place to add non-JVM languages, since there is no JVM build integration constraining the toolchain.

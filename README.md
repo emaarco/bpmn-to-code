@@ -126,6 +126,16 @@ dependencies {
 }
 ```
 
+## Supported Languages
+
+| Module | Java | Kotlin |
+|--------|:---:|:---:|
+| Gradle plugin | ✅ | ✅ |
+| Maven plugin | ✅ | ✅ |
+| Web app | ✅ | ✅ |
+
+> Today, every module emits the same two languages. Additional output languages may be added in the future — most likely surfacing first in the Web app, where there is no JVM build integration to constrain the toolchain.
+
 ## Supported Engines
 
 | Engine | Value |
