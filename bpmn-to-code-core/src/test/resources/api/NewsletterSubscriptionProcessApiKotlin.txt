@@ -90,7 +90,7 @@ object NewsletterSubscriptionProcessApi {
   object ServiceTasks {
     const val NEWSLETTER_SEND_CONFIRMATION_MAIL: String = "#{newsletterSendConfirmationMail}"
 
-    const val NEWSLETTER_SEND_WELCOME_MAIL: String = "\${newsletterSendWelcomeMail}"
+    const val NEWSLETTER_SEND_WELCOME_MAIL: String = $$"""${newsletterSendWelcomeMail}"""
 
     const val COUNTER_CLASS: String = "counterClass"
 
@@ -98,7 +98,7 @@ object NewsletterSubscriptionProcessApi {
   }
 
   object Timers {
-    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", "\${testVariable}")
+    val TIMER_AFTER_3_DAYS: BpmnTimer = BpmnTimer("Duration", $$"""${testVariable}""")
 
     val TIMER_EVERY_DAY: BpmnTimer = BpmnTimer("Duration", "PT1M")
   }
