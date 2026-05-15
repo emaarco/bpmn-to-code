@@ -116,14 +116,11 @@ tasks.named<ProcessResources>("processResources") {
 val dockerImageName = "emaarco/bpmn-to-code-web"
 val dockerImageTag = project.version.toString()
 
-fun findDocker(): String {
-    return try {
-        val result = providers.exec { commandLine("which", "docker") }.standardOutput.asText.get().trim()
-        result.ifEmpty { "docker" }
-    } catch (_: Exception) {
-        "docker"
-    }
-}
+val dockerExecutable: Provider<String> =
+    providers.exec { commandLine("which", "docker") }
+        .standardOutput.asText
+        .map { it.trim().ifEmpty { "docker" } }
+        .orElse("docker")
 
 tasks.register<Exec>("dockerBuild") {
     group = "docker"
@@ -132,26 +129,26 @@ tasks.register<Exec>("dockerBuild") {
     dependsOn("buildFatJar")
     workingDir = rootProject.projectDir
 
-    doFirst {
-        // Remove old tags before building so they don't become <none>:<none> dangling images.
-        // isIgnoreExitValue = true is the Gradle equivalent of "|| true": if the image doesn't
-        // exist yet (first-ever build), docker rmi exits non-zero — we want to continue anyway.
-        val docker = findDocker()
-        listOf("$dockerImageName:$dockerImageTag", "$dockerImageName:latest").forEach { tag ->
-            ProcessBuilder(docker, "rmi", tag).inheritIO().start().waitFor()
-        }
-    }
+    val imageName = dockerImageName
+    val imageTag = dockerImageTag
+    val dockerExec = dockerExecutable
 
     doFirst {
-        val docker = findDocker()
-        println("Building Docker image: $dockerImageName:$dockerImageTag")
+        val docker = dockerExec.get()
+
+        // Remove old tags before building so they don't become <none>:<none> dangling images.
+        listOf("$imageName:$imageTag", "$imageName:latest").forEach { tag ->
+            ProcessBuilder(docker, "rmi", tag).inheritIO().start().waitFor()
+        }
+
+        println("Building Docker image: $imageName:$imageTag")
         println("Using docker: $docker")
         commandLine(
             docker, "build",
             "--platform", "linux/amd64",
             "-f", "bpmn-to-code-web/Dockerfile",
-            "-t", "$dockerImageName:$dockerImageTag",
-            "-t", "$dockerImageName:latest",
+            "-t", "$imageName:$imageTag",
+            "-t", "$imageName:latest",
             "."
         )
     }
@@ -164,12 +161,16 @@ tasks.register<Exec>("dockerPush") {
     dependsOn("dockerBuild")
     workingDir = rootProject.projectDir
 
+    val imageName = dockerImageName
+    val imageTag = dockerImageTag
+    val dockerExec = dockerExecutable
+
     doFirst {
-        commandLine(findDocker(), "push", "$dockerImageName:$dockerImageTag")
+        commandLine(dockerExec.get(), "push", "$imageName:$imageTag")
     }
 
     doLast {
-        println("Pushed image: $dockerImageName:$dockerImageTag")
+        println("Pushed image: $imageName:$imageTag")
     }
 }
 
@@ -180,13 +181,17 @@ tasks.register<Exec>("dockerRun") {
     dependsOn("dockerBuild")
     workingDir = rootProject.projectDir
 
+    val imageName = dockerImageName
+    val imageTag = dockerImageTag
+    val dockerExec = dockerExecutable
+
     doFirst {
         commandLine(
-            findDocker(), "run",
+            dockerExec.get(), "run",
             "-p", "9099:8080",
             "--rm",
             "-d",
-            "$dockerImageName:$dockerImageTag"
+            "$imageName:$imageTag"
         )
     }
 }
