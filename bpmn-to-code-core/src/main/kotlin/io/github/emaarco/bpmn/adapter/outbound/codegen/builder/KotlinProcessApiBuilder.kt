@@ -79,9 +79,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
 
         override fun write(builder: TypeSpec.Builder, modelApi: BpmnModelApi) {
             val processIdClass = ClassName(RUNTIME_PACKAGE, "ProcessId")
-            val cleanValue = modelApi.model.processId.escapeDollarInterpolation()
             val idProperty = PropertySpec.builder("PROCESS_ID", processIdClass)
-                .initializer("ProcessId(\"$cleanValue\")")
+                .initializer("%T(%L)", processIdClass, stringLiteral(modelApi.model.processId))
                 .build()
             builder.addProperty(idProperty)
         }
@@ -196,7 +195,7 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             if (name != null) add("name = %S,\n", name)
             add("sourceRef = %S,\n", sourceRef)
             add("targetRef = %S,\n", targetRef)
-            if (condition != null) add("condition = \$\$\"\"\"%L\"\"\",\n", condition)
+            if (condition != null) add("condition = %L,\n", stringLiteral(condition))
             if (isDefault) add("isDefault = true,\n")
             unindent()
             add(")")
@@ -345,10 +344,9 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
         }
 
         private fun createDirectionalAttribute(variable: VariableDefinition, subtype: VariableNameSubtype, wrapperClass: ClassName): PropertySpec {
-            val cleanValue = variable.getValue().escapeDollarInterpolation()
             val subtypeClass = wrapperClass.nestedClass(subtype.simpleName)
             return PropertySpec.builder(variable.getName(), subtypeClass)
-                .initializer("%T(\"$cleanValue\")", subtypeClass)
+                .initializer("%T(%L)", subtypeClass, stringLiteral(variable.getValue()))
                 .build()
         }
     }
@@ -414,9 +412,8 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
             val timersBuilder = TypeSpec.objectBuilder("Timers")
             modelApi.model.timers.forEach { timer ->
                 val (timerType, timerValue) = timer.getValue()
-                val cleanTimerValue = timerValue.escapeDollarInterpolation()
                 val instanceBuilder = PropertySpec.builder(timer.getName(), bpmnTimerClass)
-                val variable = instanceBuilder.initializer("BpmnTimer(\"$timerType\", \"$cleanTimerValue\")")
+                val variable = instanceBuilder.initializer("%T(%S, %L)", bpmnTimerClass, timerType, stringLiteral(timerValue))
                 timersBuilder.addProperty(variable.build())
             }
             builder.addType(timersBuilder.build())
@@ -424,22 +421,23 @@ class KotlinProcessApiBuilder : CodeGenerationAdapter.AbstractProcessApiBuilder<
     }
 
     private fun createAttribute(variable: VariableMapping<String>): PropertySpec {
-        val cleanValue = variable.getValue().escapeDollarInterpolation()
         return PropertySpec.builder(variable.getName(), String::class)
             .addModifiers(KModifier.CONST)
-            .initializer("\"$cleanValue\"")
+            .initializer("%L", stringLiteral(variable.getValue()))
             .build()
     }
 
     private fun createTypedAttribute(variable: VariableMapping<String>, wrapperClass: ClassName): PropertySpec {
-        val cleanValue = variable.getValue().escapeDollarInterpolation()
         return PropertySpec.builder(variable.getName(), wrapperClass)
-            .initializer("${wrapperClass.simpleName}(\"$cleanValue\")")
+            .initializer("%T(%L)", wrapperClass, stringLiteral(variable.getValue()))
             .build()
     }
 
-    private fun String.escapeDollarInterpolation(): String {
-        // Prevent KotlinPoet from interpreting "${...}" in string literals as interpolation
-        return this.replace("\${", "\\\${")
+    private fun stringLiteral(value: String): CodeBlock {
+        return if (value.contains("\${")) {
+            CodeBlock.of("\$\$\"\"\"%L\"\"\"", value)
+        } else {
+            CodeBlock.of("%S", value)
+        }
     }
 }

@@ -9,6 +9,7 @@ target
 .claude/settings.local.json
 .claude/.tmp
 .claude/logs/
+.claude/scheduled_tasks.lock
 docs/node_modules
 docs/.vitepress/dist
 docs/.vitepress/cache
