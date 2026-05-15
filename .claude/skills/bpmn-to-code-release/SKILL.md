@@ -6,21 +6,33 @@ allowed-tools: Bash(git *), Bash(gh *), Bash(./gradlew *), AskUserQuestion
 
 # Release – bpmn-to-code
 
-## Step 0 – Enforce main branch
+`main` is a protected branch — direct pushes are rejected. A release happens in two phases:
+
+- **Phase 1 – Prep PR**: from a release branch, bump the version and open a PR into `main`.
+- **Phase 2 – Tag & release**: after the PR is merged, from `main`, build, tag, and create the draft GitHub release.
+
+## Step 0 – Detect phase
 
 Run:
 
 ```bash
 git branch --show-current
+git fetch origin
 ```
 
-If the result is **not** `main`, stop immediately with:
+Then read `projectVersion` from `gradle.properties` and the latest release tag:
 
-> "This skill can only be run on the `main` branch. Please switch to `main` and try again."
+```bash
+gh release list --limit 1
+```
 
-Do not proceed with any further steps.
+Decide which phase to run:
 
-## Step 1 – Pre-flight checks
+- **On `main`** AND `gradle.properties` version is **greater than** the latest release tag → **Phase 2** (jump to **Step 5**).
+- **On `main`** AND versions match → nothing to do. Tell the user there is no pending release and stop.
+- **On any other branch** → **Phase 1** (continue to **Step 1**).
+
+## Step 1 – Pre-flight checks (Phase 1)
 
 Verify the working directory is clean:
 
@@ -30,45 +42,28 @@ git status
 
 If dirty, stop and ask the user to commit or stash their changes first.
 
-Ensure local `main` is up to date with the remote:
+Ensure the current branch is up to date with `origin/main`. Compare:
 
 ```bash
-git fetch origin main
-git status -sb
+git rev-list --left-right --count origin/main...HEAD
 ```
 
-If the branch is **behind** `origin/main`, run:
+- If the branch is **behind** `origin/main` (left count > 0), stop and ask the user to rebase or merge `origin/main` first. Do **not** rebase automatically — the user owns history changes.
+- If only ahead (right count > 0) or in sync → proceed.
 
-```bash
-git pull --ff-only origin main
-```
+## Step 2 – Determine the next version
 
-If the pull fails (e.g. due to diverged history), stop and ask the user to resolve it manually.
+Read the current version from `gradle.properties`. Get the latest release tag (`<LAST_TAG>`, e.g. `v1.2.3`).
 
-## Step 2 – Check whether a version bump is needed
+If `gradle.properties` already holds a version **greater than** `<LAST_TAG>` → the bump was already done on this branch. Inform the user ("Version already bumped to `<CURRENT_VERSION>` on this branch, skipping bump.") and set `<NEXT_VERSION>` to that value, then jump to **Step 4**.
 
-Read the current version from `gradle.properties` (`projectVersion=...`).
-
-Get the latest published release:
-
-```bash
-gh release list --limit 1
-```
-
-Compare:
-
-- If `gradle.properties` already holds a version **greater than** the latest release tag → the bump was already done. Inform the user ("Version already bumped to `<CURRENT_VERSION>`, skipping bump step.") and set `<NEXT_VERSION>` to that value, then jump to **Step 4**.
-- Otherwise → a bump is needed. Continue to **Step 3**.
-
-## Step 3 – Determine bump type
-
-Inspect commits since the last release tag:
+Otherwise inspect commits since `<LAST_TAG>`:
 
 ```bash
 git log <LAST_TAG>..HEAD --oneline
 ```
 
-Use the following rules to derive a suggestion:
+Suggest a bump type:
 
 | Commits contain              | Suggested bump |
 | ---------------------------- | -------------- |
@@ -76,11 +71,13 @@ Use the following rules to derive a suggestion:
 | `feat:`                      | **minor**      |
 | Only fixes / chores / deps   | **patch**      |
 
-Compute all three candidate versions from `<LAST_RELEASE_VERSION>` (e.g. if last release was `1.2.3`: patch → `1.2.4`, minor → `1.3.0`, major → `2.0.0`).
+Compute all three candidates from `<LAST_RELEASE_VERSION>` (e.g. from `1.2.3`: patch → `1.2.4`, minor → `1.3.0`, major → `2.0.0`).
+
+## Step 3 – Confirm bump type
 
 Call `AskUserQuestion`:
 
-> Based on the changes since `<LAST_TAG>`, here is what I found:
+> Based on the changes since `<LAST_TAG>`:
 >
 > `<one-line summary of notable commits>`
 >
@@ -91,19 +88,44 @@ Call `AskUserQuestion`:
 > - `minor` → v`<minor-version>`
 > - `major` → v`<major-version>`
 
-Set `<NEXT_VERSION>` to the version the user selects.
+Set `<NEXT_VERSION>` to the chosen version.
 
-## Step 4 – Bump version in gradle.properties, commit, and push
+## Step 4 – Bump, commit, push, and open PR
 
 Update `projectVersion=<NEXT_VERSION>` in `gradle.properties`.
 
 ```bash
 git add gradle.properties
 git commit -m "chore(release): <NEXT_VERSION>"
-git push origin main
+git push -u origin HEAD
 ```
 
-## Step 5 – Build and test
+Open a PR into `main`:
+
+```bash
+gh pr create --base main --title "chore(release): <NEXT_VERSION>" --body "$(cat <<'EOF'
+## Summary
+- Bump `projectVersion` to `<NEXT_VERSION>` in `gradle.properties`.
+
+## Release notes preview
+<bullet list of notable changes since <LAST_TAG>>
+
+After merge, re-run the `bpmn-to-code-release` skill from `main` to tag and create the draft GitHub release.
+EOF
+)"
+```
+
+Stop here. Tell the user:
+
+> PR opened for v`<NEXT_VERSION>`. Once it's merged into `main`, switch to `main`, pull, and re-run this skill to continue with Phase 2 (build, tag, draft release).
+
+## Step 5 – Build and test (Phase 2)
+
+Ensure `main` is up to date:
+
+```bash
+git pull --ff-only origin main
+```
 
 Run the full build:
 
