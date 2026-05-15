@@ -66,15 +66,20 @@ jobs:
       - name: Run Gradle Build
         run: ./gradlew build --warning-mode all
 
-      # Step 5: Run Detekt static analysis
+      # Step 5: Verify the Docker image still builds (no push) — catches Dockerfile,
+      # fat-jar, and configuration-cache regressions in the bpmn-to-code-web Exec tasks
+      - name: Build Docker Image
+        run: ./gradlew :bpmn-to-code-web:dockerBuild --warning-mode all
+
+      # Step 6: Run Detekt static analysis
       - name: Run Detekt
         run: ./gradlew detekt
 
-      # Step 6: Enforce per-class test coverage (≥ 75%) for modules with in-process tests
+      # Step 7: Enforce per-class test coverage (≥ 75%) for modules with in-process tests
       - name: Check Coverage
         run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification :bpmn-to-code-web:jacocoTestCoverageVerification :bpmn-to-code-testing:jacocoTestCoverageVerification :bpmn-to-code-runtime:jacocoTestCoverageVerification
 
-      # Step 7: Post coverage summary as PR comment
+      # Step 8: Post coverage summary as PR comment
       - name: Post Coverage Comment
         if: always() && github.event_name == 'pull_request'
         env:
