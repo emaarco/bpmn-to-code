@@ -43,11 +43,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run: ./gradlew :bpmn-to-code-web:dockerBuild --no-configuration-cache
+        run: ./gradlew :bpmn-to-code-web:dockerBuild
 
       - name: Push Docker Image
         if: inputs.dry_run != true
-        run: ./gradlew :bpmn-to-code-web:dockerPush --no-configuration-cache
+        run: ./gradlew :bpmn-to-code-web:dockerPush
 
       - name: Push Latest Tag
         if: inputs.dry_run != true
