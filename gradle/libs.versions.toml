@@ -6,24 +6,24 @@ kotlin = "2.3.21"
 kotlinpoet = "2.3.0"
 javapoet = "0.15.0"
 camunda = "7.24.0"
-jUnit = "6.0.3"
+jUnit = "6.1.0"
 assertJ = "4.0.0-M1"
-junitPlatformLauncher = "6.0.3"
+junitPlatformLauncher = "6.1.0"
 mockk = "1.14.9"
-ktor = "3.4.3"
+ktor = "3.5.0"
 kotlinxSerialization = "1.11.0"
 logback = "1.5.32"
 mcpKotlinSdk = "0.12.0"
 shadow = "9.4.1"
 slf4j = "2.0.18"
-kotlinLogging = "8.0.02"
+kotlinLogging = "8.0.03"
 konsist = "0.17.3"
 dokka = "2.2.0"
 detekt = "1.23.8"
 
 [libraries]
 # Plugin dependencies
-mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.15" }
+mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.16" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.2" }
 # Production dependencies
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
