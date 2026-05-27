@@ -96,7 +96,14 @@ export default defineConfig({
           { text: 'Web App', link: '/web/' },
           { text: 'Examples', link: '/recipes/examples' },
           { text: 'Common Patterns', link: '/recipes/common-patterns' },
-          { text: 'Changelog', link: '/changelog/v2' },
+          {
+            text: 'Changelog',
+            collapsed: true,
+            items: [
+              { text: 'Release Notes', link: '/changelog/' },
+              { text: 'v2 Migration Guide', link: '/changelog/v2' },
+            ],
+          },
         ],
       },
       {
