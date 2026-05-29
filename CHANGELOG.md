@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.1.1](https://github.com/emaarco/bpmn-to-code/compare/v2.1.0...v2.1.1) (2026-05-29)
+
+
+### Bug Fixes
+
+* **testing:** bundle BPMN model + logging deps transitively ([#352](https://github.com/emaarco/bpmn-to-code/issues/352)) ([fb4a246](https://github.com/emaarco/bpmn-to-code/commit/fb4a2469b1d34fd97bea7742a5df035f4debc0f2))
+
 ## [2.1.0](https://github.com/emaarco/bpmn-to-code/compare/v2.0.4...v2.1.0) (2026-05-29)
 
 
