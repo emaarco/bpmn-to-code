@@ -52,13 +52,13 @@ class OperatonModelExtractorTest {
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
                         properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT), VariableDefinition("reasonCode", VariableDirection.INPUT), VariableDefinition("abortResult", VariableDirection.OUTPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "subscriptionId"), VariableDefinition("reasonCode", VariableDirection.INPUT, "\${reasonCode}"), VariableDefinition("abortResult", VariableDirection.OUTPUT, "abortResult")),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true)),
                     FlowNodeDefinition("Activity_ConfirmRegistration", BpmnElementType.USER_TASK,
                         displayName = "Confirm subscription",
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "\${subscriptionId}")),
                         attachedElements = listOf("Timer_EveryDay"),
                         parentId = "SubProcess_Confirmation",
                         previousElements = listOf("Activity_SendConfirmationMail"),
@@ -67,14 +67,14 @@ class OperatonModelExtractorTest {
                     FlowNodeDefinition("Activity_SendConfirmationMail", BpmnElementType.SERVICE_TASK,
                         displayName = "Send confirmation mail",
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["Activity_SendConfirmationMail"]!!),
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT), VariableDefinition("otherVariable", VariableDirection.INPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "\${subscriptionId}"), VariableDefinition("otherVariable", VariableDirection.INPUT, "dummy")),
                         parentId = "SubProcess_Confirmation",
                         previousElements = listOf("StartEvent_RequestReceived", "Timer_EveryDay"),
                         followingElements = listOf("Activity_ConfirmRegistration")),
                     FlowNodeDefinition("Activity_SendWelcomeMail", BpmnElementType.SERVICE_TASK,
                         displayName = "Send Welcome-Mail",
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["Activity_SendWelcomeMail"]!!),
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "\${subscriptionId}")),
                         previousElements = listOf("SubProcess_Confirmation"),
                         followingElements = listOf("EndEvent_RegistrationCompleted"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true, ASYNC_AFTER_KEY to true, EXCLUSIVE_KEY to false)),
@@ -86,11 +86,11 @@ class OperatonModelExtractorTest {
                         attachedToRef = "serviceTask_incrementSubscriptionCounter"),
                     FlowNodeDefinition("CompensationTask_DecrementSubscriptionCounter", BpmnElementType.TASK,
                         displayName = "Decrement subscription counter",
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT))),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "\${subscriptionId}"))),
                     FlowNodeDefinition("EndEvent_RegistrationCompleted", BpmnElementType.END_EVENT,
                         displayName = "Registration completed",
                         properties = FlowNodeProperties.ServiceTask(opServiceTaskById["EndEvent_RegistrationCompleted"]!!),
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "\${subscriptionId}")),
                         previousElements = listOf("Activity_SendWelcomeMail")),
                     FlowNodeDefinition("EndEvent_RegistrationNotPossible", BpmnElementType.END_EVENT,
                         displayName = "Registration not possible",
@@ -112,13 +112,13 @@ class OperatonModelExtractorTest {
                         followingElements = listOf("SubProcess_Confirmation")),
                     FlowNodeDefinition("StartEvent_RequestReceived", BpmnElementType.START_EVENT,
                         displayName = "Subscription requested",
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT, "\${subscriptionId}")),
                         parentId = "SubProcess_Confirmation",
                         followingElements = listOf("Activity_SendConfirmationMail"),
                         engineSpecificProperties = mapOf(ASYNC_BEFORE_KEY to true)),
                     FlowNodeDefinition("StartEvent_SubmitRegistrationForm", BpmnElementType.START_EVENT,
                         displayName = "Submit newsletter form",
-                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT)),
+                        variables = listOf(VariableDefinition("subscriptionId", VariableDirection.OUTPUT, "\${subscriptionId}")),
                         followingElements = listOf("serviceTask_incrementSubscriptionCounter")),
                     FlowNodeDefinition("SubProcess_Confirmation", BpmnElementType.SUB_PROCESS,
                         displayName = "Subscription Confirmation",
@@ -180,6 +180,8 @@ class OperatonModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
+            VariableDefinition("orderId", VariableDirection.INPUT, "\${orderId}"),
+            VariableDefinition("orderId", VariableDirection.OUTPUT, "\${orderId}"),
             VariableDefinition("orderId", VariableDirection.INPUT),
             VariableDefinition("orderId", VariableDirection.OUTPUT),
             VariableDefinition("customerEmail", VariableDirection.OUTPUT),
@@ -197,8 +199,8 @@ class OperatonModelExtractorTest {
         val bpmnModel = underTest.extract(file.readBytes())
         val activity = bpmnModel.flowNodes.single { it.id == "Activity_ProcessOrder" }
         assertThat(activity.variables).contains(
-            VariableDefinition("orderId", VariableDirection.INPUT),
-            VariableDefinition("orderId", VariableDirection.OUTPUT),
+            VariableDefinition("orderId", VariableDirection.INPUT, "\${orderId}"),
+            VariableDefinition("orderId", VariableDirection.OUTPUT, "\${orderId}"),
         )
     }
 
@@ -208,12 +210,12 @@ class OperatonModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variables).containsExactlyInAnyOrder(
-            VariableDefinition("authors", VariableDirection.INPUT),
-            VariableDefinition("author", VariableDirection.INPUT),
-            VariableDefinition("author", VariableDirection.OUTPUT),
-            VariableDefinition("subscribers", VariableDirection.INPUT),
-            VariableDefinition("subscribers", VariableDirection.OUTPUT),
-            VariableDefinition("subscriber", VariableDirection.INPUT),
+            VariableDefinition("authors", VariableDirection.INPUT, "authors"),
+            VariableDefinition("author", VariableDirection.INPUT, "author"),
+            VariableDefinition("author", VariableDirection.OUTPUT, "\${author}"),
+            VariableDefinition("subscribers", VariableDirection.INPUT, "subscribers"),
+            VariableDefinition("subscribers", VariableDirection.OUTPUT, "\${subscribers}"),
+            VariableDefinition("subscriber", VariableDirection.INPUT, "subscriber"),
         )
     }
 

@@ -16,6 +16,7 @@ object ZeebeModelConstants {
     const val ATTRIBUTE_PROCESS_ID = "processId"
     const val ATTRIBUTE_CORRELATION_KEY = "correlationKey"
     const val ATTRIBUTE_TARGET = "target"
+    const val ATTRIBUTE_SOURCE = "source"
     const val ATTRIBUTE_INPUT_ELEMENT = "inputElement"
     const val ATTRIBUTE_INPUT_COLLECTION = "inputCollection"
     const val ATTRIBUTE_OUTPUT_ELEMENT = "outputElement"
