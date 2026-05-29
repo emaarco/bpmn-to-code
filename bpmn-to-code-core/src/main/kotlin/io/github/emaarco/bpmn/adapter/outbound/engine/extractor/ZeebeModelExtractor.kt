@@ -156,7 +156,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             val outputs = extractIoVariables(ioMappings, ZeebeModelConstants.ELEMENT_OUTPUT, VariableDirection.OUTPUT)
             val multiInstanceVars = extractMultiInstanceVariables(listOf(node))
             val allVars = inputs + outputs + multiInstanceVars
-            val distinctVars = allVars.distinct().map { (name, direction) -> VariableDefinition(name, direction) }
+            val distinctVars = allVars.distinct().map { (name, direction, expression) -> VariableDefinition(name, direction, expression) }
             nodeId to distinctVars
         }
     }
@@ -165,18 +165,20 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         extensions: List<ModelElementInstance>,
         elementName: String,
         direction: VariableDirection,
-    ): List<Pair<String, VariableDirection>> {
+    ): List<Triple<String, VariableDirection, String?>> {
         val allElementsInContainer = extensions.flatMap { it.domElement.childElements }
         val matching = allElementsInContainer.filter { it.localName == elementName }
-        return matching
-            .mapNotNull { it.getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET) }
-            .filter { it.isNotBlank() }
-            .map { it to direction }
+        return matching.mapNotNull { element ->
+            val target = element.getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET)?.takeIf { it.isNotBlank() }
+                ?: return@mapNotNull null
+            val source = element.getAttribute(ZeebeModelConstants.ATTRIBUTE_SOURCE)?.takeIf { it.isNotBlank() }
+            Triple(target, direction, source)
+        }
     }
 
     private fun extractMultiInstanceVariables(
         nodes: Collection<FlowNode>
-    ): List<Pair<String, VariableDirection>> {
+    ): List<Triple<String, VariableDirection, String?>> {
         val loops = nodes.flatMap { it.getChildElementsByType(MultiInstanceLoopCharacteristics::class.java) }
         val allExtensions = loops.flatMap { it.findExtensionElements() }
         val loopCharacteristics = allExtensions.filterByType(ZeebeModelConstants.ELEMENT_LOOP_CHARACTERISTICS)
@@ -184,8 +186,8 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val inputCollections = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_INPUT_COLLECTION)
         val outputElements = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_ELEMENT)
         val outputCollections = loopCharacteristics.extractAttribute(ZeebeModelConstants.ATTRIBUTE_OUTPUT_COLLECTION)
-        val inputs = (inputElements + inputCollections).map { it.removePrefix("=") to VariableDirection.INPUT }
-        val outputs = (outputElements + outputCollections).map { it.removePrefix("=") to VariableDirection.OUTPUT }
+        val inputs = (inputElements + inputCollections).map { Triple(it.removePrefix("="), VariableDirection.INPUT, it) }
+        val outputs = (outputElements + outputCollections).map { Triple(it.removePrefix("="), VariableDirection.OUTPUT, it) }
         return inputs + outputs
     }
 
