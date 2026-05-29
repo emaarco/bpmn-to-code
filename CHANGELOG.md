@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.1.2](https://github.com/emaarco/bpmn-to-code/compare/v2.1.1...v2.1.2) (2026-05-29)
+
+
+### Bug Fixes
+
+* **web:** correct broken doc links on landing page ([#355](https://github.com/emaarco/bpmn-to-code/issues/355)) ([8fdf49c](https://github.com/emaarco/bpmn-to-code/commit/8fdf49ccfc5b6dfcabc15b3c99e2a59119419a9e))
+
 ## [2.1.1](https://github.com/emaarco/bpmn-to-code/compare/v2.1.0...v2.1.1) (2026-05-29)
 
 
