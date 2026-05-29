@@ -10,12 +10,31 @@ on:
   release:
     types: [published]
 
+# Required for the docs deployment to GitHub Pages (deploy-docs reusable workflow).
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
+  # Human approval gate. The `release` environment has a required reviewer, so the
+  # whole pipeline pauses here until the deployment is approved. A job that calls a
+  # reusable workflow via `uses:` cannot also declare `environment:`, hence this
+  # dedicated no-op job — approving it once unblocks every downstream publish.
+  gate:
+    name: Await release approval
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Approved
+        run: echo "Release approved — proceeding to publish."
+
   # Maven Central first — the Gradle plugin declares bpmn-to-code-runtime as an
   # implementation dep in consuming projects, so the runtime artifact must be
   # resolvable before the plugin is published to the Plugin Portal.
   publish-maven:
     name: Publish to Maven Central
+    needs: gate
     uses: ./.github/workflows/publish-to-maven.yml
     secrets: inherit
     with:
@@ -31,7 +50,15 @@ jobs:
 
   publish-docker:
     name: Publish to Docker Hub
+    needs: gate
     uses: ./.github/workflows/publish-to-docker.yml
     secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
+
+  deploy-docs:
+    name: Deploy Documentation
+    needs: gate
+    uses: ./.github/workflows/deploy-docs.yml
     with:
       dry_run: ${{ inputs.dry_run == true }}
