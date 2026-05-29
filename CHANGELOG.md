@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.1.0](https://github.com/emaarco/bpmn-to-code/compare/v2.0.4...v2.1.0) (2026-05-29)
+
+
+### Features
+
+* **core:** expose variable mapping expressions in the domain model ([#349](https://github.com/emaarco/bpmn-to-code/issues/349)) ([2cb7aeb](https://github.com/emaarco/bpmn-to-code/commit/2cb7aebd44799b5071c1572e51230703e848f9c1))
+
+
+### Bug Fixes
+
+* **release-please:** disable component prefix in tag ([#343](https://github.com/emaarco/bpmn-to-code/issues/343)) ([11483e1](https://github.com/emaarco/bpmn-to-code/commit/11483e1243c726b4e89f0a20cbf2bd37dc5a1880))
+* **release-please:** use block markers for gradle.properties ([#345](https://github.com/emaarco/bpmn-to-code/issues/345)) ([aff1aad](https://github.com/emaarco/bpmn-to-code/commit/aff1aad218501aa35c99c720db83074390b0fc3f))
+
 ## [2.0.4] - 2026-05-15
 
 ### Bug Fixes
@@ -522,5 +535,3 @@ new entries are appended automatically by [release-please](https://github.com/go
 
 - Create processApi files from bpmnModels
 - Prepare for beta-publishing
-
-
