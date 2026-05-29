@@ -21,6 +21,8 @@ sourceSets {
 dependencies {
     compileOnly(project(":bpmn-to-code-core"))
     api(libs.assertj)
+    api(libs.bpmnmodel)
+    api(libs.kotlinLogging)
     compileOnly(libs.junit)
     testImplementation(project(":bpmn-to-code-core"))
     testImplementation(libs.bundles.testing)
