@@ -6,16 +6,16 @@ allowed-tools: Bash(gh *)
 
 # Release – bpmn-to-code
 
-Releases are automated by [release-please](https://github.com/googleapis/release-please). There is **no manual bump or tag step**. The workflow `.github/workflows/release-please.yml` keeps a permanent "Release PR" open and creates the GitHub Release after merge.
+Releases are automated by [release-please](https://github.com/googleapis/release-please). There is **no manual bump or tag step**. The workflow `.github/workflows/release-please.yml` keeps a permanent "Release PR" open and publishes the GitHub Release (and its tag) immediately on merge.
 
 ## Normal flow
 
 1. **Conventional commits land on `main`.** `feat:` → minor, `fix:` → patch, `feat!:` / `BREAKING CHANGE` → major. Other types (`chore`, `docs`, `refactor`, `build`, `test`, …) do not bump.
 2. **Release-please opens / updates a PR** titled `chore(main): release <next-version>`. It touches only `gradle.properties`, `CHANGELOG.md`, and `.release-please-manifest.json`.
 3. **Merge the Release PR** when you want to ship.
-4. **A draft GitHub Release is created** (tag `v<version>`) with notes generated from the commits.
-5. **Review the draft**, edit notes if needed, then click **Publish release**.
-6. Publishing fires `publish-all.yml` → Maven Central → Gradle Plugin Portal → Docker Hub.
+4. **A published GitHub Release is created** (tag `v<version>` created atomically) with notes generated from the commits. The release is *not* a draft — publishing immediately is what guarantees the tag exists, which release-please needs to anchor the next changelog.
+5. **`publish-all.yml` starts and pauses at the `release` approval gate.** Open the workflow run and **approve the deployment** (or reject to abort). This is the human gate — it replaces the old "publish the draft" step.
+6. After approval, `publish-all.yml` runs: Maven Central → Gradle Plugin Portal, Docker Hub, and the GitHub Pages docs deploy.
 
 ## Force a specific bump (edge case)
 
@@ -27,9 +27,9 @@ Release-As: 3.0.0
 
 Release-please uses that version on its next run.
 
-## Edit notes before publishing
+## Edit release notes
 
-The draft Release is editable in the GitHub UI. Adjust wording, regroup items, or add a migration note, then publish. The tag is already in place once the draft exists, so editing the body is safe.
+The Release is published automatically on merge, so notes are edited **after** publishing in the GitHub UI (Releases → Edit). Adjust wording, regroup items, or add a migration note — the tag and artifacts are unaffected by body edits.
 
 ## Sanity checks
 
@@ -54,6 +54,7 @@ Or individual workflows:
 gh workflow run publish-to-maven.yml
 gh workflow run publish-to-gradle.yml
 gh workflow run publish-to-docker.yml
+gh workflow run deploy-docs.yml
 ```
 
 Verify:
