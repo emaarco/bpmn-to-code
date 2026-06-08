@@ -3,6 +3,9 @@
 
 [versions]
 kotlin = "2.4.0"
+kotlinxCoroutines = "1.10.2"
+bpmnModdle = "7.1.3"
+zeebeBpmnModdle = "1.14.0"
 camunda = "7.24.0"
 jUnit = "6.1.0"
 assertJ = "4.0.0-M1"
@@ -38,6 +41,8 @@ ktorServerSwagger = { module = "io.ktor:ktor-server-swagger", version.ref = "kto
 ktorServerOpenapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
 ktorServerTestHost = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinxCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }

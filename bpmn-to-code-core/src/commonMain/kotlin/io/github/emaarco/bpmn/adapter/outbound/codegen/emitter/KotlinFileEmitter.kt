@@ -21,10 +21,10 @@ object KotlinFileEmitter {
     }
 
     private fun emitImports(writer: CodeWriter, file: FileSpec) {
-        val imports = sortedSetOf<String>()
+        val imports = mutableSetOf<String>()
         imports.add("$KOTLIN_PACKAGE.Suppress")
         collectImports(file.rootType, imports)
-        imports.forEach { writer.line("import $it") }
+        imports.sorted().forEach { writer.line("import $it") }
         writer.line()
     }
 

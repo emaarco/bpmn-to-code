@@ -14,8 +14,19 @@ repositories {
 }
 
 kotlin {
-    jvm {
-        // The JVM target is the only one in M1; JS is added in a later milestone.
+    jvm()
+
+    js {
+        nodejs()
+        browser {
+            // The browser target is kept for the (future) browser bundle, but its tests run via
+            // Karma + a real browser. Our jsTest suite is Node-oriented (it uses Node `fs`), so we
+            // only execute tests on Node and skip the browser test task.
+            testTask {
+                enabled = false
+            }
+        }
+        useEsModules()
     }
 
     sourceSets {
@@ -23,6 +34,11 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinxSerializationJson)
                 api(libs.kotlinLoggingMultiplatform)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
             }
         }
         jvmMain {
@@ -41,6 +57,21 @@ kotlin {
             }
             // Shared BPMN fixtures used by the golden tests.
             resources.srcDir(rootProject.file("shared"))
+        }
+        jsMain {
+            dependencies {
+                implementation(libs.kotlinxCoroutinesCore)
+                // bpmn-moddle 7.1.3 is the last pure-CommonJS release; the Camunda-maintained
+                // zeebe moddle extension supplies the Zeebe namespace.
+                implementation(npm("bpmn-moddle", "7.1.3"))
+                implementation(npm("zeebe-bpmn-moddle", "1.14.0"))
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinxCoroutinesTest)
+            }
         }
     }
 }

@@ -17,9 +17,9 @@ object JavaFileEmitter {
     }
 
     private fun emitImports(writer: CodeWriter, file: FileSpec) {
-        val imports = sortedSetOf<String>()
+        val imports = mutableSetOf<String>()
         collectImports(file.rootType, imports)
-        imports.forEach { writer.line("import $it;") }
+        imports.sorted().forEach { writer.line("import $it;") }
         writer.line()
     }
 
