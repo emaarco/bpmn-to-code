@@ -42,7 +42,6 @@ sourceSets.main {
 dependencies {
     api(kotlin("stdlib"))
     api(libs.bpmnmodel)
-    api(libs.bundles.codegen)
     api(libs.kotlinxSerializationJson)
     api(libs.slf4jApi)
     api(libs.kotlinLogging)

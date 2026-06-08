@@ -10,9 +10,10 @@ import io.github.emaarco.bpmn.application.port.outbound.SaveProcessJsonPort
  * Platform-specific default wiring for the outbound adapters that the use-case services
  * fall back to when constructed without explicit dependencies.
  *
- * The JVM actuals (Camunda extractor, java.nio filesystem, KotlinPoet/JavaPoet codegen) live in
- * jvmMain; later targets (JS) provide their own. This keeps the services in commonMain while
- * preserving their no-arg default-constructor ergonomics.
+ * The JVM actuals (Camunda extractor, java.nio filesystem) live in jvmMain; later targets (JS)
+ * provide their own. The code generator is now a multiplatform emitter in commonMain, but the
+ * port is still expect/actual so JS can supply a different default. This keeps the services in
+ * commonMain while preserving their no-arg default-constructor ergonomics.
  */
 internal expect fun defaultExtractBpmnPort(): ExtractBpmnPort
 

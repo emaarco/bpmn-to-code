@@ -28,7 +28,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.bpmnmodel)
-                implementation(libs.bundles.codegen)
                 // kotlin-logging backs onto slf4j on the JVM; provide the binding API.
                 api(libs.slf4jApi)
             }

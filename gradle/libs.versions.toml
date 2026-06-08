@@ -3,8 +3,6 @@
 
 [versions]
 kotlin = "2.4.0"
-kotlinpoet = "2.3.0"
-javapoet = "0.16.0"
 camunda = "7.24.0"
 jUnit = "6.1.0"
 assertJ = "4.0.0-M1"
@@ -26,8 +24,6 @@ detekt = "1.23.8"
 mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version = "3.9.16" }
 mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version = "3.15.2" }
 # Production dependencies
-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
-javapoet = { module = "com.palantir.javapoet:javapoet", version.ref = "javapoet" }
 bpmnmodel = { module = "org.camunda.bpm.model:camunda-bpmn-model", version.ref = "camunda" }
 
 # Web module dependencies
@@ -56,7 +52,6 @@ junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher",
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [bundles]
-codegen = ["kotlinpoet", "javapoet"]
 testing = ["junit", "junitPlatformLauncher", "assertj", "mockk"]
 ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "ktorSerializationKotlinxJson", "ktorServerCors", "ktorServerCallLogging", "ktorServerStatusPages", "ktorServerSwagger", "ktorServerOpenapi"]
 
