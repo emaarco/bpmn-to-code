@@ -18,6 +18,7 @@ kotlin {
 
     js {
         nodejs()
+        binaries.executable()
         browser {
             // The browser target is kept for the (future) browser bundle, but its tests run via
             // Karma + a real browser. Our jsTest suite is Node-oriented (it uses Node `fs`), so we
