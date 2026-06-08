@@ -1,0 +1,53 @@
+name: Publish to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & pack only, no real publish)'
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & pack only, no real publish)'
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build the Kotlin/JS package
+        run: ./gradlew :bpmn-to-code-core:assembleNpmPackage --no-configuration-cache --warning-mode all
+
+      - name: Pack (Dry Run)
+        if: inputs.dry_run == true
+        run: ./gradlew :bpmn-to-code-core:npmPack --no-configuration-cache
+
+      - name: Publish to npm
+        if: inputs.dry_run != true
+        working-directory: bpmn-to-code-core/build/npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

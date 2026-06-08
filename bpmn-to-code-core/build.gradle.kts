@@ -8,6 +8,7 @@ plugins {
 }
 
 group = "io.github.emaarco"
+version = property("projectVersion").toString()
 
 repositories {
     mavenCentral()
@@ -144,4 +145,80 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             }
         }
     }
+}
+
+// --- npm packaging (Kotlin/JS CLI, dry-run only — no live publish) ---------------------------
+// Assembles a publishable npm package from the compiled Kotlin/JS node output and runs
+// `npm pack` to produce a tarball. There is deliberately NO live `npm publish` task here;
+// real publishing happens only through the approval-gated CI workflow.
+val assembleNpmPackage by tasks.registering {
+    group = "npm"
+    description = "Assemble a publishable npm package for the Kotlin/JS CLI (no publish)."
+    dependsOn("compileDevelopmentExecutableKotlinJs")
+    // The Kotlin/JS node output lives under the ROOT project build dir; reading it cross-project
+    // is not compatible with the configuration cache. This task is outside the main build path.
+    notCompatibleWithConfigurationCache("Reads the Kotlin/JS node output from the root build dir")
+
+    val sourceKotlinDir = rootProject.layout.buildDirectory
+        .dir("js/packages/bpmn-to-code-bpmn-to-code-core/kotlin").get().asFile
+    val outDir = layout.buildDirectory.dir("npm").get().asFile
+    val packageVersion = version.toString()
+    val packageName = "@emaarco/bpmn-to-code"
+    outputs.dir(outDir)
+
+    doLast {
+        outDir.deleteRecursively()
+        sourceKotlinDir.copyRecursively(outDir.resolve("kotlin"), overwrite = true)
+        outDir.resolve("bin").mkdirs()
+        outDir.resolve("bin/bpmn-to-code.mjs").writeText(
+            "#!/usr/bin/env node\nimport './../kotlin/bpmn-to-code-bpmn-to-code-core.mjs'\n"
+        )
+        outDir.resolve("package.json").writeText(
+            """
+            |{
+            |  "name": "$packageName",
+            |  "version": "$packageVersion",
+            |  "description": "Generate type-safe API definitions from BPMN process models (Zeebe).",
+            |  "type": "module",
+            |  "bin": {
+            |    "bpmn-to-code": "bin/bpmn-to-code.mjs"
+            |  },
+            |  "main": "kotlin/bpmn-to-code-bpmn-to-code-core.mjs",
+            |  "files": [
+            |    "kotlin",
+            |    "bin"
+            |  ],
+            |  "engines": {
+            |    "node": ">=18"
+            |  },
+            |  "dependencies": {
+            |    "bpmn-moddle": "7.1.3",
+            |    "zeebe-bpmn-moddle": "1.14.0"
+            |  },
+            |  "keywords": [
+            |    "bpmn",
+            |    "codegen",
+            |    "zeebe",
+            |    "camunda"
+            |  ],
+            |  "license": "MIT",
+            |  "homepage": "https://github.com/emaarco/bpmn-to-code",
+            |  "repository": {
+            |    "type": "git",
+            |    "url": "git+https://github.com/emaarco/bpmn-to-code.git"
+            |  },
+            |  "author": "emaarco"
+            |}
+            |""".trimMargin()
+        )
+    }
+}
+
+val npmPack by tasks.registering(Exec::class) {
+    group = "npm"
+    description = "Run `npm pack` on the assembled package (dry-run; produces a tarball)."
+    dependsOn(assembleNpmPackage)
+    notCompatibleWithConfigurationCache("Runs the external npm CLI")
+    workingDir = layout.buildDirectory.dir("npm").get().asFile
+    commandLine("npm", "pack")
 }

@@ -78,6 +78,15 @@ jobs:
       - name: Check Coverage
         run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification :bpmn-to-code-web:jacocoTestCoverageVerification :bpmn-to-code-testing:jacocoTestCoverageVerification :bpmn-to-code-runtime:jacocoTestCoverageVerification
 
+      # Step 6b: Verify the Kotlin/JS CLI assembles into a publishable npm package (dry run, no publish)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify npm package (dry run)
+        run: ./gradlew :bpmn-to-code-core:npmPack --no-configuration-cache
+
       # Step 7: Post coverage summary as PR comment
       - name: Post Coverage Comment
         if: always() && github.event_name == 'pull_request'

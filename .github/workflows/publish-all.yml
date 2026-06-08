@@ -48,6 +48,17 @@ jobs:
     with:
       dry_run: ${{ inputs.dry_run == true }}
 
+  # npm (Kotlin/JS CLI), published after the JVM artifacts. Shares the single `release`
+  # approval gate via the `gate` job above (no `environment:` here, since this calls a
+  # reusable workflow).
+  publish-npm:
+    name: Publish to npm
+    needs: publish-maven
+    uses: ./.github/workflows/publish-to-npm.yml
+    secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
+
   publish-docker:
     name: Publish to Docker Hub
     needs: gate
