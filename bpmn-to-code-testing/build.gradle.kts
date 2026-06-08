@@ -29,7 +29,6 @@ dependencies {
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
-// Shade the core's JVM compilation output (KMP `jvmJar` contents) into this module's jar.
 val coreJvmJar = project(":bpmn-to-code-core").tasks.named("jvmJar")
 
 tasks.jar {

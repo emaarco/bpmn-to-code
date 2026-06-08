@@ -9,13 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/**
- * End-to-end smoke test for the Node CLI's `generate` orchestration: it points [runGenerate] at the
- * shared `c8-subscribe-newsletter.bpmn` fixture, writes into a throwaway temp dir, and asserts the
- * expected Kotlin API file was produced with real content.
- *
- * Like [ZeebeParityTest] it recovers the repo root from the Node runner's cwd (`<repoRoot>/build/...`).
- */
+/** Smoke test for the Node CLI's `generate` orchestration ([runGenerate]) against the c8 fixture. */
 class CliSmokeTest {
 
   @Suppress("FunctionNaming")

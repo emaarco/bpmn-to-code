@@ -21,9 +21,7 @@ kotlin {
         nodejs()
         binaries.executable()
         browser {
-            // The browser target is kept for the (future) browser bundle, but its tests run via
-            // Karma + a real browser. Our jsTest suite is Node-oriented (it uses Node `fs`), so we
-            // only execute tests on Node and skip the browser test task.
+            // Karma/browser tests need a real browser; the jsTest suite is Node-only.
             testTask {
                 enabled = false
             }
@@ -46,7 +44,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.bpmnmodel)
-                // kotlin-logging backs onto slf4j on the JVM; provide the binding API.
+                // kotlin-logging backs onto slf4j on the JVM.
                 api(libs.slf4jApi)
             }
         }
@@ -57,14 +55,12 @@ kotlin {
                 implementation(kotlin("compiler-embeddable"))
                 runtimeOnly(libs.junitPlatformLauncher)
             }
-            // Shared BPMN fixtures used by the golden tests.
             resources.srcDir(rootProject.file("shared"))
         }
         jsMain {
             dependencies {
                 implementation(libs.kotlinxCoroutinesCore)
-                // bpmn-moddle 7.1.3 is the last pure-CommonJS release; the Camunda-maintained
-                // zeebe moddle extension supplies the Zeebe namespace.
+                // bpmn-moddle 7.1.3 is the last pure-CommonJS release.
                 implementation(npm("bpmn-moddle", "7.1.3"))
                 implementation(npm("zeebe-bpmn-moddle", "1.14.0"))
             }
@@ -82,8 +78,7 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
-// Run detekt against the multiplatform source sets (the default `detekt` task only
-// looks at the conventional src/main|test which are empty for a KMP module).
+// The default detekt task only scans src/main|test, which are empty for a KMP module.
 detekt {
     source.setFrom(
         files(
@@ -105,9 +100,7 @@ private val coverageExclusions = listOf(
     "**/*\$Companion*",
 )
 
-// JaCoCo wiring for the KMP jvm target. The jacoco plugin instruments the `jvmTest`
-// task automatically (producing build/jacoco/jvmTest.exec); we point the report and
-// verification at the jvm main compilation output and the moved source sets.
+// JaCoCo wiring for the KMP jvm target (the plugin instruments jvmTest into build/jacoco/jvmTest.exec).
 private val jvmMainClasses = layout.buildDirectory.dir("classes/kotlin/jvm/main")
 private val jvmExecData = layout.buildDirectory.file("jacoco/jvmTest.exec")
 private val coverageSources = files(
@@ -147,16 +140,11 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     }
 }
 
-// --- npm packaging (Kotlin/JS CLI, dry-run only — no live publish) ---------------------------
-// Assembles a publishable npm package from the compiled Kotlin/JS node output and runs
-// `npm pack` to produce a tarball. There is deliberately NO live `npm publish` task here;
-// real publishing happens only through the approval-gated CI workflow.
+// npm packaging for the Kotlin/JS CLI: assemble a package + `npm pack` (no live publish).
 val assembleNpmPackage by tasks.registering {
     group = "npm"
     description = "Assemble a publishable npm package for the Kotlin/JS CLI (no publish)."
     dependsOn("compileDevelopmentExecutableKotlinJs")
-    // The Kotlin/JS node output lives under the ROOT project build dir; reading it cross-project
-    // is not compatible with the configuration cache. This task is outside the main build path.
     notCompatibleWithConfigurationCache("Reads the Kotlin/JS node output from the root build dir")
 
     val sourceKotlinDir = rootProject.layout.buildDirectory

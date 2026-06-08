@@ -3,10 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.filesystem
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessJsonPort
 import io.github.emaarco.bpmn.domain.GeneratedJsonFile
 
-/**
- * Node-fs implementation of [SaveProcessJsonPort]. Mirrors the JVM [ProcessJsonFileSaver]:
- * all files are written flat into the output folder.
- */
+/** Node-fs [SaveProcessJsonPort]: all files are written flat into the output folder. */
 class ProcessJsonFileSaver : SaveProcessJsonPort {
 
   private val fs = nodeFs()

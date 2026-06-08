@@ -14,14 +14,9 @@ import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
 import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 
 /**
- * Synchronous, platform-agnostic core of the process-API generation pipeline.
- *
- * It takes already-parsed [BpmnModel]s (parsing is platform-specific and, on JS, asynchronous —
- * see the suspend Zeebe parser in jsMain) and runs the exact same
- * validate -> PRE_MERGE -> merge -> POST_MERGE -> generateCode pipeline used by
- * `GenerateProcessApiInMemoryService`. Keeping it here (outside `application.service`) lets both the
- * JVM in-memory service and the JS suspend entry point share one code path while satisfying the
- * konsist rule that every file in `application.service` is a `*Service` importing one inbound port.
+ * Synchronous, platform-agnostic core of the generation pipeline (validate -> merge -> generate) over
+ * already-parsed models. Lives outside `application.service` to satisfy the konsist rule that every
+ * file there is a `*Service` importing one inbound port.
  */
 object ProcessApiGeneration {
 

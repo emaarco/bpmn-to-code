@@ -1,9 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.emitter
 
-/**
- * Renders a [FileSpec] as a Kotlin source file: file comment, `@file:Suppress`, package,
- * a sorted/deduplicated import block, and the nested object tree. Replaces KotlinPoet.
- */
+/** Renders a [FileSpec] as Kotlin source (replaces KotlinPoet). */
 object KotlinFileEmitter {
 
     private const val KOTLIN_PACKAGE = "kotlin"

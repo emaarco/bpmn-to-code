@@ -10,14 +10,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Cross-target parity gate: the Kotlin/JS bpmn-moddle parser, fed through the shared synchronous
- * [ProcessApiGeneration] core, must produce byte-for-byte the same generated Kotlin API file as the
- * JVM pipeline does for the same fixture (`shared/bpmn/c8-subscribe-newsletter.bpmn`).
- *
- * The JVM reference (`NewsletterSubscriptionProcessApiKotlin.jvm-reference.txt`) was produced by
- * running `ZeebeModelExtractor` + `ProcessApiGeneration` on the JVM for this exact fixture. (The
- * committed `jvmTest` golden `NewsletterSubscriptionProcessApiKotlin.txt` is a *synthetic* codegen
- * fixture with hand-edited names/impls, so it is intentionally NOT used as the parse-parity oracle.)
+ * Cross-target parity gate: the Kotlin/JS parser + [ProcessApiGeneration] must produce byte-for-byte
+ * the JVM reference. (The committed jvmTest golden is a synthetic fixture, so a separate JVM-parse
+ * reference is used as the oracle.)
  */
 class ZeebeParityTest {
 
@@ -42,10 +37,7 @@ class ZeebeParityTest {
     assertEquals(jvmReference, generated.single().content)
   }
 
-  /**
-   * The node test runner's cwd is `<repoRoot>/build/js/packages/...`. Strip everything from
-   * `/build/` onwards to recover the repo root, then read the file via Node `fs`.
-   */
+  // Recover the repo root from the node runner's cwd (<repoRoot>/build/js/packages/...).
   private fun readRepoFile(repoRelativePath: String): String {
     val process = js("process")
     val cwd = process.cwd() as String

@@ -1,9 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.emitter
 
-/**
- * Renders a [FileSpec] as a Java source file: file comment, package, a sorted/deduplicated import
- * block, and the nested `public static final class` tree. Replaces JavaPoet.
- */
+/** Renders a [FileSpec] as Java source (replaces JavaPoet). */
 object JavaFileEmitter {
 
     fun emit(file: FileSpec): String {

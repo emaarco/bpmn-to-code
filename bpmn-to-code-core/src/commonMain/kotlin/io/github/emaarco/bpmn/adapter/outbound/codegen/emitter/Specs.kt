@@ -1,25 +1,17 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.emitter
 
-/**
- * A reference to a (possibly nested) type. [packageName] drives import collection;
- * [simpleName] is the rendered name. [nested] models a member type such as `VariableName.Input`.
- */
+/** A reference to a (possibly nested) type; [packageName] drives import collection. */
 data class ClassRef(
     val packageName: String,
     val simpleName: String,
     val nested: String? = null,
 ) {
-    /** Name as referenced in source: `VariableName.Input` for a nested ref, else `VariableName`. */
     fun referencedName(): String {
         return if (nested != null) "$simpleName.$nested" else simpleName
     }
 }
 
-/**
- * The initializer of a property/field. Either fits on a single line ([single]) or spans several
- * lines ([multi]) — the latter is rendered with the constructor name on the first line and each
- * argument indented beneath it.
- */
+/** The initializer of a property/field: either a single line or several lines. */
 class InitializerSpec private constructor(
     val single: String?,
     val multi: List<String>?,
@@ -35,10 +27,7 @@ class InitializerSpec private constructor(
     }
 }
 
-/**
- * A constant/property declaration. [refs] lists the types this property references so the file
- * emitter can collect imports.
- */
+/** A constant/property declaration; [refs] are the types it references (for import collection). */
 class PropertySpec(
     val name: String,
     val type: ClassRef,

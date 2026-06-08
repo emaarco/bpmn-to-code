@@ -19,11 +19,8 @@ import kotlinx.coroutines.await
 import kotlin.js.Promise
 
 /**
- * Kotlin/JS Zeebe BPMN parser built on bpmn-moddle + zeebe-bpmn-moddle.
- *
- * It mirrors the JVM `ZeebeModelExtractor` against bpmn-moddle's object model so that, for the same
- * XML, it produces an equivalent [BpmnModel]. bpmn-moddle is asynchronous, so the entry point is
- * a `suspend fun`; the downstream generate pipeline ([ProcessApiGeneration]) stays synchronous.
+ * Kotlin/JS Zeebe BPMN parser (bpmn-moddle + zeebe-bpmn-moddle). Mirrors the JVM `ZeebeModelExtractor`
+ * to produce an equivalent [BpmnModel]. Async, hence `suspend`; the generate pipeline stays sync.
  */
 class ZeebeBpmnParser {
 

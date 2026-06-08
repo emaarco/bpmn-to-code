@@ -46,14 +46,12 @@ mavenPlugin {
     dependencies = deps
 }
 
-// The maven-plugin-development plugin detects core (on the compile classpath) as an
-// "upstream project" and tries to read its conventional `main` source set. The KMP core
-// has no such source set, and it contains no Mojos, so drop it from the upstream projects.
+// maven-plugin-development treats the KMP core as an "upstream project" and reads its (non-existent)
+// `main` source set. Core has no Mojos, so drop it from the upstream projects.
 tasks.withType<GenerateMavenPluginDescriptorTask>().configureEach {
     upstreamProjects.set(emptyList())
 }
 
-// Shade the core's JVM compilation output (KMP `jvmJar` contents) into the plugin jar.
 val coreJvmJar = project(":bpmn-to-code-core").tasks.named("jvmJar")
 
 tasks.jar {

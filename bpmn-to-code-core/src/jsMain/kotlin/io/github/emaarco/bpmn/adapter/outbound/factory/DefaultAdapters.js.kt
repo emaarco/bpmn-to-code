@@ -10,11 +10,7 @@ import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessJsonPort
 
-/**
- * bpmn-moddle parses asynchronously, but [ExtractBpmnPort.extract] is synchronous. Kotlin/JS therefore
- * does not implement the sync extract port — use the suspend `ZeebeBpmnParser` instead and feed the
- * resulting models into the synchronous `ProcessApiGeneration` core.
- */
+// bpmn-moddle parses asynchronously, so Kotlin/JS has no sync ExtractBpmnPort: use ZeebeBpmnParser.
 internal actual fun defaultExtractBpmnPort(): ExtractBpmnPort =
   throw UnsupportedOperationException("Kotlin/JS parses BPMN asynchronously; use the suspend parser instead.")
 

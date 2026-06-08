@@ -9,11 +9,8 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
- * JVM half of the cross-target parity gate. Parsing `c8-subscribe-newsletter.bpmn` with the JVM
- * Camunda/Zeebe extractor and running it through the shared [ProcessApiGeneration] core must produce
- * exactly the committed reference file. The Kotlin/JS [ZeebeParityTest] asserts the bpmn-moddle
- * pipeline produces the same reference, so `JVM == reference == JS` proves byte-for-byte
- * cross-target parity (and verifies the reference is the genuine JVM output, not a hand-written file).
+ * JVM half of the cross-target parity gate: the JVM extractor + [ProcessApiGeneration] must produce
+ * the committed reference. The JS [ZeebeParityTest] asserts the same, so JVM == reference == JS.
  */
 class ZeebeParityReferenceTest {
 

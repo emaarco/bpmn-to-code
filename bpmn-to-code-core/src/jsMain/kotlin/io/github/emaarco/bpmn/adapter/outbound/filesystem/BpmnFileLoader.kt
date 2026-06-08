@@ -4,13 +4,8 @@ import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.domain.BpmnResource
 
 /**
- * Best-effort Node-fs implementation of [LoadBpmnFilesPort].
- *
- * It recursively walks [baseDirectory] and returns every regular file whose name matches the
- * suffix of [filePattern] (everything after the last `/`, with a leading `*` treated as a
- * suffix match). This is intentionally simpler than the JVM glob matcher — the JS code-gen entry
- * point typically receives BPMN content directly rather than discovering files — but it compiles,
- * reads real files via `fs`, and handles the common recursive-glob and plain `*.bpmn` cases.
+ * Node-fs [LoadBpmnFilesPort]: recursively walks [baseDirectory] and returns files whose name
+ * matches the suffix of [filePattern]. Simpler than the JVM glob matcher (handles `*.bpmn`-style cases).
  */
 class BpmnFileLoader : LoadBpmnFilesPort {
 

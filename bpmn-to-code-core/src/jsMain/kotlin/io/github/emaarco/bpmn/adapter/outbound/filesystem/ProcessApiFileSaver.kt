@@ -3,10 +3,7 @@ package io.github.emaarco.bpmn.adapter.outbound.filesystem
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 
-/**
- * Node-fs implementation of [SaveProcessApiPort]. Mirrors the JVM [ProcessApiFileSaver]:
- * the package path becomes a nested directory under the output folder.
- */
+/** Node-fs [SaveProcessApiPort]: the package path becomes a nested directory under the output folder. */
 class ProcessApiFileSaver : SaveProcessApiPort {
 
   private val fs = nodeFs()

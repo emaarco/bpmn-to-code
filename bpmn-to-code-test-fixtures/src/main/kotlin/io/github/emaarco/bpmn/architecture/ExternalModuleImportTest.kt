@@ -23,7 +23,7 @@ abstract class ExternalModuleImportTest(private val modulePath: String) {
     )
 
     @Test
-    @Suppress("FunctionNaming") // JUnit test method uses a descriptive backtick name
+    @Suppress("FunctionNaming")
     fun `module only imports domain objects or inbound adapters from core`() {
         Konsist
             .scopeFromProject()

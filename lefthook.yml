@@ -2,8 +2,7 @@ pre-push:
   commands:
     compile:
       glob: "*.{kt,kts}"
-      # `compileKotlin` covers the JVM-only modules; `compileKotlinJvm` covers the
-      # Kotlin Multiplatform core module.
+      # compileKotlinJvm covers the KMP core; compileKotlin the JVM-only modules.
       run: ./gradlew compileKotlin compileKotlinJvm
     coverage:
       glob: "*.{kt,kts}"

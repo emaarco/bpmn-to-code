@@ -18,18 +18,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.promise
 
 /**
- * Node CLI entry point for the Kotlin/JS build, mirroring the JVM Gradle/Maven plugins.
- *
- * Lives OUTSIDE the hexagonal layers (package `cli`, not `adapter.inbound`) because it talks
- * directly to OUTBOUND adapters (loader, parser, savers); the konsist architecture test only
- * permits `adapter.inbound` to depend on the application/domain layers.
- *
- * bpmn-moddle parsing is asynchronous, so `main` launches a coroutine (`GlobalScope.promise`,
- * since `runBlocking` does not exist on Kotlin/JS) and delegates to the `suspend` orchestration
- * functions below, which the smoke test can also invoke directly.
+ * Node CLI for the Kotlin/JS build. Lives outside the hexagonal layers (package `cli`, not
+ * `adapter.inbound`) so it may use outbound adapters directly without breaking the konsist arch test.
  */
 
-/** Parsed CLI arguments. The Zeebe parser is the only JS parser, so the engine is always ZEEBE. */
 data class CliConfig(
   val command: String,
   val baseDir: String = ".",
@@ -42,9 +34,7 @@ data class CliConfig(
 
 @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
-  // Kotlin/JS invokes the generated entry point as `main([])`, so CLI arguments are not handed in
-  // via `args`. Read them straight from Node's `process.argv` (skipping `node` + script path), and
-  // fall back to whatever `args` carries (handy for tests that call `main` directly).
+  // Kotlin/JS calls main([]), so read args from process.argv (falling back to args for direct callers).
   val effectiveArgs = if (args.isNotEmpty()) args else nodeArgv()
   val command = effectiveArgs.firstOrNull()
   val flags = parseFlags(effectiveArgs)
@@ -57,13 +47,11 @@ fun main(args: Array<String>) {
   }
 }
 
-/** Returns Node CLI arguments (everything after `node <script>`), or an empty array off Node. */
 private fun nodeArgv(): Array<String> {
   val argv = js("(typeof process !== 'undefined' && process.argv) ? process.argv.slice(2) : []")
   return argv.unsafeCast<Array<String>>()
 }
 
-/** Dispatches to the requested command. Returns Unit; failures throw or set a non-zero exit code. */
 suspend fun runCommand(command: String?, flags: Map<String, String>) {
   when (command) {
     "generate" -> {
@@ -91,10 +79,6 @@ suspend fun runCommand(command: String?, flags: Map<String, String>) {
   }
 }
 
-/**
- * Loads matching BPMN files, parses each with the suspend Zeebe parser, runs the shared synchronous
- * [ProcessApiGeneration] core, writes the generated API files, and returns their full paths.
- */
 suspend fun runGenerate(config: CliConfig): List<String> {
   val models = parseModels(config)
   val generated = ProcessApiGeneration.generate(
@@ -110,7 +94,6 @@ suspend fun runGenerate(config: CliConfig): List<String> {
   return generated.map { joinPath(config.outputFolderPath, it.packagePath.replace('.', '/'), it.fileName) }
 }
 
-/** Parses each matching BPMN file and writes one JSON file per model; returns their paths. */
 suspend fun runJson(config: CliConfig): List<String> {
   val models = parseModels(config)
   val jsonAdapter = BpmnJsonGenerationAdapter()
@@ -119,7 +102,6 @@ suspend fun runJson(config: CliConfig): List<String> {
   return files.map { joinPath(config.outputFolderPath, it.fileName) }
 }
 
-/** Parses each matching BPMN file and collects PRE_MERGE validation violations across all models. */
 suspend fun runValidate(config: CliConfig): List<ValidationViolation> {
   val models = parseModels(config)
   val validationService = BpmnValidationService(ValidationConfig())
@@ -171,11 +153,10 @@ private fun parseLanguage(value: String?): OutputLanguage {
 
 @Suppress("UNUSED_PARAMETER")
 private fun parseEngine(value: String?): ProcessEngine {
-  // JS supports only the Zeebe parser; accept --processEngine ZEEBE but always resolve to ZEEBE.
+  // JS supports only the Zeebe parser.
   return ProcessEngine.ZEEBE
 }
 
-/** Parses simple `--flag value` pairs. The first positional arg (the command) is ignored here. */
 private fun parseFlags(args: Array<String>): Map<String, String> {
   val flags = mutableMapOf<String, String>()
   var index = 0
@@ -225,7 +206,6 @@ private fun joinPath(vararg parts: String): String {
   return parts.filter { it.isNotEmpty() }.joinToString("/")
 }
 
-/** Sets the Node process exit code without throwing, so any in-flight output is flushed. */
 private fun setExitCode(code: Int) {
   js("process.exitCode = code")
 }

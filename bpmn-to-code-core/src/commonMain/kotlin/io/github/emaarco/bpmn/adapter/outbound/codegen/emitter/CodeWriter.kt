@@ -1,12 +1,6 @@
 package io.github.emaarco.bpmn.adapter.outbound.codegen.emitter
 
-/**
- * Multiplatform replacement for KotlinPoet's / JavaPoet's formatter.
- *
- * A tiny indent-aware writer. Deliberately deterministic: fixed 2-space indent, NO automatic
- * column-wrapping and NO automatic import collection (the two things the poet libraries do that
- * are hard to reproduce byte-for-byte and that the migration plan re-baselines away).
- */
+/** A tiny deterministic indent-aware writer (replaces KotlinPoet/JavaPoet formatting). */
 class CodeWriter(private val indentUnit: String = "  ") {
 
     private val sb = StringBuilder()
@@ -22,7 +16,6 @@ class CodeWriter(private val indentUnit: String = "  ") {
         return this
     }
 
-    /** Appends one indented line (or a blank line when [text] is empty). */
     fun line(text: String = ""): CodeWriter {
         if (text.isEmpty()) {
             sb.append('\n')
