@@ -14,11 +14,11 @@ import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -94,8 +94,7 @@ class KotlinProcessApiBuilderTest {
 
         @OptIn(K1Deprecation::class)
         private val kotlinEnvironment by lazy {
-            val config = CompilerConfiguration()
-            config.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            val config = CompilerConfiguration.create(messageCollector = MessageCollector.NONE)
             KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         }
 
