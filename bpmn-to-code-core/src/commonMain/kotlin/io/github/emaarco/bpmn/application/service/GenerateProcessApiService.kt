@@ -4,17 +4,13 @@ import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
 import io.github.emaarco.bpmn.adapter.outbound.factory.defaultGenerateApiCodePort
 import io.github.emaarco.bpmn.adapter.outbound.factory.defaultLoadBpmnFilesPort
 import io.github.emaarco.bpmn.adapter.outbound.factory.defaultSaveProcessApiPort
+import io.github.emaarco.bpmn.application.ProcessApiGeneration
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
-import io.github.emaarco.bpmn.domain.BpmnFileResult
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.GenerateApiCodePort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
-import io.github.emaarco.bpmn.domain.BpmnModelApi
-import io.github.emaarco.bpmn.domain.ProcessModel
-import io.github.emaarco.bpmn.domain.service.BpmnValidationService
-import io.github.emaarco.bpmn.domain.service.ModelMergerService
-import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
+import io.github.emaarco.bpmn.domain.BpmnFileResult
 
 class GenerateProcessApiService(
     private val codeGenerator: GenerateApiCodePort = defaultGenerateApiCodePort(),
@@ -23,37 +19,22 @@ class GenerateProcessApiService(
     private val fileSystemOutput: SaveProcessApiPort = defaultSaveProcessApiPort(),
 ) : GenerateProcessApiFromFilesystemUseCase {
 
-    private val modelMergerService = ModelMergerService()
-
     override fun generateProcessApi(command: GenerateProcessApiFromFilesystemUseCase.Command): List<BpmnFileResult> {
-        val validationService = BpmnValidationService(command.validationConfig)
         val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
         val models = inputFiles.map { bpmnService.extract(it, command.engine) }
-        validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
-        val mergedModels = modelMergerService.mergeModels(models)
-        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
-        val generatedFiles = mergedModels
-            .flatMap { codeGenerator.generateCode(toBpmnModelApi(it, command)) }
-            .distinctBy { it.packagePath to it.fileName }
+        val generatedFiles = ProcessApiGeneration.generate(
+            models = models,
+            config = ProcessApiGeneration.Config(
+                packagePath = command.packagePath,
+                outputLanguage = command.outputLanguage,
+                engine = command.engine,
+                validationConfig = command.validationConfig,
+            ),
+            codeGenerator = codeGenerator,
+        )
         fileSystemOutput.writeFiles(generatedFiles, command.outputFolderPath)
-        val filesByProcessId = inputFiles.zip(models)
+        return inputFiles.zip(models)
             .groupBy({ (_, model) -> model.processId }, { (file, _) -> file.fileName })
-        return mergedModels.map { model ->
-            BpmnFileResult(
-                processId = model.processId,
-                sourceFiles = filesByProcessId[model.processId] ?: emptyList(),
-            )
-        }
+            .map { (processId, sourceFiles) -> BpmnFileResult(processId = processId, sourceFiles = sourceFiles) }
     }
-
-    private fun toBpmnModelApi(
-        model: ProcessModel,
-        command: GenerateProcessApiFromFilesystemUseCase.Command,
-    ) = BpmnModelApi(
-        model = model,
-        outputLanguage = command.outputLanguage,
-        packagePath = command.packagePath,
-        engine = command.engine,
-    )
-
 }

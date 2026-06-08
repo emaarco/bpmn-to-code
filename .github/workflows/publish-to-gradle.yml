@@ -6,7 +6,9 @@ on:
       dry_run:
         description: 'Dry run (build & verify only, no real publish)'
         type: boolean
-        default: false
+        # Manual dispatch defaults to a dry run so an accidental run cannot publish for real;
+        # the gated publish-all.yml path passes dry_run explicitly.
+        default: true
   workflow_call:
     inputs:
       dry_run:

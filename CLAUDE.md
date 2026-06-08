@@ -14,23 +14,31 @@ bpmn-to-code is a Gradle and Maven plugin that generates type-safe API definitio
 
 ## Architecture
 
+`bpmn-to-code-core` is a **Kotlin Multiplatform** module. Platform-neutral code lives in
+`src/commonMain`; platform adapters live in `src/jvmMain` (Camunda model API, `java.nio`) and
+`src/jsMain` (bpmn-moddle parser, Node `fs`, the npx CLI). Tests are in `src/jvmTest` / `src/jsTest`.
+The JVM targets the Gradle/Maven plugins (Camunda 7 / Operaton / Zeebe); the JS target ships an
+`npx` CLI and is **Zeebe-only**.
+
 The core follows hexagonal architecture with clear separation of concerns:
 
-### Domain Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/`)
-- `BpmnModel.kt`, `BpmnFile.kt`, `BpmnModelApi.kt`: Core domain entities
+### Domain Layer (`bpmn-to-code-core/src/commonMain/kotlin/io/github/emaarco/bpmn/domain/`)
+- `BpmnModel.kt`, `BpmnModelApi.kt`: Core domain entities
 - `shared/`: Common types like `OutputLanguage`, `ProcessEngine`, `ServiceTaskDefinition`
 - `service/ModelMergerService.kt`: Business logic for merging BPMN models
 
-### Application Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/application/`)
-- `port/inbound/GenerateProcessApiUseCase.kt`: Main use case interface
-- `port/outbound/`: Adapter interfaces for external dependencies
-- `service/GenerateProcessApiService.kt`: Use case implementation
+### Application Layer (`bpmn-to-code-core/src/commonMain/kotlin/io/github/emaarco/bpmn/application/`)
+- `port/inbound/`, `port/outbound/`: Use-case and adapter interfaces
+- `service/`: Port-driven use-case implementations
+- `ProcessApiGeneration` / `ProcessJsonGeneration` / `ProcessValidation`: shared synchronous cores
+  (validate → merge → generate) that the services and the JS CLI both delegate to
 
-### Adapter Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/`)
-- `inbound/CreateProcessApiPlugin.kt`: Entry point for plugins
-- `outbound/codegen/`: Code generation adapters with Java/Kotlin builders
-- `outbound/engine/`: BPMN parsing adapters for Camunda 7 and Zeebe
-- `outbound/filesystem/BpmnFileLoader.kt`: File system operations
+### Adapter Layer (`bpmn-to-code-core/src/{commonMain,jvmMain,jsMain}/kotlin/io/github/emaarco/bpmn/adapter/`)
+- `outbound/codegen/`: multiplatform code emitter + Java/Kotlin builders (`commonMain`)
+- `outbound/json/`: JSON descriptor generation (`commonMain`)
+- `outbound/engine/`: BPMN parsing — Camunda model API (`jvmMain`), bpmn-moddle (`jsMain`)
+- `outbound/filesystem/`: file IO — `java.nio` (`jvmMain`), Node `fs` (`jsMain`)
+- `inbound/` (plugins, `jvmMain`) and `cli/` (npx CLI, `jsMain`): entry points
 
 ## Common Commands
 
@@ -46,8 +54,8 @@ lefthook install
 # Build entire project
 ./gradlew build
 
-# Run tests for specific module
-./gradlew :bpmn-to-code-core:test
+# Run tests for the core (KMP — runs JVM and JS)
+./gradlew :bpmn-to-code-core:allTests
 
 # Run all tests
 ./gradlew test
@@ -88,7 +96,7 @@ Follow **TDD** when planning and implementing changes: update the domain model f
 
 ### Verify After Each Task
 
-After completing each discrete task (e.g., a phase in a plan, a refactor step, a bug fix), run a Gradle build on the affected modules to confirm compilation and tests still pass. Use targeted module builds (e.g., `./gradlew :bpmn-to-code-core:test`) rather than a full project build when only specific modules were changed.
+After completing each discrete task (e.g., a phase in a plan, a refactor step, a bug fix), run a Gradle build on the affected modules to confirm compilation and tests still pass. Use targeted module builds (e.g., `./gradlew :bpmn-to-code-core:allTests`) rather than a full project build when only specific modules were changed.
 
 ### Always Consider Testing Impact
 
@@ -100,7 +108,7 @@ When making code changes, always think about the testing implications:
 - **Update test fixtures** (like expected output files) when generation logic changes
 
 Example: When modifying code generators (e.g., `KotlinApiBuilder`), remember to:
-1. Update the corresponding expected output files in `src/test/resources/`
+1. Update the corresponding expected output files in `src/jvmTest/resources/`
 2. Run the specific test suite to verify the changes
 3. Check if other builders or tests are affected
 

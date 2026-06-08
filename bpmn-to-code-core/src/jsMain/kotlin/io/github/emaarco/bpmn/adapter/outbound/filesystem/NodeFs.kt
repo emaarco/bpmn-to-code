@@ -13,12 +13,12 @@ internal external interface NodePath {
   fun join(vararg parts: String): String
 }
 
-// useEsModules() means no `require` global at runtime; createRequire gives a working one.
+// useEsModules() emits ESM with no `require` global (and any bundler-injected `require` is a no-op
+// anchored at the wrong place). Always build one with module.createRequire, anchored at THIS module's
+// URL, so npm dependencies resolve against the installed package's node_modules under any layout
+// (npm hoisted, pnpm, nested).
 internal fun nodeRequire(): (String) -> dynamic {
-  val req = js(
-    "(typeof require !== 'undefined') ? require : " +
-      "process.getBuiltinModule('module').createRequire(process.cwd() + '/')"
-  )
+  val req = js("process.getBuiltinModule('module').createRequire(import.meta.url)")
   return { id: String -> req(id) }
 }
 

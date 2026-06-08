@@ -4,15 +4,14 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.ZeebeBpmnParser
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.BpmnFileLoader
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
 import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessJsonFileSaver
-import io.github.emaarco.bpmn.adapter.outbound.json.BpmnJsonGenerationAdapter
 import io.github.emaarco.bpmn.application.ProcessApiGeneration
+import io.github.emaarco.bpmn.application.ProcessJsonGeneration
+import io.github.emaarco.bpmn.application.ProcessValidation
 import io.github.emaarco.bpmn.domain.BpmnModel
-import io.github.emaarco.bpmn.domain.service.BpmnValidationService
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.validation.model.Severity
 import io.github.emaarco.bpmn.domain.validation.model.ValidationConfig
-import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.promise
@@ -41,7 +40,7 @@ fun main(args: Array<String>) {
   GlobalScope.promise {
     runCommand(command, flags)
   }.catch { error ->
-    println("Error: ${error.message}")
+    printErr("Error: ${error.message}")
     setExitCode(1)
     null
   }
@@ -96,20 +95,21 @@ suspend fun runGenerate(config: CliConfig): List<String> {
 
 suspend fun runJson(config: CliConfig): List<String> {
   val models = parseModels(config)
-  val jsonAdapter = BpmnJsonGenerationAdapter()
-  val files = models.map { jsonAdapter.generateJson(it) }
+  val files = ProcessJsonGeneration.generate(models, config.engine)
   ProcessJsonFileSaver().writeFiles(files, config.outputFolderPath)
   return files.map { joinPath(config.outputFolderPath, it.fileName) }
 }
 
 suspend fun runValidate(config: CliConfig): List<ValidationViolation> {
   val models = parseModels(config)
-  val validationService = BpmnValidationService(ValidationConfig())
-  return validationService.collectViolations(models, config.engine, ValidationPhase.PRE_MERGE)
+  return ProcessValidation.validate(models, config.engine).violations
 }
 
 private suspend fun parseModels(config: CliConfig): List<BpmnModel> {
   val resources = BpmnFileLoader().loadFrom(config.baseDir, config.filePattern)
+  if (resources.isEmpty()) {
+    printErr("Warning: no BPMN files matched '${config.filePattern}' under '${config.baseDir}'.")
+  }
   val parser = ZeebeBpmnParser()
   return resources.map { parser.parse(it.content.decodeToString()) }
 }
@@ -151,9 +151,11 @@ private fun parseLanguage(value: String?): OutputLanguage {
   }
 }
 
-@Suppress("UNUSED_PARAMETER")
 private fun parseEngine(value: String?): ProcessEngine {
-  // JS supports only the Zeebe parser.
+  // JS supports only the Zeebe parser; reject other engines rather than silently using Zeebe.
+  require(value == null || value.uppercase() == "ZEEBE") {
+    "Kotlin/JS supports only --processEngine ZEEBE (got '$value')."
+  }
   return ProcessEngine.ZEEBE
 }
 
@@ -208,4 +210,8 @@ private fun joinPath(vararg parts: String): String {
 
 private fun setExitCode(code: Int) {
   js("process.exitCode = code")
+}
+
+private fun printErr(message: String) {
+  js("console.error(message)")
 }

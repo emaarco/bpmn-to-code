@@ -25,6 +25,11 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.junit.jupiter.api.Test
 import java.io.File
 
+/**
+ * Drives the Kotlin builder from hand-built (synthetic) flow nodes, so its golden files under
+ * `api/` are deliberately NOT a real parse of any BPMN fixture. Cross-target parse parity uses a
+ * separate oracle — see `ZeebeParityReferenceTest` and the `...jvm-reference.txt` resource.
+ */
 class KotlinProcessApiBuilderTest {
 
     private val underTest = KotlinProcessApiBuilder()

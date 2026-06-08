@@ -2,13 +2,10 @@ package io.github.emaarco.bpmn.application.service
 
 import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
 import io.github.emaarco.bpmn.adapter.outbound.factory.defaultLoadBpmnFilesPort
+import io.github.emaarco.bpmn.application.ProcessValidation
 import io.github.emaarco.bpmn.application.port.inbound.ValidateBpmnFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
 import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
-import io.github.emaarco.bpmn.domain.service.BpmnValidationService
-import io.github.emaarco.bpmn.domain.service.ModelMergerService
-import io.github.emaarco.bpmn.domain.validation.model.Severity
-import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
 
 class ValidateBpmnService(
@@ -16,18 +13,9 @@ class ValidateBpmnService(
     private val bpmnService: ExtractBpmnPort = defaultExtractBpmnPort(),
 ) : ValidateBpmnFromFilesystemUseCase {
 
-    private val modelMergerService = ModelMergerService()
-
     override fun validateBpmn(command: ValidateBpmnFromFilesystemUseCase.Command): ValidationResult {
-        val validationService = BpmnValidationService(command.validationConfig)
         val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
         val models = inputFiles.map { bpmnService.extract(it, command.engine) }
-        val preMergeViolations = validationService.collectViolations(models, command.engine, ValidationPhase.PRE_MERGE)
-        if (preMergeViolations.any { it.severity == Severity.ERROR }) {
-            return ValidationResult(preMergeViolations)
-        }
-        val mergedModels = modelMergerService.mergeModels(models)
-        val postMergeViolations = validationService.collectViolations(mergedModels, command.engine, ValidationPhase.POST_MERGE)
-        return ValidationResult(preMergeViolations + postMergeViolations)
+        return ProcessValidation.validate(models, command.engine, command.validationConfig)
     }
 }

@@ -153,6 +153,9 @@ val assembleNpmPackage by tasks.registering {
     val packageVersion = version.toString()
     val packageName = "@emaarco/bpmn-to-code"
     outputs.dir(outDir)
+    // The compiled JS lives in the root build dir (cross-project), so it can't be declared as a
+    // tracked input here; always re-assemble so the package never ships a stale bundle/version.
+    outputs.upToDateWhen { false }
 
     doLast {
         outDir.deleteRecursively()
