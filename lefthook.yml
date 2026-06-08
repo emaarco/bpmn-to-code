@@ -2,7 +2,9 @@ pre-push:
   commands:
     compile:
       glob: "*.{kt,kts}"
-      run: ./gradlew compileKotlin
+      # `compileKotlin` covers the JVM-only modules; `compileKotlinJvm` covers the
+      # Kotlin Multiplatform core module.
+      run: ./gradlew compileKotlin compileKotlinJvm
     coverage:
       glob: "*.{kt,kts}"
       run: ./gradlew :bpmn-to-code-core:jacocoTestCoverageVerification

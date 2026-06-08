@@ -49,16 +49,27 @@ dependencies {
     compileOnly(project(":bpmn-to-code-core"))
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.testing)
-    testImplementation(testFixtures(project(":bpmn-to-code-core")))
+    // Core is shaded into the plugin jar at runtime, but the unit tests instantiate the
+    // plugin directly and therefore need core on the test runtime classpath. This was
+    // previously pulled in transitively via the core test-fixtures dependency.
+    testImplementation(project(":bpmn-to-code-core"))
+    testImplementation(project(":bpmn-to-code-test-fixtures"))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
+// The core is now a Kotlin Multiplatform module; shade its JVM compilation output
+// (the `jvmJar` contents) into the plugin jar instead of the old `sourceSets.main` output.
+val coreJvmJar = project(":bpmn-to-code-core").tasks.named("jvmJar")
+
 tasks.jar {
-    from(project(":bpmn-to-code-core").sourceSets.main.get().output)
+    dependsOn(coreJvmJar)
+    from({ zipTree(coreJvmJar.get().outputs.files.singleFile) }) {
+        exclude("META-INF/MANIFEST.MF")
+    }
 }
 
 tasks.named<PluginUnderTestMetadata>("pluginUnderTestMetadata") {
-    pluginClasspath.from(project(":bpmn-to-code-core").sourceSets.main.get().output)
+    pluginClasspath.from(coreJvmJar)
 }
 
 tasks.named<Test>("test") {

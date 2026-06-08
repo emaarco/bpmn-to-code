@@ -1,3 +1,5 @@
+import org.gradlex.maven.plugin.development.task.GenerateMavenPluginDescriptorTask
+
 plugins {
     `maven-publish`
     alias(libs.plugins.kotlin.jvm)
@@ -33,7 +35,7 @@ dependencies {
     implementation(libs.mavenPluginAnnotations)
     testImplementation(project(":bpmn-to-code-core"))
     testImplementation(libs.bundles.testing)
-    testImplementation(testFixtures(project(":bpmn-to-code-core")))
+    testImplementation(project(":bpmn-to-code-test-fixtures"))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
@@ -45,9 +47,21 @@ mavenPlugin {
     dependencies = deps
 }
 
-// Configure the jar task to include output from the core module.
+// The maven-plugin-development plugin detects core (on the compile classpath) as an
+// "upstream project" and tries to read its conventional `main` source set. The KMP core
+// has no such source set, and it contains no Mojos, so drop it from the upstream projects.
+tasks.withType<GenerateMavenPluginDescriptorTask>().configureEach {
+    upstreamProjects.set(emptyList())
+}
+
+// Shade the core's JVM compilation output (KMP `jvmJar` contents) into the plugin jar.
+val coreJvmJar = project(":bpmn-to-code-core").tasks.named("jvmJar")
+
 tasks.jar {
-    from(project(":bpmn-to-code-core").sourceSets.main.get().output)
+    dependsOn(coreJvmJar)
+    from({ zipTree(coreJvmJar.get().outputs.files.singleFile) }) {
+        exclude("META-INF/MANIFEST.MF")
+    }
 }
 
 

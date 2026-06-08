@@ -20,7 +20,7 @@ dependencies {
     implementation(libs.ktorServerNetty)
 
     testImplementation(libs.bundles.testing)
-    testImplementation(testFixtures(project(":bpmn-to-code-core")))
+    testImplementation(project(":bpmn-to-code-test-fixtures"))
     testRuntimeOnly(libs.junitPlatformLauncher)
 }
 

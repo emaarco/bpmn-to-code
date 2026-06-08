@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.mavenPublish) apply false
     alias(libs.plugins.detekt) apply false
 }

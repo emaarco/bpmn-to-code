@@ -45,6 +45,7 @@ kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serializati
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
+kotlinLoggingMultiplatform = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging" }
 mcpKotlinSdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpKotlinSdk" }
 
 # Testing dependencies
@@ -61,6 +62,7 @@ ktor = ["ktorServerCore", "ktorServerNetty", "ktorServerContentNegotiation", "kt
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 gradlePluginPublish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
 mavenPluginDevelopment = { id = "org.gradlex.maven-plugin-development", version = "1.0.3" }
