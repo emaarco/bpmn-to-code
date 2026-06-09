@@ -27,13 +27,21 @@ class EngineMismatchRuleTest {
 
     @Test
     fun `no violation when the detected engine matches the selected engine`() {
+
+        // given: a model whose detected engine matches the selected one
         val model = testBpmnModel(detectedEngine = ProcessEngine.ZEEBE)
+
+        // when / then: no violation is reported
         assertThat(underTest.validate(ValidationContext(model = model, engine = ProcessEngine.ZEEBE))).isEmpty()
     }
 
     @Test
     fun `warns when the source engine could not be detected`() {
+
+        // given: a model whose target engine could not be determined
         val model = testBpmnModel(detectedEngine = null)
+
+        // when / then: a single engine-mismatch WARN is produced
         val violations = underTest.validate(ValidationContext(model = model, engine = ProcessEngine.CAMUNDA_7))
         assertThat(violations).hasSize(1)
         assertThat(violations[0].ruleId).isEqualTo("engine-mismatch")
