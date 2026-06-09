@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.2.0](https://github.com/emaarco/bpmn-to-code/compare/v2.1.2...v2.2.0) (2026-06-09)
+
+
+### Features
+
+* detect engine mismatch and add engine-matched demo samples ([#365](https://github.com/emaarco/bpmn-to-code/issues/365)) ([3018bdb](https://github.com/emaarco/bpmn-to-code/commit/3018bdbfa3ff029cd52966d53c881dfc18663b4f))
+
+
+### Bug Fixes
+
+* tolerate engine-mismatched models in Zeebe extractor instead of crashing ([#367](https://github.com/emaarco/bpmn-to-code/issues/367)) ([475d109](https://github.com/emaarco/bpmn-to-code/commit/475d1096374404f197cd30517c10f2526dec0c0a))
+
 ## [2.1.2](https://github.com/emaarco/bpmn-to-code/compare/v2.1.1...v2.1.2) (2026-05-29)
 
 
