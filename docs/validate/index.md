@@ -21,7 +21,7 @@ bpmn-to-code can validate your BPMN models against a set of built-in rules — i
 | `empty-process` | ERROR | Process with no flow nodes |
 | `invalid-identifier` | WARN | Element ID that produces an invalid UPPER_SNAKE_CASE identifier in the generated API |
 | `collision-detection` | ERROR | Two different element IDs that normalize to the same constant name (post-merge) |
-| `engine-mismatch` | ERROR / WARN | Model's target engine (detected from its XML namespace) doesn't match the selected one — ERROR on a clear mismatch (e.g. a Zeebe model generated for Camunda 7), WARN when the engine can't be determined |
+| `engine-mismatch` | ERROR / WARN | Model's target engine (from its XML namespace) differs from the selected one |
 
 ## Gradle
 
