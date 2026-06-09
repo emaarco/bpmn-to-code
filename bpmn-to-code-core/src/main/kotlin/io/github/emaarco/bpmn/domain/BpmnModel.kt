@@ -7,6 +7,7 @@ import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.shared.SequenceFlowDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.SignalDefinition
@@ -23,6 +24,7 @@ data class BpmnModel(
     override val errors: List<ErrorDefinition>,
     override val escalations: List<EscalationDefinition> = emptyList(),
     override val compensations: List<CompensationDefinition> = emptyList(),
+    val detectedEngine: ProcessEngine? = null,
 ) : ProcessModel {
     override val serviceTasks: List<ServiceTaskDefinition>
         get() = flowNodes.mapNotNull { (it.properties as? FlowNodeProperties.ServiceTask)?.definition }

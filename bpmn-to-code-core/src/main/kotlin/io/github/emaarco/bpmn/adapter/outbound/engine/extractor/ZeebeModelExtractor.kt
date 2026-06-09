@@ -24,6 +24,7 @@ import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
 import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
+import io.github.emaarco.bpmn.adapter.outbound.engine.EngineDetector
 import io.github.emaarco.bpmn.adapter.outbound.engine.SecureBpmnParser
 import io.github.emaarco.bpmn.domain.shared.VariableDirection
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
@@ -66,6 +67,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             errors = allErrorEvents,
             escalations = allEscalationEvents,
             compensations = allCompensationEvents,
+            detectedEngine = EngineDetector.detect(bytes.decodeToString()),
         )
     }
 

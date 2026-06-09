@@ -83,12 +83,27 @@
                     <span class="upload-hint">.bpmn files only</span>
                 </label>
             </div>
-            <div class="sample-divider"><span>or</span></div>
-            <button class="btn btn-secondary sample-btn" id="try-sample-btn" type="button">
-                Try with Newsletter Sample
-            </button>
+            <div class="sample-divider"><span>or try a newsletter sample</span></div>
+            <div class="sample-btn-group">
+                <button class="btn btn-secondary sample-btn" type="button"
+                        data-sample-engine="ZEEBE" data-sample-file="c8-subscribe-newsletter.bpmn">
+                    Zeebe (Camunda 8)
+                </button>
+                <button class="btn btn-secondary sample-btn" type="button"
+                        data-sample-engine="CAMUNDA_7" data-sample-file="c7-subscribe-newsletter.bpmn">
+                    Camunda 7
+                </button>
+                <button class="btn btn-secondary sample-btn" type="button"
+                        data-sample-engine="OPERATON" data-sample-file="operaton-subscribe-newsletter.bpmn">
+                    Operaton
+                </button>
+            </div>
             <div class="file-list" id="file-list"></div>
             <div class="bpmn-viewer-container" id="bpmn-viewer-container" style="display: none;">
+                <div class="bpmn-viewer-header">
+                    <span class="bpmn-viewer-title">Model Preview</span>
+                    <span class="bpmn-viewer-hint">Rendered from the selected BPMN file</span>
+                </div>
                 <div id="bpmn-canvas"></div>
             </div>
         </section>

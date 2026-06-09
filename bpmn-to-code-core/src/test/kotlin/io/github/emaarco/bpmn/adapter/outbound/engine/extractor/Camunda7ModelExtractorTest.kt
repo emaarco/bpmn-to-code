@@ -17,6 +17,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition.Companion.IMPL
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDirection
+import io.github.emaarco.bpmn.domain.shared.ProcessEngine
 import io.github.emaarco.bpmn.domain.testSubscribeNewsletterBpmnModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -48,6 +49,7 @@ class Camunda7ModelExtractorTest {
         assertThat(bpmnModel).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(
             testSubscribeNewsletterBpmnModel(
                 variantName = "withApproval",
+                detectedEngine = ProcessEngine.CAMUNDA_7,
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",

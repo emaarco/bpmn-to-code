@@ -56,6 +56,18 @@ val copyLibrarySources by tasks.registering(Copy::class) {
     include("*.kt")
 }
 
+// Bundle one engine-specific newsletter example per engine for the demo
+val copyExampleModels by tasks.registering(Copy::class) {
+    from(rootProject.layout.projectDirectory.dir("shared/bpmn")) {
+        include(
+            "c8-subscribe-newsletter.bpmn",
+            "c7-subscribe-newsletter.bpmn",
+            "operaton-subscribe-newsletter.bpmn",
+        )
+    }
+    into(layout.buildDirectory.dir("generated/resources/examples/examples"))
+}
+
 val generateLibrarySourcesManifest by tasks.registering {
     dependsOn(copyLibrarySources)
     val outputDir = layout.buildDirectory.dir("generated/resources/library-sources/library-sources")
@@ -72,10 +84,11 @@ val generateLibrarySourcesManifest by tasks.registering {
 
 sourceSets.main {
     resources.srcDir(layout.buildDirectory.dir("generated/resources/library-sources"))
+    resources.srcDir(layout.buildDirectory.dir("generated/resources/examples"))
 }
 
 tasks.named("processResources") {
-    dependsOn(generateLibrarySourcesManifest)
+    dependsOn(generateLibrarySourcesManifest, copyExampleModels)
 }
 
 application {

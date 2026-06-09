@@ -90,8 +90,8 @@ fun Application.configureApp(
         // Serve static files (frontend)
         staticResources("/static", "static")
 
-        // Serve sample BPMN files
-        staticResources("/samples", "samples")
+        // Serve the engine-specific example BPMN files
+        staticResources("/examples", "examples")
 
         // Root redirects to static index.html
         get("/") {
