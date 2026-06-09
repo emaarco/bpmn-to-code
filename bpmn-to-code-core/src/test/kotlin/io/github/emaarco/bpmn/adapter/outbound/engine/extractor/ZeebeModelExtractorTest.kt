@@ -220,4 +220,20 @@ class ZeebeModelExtractorTest {
         )
     }
 
+    @Test
+    fun `extract stays tolerant and leaves a call activity without calledElement for later validation`() {
+
+        // given: a Camunda 7 model with a call activity and no zeebe:calledElement
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+
+        // when: extracting the mismatched model
+        val bpmnModel = underTest.extract(file.readBytes())
+
+        // then: extraction does not validate or fail here
+        val callActivity = bpmnModel.callActivities.single { it.id == "CallActivity_AbortRegistration" }
+        assertThat(callActivity.hasCalledElement()).isFalse()
+        assertThat(bpmnModel.detectedEngine).isEqualTo(ProcessEngine.CAMUNDA_7)
+    }
+
 }

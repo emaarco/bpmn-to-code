@@ -110,7 +110,7 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         return callActivities.map { activity ->
             val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            val processId = extension.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
+            val processId = extension?.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
             CallActivityDefinition(elementId, processId)
         }
     }
