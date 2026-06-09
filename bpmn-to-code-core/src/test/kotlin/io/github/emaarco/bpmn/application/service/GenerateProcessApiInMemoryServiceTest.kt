@@ -7,11 +7,13 @@ import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 import io.github.emaarco.bpmn.domain.shared.OutputLanguage
 import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.github.emaarco.bpmn.domain.validation.BpmnValidationException
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 class GenerateProcessApiInMemoryServiceTest {
@@ -57,6 +59,30 @@ class GenerateProcessApiInMemoryServiceTest {
         assertThat(result).hasSize(1)
         assertThat(result[0]).isEqualTo(expectedGeneratedFile)
         confirmVerified(codeGenerator, bpmnService)
+    }
+
+    @Test
+    fun `service rejects a model that targets a different engine before generating`() {
+
+        // given: a model detected as Camunda 7 but generation requested for Operaton
+        val bpmnInput = GenerateProcessApiInMemoryUseCase.BpmnInput(
+            bpmnXml = "<bpmn>camunda</bpmn>",
+            processName = "newsletter.bpmn"
+        )
+        every { bpmnService.extract(any(), any()) } returns dummyModel.copy(detectedEngine = ProcessEngine.CAMUNDA_7)
+        val command = GenerateProcessApiInMemoryUseCase.Command(
+            bpmnContents = listOf(bpmnInput),
+            packagePath = "com.example",
+            outputLanguage = OutputLanguage.KOTLIN,
+            engine = ProcessEngine.OPERATON
+        )
+
+        // when / then: it fails with a single engine-mismatch error and never generates code
+        assertThatThrownBy { underTest.generateProcessApi(command) }
+            .isInstanceOf(BpmnValidationException::class.java)
+            .extracting("violations")
+            .matches { (it as List<*>).size == 1 }
+        verify(exactly = 0) { codeGenerator.generateCode(any()) }
     }
 
     private val dummyModel = BpmnModel(

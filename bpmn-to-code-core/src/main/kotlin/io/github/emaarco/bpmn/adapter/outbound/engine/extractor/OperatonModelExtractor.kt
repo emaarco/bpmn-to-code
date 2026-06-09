@@ -28,6 +28,7 @@ import io.github.emaarco.bpmn.domain.shared.ServiceTaskDefinition
 import io.github.emaarco.bpmn.domain.shared.TimerDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDefinition
 import io.github.emaarco.bpmn.domain.shared.VariableDirection
+import io.github.emaarco.bpmn.adapter.outbound.engine.EngineDetector
 import io.github.emaarco.bpmn.adapter.outbound.engine.SecureBpmnParser
 import io.github.emaarco.bpmn.domain.utils.StringUtils.removeExpressionSyntax
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants
@@ -80,6 +81,7 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             errors = errors,
             escalations = escalations,
             compensations = compensations,
+            detectedEngine = EngineDetector.detect(bytes.decodeToString()),
         )
     }
 

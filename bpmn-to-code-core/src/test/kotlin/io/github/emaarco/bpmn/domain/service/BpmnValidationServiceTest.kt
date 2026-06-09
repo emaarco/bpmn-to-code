@@ -21,8 +21,8 @@ class BpmnValidationServiceTest {
     @Test
     fun `valid model passes all pre-merge rules`() {
 
-        // given: a valid BPMN model
-        val model = testBpmnModel()
+        // given: a valid BPMN model whose detected engine matches the selected one
+        val model = testBpmnModel(detectedEngine = ProcessEngine.ZEEBE)
 
         // when / then: no exception is thrown
         assertDoesNotThrow { underTest.validate(listOf(model), ProcessEngine.ZEEBE, ValidationPhase.PRE_MERGE) }

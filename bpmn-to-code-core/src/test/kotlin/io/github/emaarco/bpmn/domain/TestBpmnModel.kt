@@ -32,6 +32,7 @@ fun testBpmnModel(
     errors: List<ErrorDefinition> = listOf(ErrorDefinition(id = "errorId", name = "errorName", code = "errorCode")),
     escalations: List<EscalationDefinition> = emptyList(),
     compensations: List<CompensationDefinition> = emptyList(),
+    detectedEngine: ProcessEngine? = null,
 ) = BpmnModel(
     processId = processId,
     variantName = variantName,
@@ -42,6 +43,7 @@ fun testBpmnModel(
     errors = errors,
     escalations = escalations,
     compensations = compensations,
+    detectedEngine = detectedEngine,
 )
 
 fun testBpmnModelApi(
@@ -163,6 +165,7 @@ fun testSubscribeNewsletterBpmnModel(
         CompensationDefinition("CompensationEndEvent_RegistrationAborted", CompensationType.THROWING),
         CompensationDefinition("CompensationEvent_OnSubscriptionCounter", CompensationType.CATCHING),
     ),
+    detectedEngine: ProcessEngine? = null,
 ) = testBpmnModel(
     processId = processId,
     variantName = variantName,
@@ -173,6 +176,7 @@ fun testSubscribeNewsletterBpmnModel(
     errors = errors,
     escalations = escalations,
     compensations = compensations,
+    detectedEngine = detectedEngine,
 )
 
 fun testSendNewsletterBpmnModel(

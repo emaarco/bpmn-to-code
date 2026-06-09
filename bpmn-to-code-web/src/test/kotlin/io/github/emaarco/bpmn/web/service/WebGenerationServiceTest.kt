@@ -70,6 +70,58 @@ class WebGenerationServiceTest {
     }
 
     @Test
+    fun `should reject a model whose target engine does not match the selected engine`() {
+
+        // given: a Zeebe model but Camunda 7 selected (the demo's original failure mode)
+        val request = GenerateRequest(
+            files = listOf(
+                GenerateRequest.BpmnFileData(
+                    fileName = "c8-subscribe-newsletter.bpmn",
+                    content = loadBpmnBase64("bpmn/c8-subscribe-newsletter.bpmn"),
+                )
+            ),
+            config = GenerateRequest.GenerationConfig(
+                outputLanguage = OutputLanguage.KOTLIN,
+                processEngine = ProcessEngine.CAMUNDA_7,
+            )
+        )
+
+        // when: generating the API
+        val response = underTest.generate(request)
+
+        // then: the engine-mismatch error is reported (collected alongside any other problems)
+        assertThat(response.success).isFalse()
+        assertThat(response.files).isEmpty()
+        assertThat(response.error)
+            .contains("engine-mismatch", "targets Zeebe (Camunda 8)", "selected engine is Camunda 7")
+    }
+
+    @Test
+    fun `should reject a Camunda 7 model when Operaton is selected`() {
+
+        // given: a Camunda 7 model but Operaton selected (the reported case)
+        val request = GenerateRequest(
+            files = listOf(
+                GenerateRequest.BpmnFileData(
+                    fileName = "c7-subscribe-newsletter.bpmn",
+                    content = loadBpmnBase64("bpmn/c7-subscribe-newsletter.bpmn"),
+                )
+            ),
+            config = GenerateRequest.GenerationConfig(
+                outputLanguage = OutputLanguage.KOTLIN,
+                processEngine = ProcessEngine.OPERATON,
+            )
+        )
+
+        // when: generating the API
+        val response = underTest.generate(request)
+
+        // then: surfaced as an engine-mismatch error, not a swallowed warning
+        assertThat(response.success).isFalse()
+        assertThat(response.error).contains("targets Camunda 7", "selected engine is Operaton")
+    }
+
+    @Test
     fun `should handle invalid Base64 content gracefully`() {
 
         // given: a request with invalid Base64 content

@@ -72,7 +72,6 @@ function setupEventListeners() {
     const fileInput = document.getElementById('file-input');
     const uploadArea = document.getElementById('upload-area');
     const configForm = document.getElementById('config-form');
-    const trySampleBtn = document.getElementById('try-sample-btn');
 
     fileInput.addEventListener('change', handleFileSelect);
 
@@ -95,7 +94,8 @@ function setupEventListeners() {
     });
 
     configForm.addEventListener('submit', handleGenerate);
-    trySampleBtn.addEventListener('click', loadSample);
+    document.querySelectorAll('.sample-btn').forEach(btn =>
+        btn.addEventListener('click', () => loadSample(btn)));
 
     document.getElementById('download-all-btn').addEventListener('click', downloadAllAsZip);
     document.getElementById('reset-btn').addEventListener('click', resetGeneration);
@@ -203,29 +203,32 @@ async function renderBpmnDiagram(xml) {
     console.warn('Could not fit viewport, diagram rendered at default zoom');
 }
 
-async function loadSample() {
-    const trySampleBtn = document.getElementById('try-sample-btn');
+async function loadSample(button) {
+    const engine = button.dataset.sampleEngine;
+    const fileName = button.dataset.sampleFile;
+    const originalText = button.textContent;
     try {
-        trySampleBtn.disabled = true;
-        trySampleBtn.textContent = 'Loading...';
+        button.disabled = true;
+        button.textContent = 'Loading...';
 
-        const response = await fetch('/samples/c8-newsletter.bpmn');
+        const response = await fetch(`/examples/${fileName}`);
         if (!response.ok) throw new Error('Failed to fetch sample');
         const xml = await response.text();
 
         const blob = new Blob([xml], { type: 'application/xml' });
-        const file = new File([blob], 'c8-newsletter.bpmn', { type: 'application/xml' });
+        const file = new File([blob], fileName, { type: 'application/xml' });
 
         state.files = [];
         addFiles([file]);
 
-        document.getElementById('process-engine').value = 'ZEEBE';
+        // Keep the engine in sync with the chosen sample so generation never mismatches.
+        document.getElementById('process-engine').value = engine;
 
     } catch (err) {
         showError('Failed to load sample: ' + err.message);
     } finally {
-        trySampleBtn.disabled = false;
-        trySampleBtn.textContent = 'Try with Newsletter Sample';
+        button.disabled = false;
+        button.textContent = originalText;
     }
 }
 

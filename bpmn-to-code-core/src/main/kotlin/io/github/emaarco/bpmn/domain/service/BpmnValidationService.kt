@@ -10,6 +10,7 @@ import io.github.emaarco.bpmn.domain.validation.model.ValidationPhase
 import io.github.emaarco.bpmn.domain.validation.model.ValidationViolation
 import io.github.emaarco.bpmn.domain.validation.rules.CollisionDetectionRule
 import io.github.emaarco.bpmn.domain.validation.rules.EmptyProcessRule
+import io.github.emaarco.bpmn.domain.validation.rules.EngineMismatchRule
 import io.github.emaarco.bpmn.domain.validation.rules.InvalidIdentifierRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingCalledElementRule
 import io.github.emaarco.bpmn.domain.validation.rules.MissingElementIdRule
@@ -69,6 +70,7 @@ class BpmnValidationService(
     companion object {
 
         private fun builtInRules() = listOf(
+            EngineMismatchRule(),
             MissingServiceTaskImplementationRule(),
             MissingMessageNameRule(),
             MissingErrorDefinitionRule(),

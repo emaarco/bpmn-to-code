@@ -36,9 +36,9 @@ class ValidateBpmnServiceTest {
     @Test
     fun `valid model returns empty result`() {
 
-        // given: a valid model
+        // given: a valid model whose detected engine matches the selected one
         every { bpmnFileLoader.loadFrom(any(), any()) } returns listOf(dummyResource)
-        every { bpmnExtractor.extract(any(), any()) } returns testBpmnModel()
+        every { bpmnExtractor.extract(any(), any()) } returns testBpmnModel(detectedEngine = ProcessEngine.ZEEBE)
 
         // when: validateBpmn is called
         val result = underTest.validateBpmn(command)
