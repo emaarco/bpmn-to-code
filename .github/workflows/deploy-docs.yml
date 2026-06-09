@@ -1,9 +1,5 @@
 name: Deploy Documentation
 
-# Docs ship as part of the orchestrated release pipeline (publish-all.yml), which
-# calls this workflow after the release approval gate. The standalone
-# `release: published` trigger was removed so docs no longer deploy as a second,
-# ungated reaction to a release. `workflow_dispatch` remains for manual redeploys.
 on:
   workflow_dispatch:
     inputs:
