@@ -14,24 +14,33 @@ bpmn-to-code is a Gradle and Maven plugin that generates type-safe API definitio
 
 ## Architecture
 
-`bpmn-to-code-core` is a **Kotlin Multiplatform** module. Platform-neutral code lives in
-`src/commonMain`; platform adapters live in `src/jvmMain` (Camunda model API, `java.nio`) and
-`src/jsMain` (bpmn-moddle parser, Node `fs`, the npx CLI). Tests are in `src/jvmTest` / `src/jsTest`.
-The JVM targets the Gradle/Maven plugins (Camunda 7 / Operaton / Zeebe); the JS target ships an
-`npx` CLI and is **Zeebe-only**.
+`bpmn-to-code-core` is a **Kotlin Multiplatform** module. The guiding rule:
 
-The core follows hexagonal architecture with clear separation of concerns:
+> **`commonMain` is the pure, platform-agnostic generation engine** (BPMN domain model →
+> code / JSON / validation, with no IO and no parsing). **Each platform brings its own parser,
+> filesystem and entry point on top.** Because `commonMain` never calls platform code, there is
+> **no `expect`/`actual`** in this module.
 
-### Domain Layer (`bpmn-to-code-core/src/commonMain/kotlin/io/github/emaarco/bpmn/domain/`)
+- **`commonMain`** — domain, the synchronous generation cores, the code/JSON emitter.
+- **`jvmMain`** — the Gradle/Maven plugins' hexagon: the use-case services + their inbound/extract
+  ports, Camunda parsing (Camunda 7 / Operaton / Zeebe), and `java.nio` filesystem.
+- **`jsMain`** — a thin Node CLI: a bpmn-moddle parser, Node `fs` adapters, and the `cli` that calls
+  the common cores directly. **Zeebe-only.**
+
+Tests are in `src/jvmTest` / `src/jsTest`.
+
+### Domain Layer (`commonMain/.../domain/`)
 - `BpmnModel.kt`, `BpmnModelApi.kt`: Core domain entities
 - `shared/`: Common types like `OutputLanguage`, `ProcessEngine`, `ServiceTaskDefinition`
-- `service/ModelMergerService.kt`: Business logic for merging BPMN models
+- `service/ModelMergerService.kt`, `service/BpmnValidationService.kt`: merge + validation logic
 
-### Application Layer (`bpmn-to-code-core/src/commonMain/kotlin/io/github/emaarco/bpmn/application/`)
-- `port/inbound/`, `port/outbound/`: Use-case and adapter interfaces
-- `service/`: Port-driven use-case implementations
-- `ProcessApiGeneration` / `ProcessJsonGeneration` / `ProcessValidation`: shared synchronous cores
-  (validate → merge → generate) that the services and the JS CLI both delegate to
+### Application Layer
+- `commonMain/.../application/`: the synchronous cores `ProcessApiGeneration` /
+  `ProcessJsonGeneration` / `ProcessValidation` (validate → merge → generate, over already-parsed
+  models) + the `GenerateApiCodePort` / `GenerateJsonPort` they use.
+- `jvmMain/.../application/`: the port-driven use-case `service/`s + their `port/inbound/` and the
+  synchronous `ExtractBpmnPort`. The JS CLI does not use these — it calls the common cores directly
+  (bpmn-moddle parses asynchronously).
 
 ### Adapter Layer (`bpmn-to-code-core/src/{commonMain,jvmMain,jsMain}/kotlin/io/github/emaarco/bpmn/adapter/`)
 - `outbound/codegen/`: multiplatform code emitter + Java/Kotlin builders (`commonMain`)

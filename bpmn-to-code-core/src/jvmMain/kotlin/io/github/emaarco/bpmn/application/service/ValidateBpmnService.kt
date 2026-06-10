@@ -1,7 +1,7 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultLoadBpmnFilesPort
+import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
+import io.github.emaarco.bpmn.adapter.outbound.filesystem.BpmnFileLoader
 import io.github.emaarco.bpmn.application.ProcessValidation
 import io.github.emaarco.bpmn.application.port.inbound.ValidateBpmnFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
@@ -9,8 +9,8 @@ import io.github.emaarco.bpmn.application.port.outbound.LoadBpmnFilesPort
 import io.github.emaarco.bpmn.domain.validation.ValidationResult
 
 class ValidateBpmnService(
-    private val bpmnFileLoader: LoadBpmnFilesPort = defaultLoadBpmnFilesPort(),
-    private val bpmnService: ExtractBpmnPort = defaultExtractBpmnPort(),
+    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
 ) : ValidateBpmnFromFilesystemUseCase {
 
     override fun validateBpmn(command: ValidateBpmnFromFilesystemUseCase.Command): ValidationResult {

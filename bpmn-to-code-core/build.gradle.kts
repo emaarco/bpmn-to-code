@@ -93,7 +93,6 @@ private val coverageExclusions = listOf(
     "**/domain/validation/model/**",
     "**/adapter/outbound/engine/constants/**",
     "**/adapter/outbound/engine/extractor/*ImplementationKind*",
-    "**/adapter/outbound/factory/**",
     "**/adapter/outbound/json/model/**",
     "**/application/port/**",
     "**/*\$DefaultImpls*",

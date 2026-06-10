@@ -1,8 +1,8 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultLoadBpmnFilesPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultSaveProcessJsonPort
+import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
+import io.github.emaarco.bpmn.adapter.outbound.filesystem.BpmnFileLoader
+import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessJsonFileSaver
 import io.github.emaarco.bpmn.adapter.outbound.json.BpmnJsonGenerationAdapter
 import io.github.emaarco.bpmn.application.ProcessJsonGeneration
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessJsonFromFilesystemUseCase
@@ -13,9 +13,9 @@ import io.github.emaarco.bpmn.application.port.outbound.SaveProcessJsonPort
 
 class GenerateProcessJsonService(
     private val jsonGenerator: GenerateJsonPort = BpmnJsonGenerationAdapter(),
-    private val bpmnFileLoader: LoadBpmnFilesPort = defaultLoadBpmnFilesPort(),
-    private val bpmnExtractor: ExtractBpmnPort = defaultExtractBpmnPort(),
-    private val fileSaver: SaveProcessJsonPort = defaultSaveProcessJsonPort(),
+    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(),
+    private val bpmnExtractor: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val fileSaver: SaveProcessJsonPort = ProcessJsonFileSaver(),
 ) : GenerateProcessJsonFromFilesystemUseCase {
 
     override fun generateProcessJson(command: GenerateProcessJsonFromFilesystemUseCase.Command) {

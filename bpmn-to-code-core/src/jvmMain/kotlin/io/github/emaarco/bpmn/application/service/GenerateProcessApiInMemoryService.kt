@@ -1,7 +1,7 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultGenerateApiCodePort
+import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
+import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.application.ProcessApiGeneration
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiInMemoryUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
@@ -10,8 +10,8 @@ import io.github.emaarco.bpmn.domain.BpmnResource
 import io.github.emaarco.bpmn.domain.GeneratedApiFile
 
 class GenerateProcessApiInMemoryService(
-    private val codeGenerator: GenerateApiCodePort = defaultGenerateApiCodePort(),
-    private val bpmnService: ExtractBpmnPort = defaultExtractBpmnPort(),
+    private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
 ) : GenerateProcessApiInMemoryUseCase {
 
     override fun generateProcessApi(

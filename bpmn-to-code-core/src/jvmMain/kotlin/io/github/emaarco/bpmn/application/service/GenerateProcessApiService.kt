@@ -1,9 +1,9 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultGenerateApiCodePort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultLoadBpmnFilesPort
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultSaveProcessApiPort
+import io.github.emaarco.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
+import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
+import io.github.emaarco.bpmn.adapter.outbound.filesystem.BpmnFileLoader
+import io.github.emaarco.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
 import io.github.emaarco.bpmn.application.ProcessApiGeneration
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
 import io.github.emaarco.bpmn.application.port.outbound.ExtractBpmnPort
@@ -13,10 +13,10 @@ import io.github.emaarco.bpmn.application.port.outbound.SaveProcessApiPort
 import io.github.emaarco.bpmn.domain.BpmnFileResult
 
 class GenerateProcessApiService(
-    private val codeGenerator: GenerateApiCodePort = defaultGenerateApiCodePort(),
-    private val bpmnFileLoader: LoadBpmnFilesPort = defaultLoadBpmnFilesPort(),
-    private val bpmnService: ExtractBpmnPort = defaultExtractBpmnPort(),
-    private val fileSystemOutput: SaveProcessApiPort = defaultSaveProcessApiPort(),
+    private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
+    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val fileSystemOutput: SaveProcessApiPort = ProcessApiFileSaver(),
 ) : GenerateProcessApiFromFilesystemUseCase {
 
     override fun generateProcessApi(command: GenerateProcessApiFromFilesystemUseCase.Command): List<BpmnFileResult> {

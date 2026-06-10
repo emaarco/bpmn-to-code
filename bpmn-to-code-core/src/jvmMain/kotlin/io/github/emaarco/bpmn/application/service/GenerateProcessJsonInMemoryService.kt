@@ -1,6 +1,6 @@
 package io.github.emaarco.bpmn.application.service
 
-import io.github.emaarco.bpmn.adapter.outbound.factory.defaultExtractBpmnPort
+import io.github.emaarco.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
 import io.github.emaarco.bpmn.adapter.outbound.json.BpmnJsonGenerationAdapter
 import io.github.emaarco.bpmn.application.ProcessJsonGeneration
 import io.github.emaarco.bpmn.application.port.inbound.GenerateProcessJsonInMemoryUseCase
@@ -11,7 +11,7 @@ import io.github.emaarco.bpmn.domain.GeneratedJsonFile
 
 class GenerateProcessJsonInMemoryService(
     private val jsonGenerator: GenerateJsonPort = BpmnJsonGenerationAdapter(),
-    private val bpmnExtractor: ExtractBpmnPort = defaultExtractBpmnPort(),
+    private val bpmnExtractor: ExtractBpmnPort = ExtractBpmnAdapter(),
 ) : GenerateProcessJsonInMemoryUseCase {
 
     override fun generateProcessJson(
