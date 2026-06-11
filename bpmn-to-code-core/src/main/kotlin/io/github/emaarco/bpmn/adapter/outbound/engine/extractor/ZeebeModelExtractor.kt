@@ -114,15 +114,15 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
             val calledElement = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
             val processId = calledElement?.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
             val ioMappings = activity.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING)
+            val propagateAllInput = calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_PARENT)
+            val propagateAllOutput = calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_CHILD)
             CallActivityDefinition(
                 id = elementId,
                 calledElement = processId,
                 mappings = extractCallActivityMappings(ioMappings),
                 engineSpecificProperties = buildMap {
-                    calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_PARENT)
-                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
-                    calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_CHILD)
-                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
+                    propagateAllInput?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
+                    propagateAllOutput?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
                 },
             )
         }
@@ -134,10 +134,10 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
 
     private fun extractCallActivityMappings(ioMappings: List<ModelElementInstance>): List<CallActivityMapping> {
         val elements = ioMappings.flatMap { it.domElement.childElements }
-        val inputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_INPUT }
-            .mapNotNull { it.toCallActivityMapping(VariableDirection.INPUT) }
-        val outputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_OUTPUT }
-            .mapNotNull { it.toCallActivityMapping(VariableDirection.OUTPUT) }
+        val rawInputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_INPUT }
+        val inputs = rawInputs.mapNotNull { it.toCallActivityMapping(VariableDirection.INPUT) }
+        val rawOutputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_OUTPUT }
+        val outputs = rawOutputs.mapNotNull { it.toCallActivityMapping(VariableDirection.OUTPUT) }
         return inputs + outputs
     }
 

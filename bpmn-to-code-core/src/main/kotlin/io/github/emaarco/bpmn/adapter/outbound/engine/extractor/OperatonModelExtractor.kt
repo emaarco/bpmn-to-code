@@ -150,15 +150,15 @@ class OperatonModelExtractor : EngineSpecificExtractor {
             val id = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
             val calledElement = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
             val extensions = activity.findExtensionElements()
+            val propagateAllInput = extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_IN)
+            val propagateAllOutput = extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
             CallActivityDefinition(
                 id = id,
                 calledElement = calledElement,
                 mappings = extractCallActivityMappings(extensions),
                 engineSpecificProperties = buildMap {
-                    extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_IN)
-                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
-                    extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
-                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
+                    propagateAllInput?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
+                    propagateAllOutput?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
                 },
             )
         }
@@ -167,10 +167,10 @@ class OperatonModelExtractor : EngineSpecificExtractor {
     private fun extractCallActivityMappings(
         extensions: List<ModelElementInstance>
     ): List<CallActivityMapping> {
-        val inputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
-            .mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.INPUT) }
-        val outputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
-            .mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.OUTPUT) }
+        val rawInputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
+        val inputs = rawInputs.mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.INPUT) }
+        val rawOutputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
+        val outputs = rawOutputs.mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.OUTPUT) }
         return inputs + outputs
     }
 
