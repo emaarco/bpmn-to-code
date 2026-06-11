@@ -15,6 +15,8 @@ object ZeebeModelConstants {
 
     const val ATTRIBUTE_PROCESS_ID = "processId"
     const val ATTRIBUTE_CORRELATION_KEY = "correlationKey"
+    const val ATTRIBUTE_PROPAGATE_PARENT = "propagateAllParentVariables"
+    const val ATTRIBUTE_PROPAGATE_CHILD = "propagateAllChildVariables"
     const val ATTRIBUTE_TARGET = "target"
     const val ATTRIBUTE_SOURCE = "source"
     const val ATTRIBUTE_INPUT_ELEMENT = "inputElement"

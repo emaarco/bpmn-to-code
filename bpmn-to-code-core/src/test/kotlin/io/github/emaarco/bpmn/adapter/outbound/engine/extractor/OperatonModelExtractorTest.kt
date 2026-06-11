@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CallActivityMapping
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
@@ -53,7 +54,12 @@ class OperatonModelExtractorTest {
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
-                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
+                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration",
+                            mappings = listOf(
+                                CallActivityMapping(VariableDirection.INPUT, source = "subscriptionId", target = "childSubscriptionId"),
+                                CallActivityMapping(VariableDirection.INPUT, sourceExpression = "\${reasonCode}", target = "childReasonCode"),
+                                CallActivityMapping(VariableDirection.OUTPUT, source = "childAbortResult", target = "abortResult"),
+                            ))),
                         variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "subscriptionId"), VariableDefinition("reasonCode", VariableDirection.INPUT, "\${reasonCode}"), VariableDefinition("abortResult", VariableDirection.OUTPUT, "abortResult")),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted"),

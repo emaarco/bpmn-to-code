@@ -18,6 +18,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.e
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CallActivityMapping
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_AFTER_KEY
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition.Companion.ASYNC_BEFORE_KEY
@@ -142,11 +143,50 @@ class Camunda7ModelExtractor : EngineSpecificExtractor {
 
     private fun findCallActivities(modelInstance: ModelInstance): List<CallActivityDefinition> {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
-        return callActivities.map {
-            val id = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val calledElement = it.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            CallActivityDefinition(id, calledElement)
+        return callActivities.map { activity ->
+            val id = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
+            val calledElement = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
+            val extensions = activity.findExtensionElements()
+            CallActivityDefinition(
+                id = id,
+                calledElement = calledElement,
+                mappings = extractCallActivityMappings(extensions),
+                engineSpecificProperties = buildMap {
+                    extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_IN)
+                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
+                    extractPropagateAll(extensions, BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
+                        ?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
+                },
+            )
         }
+    }
+
+    private fun extractCallActivityMappings(
+        extensions: List<ModelElementInstance>
+    ): List<CallActivityMapping> {
+        val inputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_IN)
+            .mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.INPUT) }
+        val outputs = extensions.filterByType(BpmnModelConstants.CAMUNDA_ELEMENT_OUT)
+            .mapNotNull { it.domElement.toCallActivityMapping(VariableDirection.OUTPUT) }
+        return inputs + outputs
+    }
+
+    private fun DomElement.toCallActivityMapping(direction: VariableDirection): CallActivityMapping? {
+        val source = getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE)?.takeIf { it.isNotBlank() }
+        val sourceExpression = getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_SOURCE_EXPRESSION)?.takeIf { it.isNotBlank() }
+        val target = getAttribute(BpmnModelConstants.CAMUNDA_ATTRIBUTE_TARGET)?.takeIf { it.isNotBlank() }
+        if (source == null && sourceExpression == null && target == null) return null
+        return CallActivityMapping(direction, source, sourceExpression, target)
+    }
+
+    private fun extractPropagateAll(
+        extensions: List<ModelElementInstance>,
+        elementType: String,
+    ): Boolean? {
+        val hasAll = extensions.filterByType(elementType).any {
+            it.domElement.getAttribute(CamundaModelConstants.VARIABLES_ATTRIBUTE) == CamundaModelConstants.VARIABLES_ALL_VALUE
+        }
+        return if (hasAll) true else null
     }
 
     private fun getServiceTaskTypes(modelInstance: ModelInstance): List<ServiceTaskDefinition> {
