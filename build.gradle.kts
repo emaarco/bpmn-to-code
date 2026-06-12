@@ -37,35 +37,32 @@ subprojects {
         targetCompatibility = "21"
     }
 
-    // Common JaCoCo configuration for all modules except MCP.
-    // Each module declares the jacoco plugin in its own plugins {} block to ensure
-    // classDirectories is properly wired to compileKotlin task outputs.
-    if (name != "bpmn-to-code-mcp") {
-        plugins.withId("jacoco") {
-            tasks.withType<Test>().configureEach {
-                finalizedBy(tasks.named("jacocoTestReport"))
-            }
+    // Common JaCoCo configuration. Each module declares the jacoco plugin in its own
+    // plugins {} block to ensure classDirectories is properly wired to compileKotlin task outputs.
+    plugins.withId("jacoco") {
+        tasks.withType<Test>().configureEach {
+            finalizedBy(tasks.named("jacocoTestReport"))
+        }
 
-            tasks.withType<JacocoReport>().configureEach {
-                dependsOn(tasks.withType<Test>())
-                reports {
-                    xml.required.set(true)
-                    html.required.set(true)
-                }
+        tasks.withType<JacocoReport>().configureEach {
+            dependsOn(tasks.withType<Test>())
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
             }
+        }
 
-            tasks.withType<JacocoCoverageVerification>().configureEach {
-                // Explicit dependency on compilation so Gradle's implicit-dependency
-                // validation passes when classDirectories is rebuilt from compiled output.
-                dependsOn(tasks.withType<AbstractCompile>())
-                violationRules {
-                    rule {
-                        element = "CLASS"
-                        limit {
-                            counter = "LINE"
-                            value = "COVEREDRATIO"
-                            minimum = "0.75".toBigDecimal()
-                        }
+        tasks.withType<JacocoCoverageVerification>().configureEach {
+            // Explicit dependency on compilation so Gradle's implicit-dependency
+            // validation passes when classDirectories is rebuilt from compiled output.
+            dependsOn(tasks.withType<AbstractCompile>())
+            violationRules {
+                rule {
+                    element = "CLASS"
+                    limit {
+                        counter = "LINE"
+                        value = "COVEREDRATIO"
+                        minimum = "0.75".toBigDecimal()
                     }
                 }
             }

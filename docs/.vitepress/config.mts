@@ -72,7 +72,6 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/surface/' },
           { text: 'JSON Export', link: '/surface/json' },
-          { text: 'MCP Server', link: '/mcp/' },
         ],
       },
       {

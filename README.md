@@ -150,7 +150,6 @@ dependencies {
 - 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) — Gradle Plugin
 - 🌐 [Web App](https://bpmn-to-code.miragon.io/static/index.html) — Try in browser, no installation
 - 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Self-hostable container
-- 🤖 [MCP Server](bpmn-to-code-mcp/README.md) — AI-assisted generation inside your editor
 
 ## Project Structure
 
@@ -159,7 +158,6 @@ dependencies {
 - **bpmn-to-code-maven** — Maven plugin
 - **bpmn-to-code-testing** — BPMN architecture testing library
 - **bpmn-to-code-web** — browser-based web app
-- **bpmn-to-code-mcp** — MCP server for AI-assisted generation
 
 ## Contributing
 

@@ -156,7 +156,7 @@ Run:
 
 ## Using the JSON with AI
 
-The JSON is designed for use with AI coding assistants. Paste it into your assistant's context (or stream it via the [MCP Server](/mcp/)) and ask questions about your process:
+The JSON is designed for use with AI coding assistants. Paste it into your assistant's context and ask questions about your process:
 
 - "Which service tasks in this process are async?"
 - "What variables does the `Activity_SendConfirmationMail` task receive?"

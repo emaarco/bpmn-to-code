@@ -71,7 +71,7 @@ import { ideTabs, generateCompare, surfaceCompare, validateRules, skills } from 
       <div class="problem-intro">
         <span class="pillar-badge context"><span class="num">3</span>Surface <span class="eyebrow">&middot; context for your AI &middot; in beta</span></span>
         <h2>Agents can&rsquo;t read your <span class="grad-ctx">.bpmn file.</span></h2>
-        <p>Raw BPMN is 80% rendering metadata &mdash; shapes, bounds, waypoints. Agents waste context on pixels instead of process logic. bpmn-to-code emits a semantic JSON model built for AI context, not for diagrams, and exposes it over an MCP server your agent can query directly.</p>
+        <p>Raw BPMN is 80% rendering metadata &mdash; shapes, bounds, waypoints. Agents waste context on pixels instead of process logic. bpmn-to-code emits a semantic JSON model built for AI context, not for diagrams, that your agent can read directly.</p>
         <a class="pillar-link" :href="withBase('/surface/')">Read the JSON surface spec <span class="arrow">&rarr;</span></a>
       </div>
       <CompareCards
