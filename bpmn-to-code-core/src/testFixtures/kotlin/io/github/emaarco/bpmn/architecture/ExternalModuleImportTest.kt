@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
  * - `io.github.emaarco.bpmn.domain.*` — domain objects
  * - `io.github.emaarco.bpmn.adapter.inbound.*` — inbound adapters (the public API surface)
  *
- * Extend this class in each plugin module (Gradle, Maven, Web, MCP) and pass the module
+ * Extend this class in each plugin module (Gradle, Maven, Web) and pass the module
  * directory name as [modulePath]. The test will then be scoped to that module's source files.
  *
  * Note: `bpmn-to-code-testing` is excluded — it is a BPMN parsing utility library that

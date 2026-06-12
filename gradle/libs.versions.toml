@@ -13,7 +13,6 @@ mockk = "1.14.11"
 ktor = "3.5.0"
 kotlinxSerialization = "1.11.0"
 logback = "1.5.34"
-mcpKotlinSdk = "0.13.0"
 shadow = "9.4.2"
 slf4j = "2.0.18"
 kotlinLogging = "8.0.4"
@@ -45,7 +44,6 @@ kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serializati
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
-mcpKotlinSdk = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpKotlinSdk" }
 
 # Testing dependencies
 konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }

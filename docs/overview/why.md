@@ -136,7 +136,7 @@ Use the toolkit for deterministic generation and validation. Use AI for everythi
 - **Scaffolding** worker implementations, REST controllers, and test boilerplate from the generated Process API.
 - **Understanding** a process — feed the JSON export to your coding assistant and ask questions about it.
 
-Thus, bpmn-to-code ships with [AI Skills](/skills/) that automate these workflows and an [MCP Server](/mcp/) for AI-assisted generation inside your editor. Both are optional — the build plugins work standalone.
+Thus, bpmn-to-code ships with [AI Skills](/skills/) that automate these workflows. They are optional — the build plugins work standalone.
 
 ## How to Get Started
 
@@ -147,6 +147,5 @@ The generation engine is the same everywhere. Pick the format that fits your wor
 | **Gradle plugin** | JVM projects using Gradle | Java, Kotlin | [Setup guide](/getting-started/gradle) |
 | **Maven plugin** | JVM projects using Maven | Java, Kotlin | [Setup guide](/getting-started/maven) |
 | **Web app** | Trying it out, one-off generation, non-JVM projects | Java, Kotlin | [Web app](/web/) |
-| **MCP server** | AI-assisted generation inside your editor | Java, Kotlin | [MCP Server](/mcp/) |
 
 Output languages may diverge across formats in the future — the Web app is the natural place to add non-JVM languages, since there is no JVM build integration constraining the toolchain.
