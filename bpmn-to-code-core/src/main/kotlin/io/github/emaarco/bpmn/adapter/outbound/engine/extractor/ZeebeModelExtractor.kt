@@ -19,6 +19,7 @@ import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.e
 import io.github.emaarco.bpmn.adapter.outbound.engine.utils.ModelInstanceUtils.getProcessId
 import io.github.emaarco.bpmn.domain.BpmnModel
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CallActivityMapping
 import io.github.emaarco.bpmn.domain.shared.FlowNodeDefinition
 import io.github.emaarco.bpmn.domain.shared.FlowNodeProperties
 import io.github.emaarco.bpmn.domain.shared.MessageDefinition
@@ -33,6 +34,7 @@ import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Message
 import org.camunda.bpm.model.bpmn.instance.MultiInstanceLoopCharacteristics
 import org.camunda.bpm.model.xml.ModelInstance
+import org.camunda.bpm.model.xml.instance.DomElement
 import org.camunda.bpm.model.xml.instance.ModelElementInstance
 class ZeebeModelExtractor : EngineSpecificExtractor {
 
@@ -109,10 +111,40 @@ class ZeebeModelExtractor : EngineSpecificExtractor {
         val callActivities = modelInstance.getModelElementsByType(CallActivity::class.java)
         return callActivities.map { activity ->
             val elementId = activity.getAttributeValue(BpmnModelConstants.BPMN_ATTRIBUTE_ID)
-            val extension = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
-            val processId = extension?.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
-            CallActivityDefinition(elementId, processId)
+            val calledElement = activity.findExtensionElement(BpmnModelConstants.BPMN_ATTRIBUTE_CALLED_ELEMENT)
+            val processId = calledElement?.getAttributeValue(ZeebeModelConstants.ATTRIBUTE_PROCESS_ID)
+            val ioMappings = activity.findExtensionElementsWithType(ZeebeModelConstants.ELEMENT_IO_MAPPING)
+            val propagateAllInput = calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_PARENT)
+            val propagateAllOutput = calledElement?.propagateFlag(ZeebeModelConstants.ATTRIBUTE_PROPAGATE_CHILD)
+            CallActivityDefinition(
+                id = elementId,
+                calledElement = processId,
+                mappings = extractCallActivityMappings(ioMappings),
+                engineSpecificProperties = buildMap {
+                    propagateAllInput?.let { put(CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY, it) }
+                    propagateAllOutput?.let { put(CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY, it) }
+                },
+            )
         }
+    }
+
+    private fun ModelElementInstance.propagateFlag(attribute: String): Boolean? {
+        return getAttributeValue(attribute)?.takeIf { it.isNotBlank() }?.toBooleanStrictOrNull()
+    }
+
+    private fun extractCallActivityMappings(ioMappings: List<ModelElementInstance>): List<CallActivityMapping> {
+        val elements = ioMappings.flatMap { it.domElement.childElements }
+        val rawInputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_INPUT }
+        val inputs = rawInputs.mapNotNull { it.toCallActivityMapping(VariableDirection.INPUT) }
+        val rawOutputs = elements.filter { it.localName == ZeebeModelConstants.ELEMENT_OUTPUT }
+        val outputs = rawOutputs.mapNotNull { it.toCallActivityMapping(VariableDirection.OUTPUT) }
+        return inputs + outputs
+    }
+
+    private fun DomElement.toCallActivityMapping(direction: VariableDirection): CallActivityMapping? {
+        val target = getAttribute(ZeebeModelConstants.ATTRIBUTE_TARGET)?.takeIf { it.isNotBlank() } ?: return null
+        val source = getAttribute(ZeebeModelConstants.ATTRIBUTE_SOURCE)?.takeIf { it.isNotBlank() }
+        return CallActivityMapping(direction, source = source, sourceExpression = null, target = target)
     }
 
     private fun findServiceTasks(modelInstance: ModelInstance): List<ServiceTaskDefinition> {

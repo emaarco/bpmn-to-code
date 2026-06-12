@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CallActivityMapping
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
@@ -53,7 +54,12 @@ class Camunda7ModelExtractorTest {
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
-                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
+                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration",
+                            mappings = listOf(
+                                CallActivityMapping(VariableDirection.INPUT, source = "subscriptionId", target = "childSubscriptionId"),
+                                CallActivityMapping(VariableDirection.INPUT, sourceExpression = "\${reasonCode}", target = "childReasonCode"),
+                                CallActivityMapping(VariableDirection.OUTPUT, source = "childAbortResult", target = "abortResult"),
+                            ))),
                         variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "subscriptionId"), VariableDefinition("reasonCode", VariableDirection.INPUT, "\${reasonCode}"), VariableDefinition("abortResult", VariableDirection.OUTPUT, "abortResult")),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted"),
@@ -162,6 +168,20 @@ class Camunda7ModelExtractorTest {
     }
 
     @Test
+    fun `extract captures call-activity input and output mapping targets`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
+        val bpmnModel = underTest.extract(File(resourceUrl.toURI()).readBytes())
+        val callActivity = bpmnModel.callActivities.single { it.id == "CallActivity_AbortRegistration" }
+        assertThat(callActivity.inputMappings).containsExactlyInAnyOrder(
+            CallActivityMapping(VariableDirection.INPUT, source = "subscriptionId", target = "childSubscriptionId"),
+            CallActivityMapping(VariableDirection.INPUT, sourceExpression = "\${reasonCode}", target = "childReasonCode"),
+        )
+        assertThat(callActivity.outputMappings).containsExactly(
+            CallActivityMapping(VariableDirection.OUTPUT, source = "childAbortResult", target = "abortResult"),
+        )
+    }
+
+    @Test
     fun `extract returns variantName from process-level extension properties`() {
         val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
         val file = File(resourceUrl.toURI())
@@ -263,5 +283,44 @@ class Camunda7ModelExtractorTest {
         assertThat(flowsById["Flow_1gsz7wd"]).isEqualTo(
             SequenceFlowDefinition("Flow_1gsz7wd", "gateway_hasSubscribers", "endEvent_noSubscribers", flowName = "No", conditionExpression = "\${subscribers.size() > 0}")
         )
+    }
+
+    @Test
+    fun `extract captures propagate-all and keeps named mappings alongside variables=all`() {
+        val xml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                              xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                              targetNamespace="http://bpmn.io/schema/bpmn">
+              <bpmn:process id="propagate-all-process" isExecutable="true">
+                <bpmn:callActivity id="CallActivity_PropagateAll" name="Propagate all" calledElement="child-process">
+                  <bpmn:extensionElements>
+                    <camunda:in source="orderId" target="businessKey" />
+                    <camunda:in variables="all" />
+                    <camunda:out variables="all" />
+                  </bpmn:extensionElements>
+                </bpmn:callActivity>
+              </bpmn:process>
+            </bpmn:definitions>
+        """.trimIndent()
+
+        val bpmnModel = underTest.extract(xml.toByteArray())
+
+        val callActivity = bpmnModel.callActivities.single()
+        assertThat(callActivity.propagateAllInputVariables).isTrue()
+        assertThat(callActivity.propagateAllOutputVariables).isTrue()
+        assertThat(callActivity.inputMappings).containsExactly(
+            CallActivityMapping(VariableDirection.INPUT, source = "orderId", target = "businessKey")
+        )
+    }
+
+    @Test
+    fun `extract leaves propagate-all null when variables=all is not declared`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c7-subscribe-newsletter.bpmn"))
+        val file = File(resourceUrl.toURI())
+        val bpmnModel = underTest.extract(file.readBytes())
+        val callActivity = bpmnModel.callActivities.single { it.id == "CallActivity_AbortRegistration" }
+        assertThat(callActivity.propagateAllInputVariables).isNull()
+        assertThat(callActivity.propagateAllOutputVariables).isNull()
     }
 }

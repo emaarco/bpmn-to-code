@@ -169,6 +169,65 @@ BpmnValidator
     .assertNoViolations()
 ```
 
+## Asserting Call-Activity Variable Mappings
+
+Call activities expose their input/output variable mappings via `CallActivityDefinition.mappings`,
+with `inputMappings` / `outputMappings` helpers. Each `CallActivityMapping` keeps **both** sides of
+the mapping — the `source` (or `sourceExpression`) and the `target` — so you can assert on the name a
+variable gets inside the called process. For example, requiring every call activity to pass a
+`businessKey` and `correlationKey`:
+
+```kotlin
+class RequireCallActivityInputsRule(private val required: Set<String>) : BpmnValidationRule {
+
+    override val id = "call-activity-required-inputs"
+    override val severity = Severity.ERROR
+
+    override fun validate(context: ValidationContext): List<ValidationViolation> {
+        return context.model.callActivities.flatMap { callActivity ->
+            val declaredTargets = callActivity.inputMappings.mapNotNull { it.target }.toSet()
+            (required - declaredTargets).map { missing ->
+                ValidationViolation(
+                    ruleId = id,
+                    severity = severity,
+                    elementId = callActivity.id,
+                    processId = context.model.processId,
+                    message = "Call activity '${callActivity.id}' must pass '$missing' to the called process.",
+                )
+            }
+        }
+    }
+}
+```
+
+```kotlin
+BpmnValidator
+    .fromClasspath("bpmn/")
+    .engine(ProcessEngine.CAMUNDA_7)
+    .withRules(RequireCallActivityInputsRule(setOf("businessKey", "correlationKey")))
+    .validate()
+    .assertNoViolations()
+```
+
+::: tip Engine differences
+For **Camunda 7 / Operaton** (`camunda:in` / `camunda:out`), `source` is a plain variable name and
+`sourceExpression` holds a `${...}` expression. For **Zeebe** (`zeebe:input` / `zeebe:output`),
+`source` is a FEEL expression (e.g. `=orderId`) and `sourceExpression` is always `null`. The `target`
+— the name inside the called process — is populated the same way for all engines.
+
+The "pass all variables" mode (`variables="all"` / `propagateAll{Parent,Child}Variables`) is exposed
+separately via `propagateAllInputVariables` / `propagateAllOutputVariables`, which are tri-state:
+
+| Value | Meaning |
+|-------|---------|
+| `true` | The model explicitly enables pass-all (Camunda 7 / Operaton `variables="all"`; Zeebe `propagateAll…="true"`). |
+| `false` | The model explicitly disables it. **Zeebe only** — Camunda 7 / Operaton have no attribute to express this, so they never report `false`. |
+| `null` | Not declared in the model. |
+
+For a rule that should behave the same across engines, test `!= true` to mean "does not pass all
+variables" (this treats Camunda's "not declared" and Zeebe's explicit `false` alike).
+:::
+
 ::: tip ValidationContext
-`context.model` gives you the full `BpmnModel` — flow nodes, service tasks, messages, signals, errors, timers, and variables. `context.engine` tells you which engine was selected, so you can write engine-specific rules.
+`context.model` gives you the full `BpmnModel` — flow nodes, service tasks, call activities, messages, signals, errors, timers, and variables. `context.engine` tells you which engine was selected, so you can write engine-specific rules.
 :::

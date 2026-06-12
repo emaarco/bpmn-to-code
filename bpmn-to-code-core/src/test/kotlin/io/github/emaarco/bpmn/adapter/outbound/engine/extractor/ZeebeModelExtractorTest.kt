@@ -2,6 +2,7 @@ package io.github.emaarco.bpmn.adapter.outbound.engine.extractor
 
 import io.github.emaarco.bpmn.domain.shared.BpmnElementType
 import io.github.emaarco.bpmn.domain.shared.CallActivityDefinition
+import io.github.emaarco.bpmn.domain.shared.CallActivityMapping
 import io.github.emaarco.bpmn.domain.shared.CompensationDefinition
 import io.github.emaarco.bpmn.domain.shared.CompensationType
 import io.github.emaarco.bpmn.domain.shared.EscalationDefinition
@@ -50,7 +51,14 @@ class ZeebeModelExtractorTest {
                 flowNodes = listOf(
                     FlowNodeDefinition("CallActivity_AbortRegistration", BpmnElementType.CALL_ACTIVITY,
                         displayName = "Abort registration",
-                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration")),
+                        properties = FlowNodeProperties.CallActivity(CallActivityDefinition("CallActivity_AbortRegistration", "abort-registration",
+                            mappings = listOf(
+                                CallActivityMapping(VariableDirection.INPUT, source = "=subscriptionId", target = "subscriptionId"),
+                            ),
+                            engineSpecificProperties = mapOf(
+                                CallActivityDefinition.PROPAGATE_ALL_INPUT_KEY to false,
+                                CallActivityDefinition.PROPAGATE_ALL_OUTPUT_KEY to false,
+                            ))),
                         variables = listOf(VariableDefinition("subscriptionId", VariableDirection.INPUT, "=subscriptionId")),
                         previousElements = listOf("Timer_After3Days"),
                         followingElements = listOf("CompensationEndEvent_RegistrationAborted")),
@@ -170,6 +178,19 @@ class ZeebeModelExtractorTest {
         val file = File(resourceUrl.toURI())
         val bpmnModel = underTest.extract(file.readBytes())
         assertThat(bpmnModel.variantName).isNull()
+    }
+
+    @Test
+    fun `extract captures call-activity io-mapping targets and propagate-all flags`() {
+        val resourceUrl = requireNotNull(javaClass.getResource("/bpmn/c8-subscribe-newsletter.bpmn"))
+        val bpmnModel = underTest.extract(File(resourceUrl.toURI()).readBytes())
+        val callActivity = bpmnModel.callActivities.single { it.id == "CallActivity_AbortRegistration" }
+        assertThat(callActivity.inputMappings).containsExactly(
+            CallActivityMapping(VariableDirection.INPUT, source = "=subscriptionId", target = "subscriptionId"),
+        )
+        assertThat(callActivity.outputMappings).isEmpty()
+        assertThat(callActivity.propagateAllInputVariables).isFalse()
+        assertThat(callActivity.propagateAllOutputVariables).isFalse()
     }
 
     @Test
