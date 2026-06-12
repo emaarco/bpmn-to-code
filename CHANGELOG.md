@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.3.0](https://github.com/emaarco/bpmn-to-code/compare/v2.2.0...v2.3.0) (2026-06-12)
+
+
+### Features
+
+* expose call-activity variable mappings for testing assertions ([#370](https://github.com/emaarco/bpmn-to-code/issues/370)) ([b0c8a19](https://github.com/emaarco/bpmn-to-code/commit/b0c8a1961b573b83e43876d41c1f80cde00446c0))
+
 ## [2.2.0](https://github.com/emaarco/bpmn-to-code/compare/v2.1.2...v2.2.0) (2026-06-09)
 
 
