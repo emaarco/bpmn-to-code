@@ -7,11 +7,15 @@
     "preview": "vitepress preview"
   },
   "devDependencies": {
-    "vitepress": "1.6.4",
+    "vitepress": "2.0.0-alpha.17",
     "vue": "3.5.35"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "5.2.8",
-    "@fontsource-variable/manrope": "5.2.8"
+    "@fontsource-variable/manrope": "5.2.8",
+    "oxc-minify": "^0.135.0"
+  },
+  "overrides": {
+    "esbuild": "0.28.1"
   }
 }
