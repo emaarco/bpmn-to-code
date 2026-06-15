@@ -1,0 +1,20 @@
+package io.miragon.bpmn.runtime
+
+/**
+ * A BPMN sequence flow connecting two elements in the process graph.
+ *
+ * @param id The sequence flow id as declared in the BPMN model.
+ * @param name Label of the flow as shown in the BPMN diagram; null when unlabelled.
+ * @param sourceRef Element id of the flow's source node.
+ * @param targetRef Element id of the flow's target node.
+ * @param condition Condition expression evaluated at runtime; null for unconditional flows.
+ * @param isDefault True when this is the default flow of an exclusive or inclusive gateway.
+ */
+data class BpmnFlow(
+    val id: String,
+    val name: String? = null,
+    val sourceRef: String,
+    val targetRef: String,
+    val condition: String? = null,
+    val isDefault: Boolean = false,
+)

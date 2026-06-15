@@ -38,9 +38,9 @@ Read the files relevant to `$ARGUMENTS`. The key files and their purposes:
 | `bpmn-to-code-web/src/main/resources/static/index.html` | Page structure, sections, CDN script tags |
 | `bpmn-to-code-web/src/main/resources/static/css/styles.css` | All styling, CSS custom properties in `:root`, responsive breakpoints |
 | `bpmn-to-code-web/src/main/resources/static/js/app.js` | All logic: state management, API calls, DOM manipulation |
-| `bpmn-to-code-web/src/main/kotlin/io/github/emaarco/bpmn/web/Application.kt` | Ktor routing, static resource serving, plugin installation |
-| `bpmn-to-code-web/src/main/kotlin/io/github/emaarco/bpmn/web/routes/GenerateRoutes.kt` | API endpoint for BPMN code generation |
-| `bpmn-to-code-web/src/main/kotlin/io/github/emaarco/bpmn/web/service/WebGenerationService.kt` | Backend generation logic |
+| `bpmn-to-code-web/src/main/kotlin/io/miragon/bpmn/web/Application.kt` | Ktor routing, static resource serving, plugin installation |
+| `bpmn-to-code-web/src/main/kotlin/io/miragon/bpmn/web/routes/GenerateRoutes.kt` | API endpoint for BPMN code generation |
+| `bpmn-to-code-web/src/main/kotlin/io/miragon/bpmn/web/service/WebGenerationService.kt` | Backend generation logic |
 
 API endpoints:
 - `POST /api/generate` — accepts base64-encoded BPMN files, returns generated code

@@ -1,0 +1,59 @@
+package io.miragon.bpmn.application.service
+
+import io.miragon.bpmn.adapter.outbound.codegen.CodeGenerationAdapter
+import io.miragon.bpmn.adapter.outbound.engine.ExtractBpmnAdapter
+import io.miragon.bpmn.adapter.outbound.filesystem.BpmnFileLoader
+import io.miragon.bpmn.adapter.outbound.filesystem.ProcessApiFileSaver
+import io.miragon.bpmn.application.port.inbound.GenerateProcessApiFromFilesystemUseCase
+import io.miragon.bpmn.domain.BpmnFileResult
+import io.miragon.bpmn.application.port.outbound.ExtractBpmnPort
+import io.miragon.bpmn.application.port.outbound.GenerateApiCodePort
+import io.miragon.bpmn.application.port.outbound.LoadBpmnFilesPort
+import io.miragon.bpmn.application.port.outbound.SaveProcessApiPort
+import io.miragon.bpmn.domain.BpmnModelApi
+import io.miragon.bpmn.domain.ProcessModel
+import io.miragon.bpmn.domain.service.BpmnValidationService
+import io.miragon.bpmn.domain.service.ModelMergerService
+import io.miragon.bpmn.domain.validation.model.ValidationPhase
+
+class GenerateProcessApiService(
+    private val codeGenerator: GenerateApiCodePort = CodeGenerationAdapter(),
+    private val bpmnFileLoader: LoadBpmnFilesPort = BpmnFileLoader(),
+    private val bpmnService: ExtractBpmnPort = ExtractBpmnAdapter(),
+    private val fileSystemOutput: SaveProcessApiPort = ProcessApiFileSaver(),
+) : GenerateProcessApiFromFilesystemUseCase {
+
+    private val modelMergerService = ModelMergerService()
+
+    override fun generateProcessApi(command: GenerateProcessApiFromFilesystemUseCase.Command): List<BpmnFileResult> {
+        val validationService = BpmnValidationService(command.validationConfig)
+        val inputFiles = bpmnFileLoader.loadFrom(command.baseDir, command.filePattern)
+        val models = inputFiles.map { bpmnService.extract(it, command.engine) }
+        validationService.validate(models, command.engine, ValidationPhase.PRE_MERGE)
+        val mergedModels = modelMergerService.mergeModels(models)
+        validationService.validate(mergedModels, command.engine, ValidationPhase.POST_MERGE)
+        val generatedFiles = mergedModels
+            .flatMap { codeGenerator.generateCode(toBpmnModelApi(it, command)) }
+            .distinctBy { it.packagePath to it.fileName }
+        fileSystemOutput.writeFiles(generatedFiles, command.outputFolderPath)
+        val filesByProcessId = inputFiles.zip(models)
+            .groupBy({ (_, model) -> model.processId }, { (file, _) -> file.fileName })
+        return mergedModels.map { model ->
+            BpmnFileResult(
+                processId = model.processId,
+                sourceFiles = filesByProcessId[model.processId] ?: emptyList(),
+            )
+        }
+    }
+
+    private fun toBpmnModelApi(
+        model: ProcessModel,
+        command: GenerateProcessApiFromFilesystemUseCase.Command,
+    ) = BpmnModelApi(
+        model = model,
+        outputLanguage = command.outputLanguage,
+        packagePath = command.packagePath,
+        engine = command.engine,
+    )
+
+}

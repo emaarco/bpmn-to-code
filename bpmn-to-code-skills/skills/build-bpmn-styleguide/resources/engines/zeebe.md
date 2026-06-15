@@ -50,7 +50,7 @@ Example:
 </bpmn:serviceTask>
 ```
 
-Source: `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/extractor/ZeebeImplementationKind.kt`
+Source: `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/extractor/ZeebeImplementationKind.kt`
 
 Style guide implications:
 - Only the job-type schema rule applies. No DELEGATE_EXPRESSION, JAVA_DELEGATE, or EXPRESSION alternatives exist.

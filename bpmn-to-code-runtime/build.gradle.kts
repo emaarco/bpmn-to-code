@@ -5,7 +5,7 @@ plugins {
     jacoco
 }
 
-group = "io.github.emaarco"
+group = "io.miragon"
 version = property("projectVersion").toString()
 
 repositories {
@@ -25,7 +25,7 @@ mavenPublishing {
 
     publishToMavenCentral()
     if (project.hasProperty("signArtifacts")) signAllPublications()
-    coordinates("io.github.emaarco", "bpmn-to-code-runtime", version.toString())
+    coordinates("io.miragon", "bpmn-to-code-runtime", version.toString())
 
     pom {
         name.set("bpmn-to-code-runtime")
@@ -50,6 +50,38 @@ mavenPublishing {
             url.set("https://github.com/emaarco/bpmn-to-code")
             connection.set("scm:git:git://github.com/emaarco/bpmn-to-code.git")
             developerConnection.set("scm:git:ssh://git@github.com/emaarco/bpmn-to-code.git")
+        }
+    }
+}
+
+// Backwards-compat: keep the old io.github.emaarco coordinate resolvable by publishing a
+// relocation POM that redirects consumers to io.miragon. Removed in 4.0.
+fun org.gradle.api.publish.maven.MavenPom.relocateTo(newGroupId: String, newArtifactId: String) {
+    withXml {
+        val relocation = asNode()
+            .appendNode("distributionManagement")
+            .appendNode("relocation")
+        relocation.appendNode("groupId", newGroupId)
+        relocation.appendNode("artifactId", newArtifactId)
+        relocation.appendNode(
+            "message",
+            "The bpmn-to-code artifacts moved from the io.github.emaarco group to io.miragon as part " +
+                "of the namespace migration. Update your dependency to $newGroupId:$newArtifactId.",
+        )
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("relocation") {
+            groupId = "io.github.emaarco"
+            artifactId = "bpmn-to-code-runtime"
+            version = project.version.toString()
+            pom {
+                name.set("bpmn-to-code-runtime (relocated)")
+                description.set("Relocated to io.miragon:bpmn-to-code-runtime")
+                relocateTo("io.miragon", "bpmn-to-code-runtime")
+            }
         }
     }
 }

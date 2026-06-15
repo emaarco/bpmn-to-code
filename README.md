@@ -4,8 +4,8 @@
 
 [![Documentation](https://img.shields.io/badge/docs-bpmn--to--code-blue?style=flat-square)](https://emaarco.github.io/bpmn-to-code/)
 [![Web App](https://img.shields.io/badge/web--app-try%20in%20browser-brightgreen?style=flat-square)](https://bpmn-to-code.miragon.io/static/index.html)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.emaarco/bpmn-to-code-maven?style=flat-square&label=maven)](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven)
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.emaarco.bpmn-to-code-gradle?style=flat-square&label=gradle)](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle)
+[![Maven Central](https://img.shields.io/maven-central/v/io.miragon/bpmn-to-code-maven?style=flat-square&label=maven)](https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.miragon.bpmn-to-code-gradle?style=flat-square&label=gradle)](https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle)
 
 # bpmn-to-code
 
@@ -82,7 +82,7 @@ Works with Claude Code out of the box.
 
 ```kotlin
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "2.0.3"
+    id("io.miragon.bpmn-to-code-gradle") version "3.0.0"
 }
 
 tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
@@ -99,9 +99,9 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
 
 ```xml
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.3</version>
+    <version>3.0.0</version>
     <executions>
         <execution>
             <goals><goal>generate-bpmn-api</goal></goals>
@@ -122,7 +122,7 @@ tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
 
 ```kotlin
 dependencies {
-    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.3")
+    testImplementation("io.miragon:bpmn-to-code-testing:3.0.0")
 }
 ```
 
@@ -146,8 +146,8 @@ dependencies {
 
 ## Get It
 
-- 📦 [Maven Central](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) — Maven Plugin
-- 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) — Gradle Plugin
+- 📦 [Maven Central](https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven) — Maven Plugin
+- 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle) — Gradle Plugin
 - 🌐 [Web App](https://bpmn-to-code.miragon.io/static/index.html) — Try in browser, no installation
 - 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Self-hostable container
 

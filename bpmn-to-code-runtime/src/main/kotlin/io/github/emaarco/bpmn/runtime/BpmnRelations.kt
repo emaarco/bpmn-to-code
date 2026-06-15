@@ -1,15 +1,10 @@
 package io.github.emaarco.bpmn.runtime
 
-/**
- * Per-element graph metadata capturing an element's neighbours in the process flow.
- *
- * @param name Display name of the element, if set in the BPMN model.
- * @param previousElements Element ids of preceding flow nodes — not sequence-flow ids (see `Flows`).
- * @param followingElements Element ids of following flow nodes — not sequence-flow ids (see `Flows`).
- * @param parentId Id of the containing subprocess, or null if top-level.
- * @param attachedToRef For boundary events: id of the host element; null otherwise.
- * @param attachedElements Ids of boundary events attached to this element; empty when none.
- */
+@Deprecated(
+    message = "Moved to io.miragon.bpmn.runtime as part of the io.miragon namespace migration. " +
+        "Regenerate your Process API and switch the import. This alias will be removed in 4.0.",
+    replaceWith = ReplaceWith("BpmnRelations", "io.miragon.bpmn.runtime.BpmnRelations"),
+)
 data class BpmnRelations(
     val name: String? = null,
     val previousElements: List<String>,

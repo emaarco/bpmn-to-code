@@ -3,6 +3,8 @@
 ## Status
 Accepted
 
+> **Update (v3.0.0):** the coordinates and package names below moved to `io.miragon:bpmn-to-code-runtime` / `io.miragon.bpmn.runtime.*` as part of the namespace migration. The design is unchanged. See [ADR 016](016-miragon-namespace-migration.md).
+
 ## Context
 v1 emitted BPMN data types (`BpmnTimer`, `BpmnError`) as nested classes inside each generated Process API file:
 

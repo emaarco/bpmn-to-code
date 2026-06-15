@@ -38,7 +38,7 @@ Ask the user for the following parameters (skip any already provided in `$ARGUME
 
 ### Step 3 – Look up latest version
 
-Check [Maven Central](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) or the project README for the latest plugin version.
+Check [Maven Central](https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven) or the project README for the latest plugin version.
 
 ### Step 4 – Draft changes
 
@@ -49,7 +49,7 @@ Add the runtime dependency inside `<dependencies>` (it provides `ProcessId`, `El
 
 ```xml
 <dependency>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-runtime</artifactId>
     <version>VERSION</version>
 </dependency>
@@ -59,7 +59,7 @@ Add the plugin block inside `<build><plugins>`:
 
 ```xml
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
     <version>VERSION</version>
     <executions>
@@ -108,6 +108,6 @@ Write the changes to `pom.xml` using the Edit tool.
 
 Suggest the user run:
 ```bash
-mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+mvn io.miragon:bpmn-to-code-maven:generate-bpmn-api
 ```
 to verify the setup works correctly. If the user has BPMN files in place, this should generate the process API code.

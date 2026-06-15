@@ -1,10 +1,10 @@
 package io.github.emaarco.bpmn.runtime
 
-/**
- * Name of a BPMN message used for correlation with message catch events.
- *
- * `toString()` returns the underlying string, so `.value` is optional in string contexts.
- */
+@Deprecated(
+    message = "Moved to io.miragon.bpmn.runtime as part of the io.miragon namespace migration. " +
+        "Regenerate your Process API and switch the import. This alias will be removed in 4.0.",
+    replaceWith = ReplaceWith("MessageName", "io.miragon.bpmn.runtime.MessageName"),
+)
 data class MessageName(val value: String) {
     override fun toString(): String = value
 }

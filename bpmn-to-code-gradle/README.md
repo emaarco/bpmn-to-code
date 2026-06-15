@@ -14,7 +14,7 @@ To get started, apply the plugin in your build.gradle.kts file:
 
 ```kotlin
 plugins {
-    id("io.github.emaarco.bpmn-to-code-gradle") version "2.0.3"
+    id("io.miragon.bpmn-to-code-gradle") version "3.0.0"
 }
 ```
 
@@ -36,9 +36,9 @@ Once configured, bpmn-to-code-gradle processes your BPMN models
 and creates convenient, type-safe references for your application.
 
 ```kotlin
-import io.github.emaarco.bpmn.adapter.GenerateBpmnModelsTask
-import io.github.emaarco.bpmn.domain.shared.OutputLanguage
-import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.miragon.bpmn.adapter.GenerateBpmnModelsTask
+import io.miragon.bpmn.domain.shared.OutputLanguage
+import io.miragon.bpmn.domain.shared.ProcessEngine
 
 tasks.named("generateBpmnModelApi", GenerateBpmnModelsTask::class) {
     baseDir = projectDir.toString()

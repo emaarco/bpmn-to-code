@@ -1,15 +1,10 @@
 package io.github.emaarco.bpmn.runtime
 
-/**
- * A BPMN sequence flow connecting two elements in the process graph.
- *
- * @param id The sequence flow id as declared in the BPMN model.
- * @param name Label of the flow as shown in the BPMN diagram; null when unlabelled.
- * @param sourceRef Element id of the flow's source node.
- * @param targetRef Element id of the flow's target node.
- * @param condition Condition expression evaluated at runtime; null for unconditional flows.
- * @param isDefault True when this is the default flow of an exclusive or inclusive gateway.
- */
+@Deprecated(
+    message = "Moved to io.miragon.bpmn.runtime as part of the io.miragon namespace migration. " +
+        "Regenerate your Process API and switch the import. This alias will be removed in 4.0.",
+    replaceWith = ReplaceWith("BpmnFlow", "io.miragon.bpmn.runtime.BpmnFlow"),
+)
 data class BpmnFlow(
     val id: String,
     val name: String? = null,

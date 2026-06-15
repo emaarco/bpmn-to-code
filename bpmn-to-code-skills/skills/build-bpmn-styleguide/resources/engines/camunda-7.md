@@ -43,7 +43,7 @@ Exactly one of the following attributes is set on `<bpmn:serviceTask>`. The `imp
 | `DELEGATE_EXPRESSION` | `camunda:delegateExpression="${bean}"` | EL expression (usually a Spring bean name) |
 | `EXPRESSION` | `camunda:expression="${...}"` | EL expression |
 
-Source: `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/extractor/Camunda7ImplementationKind.kt`
+Source: `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/extractor/Camunda7ImplementationKind.kt`
 
 Style guide implications:
 - Teams typically pick one kind project-wide (e.g., external tasks for worker-based projects, delegate expressions for monolithic Spring deployments). A rule can enforce that choice.

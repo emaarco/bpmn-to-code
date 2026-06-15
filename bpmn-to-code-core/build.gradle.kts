@@ -5,7 +5,7 @@ plugins {
     `java-test-fixtures`
 }
 
-group = "io.github.emaarco"
+group = "io.miragon"
 
 repositories {
     mavenCentral()

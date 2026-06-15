@@ -1,0 +1,118 @@
+package io.miragon.bpmn.adapter.outbound.codegen.builder
+
+import io.miragon.bpmn.domain.BpmnModelApi
+import io.miragon.bpmn.domain.MergedBpmnModel
+import io.miragon.bpmn.domain.MergedBpmnModel.VariantData
+import io.miragon.bpmn.domain.shared.OutputLanguage
+import io.miragon.bpmn.domain.shared.ProcessEngine
+import io.miragon.bpmn.domain.shared.VariableDefinition
+import io.miragon.bpmn.domain.shared.VariableDirection
+import io.miragon.bpmn.domain.testBpmnModelApi
+import io.miragon.bpmn.domain.testSendNewsletterBpmnModel
+import io.miragon.bpmn.domain.testSubscribeNewsletterBpmnModel
+import com.sun.source.util.JavacTask
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import java.io.File
+import java.net.URI
+import javax.tools.Diagnostic
+import javax.tools.DiagnosticCollector
+import javax.tools.JavaFileObject
+import javax.tools.SimpleJavaFileObject
+import javax.tools.ToolProvider
+
+class JavaProcessApiBuilderTest {
+
+    private val underTest = JavaProcessApiBuilder()
+
+    @Test
+    fun `buildApiFile generates correct process API file`() {
+
+        // given: a BPMN model with custom service task implementations
+        val modelApi = testBpmnModelApi(
+            packagePath = "de.emaarco.example",
+            model = testSubscribeNewsletterBpmnModel(
+                flowNodes = buildSubscribeNewsletterFlowNodes(
+                    confirmationMailImpl = "#{newsletterSendConfirmationMail}",
+                    welcomeMailImpl = "\${newsletterSendWelcomeMail}",
+                    registrationCompletedImpl = "newsletter.registrationCompleted",
+                    extraVariables = listOf(VariableDefinition("testVariable", VariableDirection.INPUT)),
+                ),
+            )
+        )
+
+        // when: we build the process API file
+        val result = underTest.buildApiFile(modelApi)
+
+        // then: a single model file is returned at the root package
+        assertThat(result.fileName).isEqualTo("${modelApi.fileName()}.java")
+        assertThat(result.packagePath).isEqualTo("de.emaarco.example")
+
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/NewsletterSubscriptionProcessApiJava.txt")).toURI())
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJavaSyntaxValid(result.fileName, result.content)
+    }
+
+    @Test
+    fun `maps content of id to valid variable name format`() {
+
+        // given: a model with flow nodes that have slashes in their names
+        val defaultModel = testSubscribeNewsletterBpmnModel()
+        val modifiedNodes = defaultModel.flowNodes.map { it.copy(id = it.getName().replace("_", "-")) }
+        val modelApi = testBpmnModelApi(
+            model = testSubscribeNewsletterBpmnModel(flowNodes = modifiedNodes),
+            packagePath = "de.emaarco.example"
+        )
+
+        // when: we build the process API file
+        val result = underTest.buildApiFile(modelApi)
+
+        // then: expect the generated code contains valid Java
+        assertThat(result.content).isNotEmpty()
+        assertJavaSyntaxValid(result.fileName, result.content)
+    }
+
+    @Test
+    fun `buildApiFile generates variant-scoped Flows and Relations for merged model`() {
+
+        // given: a merged model with a single variant
+        val send = testSendNewsletterBpmnModel(variantName = "send")
+        val merged = MergedBpmnModel(
+            processId = send.processId,
+            flowNodes = send.flowNodes,
+            messages = send.messages,
+            signals = send.signals,
+            errors = send.errors,
+            escalations = send.escalations,
+            variants = listOf(
+                VariantData("send", send.sequenceFlows, send.flowNodes),
+            ),
+        )
+        val modelApi = BpmnModelApi(merged, OutputLanguage.JAVA, "de.emaarco.example", ProcessEngine.ZEEBE)
+
+        // when: we build the process API file
+        val result = underTest.buildApiFile(modelApi)
+
+        // then: output contains Variants section instead of flat Flows/Relations
+        val expectedFile = File(requireNotNull(javaClass.getResource("/api/MultiVariantProcessApiJava.txt")).toURI())
+        assertThat(result.content).isEqualToIgnoringWhitespace(expectedFile.readText())
+        assertJavaSyntaxValid(result.fileName, result.content)
+    }
+
+    private fun assertJavaSyntaxValid(fileName: String, source: String) {
+        val compiler = requireNotNull(ToolProvider.getSystemJavaCompiler())
+        val diagnostics = DiagnosticCollector<JavaFileObject>()
+        val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
+        val sourceObject = object : SimpleJavaFileObject(
+            URI.create("string:///${fileName.replace('.', '/')}"), JavaFileObject.Kind.SOURCE
+        ) {
+            override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = source
+        }
+        val task = compiler.getTask(null, fileManager, diagnostics, null, null, listOf(sourceObject)) as JavacTask
+        task.parse()
+        val errors = diagnostics.diagnostics.filter { it.kind == Diagnostic.Kind.ERROR }
+        assertThat(errors)
+            .withFailMessage { "Java syntax errors in generated output: ${errors.map { it.getMessage(null) }}" }
+            .isEmpty()
+    }
+}

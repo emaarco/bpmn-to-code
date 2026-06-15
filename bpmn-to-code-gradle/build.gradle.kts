@@ -6,7 +6,7 @@ plugins {
     jacoco
 }
 
-group = "io.github.emaarco"
+group = "io.miragon"
 version = property("projectVersion").toString()
 
 repositories {
@@ -72,7 +72,7 @@ tasks.named<Test>("test") {
 publishing {
     publications {
         create<MavenPublication>("pluginMaven") {
-            groupId = "io.github.emaarco"
+            groupId = "io.miragon"
             artifactId = "bpmn-to-code-gradle"
         }
     }
@@ -85,12 +85,20 @@ gradlePlugin {
     website = "https://github.com/emaarco/bpmn-to-code"
     vcsUrl = "https://github.com/emaarco/bpmn-to-code"
     plugins {
-        create("io.github.emaarco.bpmn-to-code-gradle") {
-            id = "io.github.emaarco.bpmn-to-code-gradle"
+        create("io.miragon.bpmn-to-code-gradle") {
+            id = "io.miragon.bpmn-to-code-gradle"
             displayName = "bpmn-to-code"
             description =
                 "Gradle plugin that bridges gaps between BPMN and code - fostering the creation of clean process-automation solutions"
-            implementationClass = "io.github.emaarco.bpmn.adapter.BpmnModelGeneratorPlugin"
+            implementationClass = "io.miragon.bpmn.adapter.BpmnModelGeneratorPlugin"
+            tags = setOf("bpmn", "codegen")
+        }
+        create("io.github.emaarco.bpmn-to-code-gradle") {
+            id = "io.github.emaarco.bpmn-to-code-gradle"
+            displayName = "bpmn-to-code (deprecated id)"
+            description =
+                "DEPRECATED — use 'io.miragon.bpmn-to-code-gradle'. This id applies the new plugin and warns; it will be removed in 4.0."
+            implementationClass = "io.miragon.bpmn.adapter.DeprecatedBpmnModelGeneratorPlugin"
             tags = setOf("bpmn", "codegen")
         }
     }

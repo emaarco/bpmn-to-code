@@ -24,8 +24,8 @@ export default defineConfig({
         text: 'Links',
         items: [
           { text: 'GitHub', link: 'https://github.com/emaarco/bpmn-to-code' },
-          { text: 'Maven Central', link: 'https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven' },
-          { text: 'Gradle Plugin Portal', link: 'https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle' },
+          { text: 'Maven Central', link: 'https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven' },
+          { text: 'Gradle Plugin Portal', link: 'https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle' },
         ],
       },
     ],
@@ -100,6 +100,7 @@ export default defineConfig({
             collapsed: true,
             items: [
               { text: 'Release Notes', link: '/changelog/' },
+              { text: 'v3 Migration Guide', link: '/changelog/v3' },
               { text: 'v2 Migration Guide', link: '/changelog/v2' },
             ],
           },

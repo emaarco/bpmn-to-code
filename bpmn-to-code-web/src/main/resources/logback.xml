@@ -9,6 +9,6 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="io.github.emaarco" level="DEBUG"/>
+    <logger name="io.miragon" level="DEBUG"/>
     <logger name="io.ktor" level="INFO"/>
 </configuration>

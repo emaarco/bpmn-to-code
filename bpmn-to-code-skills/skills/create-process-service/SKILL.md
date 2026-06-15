@@ -181,7 +181,7 @@ cp "{{bpmnFile}}" "{{outputDir}}/{{artifactId}}/src/main/resources/bpmn/"
 Run codegen from inside the project directory:
 
 - **Gradle:** `./gradlew generateBpmnModelApi`
-- **Maven:** `mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api`
+- **Maven:** `mvn io.miragon:bpmn-to-code-maven:generate-bpmn-api`
 
 If codegen fails, show the full error and stop. Do not proceed until it succeeds.
 

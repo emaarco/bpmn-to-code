@@ -1,6 +1,6 @@
 # 🚀 Maven Setup
 
-The bpmn-to-code Maven plugin generates type-safe Process API files from your BPMN models during `mvn compile`. It's published on [Maven Central](https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven) and integrates into your existing build lifecycle with minimal configuration.
+The bpmn-to-code Maven plugin generates type-safe Process API files from your BPMN models during `mvn compile`. It's published on [Maven Central](https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven) and integrates into your existing build lifecycle with minimal configuration.
 
 ## 1. Add the plugin
 
@@ -10,9 +10,9 @@ Add the following to the `<build>` section of your `pom.xml`:
 <build>
     <plugins>
         <plugin>
-            <groupId>io.github.emaarco</groupId>
+            <groupId>io.miragon</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>2.0.1</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -38,7 +38,7 @@ See [Configuration](/guide/configuration) for all available parameters.
 ## 2. Generate the API
 
 ```bash
-mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+mvn io.miragon:bpmn-to-code-maven:generate-bpmn-api
 ```
 
 Or, since the goal is bound to the `generate-sources` phase by default:

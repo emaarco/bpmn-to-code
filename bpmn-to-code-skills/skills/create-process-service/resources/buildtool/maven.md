@@ -10,13 +10,13 @@ PostgreSQL driver versions — do not add explicit versions for those.
 
 ## 1. bpmn-to-code plugin (add inside `<build><plugins>`)
 
-Look up the latest version at https://central.sonatype.com/artifact/io.github.emaarco/bpmn-to-code-maven
+Look up the latest version at https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven
 
 For Java projects change `src/main/kotlin` to `src/main/java` and `KOTLIN` to `JAVA`.
 
 ```xml
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
     <version>{{bpmnToCodeVersion}}</version>
     <executions>
@@ -172,7 +172,7 @@ For Java projects change `src/main/kotlin` to `src/main/java` and `KOTLIN` to `J
 ## 4. Codegen command
 
 ```bash
-mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+mvn io.miragon:bpmn-to-code-maven:generate-bpmn-api
 ```
 
 ## 5. Build command

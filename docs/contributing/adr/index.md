@@ -65,6 +65,7 @@ Document decisions that:
 - [ADR 012: JSON Export](012-json-export.md) - Structured JSON representation of process models
 - [ADR 014: Shared BPMN Types](014-shared-bpmn-types.md) - Published `bpmn-to-code-runtime` artifact for shared types across modules
 - [ADR 015: Directional Variable Extraction](015-directional-variable-extraction.md) - Split `Variables.<Element>` into `Inputs` / `Outputs`
+- [ADR 016: Migration to the `io.miragon` Namespace](016-miragon-namespace-migration.md) - Rename to `io.miragon` with a deprecated backward-compat layer
 
 ### Web Module
 - [ADR 008: Web Module for Browser-Based Access](008-web-module-for-browser-access.md) - Strategic decision for web application

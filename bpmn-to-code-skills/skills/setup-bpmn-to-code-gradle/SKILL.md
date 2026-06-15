@@ -36,7 +36,7 @@ Ask the user for the following parameters (skip any already provided in `$ARGUME
 
 ### Step 3 – Look up latest version
 
-Check the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle) or the project README for the latest plugin version.
+Check the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle) or the project README for the latest plugin version.
 
 ### Step 4 – Draft changes
 
@@ -46,14 +46,14 @@ Prepare the following changes to the build file. Use the example at `examples/gr
 
 1. Add imports at the top of the file:
    ```kotlin
-   import io.github.emaarco.bpmn.adapter.GenerateBpmnModelsTask
-   import io.github.emaarco.bpmn.domain.shared.OutputLanguage
-   import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+   import io.miragon.bpmn.adapter.GenerateBpmnModelsTask
+   import io.miragon.bpmn.domain.shared.OutputLanguage
+   import io.miragon.bpmn.domain.shared.ProcessEngine
    ```
 
 2. Add the plugin to the `plugins {}` block:
    ```kotlin
-   id("io.github.emaarco.bpmn-to-code-gradle") version "<version>"
+   id("io.miragon.bpmn-to-code-gradle") version "<version>"
    ```
 
 3. Register the code generation task:

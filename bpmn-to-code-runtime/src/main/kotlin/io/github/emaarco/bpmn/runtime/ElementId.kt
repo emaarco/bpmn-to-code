@@ -1,10 +1,10 @@
 package io.github.emaarco.bpmn.runtime
 
-/**
- * Identifier of an element (task, gateway, event, ...) inside a BPMN process.
- *
- * `toString()` returns the underlying string, so `.value` is optional in string contexts.
- */
+@Deprecated(
+    message = "Moved to io.miragon.bpmn.runtime as part of the io.miragon namespace migration. " +
+        "Regenerate your Process API and switch the import. This alias will be removed in 4.0.",
+    replaceWith = ReplaceWith("ElementId", "io.miragon.bpmn.runtime.ElementId"),
+)
 data class ElementId(val value: String) {
     override fun toString(): String = value
 }

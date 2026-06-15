@@ -16,17 +16,17 @@ bpmn-to-code is a Gradle and Maven plugin that generates type-safe API definitio
 
 The core follows hexagonal architecture with clear separation of concerns:
 
-### Domain Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/`)
+### Domain Layer (`bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/`)
 - `BpmnModel.kt`, `BpmnFile.kt`, `BpmnModelApi.kt`: Core domain entities
 - `shared/`: Common types like `OutputLanguage`, `ProcessEngine`, `ServiceTaskDefinition`
 - `service/ModelMergerService.kt`: Business logic for merging BPMN models
 
-### Application Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/application/`)
+### Application Layer (`bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/application/`)
 - `port/inbound/GenerateProcessApiUseCase.kt`: Main use case interface
 - `port/outbound/`: Adapter interfaces for external dependencies
 - `service/GenerateProcessApiService.kt`: Use case implementation
 
-### Adapter Layer (`bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/`)
+### Adapter Layer (`bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/`)
 - `inbound/CreateProcessApiPlugin.kt`: Entry point for plugins
 - `outbound/codegen/`: Code generation adapters with Java/Kotlin builders
 - `outbound/engine/`: BPMN parsing adapters for Camunda 7 and Zeebe

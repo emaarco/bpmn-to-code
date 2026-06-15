@@ -8,9 +8,9 @@ Add separate `<execution>` blocks with their own `<configuration>` to generate f
 
 ```xml
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <executions>
         <!-- Camunda 7 processes -->
         <execution>
@@ -78,9 +78,9 @@ bpmn-to-code processes all files matching the `filePattern` glob — it has no b
 
 <!-- 2. Generate from the staged files -->
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <executions>
         <execution>
             <goals><goal>generate-bpmn-api</goal></goals>

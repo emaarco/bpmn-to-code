@@ -17,7 +17,7 @@ All engine-specific attributes use the `operaton:` prefix (e.g. `operaton:type`,
 
 Same four as C7: `EXTERNAL_TASK`, `JAVA_DELEGATE`, `DELEGATE_EXPRESSION`, `EXPRESSION`.
 
-Source: `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/extractor/OperatonImplementationKind.kt`
+Source: `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/extractor/OperatonImplementationKind.kt`
 
 ### Example XML snippet
 

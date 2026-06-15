@@ -16,11 +16,11 @@ Generate a single Kotlin `BpmnValidationRule` implementation for one entry in `B
 - For `hybrid` rules, generate the deterministic half and note in a comment that the semantic half stays for `/validate-bpmn-style`.
 - Don't touch the aggregator (`BpmnStyleGuideRules.kt`) owned by the bulk variant. This skill writes its own per-rule file; the user can run the bulk skill later to regenerate the aggregator.
 - Use `requireNotNull()` instead of `!!`.
-- Use `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/validation/rules/InvalidIdentifierRule.kt` as the structural template.
+- Use `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/validation/rules/InvalidIdentifierRule.kt` as the structural template.
 
 ## Domain Model
 
-For rule bodies, read the actual domain classes under `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/shared/` — don't trust static summaries.
+For rule bodies, read the actual domain classes under `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/shared/` — don't trust static summaries.
 
 ## Instructions
 

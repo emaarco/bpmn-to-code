@@ -14,15 +14,15 @@ Add it to your test scope, write a test, and your CI will catch modeling issues 
 
 ```kotlin [Gradle]
 dependencies {
-    testImplementation("io.github.emaarco:bpmn-to-code-testing:2.0.1")
+    testImplementation("io.miragon:bpmn-to-code-testing:3.0.0")
 }
 ```
 
 ```xml [Maven]
 <dependency>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-testing</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -32,8 +32,8 @@ dependencies {
 ## Basic Usage
 
 ```kotlin
-import io.github.emaarco.bpmn.testing.BpmnValidator
-import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.miragon.bpmn.testing.BpmnValidator
+import io.miragon.bpmn.domain.shared.ProcessEngine
 
 @Test
 fun `BPMN models should have no violations`() {

@@ -16,9 +16,9 @@ For each engine (Zeebe, Camunda 7, Operaton), compare the doc page against its e
 
 | Engine | Doc page | Extractor |
 |--------|----------|-----------|
-| Zeebe | `docs/engines/zeebe.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/zeebe/ZeebeModelExtractor.kt` |
-| Camunda 7 | `docs/engines/camunda7.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/camunda7/Camunda7ModelExtractor.kt` |
-| Operaton | `docs/engines/operaton.md` | `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/operaton/OperatonModelExtractor.kt` |
+| Zeebe | `docs/engines/zeebe.md` | `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/zeebe/ZeebeModelExtractor.kt` |
+| Camunda 7 | `docs/engines/camunda7.md` | `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/camunda7/Camunda7ModelExtractor.kt` |
+| Operaton | `docs/engines/operaton.md` | `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/operaton/OperatonModelExtractor.kt` |
 
 For each engine, verify:
 - **Service task detection**: Which attributes/elements are parsed? Does the doc match?
@@ -27,25 +27,25 @@ For each engine, verify:
 - **Any other sections**: Does the doc claim features that aren't implemented?
 - **Missing documentation**: Are there implemented features the docs don't mention? Would they be relevant enough to document?
 
-Also check the shared extractors in `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/engine/shared/` — these handle flow nodes, messages, errors, signals, and timers for all engines.
+Also check the shared extractors in `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/engine/shared/` — these handle flow nodes, messages, errors, signals, and timers for all engines.
 
 ### 2. Configuration page vs plugin parameters
 
 Compare `docs/guide/configuration.md` against:
-- `bpmn-to-code-gradle/src/main/kotlin/io/github/emaarco/bpmn/adapter/GenerateBpmnModelsTask.kt`
-- `bpmn-to-code-maven/src/main/kotlin/io/github/emaarco/bpmn/adapter/BpmnModelMojo.java`
+- `bpmn-to-code-gradle/src/main/kotlin/io/miragon/bpmn/adapter/GenerateBpmnModelsTask.kt`
+- `bpmn-to-code-maven/src/main/kotlin/io/miragon/bpmn/adapter/BpmnModelMojo.java`
 
 Verify:
 - All parameters listed in the docs exist in the code
 - All parameters in the code are listed in the docs
 - Types, defaults, and descriptions are accurate
-- `ProcessEngine` enum values match (check `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/shared/ProcessEngine.kt`)
+- `ProcessEngine` enum values match (check `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/shared/ProcessEngine.kt`)
 - `OutputLanguage` enum values match
 
 ### 3. Generated API page vs code generators
 
 Compare `docs/guide/generated-api.md` against:
-- `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/adapter/outbound/codegen/`
+- `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/adapter/outbound/codegen/`
 
 Verify:
 - All sections listed (Elements, CallActivities, Messages, ServiceTasks, Timers, Errors, Signals, Variables) actually get generated

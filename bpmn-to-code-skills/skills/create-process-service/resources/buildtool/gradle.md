@@ -12,19 +12,19 @@ After applying changes, also patch the `plugins {}` block:
 ## 1. Imports (prepend after any existing imports at top of file)
 
 ```kotlin
-import io.github.emaarco.bpmn.adapter.GenerateBpmnModelsTask
-import io.github.emaarco.bpmn.domain.shared.OutputLanguage
-import io.github.emaarco.bpmn.domain.shared.ProcessEngine
+import io.miragon.bpmn.adapter.GenerateBpmnModelsTask
+import io.miragon.bpmn.domain.shared.OutputLanguage
+import io.miragon.bpmn.domain.shared.ProcessEngine
 ```
 
 ---
 
 ## 2. Plugin (add inside `plugins {}` block)
 
-Look up the latest version at https://plugins.gradle.org/plugin/io.github.emaarco.bpmn-to-code-gradle
+Look up the latest version at https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle
 
 ```kotlin
-id("io.github.emaarco.bpmn-to-code-gradle") version "{{bpmnToCodeVersion}}"
+id("io.miragon.bpmn-to-code-gradle") version "{{bpmnToCodeVersion}}"
 ```
 
 ---

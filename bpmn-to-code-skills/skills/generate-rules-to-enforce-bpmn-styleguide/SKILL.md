@@ -15,18 +15,18 @@ Generate Kotlin `BpmnValidationRule` implementations for the deterministic rules
 - Never modify existing source files — only create new files.
 - Always present the classification table to the user before generating anything.
 - Use `requireNotNull()` instead of `!!` (project convention).
-- Use `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/validation/rules/InvalidIdentifierRule.kt` as the structural template.
+- Use `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/validation/rules/InvalidIdentifierRule.kt` as the structural template.
 - After generating, verify compilation with `./gradlew compileKotlin` (or the user's module-specific task).
 
 ## Domain Model
 
-For rule bodies, read the actual domain classes under `bpmn-to-code-core/src/main/kotlin/io/github/emaarco/bpmn/domain/shared/` — don't trust static summaries, the model evolves. `ProcessModel` is the entry point.
+For rule bodies, read the actual domain classes under `bpmn-to-code-core/src/main/kotlin/io/miragon/bpmn/domain/shared/` — don't trust static summaries, the model evolves. `ProcessModel` is the entry point.
 
 ## Instructions
 
 ### Step 0 — Verify `bpmn-to-code-testing` Setup
 
-Generated rules depend on `io.github.emaarco:bpmn-to-code-testing`. If it's not on the user's classpath, the code won't compile — abort before writing anything.
+Generated rules depend on `io.miragon:bpmn-to-code-testing`. If it's not on the user's classpath, the code won't compile — abort before writing anything.
 
 1. Glob for build files at repo root and one level below: `build.gradle`, `build.gradle.kts`, `pom.xml`, `*/build.gradle*`, `*/pom.xml`.
 2. Grep each for `bpmn-to-code-testing`.
@@ -35,14 +35,14 @@ Generated rules depend on `io.github.emaarco:bpmn-to-code-testing`. If it's not 
    ```kotlin
    // build.gradle.kts
    dependencies {
-       testImplementation("io.github.emaarco:bpmn-to-code-testing:<latest>")
+       testImplementation("io.miragon:bpmn-to-code-testing:<latest>")
    }
    ```
 
    ```xml
    <!-- pom.xml -->
    <dependency>
-     <groupId>io.github.emaarco</groupId>
+     <groupId>io.miragon</groupId>
      <artifactId>bpmn-to-code-testing</artifactId>
      <version><latest></version>
      <scope>test</scope>

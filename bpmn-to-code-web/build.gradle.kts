@@ -6,7 +6,7 @@ plugins {
     jacoco
 }
 
-group = "io.github.emaarco"
+group = "io.miragon"
 version = property("projectVersion").toString()
 
 repositories {
@@ -51,7 +51,7 @@ sourceSets {
 
 val copyLibrarySources by tasks.registering(Copy::class) {
     val runtimeProject = project(":bpmn-to-code-runtime")
-    from(runtimeProject.layout.projectDirectory.dir("src/main/kotlin/io/github/emaarco/bpmn/runtime"))
+    from(runtimeProject.layout.projectDirectory.dir("src/main/kotlin/io/miragon/bpmn/runtime"))
     into(layout.buildDirectory.dir("generated/resources/library-sources/library-sources"))
     include("*.kt")
 }
@@ -92,7 +92,7 @@ tasks.named("processResources") {
 }
 
 application {
-    mainClass.set("io.github.emaarco.bpmn.web.ApplicationKt")
+    mainClass.set("io.miragon.bpmn.web.ApplicationKt")
 }
 
 tasks.named<Test>("test") {

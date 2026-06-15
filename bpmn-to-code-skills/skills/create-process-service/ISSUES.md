@@ -10,7 +10,7 @@ input: `shared/bpmn/c8-subscribe-newsletter.bpmn`).
 **Where:** `resources/buildtool/gradle.md`, Section 4 "Code generation task"
 
 **Problem:** The template uses `tasks.register<GenerateBpmnModelsTask>("generateBpmnModelApi") { … }`,
-but the `io.github.emaarco.bpmn-to-code-gradle` plugin already registers this task on apply.
+but the `io.miragon.bpmn-to-code-gradle` plugin already registers this task on apply.
 Running the task results in:
 
 ```

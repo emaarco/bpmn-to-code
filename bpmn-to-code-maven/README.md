@@ -16,9 +16,9 @@ Add the `bpmn-to-code-runtime` dependency (it ships the shared types — `Proces
 ```xml
 <dependencies>
     <dependency>
-        <groupId>io.github.emaarco</groupId>
+        <groupId>io.miragon</groupId>
         <artifactId>bpmn-to-code-runtime</artifactId>
-        <version>2.0.3</version>
+        <version>3.0.0</version>
     </dependency>
 </dependencies>
 ```
@@ -31,9 +31,9 @@ BPMN files, where to output the generated API files, and how to format the outpu
 <build>
     <plugins>
         <plugin>
-            <groupId>io.github.emaarco</groupId>
+            <groupId>io.miragon</groupId>
             <artifactId>bpmn-to-code-maven</artifactId>
-            <version>2.0.3</version>
+            <version>3.0.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -60,5 +60,5 @@ you can seamlessly integrate into your application—whether for testing, messag
 To execute the plugin, run the following command:
 
 ```shell
-mvn io.github.emaarco:bpmn-to-code-maven:generate-bpmn-api
+mvn io.miragon:bpmn-to-code-maven:generate-bpmn-api
 ```

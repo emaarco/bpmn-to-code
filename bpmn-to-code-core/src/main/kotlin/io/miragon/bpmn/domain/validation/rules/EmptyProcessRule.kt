@@ -1,0 +1,27 @@
+package io.miragon.bpmn.domain.validation.rules
+
+import io.miragon.bpmn.domain.validation.BpmnValidationRule
+import io.miragon.bpmn.domain.validation.model.Severity
+import io.miragon.bpmn.domain.validation.model.ValidationContext
+import io.miragon.bpmn.domain.validation.model.ValidationViolation
+
+class EmptyProcessRule : BpmnValidationRule {
+
+    override val id = "empty-process"
+    override val severity = Severity.WARN
+
+    override fun validate(context: ValidationContext): List<ValidationViolation> {
+        if (context.model.flowNodes.isEmpty()) {
+            return listOf(
+                ValidationViolation(
+                    ruleId = id,
+                    severity = severity,
+                    elementId = null,
+                    processId = context.model.processId,
+                    message = "Process has no elements defined.",
+                )
+            )
+        }
+        return emptyList()
+    }
+}

@@ -63,9 +63,9 @@ BPMN validation failed: 1 error(s), 1 warning(s)
 
 ```xml
 <plugin>
-    <groupId>io.github.emaarco</groupId>
+    <groupId>io.miragon</groupId>
     <artifactId>bpmn-to-code-maven</artifactId>
-    <version>2.0.1</version>
+    <version>3.0.0</version>
     <executions>
         <execution>
             <id>validate-bpmn</id>

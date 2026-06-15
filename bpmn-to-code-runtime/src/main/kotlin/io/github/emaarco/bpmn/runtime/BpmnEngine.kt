@@ -1,8 +1,10 @@
 package io.github.emaarco.bpmn.runtime
 
-/**
- * Process engine dialect a generated Process API targets.
- */
+@Deprecated(
+    message = "Moved to io.miragon.bpmn.runtime as part of the io.miragon namespace migration. " +
+        "Regenerate your Process API and switch the import. This alias will be removed in 4.0.",
+    replaceWith = ReplaceWith("BpmnEngine", "io.miragon.bpmn.runtime.BpmnEngine"),
+)
 enum class BpmnEngine {
     ZEEBE,
     CAMUNDA_7,

@@ -404,7 +404,7 @@ async function downloadAllAsZip() {
         const includeSourcesCheckbox = document.getElementById('include-sources-checkbox');
         if (includeSourcesCheckbox && includeSourcesCheckbox.checked && state.libraryFiles.length) {
             state.libraryFiles.forEach(file => {
-                zip.file(`io/github/emaarco/bpmn/runtime/${file.fileName}`, file.content);
+                zip.file(`io/miragon/bpmn/runtime/${file.fileName}`, file.content);
             });
         }
         const blob = await zip.generateAsync({ type: 'blob' });
@@ -517,7 +517,7 @@ function renderLibrarySources() {
                 <span class="code-file-icon ci-kt">Kt</span>
                 <div class="code-file-title-group">
                     <div class="code-file-title">${escapeHtml(file.fileName)}</div>
-                    <div class="code-file-meta">io.github.emaarco.bpmn.runtime</div>
+                    <div class="code-file-meta">io.miragon.bpmn.runtime</div>
                 </div>
             </div>
             <div class="code-preview">
