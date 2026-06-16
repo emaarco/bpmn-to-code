@@ -14,7 +14,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Maven Mojo for generating type-safe API definitions from BPMN process models
+ *
+ * @deprecated bpmn-to-code is moving to the io.miragon namespace; the io.github.emaarco coordinates are
+ * deprecated and will receive no further updates. Migrate to the io.miragon:bpmn-to-code-maven plugin —
+ * see https://github.com/miragon/bpmn-to-code
  */
+@Deprecated
 @Mojo(
 		name = "generate-bpmn-api",
 		defaultPhase = LifecyclePhase.NONE,

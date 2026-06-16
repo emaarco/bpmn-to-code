@@ -5,7 +5,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.Properties
 
-@Suppress("unused")
+@Deprecated(
+    "bpmn-to-code is moving to the io.miragon namespace; the 'io.github.emaarco' coordinates and the " +
+        "'io.github.emaarco.bpmn-to-code-gradle' plugin id are deprecated and will receive no further updates. " +
+        "Migrate to io.miragon — https://github.com/miragon/bpmn-to-code"
+)
+@Suppress("unused", "DEPRECATION")
 class BpmnModelGeneratorPlugin : Plugin<Project> {
 
     companion object {

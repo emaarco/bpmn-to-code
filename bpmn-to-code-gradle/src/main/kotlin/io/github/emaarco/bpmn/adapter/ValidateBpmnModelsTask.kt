@@ -11,6 +11,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 
+@Deprecated(
+    "bpmn-to-code is moving to the io.miragon namespace; the 'io.github.emaarco' coordinates are deprecated " +
+        "and will receive no further updates. Migrate to io.miragon — https://github.com/miragon/bpmn-to-code"
+)
 @Incubating
 @DisableCachingByDefault(
     because = "Validation depends on BPMN files that can change at any time without the plugin knowing about it"

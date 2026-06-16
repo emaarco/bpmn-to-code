@@ -25,6 +25,11 @@ import java.nio.file.Path
  *     .assertNoViolations()
  * ```
  */
+@Deprecated(
+    "bpmn-to-code is moving to the io.miragon namespace; the 'io.github.emaarco' coordinates are deprecated " +
+        "and will receive no further updates. Migrate to io.miragon — https://github.com/miragon/bpmn-to-code"
+)
+@Suppress("DEPRECATION")
 class BpmnValidator private constructor(
     private val resourceLoader: () -> List<BpmnResource>,
 ) {

@@ -17,7 +17,12 @@ import java.util.Set;
 /**
  * [Experimental] Maven Mojo for validating BPMN models against built-in rules without generating code.
  * This goal is experimental and may change in future releases.
+ *
+ * @deprecated bpmn-to-code is moving to the io.miragon namespace; the io.github.emaarco coordinates are
+ * deprecated and will receive no further updates. Migrate to the io.miragon:bpmn-to-code-maven plugin —
+ * see https://github.com/miragon/bpmn-to-code
  */
+@Deprecated
 @Mojo(
 		name = "validate-bpmn",
 		defaultPhase = LifecyclePhase.NONE,
