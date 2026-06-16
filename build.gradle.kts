@@ -59,6 +59,9 @@ subprojects {
             violationRules {
                 rule {
                     element = "CLASS"
+                    // Deprecated io.github.emaarco.* compatibility shims (removed in 4.0) mirror the
+                    // canonical io.miragon types and are exempt from the coverage bar.
+                    excludes = listOf("io.github.emaarco.*")
                     limit {
                         counter = "LINE"
                         value = "COVEREDRATIO"
