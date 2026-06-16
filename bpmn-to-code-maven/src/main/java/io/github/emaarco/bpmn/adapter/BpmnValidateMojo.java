@@ -71,6 +71,12 @@ public class BpmnValidateMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoFailureException {
+		getLog().warn(
+				"[bpmn-to-code] bpmn-to-code will be moved to the io.miragon namespace. The 'io.github.emaarco' " +
+						"coordinates and the 'io.github.emaarco:bpmn-to-code-maven' plugin are DEPRECATED and will not " +
+						"receive further updates. Migrate to the io.miragon:bpmn-to-code-maven plugin / " +
+						"'io.miragon:bpmn-to-code-*' — see https://github.com/miragon/bpmn-to-code"
+		);
 		getLog().warn("[EXPERIMENTAL] The 'validate-bpmn' goal is experimental and may change in future releases.");
 		if (processEngine == null || processEngine.isBlank()) {
 			throw new MojoFailureException("processEngine is required (valid values: CAMUNDA_7, ZEEBE, OPERATON)");

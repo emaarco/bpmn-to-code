@@ -76,6 +76,12 @@ public class BpmnModelMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() {
+		getLog().warn(
+				"[bpmn-to-code] bpmn-to-code will be moved to the io.miragon namespace. The 'io.github.emaarco' " +
+						"coordinates and the 'io.github.emaarco:bpmn-to-code-maven' plugin are DEPRECATED and will not " +
+						"receive further updates. Migrate to the io.miragon:bpmn-to-code-maven plugin / " +
+						"'io.miragon:bpmn-to-code-*' — see https://github.com/miragon/bpmn-to-code"
+		);
 		CreateProcessApiFilesystemPlugin plugin = new CreateProcessApiFilesystemPlugin();
 		OutputLanguage language = OutputLanguage.valueOf(outputLanguage);
 		ProcessEngine engine = ProcessEngine.valueOf(processEngine);

@@ -78,6 +78,14 @@ class BpmnValidator private constructor(
      * Executes validation and returns a [BpmnValidationAssert] for fluent assertions.
      */
     fun validate(): BpmnValidationAssert {
+        // Written directly to stderr — not via a logging facade — so the notice is visible to every
+        // consumer regardless of whether they have an SLF4J backend configured in their test classpath.
+        System.err.println(
+            "[bpmn-to-code] bpmn-to-code will be moved to the io.miragon namespace. The 'io.github.emaarco' " +
+                "coordinates and the 'io.github.emaarco:bpmn-to-code-testing' library are DEPRECATED and will not " +
+                "receive further updates. Migrate to 'io.miragon:bpmn-to-code-testing' / 'io.miragon:bpmn-to-code-*' " +
+                "— see https://github.com/miragon/bpmn-to-code"
+        )
         val selectedEngine = requireNotNull(engine) {
             "Process engine must be set. Call .engine(ProcessEngine.CAMUNDA_7) or similar before .validate()"
         }

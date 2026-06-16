@@ -15,6 +15,12 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        project.logger.warn(
+            "[bpmn-to-code] bpmn-to-code will be moved to the io.miragon namespace. The 'io.github.emaarco' " +
+                "coordinates and the 'io.github.emaarco.bpmn-to-code-gradle' plugin id are DEPRECATED and will not " +
+                "receive further updates. Migrate to 'io.miragon.bpmn-to-code-gradle' / 'io.miragon:bpmn-to-code-*' " +
+                "— see https://github.com/miragon/bpmn-to-code"
+        )
         project.tasks.register("generateBpmnModelApi", GenerateBpmnModelsTask::class.java) {
             it.group = "BPMN"
             it.description = "Generates API-files from BPMN files to interact with a process-engine."
