@@ -1,5 +1,8 @@
 # 🚀 bpmn-to-code-web
 
+> ## ⚠️ Moving to io.miragon
+> bpmn-to-code is **moving to the `io.miragon` namespace**. As of this release the `io.github.emaarco` coordinates and the `emaarco/bpmn-to-code-web` Docker image are **deprecated** and will receive no further updates — migrate to `io.miragon` / `miragon/bpmn-to-code-web` ([github.com/miragon/bpmn-to-code](https://github.com/miragon/bpmn-to-code), [migration note](../docs/changelog/moved-to-miragon.md)).
+
 bpmn-to-code-web is a web application that provides browser-based access to bpmn-to-code's code generation capabilities.
 It offers the same powerful Process API generation without requiring Gradle or Maven installation,
 making it ideal for quick experiments, non-Java projects, or teams who prefer a graphical interface.
