@@ -23,7 +23,7 @@ The web module will:
 
 ### Deployment Strategy
 1. **Hosted Version**: Deploy to public URL (e.g., bpmn-to-code.miragon.io) for immediate access
-2. **Docker Image**: Publish to Docker Hub (`emaarco/bpmn-to-code-web`) for self-hosting
+2. **Docker Image**: Publish to Docker Hub (`miragon/bpmn-to-code-web`) for self-hosting
 
 ## Rationale
 

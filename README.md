@@ -149,7 +149,7 @@ dependencies {
 - 📦 [Maven Central](https://central.sonatype.com/artifact/io.miragon/bpmn-to-code-maven) — Maven Plugin
 - 📦 [Gradle Plugin Portal](https://plugins.gradle.org/plugin/io.miragon.bpmn-to-code-gradle) — Gradle Plugin
 - 🌐 [Web App](https://bpmn-to-code.miragon.io/static/index.html) — Try in browser, no installation
-- 🐳 [Docker Hub](https://hub.docker.com/r/emaarco/bpmn-to-code-web) — Self-hostable container
+- 🐳 [Docker Hub](https://hub.docker.com/r/miragon/bpmn-to-code-web) — Self-hostable container
 
 ## Project Structure
 

@@ -51,7 +51,7 @@ jobs:
 
       - name: Push Latest Tag
         if: inputs.dry_run != true
-        run: docker push emaarco/bpmn-to-code-web:latest
+        run: docker push miragon/bpmn-to-code-web:latest
 
       - name: Log out from Docker Hub
         if: always() && inputs.dry_run != true

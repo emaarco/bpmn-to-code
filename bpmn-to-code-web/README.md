@@ -75,10 +75,10 @@ The application is available as a Docker image for easy self-hosting:
 
 ```bash
 # Pull the image
-docker pull emaarco/bpmn-to-code-web:latest
+docker pull miragon/bpmn-to-code-web:latest
 
 # Run the container
-docker run -p 8080:8080 emaarco/bpmn-to-code-web:latest
+docker run -p 8080:8080 miragon/bpmn-to-code-web:latest
 ```
 
-The Docker image is hosted on Docker Hub: **https://hub.docker.com/r/emaarco/bpmn-to-code-web**
+The Docker image is hosted on Docker Hub: **https://hub.docker.com/r/miragon/bpmn-to-code-web**

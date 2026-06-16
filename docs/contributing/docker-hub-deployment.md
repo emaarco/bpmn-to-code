@@ -5,7 +5,7 @@ This guide explains how to build and deploy new versions of `bpmn-to-code-web` t
 ## Prerequisites
 
 ### 1. Docker Hub Account
-- Repository: `emaarco/bpmn-to-code-web`
+- Repository: `miragon/bpmn-to-code-web`
 - Access: Maintainer or Owner permissions required
 
 ### 2. Docker Installation
@@ -51,8 +51,8 @@ This task:
 1. Builds the fat JAR: `./gradlew :bpmn-to-code-web:buildFatJar`
 2. Runs `docker build` using `bpmn-to-code-web/Dockerfile`
 3. Tags image as:
-   - `emaarco/bpmn-to-code-web:VERSION` (e.g., `2.0.1`)
-   - `emaarco/bpmn-to-code-web:latest`
+   - `miragon/bpmn-to-code-web:VERSION` (e.g., `2.0.1`)
+   - `miragon/bpmn-to-code-web:latest`
 
 **Platform Architecture:**
 The build is configured to create AMD64/x86_64 images using `--platform linux/amd64`. This ensures compatibility with most cloud Kubernetes clusters (AWS, GCP, Azure, etc.), even when building locally on Apple Silicon Macs.
@@ -75,8 +75,8 @@ docker images | grep bpmn-to-code-web
 
 Expected output:
 ```
-emaarco/bpmn-to-code-web   2.0.1    abc123def456   ...
-emaarco/bpmn-to-code-web   latest    abc123def456   ...
+miragon/bpmn-to-code-web   2.0.1    abc123def456   ...
+miragon/bpmn-to-code-web   latest    abc123def456   ...
 ```
 
 ### Step 3: Test the Image Locally
@@ -88,7 +88,7 @@ Run the container:
 
 Or manually:
 ```bash
-docker run -p 8080:8080 --rm emaarco/bpmn-to-code-web:latest
+docker run -p 8080:8080 --rm miragon/bpmn-to-code-web:latest
 ```
 
 **Verify functionality:**
@@ -122,26 +122,26 @@ Push the image:
 ```
 
 This pushes both tags:
-- `emaarco/bpmn-to-code-web:VERSION`
-- `emaarco/bpmn-to-code-web:latest`
+- `miragon/bpmn-to-code-web:VERSION`
+- `miragon/bpmn-to-code-web:latest`
 
 **Manual push (alternative):**
 ```bash
-docker push emaarco/bpmn-to-code-web:2.0.1
-docker push emaarco/bpmn-to-code-web:latest
+docker push miragon/bpmn-to-code-web:2.0.1
+docker push miragon/bpmn-to-code-web:latest
 ```
 
 ### Step 6: Verify Deployment
 
 Check Docker Hub:
-1. Visit: https://hub.docker.com/r/emaarco/bpmn-to-code-web/tags
+1. Visit: https://hub.docker.com/r/miragon/bpmn-to-code-web/tags
 2. Confirm new version appears in tag list
 3. Verify `latest` tag updated
 
 Pull and test from Docker Hub:
 ```bash
-docker pull emaarco/bpmn-to-code-web:2.0.1
-docker run -p 8080:8080 emaarco/bpmn-to-code-web:2.0.1
+docker pull miragon/bpmn-to-code-web:2.0.1
+docker run -p 8080:8080 miragon/bpmn-to-code-web:2.0.1
 ```
 
 ## Gradle Tasks Reference
@@ -164,7 +164,7 @@ docker run -p 8080:8080 emaarco/bpmn-to-code-web:2.0.1
 ### Task Configuration
 Defined in `bpmn-to-code-web/build.gradle.kts`:
 ```kotlin
-val dockerImageName = "emaarco/bpmn-to-code-web"
+val dockerImageName = "miragon/bpmn-to-code-web"
 val dockerImageTag = project.version.toString()
 ```
 
@@ -176,22 +176,22 @@ val dockerImageTag = project.version.toString()
 docker images | grep bpmn-to-code-web
 
 # Remove local image
-docker rmi emaarco/bpmn-to-code-web:VERSION
+docker rmi miragon/bpmn-to-code-web:VERSION
 
 # Remove all versions
-docker rmi $(docker images emaarco/bpmn-to-code-web -q)
+docker rmi $(docker images miragon/bpmn-to-code-web -q)
 
 # Inspect image
-docker inspect emaarco/bpmn-to-code-web:latest
+docker inspect miragon/bpmn-to-code-web:latest
 ```
 
 ### Container Management
 ```bash
 # Run container (foreground)
-docker run -p 8080:8080 --rm emaarco/bpmn-to-code-web:latest
+docker run -p 8080:8080 --rm miragon/bpmn-to-code-web:latest
 
 # Run container (background)
-docker run -d -p 8080:8080 --name bpmn-web emaarco/bpmn-to-code-web:latest
+docker run -d -p 8080:8080 --name bpmn-web miragon/bpmn-to-code-web:latest
 
 # Stop container
 docker stop bpmn-web

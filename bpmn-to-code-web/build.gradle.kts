@@ -126,7 +126,7 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 // Docker tasks
-val dockerImageName = "emaarco/bpmn-to-code-web"
+val dockerImageName = "miragon/bpmn-to-code-web"
 val dockerImageTag = project.version.toString()
 
 val dockerExecutable: Provider<String> =

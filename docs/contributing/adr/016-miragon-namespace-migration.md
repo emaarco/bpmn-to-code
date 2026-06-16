@@ -37,7 +37,7 @@ Per-surface mechanism:
 ### Negative
 - The compatibility surface (11 duplicated runtime types, 3 relocation publications, 1 wrapper plugin) must be maintained until 4.0.
 - Gradle does not warn when following a relocation POM, so a consumer pinning the old dependency coordinate directly is nudged only by the `@Deprecated` type warnings. Documented in the [v3 Migration Guide](../../changelog/v3.md).
-- The repository, SCM URLs, Docker image, and developer metadata stay under `emaarco` for now; a later move to a `miragon` GitHub organization is out of scope for this change.
+- The Docker image moves to the `miragon` Docker Hub organization (`miragon/bpmn-to-code-web`). The GitHub repository, SCM URLs, and POM developer metadata stay under `emaarco` for now; a later move to a `miragon` GitHub organization is out of scope for this change.
 
 ## Alternatives
 - **Hard cut (no compat layer).** Simpler, but breaks every consumer's build and generated code at once. Rejected — the project has published releases in the wild.
