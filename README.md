@@ -1,3 +1,6 @@
+> ## ⚠️ Moving to io.miragon
+> bpmn-to-code is **moving to the `io.miragon` namespace** ([github.com/miragon/bpmn-to-code](https://github.com/miragon/bpmn-to-code)). As of this release the `io.github.emaarco` coordinates and the `io.github.emaarco.bpmn-to-code-gradle` plugin id are **deprecated** and will receive no further updates — migrate to `io.miragon`. See the [migration note](docs/changelog/moved-to-miragon.md).
+
 > **bpmn-to-code is early-stage and actively developing.**
 > The four pillars — Generate, Validate, Surface, Ship — are taking shape, but expect rough edges.
 > Feedback and contributions are very welcome.

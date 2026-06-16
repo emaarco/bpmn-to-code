@@ -100,6 +100,7 @@ export default defineConfig({
             collapsed: true,
             items: [
               { text: 'Release Notes', link: '/changelog/' },
+              { text: 'Moved to io.miragon', link: '/changelog/moved-to-miragon' },
               { text: 'v2 Migration Guide', link: '/changelog/v2' },
             ],
           },

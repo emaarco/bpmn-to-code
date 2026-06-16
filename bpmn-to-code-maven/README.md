@@ -1,5 +1,8 @@
 # 🚀 bpmn-to-code Maven Plugin
 
+> ## ⚠️ Moving to io.miragon
+> bpmn-to-code is **moving to the `io.miragon` namespace**. As of this release the `io.github.emaarco` coordinates are **deprecated** and will receive no further updates — migrate to the `io.miragon:bpmn-to-code-maven` plugin ([github.com/miragon/bpmn-to-code](https://github.com/miragon/bpmn-to-code), [migration note](../docs/changelog/moved-to-miragon.md)).
+
 bpmn-to-code is a plugin designed to simplify process automation.
 Its vision is to foster clean & robust solutions for BPMN-based process automation.
 Therefore, it aims to provide a range of features —

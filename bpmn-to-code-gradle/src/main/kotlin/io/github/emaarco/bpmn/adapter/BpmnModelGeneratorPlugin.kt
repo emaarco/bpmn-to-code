@@ -5,7 +5,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.Properties
 
-@Suppress("unused")
+@Deprecated(
+    "bpmn-to-code is moving to the io.miragon namespace; the 'io.github.emaarco' coordinates and the " +
+        "'io.github.emaarco.bpmn-to-code-gradle' plugin id are deprecated and will receive no further updates. " +
+        "Migrate to io.miragon — https://github.com/miragon/bpmn-to-code"
+)
+@Suppress("unused", "DEPRECATION")
 class BpmnModelGeneratorPlugin : Plugin<Project> {
 
     companion object {
@@ -15,6 +20,12 @@ class BpmnModelGeneratorPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        project.logger.warn(
+            "[bpmn-to-code] bpmn-to-code will be moved to the io.miragon namespace. The 'io.github.emaarco' " +
+                "coordinates and the 'io.github.emaarco.bpmn-to-code-gradle' plugin id are DEPRECATED and will not " +
+                "receive further updates. Migrate to 'io.miragon.bpmn-to-code-gradle' / 'io.miragon:bpmn-to-code-*' " +
+                "— see https://github.com/miragon/bpmn-to-code"
+        )
         project.tasks.register("generateBpmnModelApi", GenerateBpmnModelsTask::class.java) {
             it.group = "BPMN"
             it.description = "Generates API-files from BPMN files to interact with a process-engine."

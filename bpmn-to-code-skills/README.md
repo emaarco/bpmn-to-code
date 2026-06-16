@@ -1,5 +1,8 @@
 # bpmn-to-code Skills Plugin
 
+> ## ⚠️ Moving to io.miragon
+> bpmn-to-code is **moving to the `io.miragon` namespace** ([github.com/miragon/bpmn-to-code](https://github.com/miragon/bpmn-to-code)). As of this release the `io.github.emaarco` coordinates are **deprecated** and will receive no further updates — see the [migration note](../docs/changelog/moved-to-miragon.md).
+
 Claude Code plugin with AI skills for setting up and using the [bpmn-to-code](https://github.com/emaarco/bpmn-to-code) Gradle/Maven plugin.
 
 ## Installation
