@@ -21,7 +21,9 @@ Per-surface mechanism:
 
    They are **real duplicated classes**, not a Kotlin `typealias`: a `typealias` is invisible to Java, and the types are final `data class`/`enum` (so subclassing is out). Real classes are the only mechanism that keeps both Java and Kotlin generated code compiling. The old and new types are therefore distinct JVM types — consumers regenerate and switch imports together per module.
 
-2. **Old coordinates — relocation POMs.** `io.github.emaarco:bpmn-to-code-{runtime,maven,testing}` are published as POM-only artifacts carrying `<distributionManagement><relocation>` to `io.miragon:*`. Maven and Gradle both follow relocation, so unchanged build files keep resolving. This is the only correct way to keep a Maven `<plugin>` coordinate working.
+2. **Old coordinates — relocation POMs in a dedicated module.** `io.github.emaarco:bpmn-to-code-{runtime,maven,testing}` are published as POM-only artifacts carrying `<distributionManagement><relocation>` to `io.miragon:*`. Maven and Gradle both follow relocation, so unchanged build files keep resolving, and a published `…:3.0.0` relocation POM also makes the new version *discoverable* to anyone still on the old coordinate (Dependabot, `versions:display-dependency-updates`, …). This is the only correct way to keep a Maven `<plugin>` coordinate working.
+
+   These three POMs live in a separate `bpmn-to-code-relocation` module rather than alongside the real artifacts, because `io.miragon` is an **org-owned** Central namespace while `io.github.emaarco` is **personally owned** — a single Central upload uses one credential, so the two namespaces must be published in separate runs. The release pipeline publishes the real `io.miragon` artifacts with the org token (`MIRAGON_SONATYPE_*`) and the relocation module with the personal token (`SONATYPE_*`), both signed with the same key.
 
 3. **Old Gradle plugin id — deprecated wrapper plugin.** `io.github.emaarco.bpmn-to-code-gradle` stays registered as a thin `DeprecatedBpmnModelGeneratorPlugin` that applies the new plugin and logs a deprecation warning at configuration time.
 

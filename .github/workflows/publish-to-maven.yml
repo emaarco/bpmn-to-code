@@ -1,4 +1,4 @@
-name: Publish to Maven Central
+name: Publish to Maven Central (io.miragon)
 
 on:
   workflow_dispatch:
@@ -23,8 +23,9 @@ jobs:
       ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
       ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
       ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
-      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+      # io.miragon is an org-owned Central namespace — uses the org token, not the personal one.
+      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MIRAGON_SONATYPE_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MIRAGON_SONATYPE_PASSWORD }}
 
     steps:
       - name: Check out repository
@@ -42,10 +43,20 @@ jobs:
       - name: Build & Test
         run: ./gradlew build --warning-mode all
 
+      # Only the real io.miragon artifacts here. The io.github.emaarco relocation POMs are published
+      # separately (publish-to-maven-relocation.yml) with the personal token that owns that namespace.
       - name: Publish to Maven Central
         if: inputs.dry_run != true
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PsignArtifacts=true
+        run: >-
+          ./gradlew --no-configuration-cache -PsignArtifacts=true
+          :bpmn-to-code-runtime:publishAndReleaseToMavenCentral
+          :bpmn-to-code-maven:publishAndReleaseToMavenCentral
+          :bpmn-to-code-testing:publishAndReleaseToMavenCentral
 
       - name: Publish to Maven Local (Dry Run)
         if: inputs.dry_run == true
-        run: ./gradlew publishToMavenLocal --no-configuration-cache
+        run: >-
+          ./gradlew --no-configuration-cache
+          :bpmn-to-code-runtime:publishToMavenLocal
+          :bpmn-to-code-maven:publishToMavenLocal
+          :bpmn-to-code-testing:publishToMavenLocal

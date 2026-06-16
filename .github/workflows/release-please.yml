@@ -71,6 +71,16 @@ jobs:
     with:
       dry_run: ${{ inputs.dry_run == true }}
 
+  # Relocation POMs for the old io.github.emaarco coordinates — published with the personal token
+  # that owns that namespace. Independent of the plugin chain, so it only needs the gate.
+  publish-maven-relocation:
+    name: Publish io.github.emaarco relocation POMs
+    needs: gate
+    uses: ./.github/workflows/publish-to-maven-relocation.yml
+    secrets: inherit
+    with:
+      dry_run: ${{ inputs.dry_run == true }}
+
   publish-gradle:
     name: Publish to Gradle Plugin Portal
     needs: publish-maven

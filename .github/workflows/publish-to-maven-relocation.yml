@@ -1,0 +1,51 @@
+name: Publish to Maven Central (io.github.emaarco relocation)
+
+# Publishes the relocation POMs that redirect the old io.github.emaarco coordinates to io.miragon.
+# Uses the personal SONATYPE_* token that owns the io.github.emaarco namespace — the org io.miragon
+# token cannot publish there. Signed with the same key as the main artifacts.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      dry_run:
+        description: 'Dry run (build & verify only, no real publish)'
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    env:
+      ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+      ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Publish relocation POMs to Maven Central
+        if: inputs.dry_run != true
+        run: ./gradlew :bpmn-to-code-relocation:publishAndReleaseToMavenCentral --no-configuration-cache -PsignArtifacts=true
+
+      - name: Publish relocation POMs to Maven Local (Dry Run)
+        if: inputs.dry_run == true
+        run: ./gradlew :bpmn-to-code-relocation:publishToMavenLocal --no-configuration-cache
