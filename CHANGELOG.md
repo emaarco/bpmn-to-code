@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 This file was bootstrapped from git history with [git-cliff](https://git-cliff.org);
 new entries are appended automatically by [release-please](https://github.com/googleapis/release-please).
 
+## [2.4.0](https://github.com/emaarco/bpmn-to-code/compare/v2.3.0...v2.4.0) (2026-06-16)
+
+
+### Features
+
+* deprecate io.github.emaarco — bpmn-to-code moves to io.miragon ([#377](https://github.com/emaarco/bpmn-to-code/issues/377)) ([c0aae01](https://github.com/emaarco/bpmn-to-code/commit/c0aae0166ec35ba921b8d8766e303c826b9c964e))
+
 ## [2.3.0](https://github.com/emaarco/bpmn-to-code/compare/v2.2.0...v2.3.0) (2026-06-12)
 
 
