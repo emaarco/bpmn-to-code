@@ -1,8 +1,5 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-![Archived](https://img.shields.io/badge/status-archived-lightgrey?style=for-the-badge)
-[![New home: Miragon/bpmn-to-code](https://img.shields.io/badge/new%20home-Miragon%2Fbpmn--to--code-2ea44f?style=for-the-badge)](https://github.com/Miragon/bpmn-to-code)
-
 # bpmn-to-code
 
 > ### 📦 This repository has moved
@@ -14,11 +11,9 @@ Type-safe constants from your BPMN model — for your compiler, your tests, and 
 
 ## 👉 Where to go now
 
-| | |
-| --- | --- |
-| 🏠 **New home** | [github.com/Miragon/bpmn-to-code](https://github.com/Miragon/bpmn-to-code) |
-| 📦 **New coordinates** | `io.miragon` (group id) · `io.miragon.bpmn-to-code-gradle` (plugin id) |
-| 📚 **Everything else** | Docs, downloads, issues and discussions now live in the new repository |
+- 🏠 **New home:** [github.com/Miragon/bpmn-to-code](https://github.com/Miragon/bpmn-to-code)
+- 📦 **New coordinates:** `io.miragon` (group id) · `io.miragon.bpmn-to-code-gradle` (plugin id)
+- 📚 **Everything else:** docs, downloads, issues and discussions now live in the new repository
 
 The old `io.github.emaarco` coordinates and the `io.github.emaarco.bpmn-to-code-gradle`
 plugin id are **deprecated** and will receive no further updates. Please migrate to `io.miragon`.
