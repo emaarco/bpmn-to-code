@@ -1,8 +1,0 @@
-rootProject.name = "bpmn-to-code"
-
-include("bpmn-to-code-core")
-include("bpmn-to-code-gradle")
-include("bpmn-to-code-maven")
-include("bpmn-to-code-web")
-include("bpmn-to-code-runtime")
-include("bpmn-to-code-testing")
